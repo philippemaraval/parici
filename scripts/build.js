@@ -36,12 +36,7 @@ const DIST_INCLUDE = [
   "sw.js",
   "sw.js.min",
   "site.webmanifest",
-  "favicon.png",
-  "favicon-16x16.png",
-  "favicon-32x32.png",
-  "apple-touch-icon.png",
-  "android-chrome-192x192.png",
-  "android-chrome-512x512.png",
+  "parici-favicon.ico",
   "data",
 ];
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "parici-v9";
+const CACHE_NAME = "parici-v10";
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -7,6 +7,11 @@ const CORE_PRECACHE_URLS = [
   "/main.js",
   "/data_rules.js",
   "/site.webmanifest",
+  "/parici-favicon.ico/favicon.ico",
+  "/parici-favicon.ico/favicon-16x16.png",
+  "/parici-favicon.ico/favicon-32x32.png",
+  "/parici-favicon.ico/android-icon-192x192.png",
+  "/parici-favicon.ico/apple-icon-180x180.png",
 ];
 
 const OPTIONAL_CDN_PRECACHE_URLS = [
@@ -132,6 +137,9 @@ self.addEventListener("fetch", (event) => {
     (url.pathname.endsWith(".js") ||
       url.pathname.endsWith(".css") ||
       url.pathname.endsWith(".html") ||
+      url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".ico") ||
+      url.pathname.endsWith(".xml") ||
       url.pathname === "/" ||
       url.pathname.endsWith(".webmanifest"));
   const isCdnAsset = CDN_HOSTS.has(url.hostname);
@@ -173,8 +181,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: "/android-chrome-192x192.png",
-      badge: "/favicon-32x32.png",
+      icon: "/parici-favicon.ico/android-icon-192x192.png",
+      badge: "/parici-favicon.ico/favicon-32x32.png",
       tag: payload.tag || "parici-notification",
       renotify: true,
       data: { url: targetUrl },
