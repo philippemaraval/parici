@@ -821,6 +821,35 @@ function normalizeStreetLookupName(name) {
         .replace(/\s+/g, ' ');
 }
 
+function normalizeFeatureId(value) {
+    return String(value || '').trim();
+}
+
+function getStreetFeatureId(feature) {
+    return normalizeFeatureId(
+        feature?.properties?.id ||
+        feature?.properties?.osm_id ||
+        feature?.id ||
+        ''
+    );
+}
+
+function normalizeCoordinatePair(value) {
+    if (!Array.isArray(value) || value.length < 2) {
+        return null;
+    }
+    const longitude = Number(value[0]);
+    const latitude = Number(value[1]);
+    if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) {
+        return null;
+    }
+    return [Number(longitude.toFixed(6)), Number(latitude.toFixed(6))];
+}
+
+function getStreetFeatureCentroid(feature) {
+    return normalizeCoordinatePair(feature?.properties?.centroid || feature?.centroid);
+}
+
 function normalizeStreetInfoEntries(rawEntries, maxEntries = MAX_STREET_INFO_ENTRIES) {
     const normalized = {};
     if (!rawEntries || typeof rawEntries !== 'object' || Array.isArray(rawEntries)) {
@@ -1726,11 +1755,26 @@ function parseFriendChallengeScoreSubmission(body, gameType) {
 }
 
 function serializeFriendChallenge(challenge) {
-    const targetNames = Array.isArray(challenge?.targets_json)
-        ? challenge.targets_json
-            .map((value) => String(value || '').trim())
-            .filter(Boolean)
-        : [];
+    const rawTargets = Array.isArray(challenge?.targets_json) ? challenge.targets_json : [];
+    const targets = rawTargets
+        .map((value) => {
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+                const name = String(value.name || '').trim();
+                if (!name) {
+                    return null;
+                }
+                return {
+                    name,
+                    featureId: normalizeFeatureId(value.featureId || value.id || value.osmId || value.osm_id),
+                    centroid: normalizeCoordinatePair(value.centroid),
+                    arrondissementName: normalizeOptionalText(value.arrondissementName || value.arrondissement, 120),
+                };
+            }
+            const name = String(value || '').trim();
+            return name ? { name, featureId: '', centroid: null, arrondissementName: null } : null;
+        })
+        .filter(Boolean);
+    const targetNames = targets.map((target) => target.name);
     const serialNumber = Number.parseInt(challenge?.id, 10);
     const safeSerialNumber = Number.isInteger(serialNumber) && serialNumber > 0 ? serialNumber : null;
     const serialCode = safeSerialNumber === null
@@ -1747,6 +1791,7 @@ function serializeFriendChallenge(challenge) {
         targetType: challenge.target_type,
         itemCount: challenge.item_count || targetNames.length,
         targetNames,
+        targets,
         createdAt: challenge.created_at,
         expiresAt: challenge.expires_at,
         createdBy: {
@@ -2713,19 +2758,53 @@ const dailyManifestCache = {
 };
 function reloadStreetChallengeIndex() {
     const rawStreetIndex = JSON.parse(fs.readFileSync(BACKEND_STREETS_INDEX_PATH, 'utf8'));
+    let rawStreetFeatures = [];
+    try {
+        const rawStreetGeoJson = JSON.parse(fs.readFileSync(BACKEND_STREETS_LIGHT_PATH, 'utf8'));
+        rawStreetFeatures = Array.isArray(rawStreetGeoJson?.features) ? rawStreetGeoJson.features : [];
+    } catch (error) {
+        rawStreetFeatures = [];
+        console.warn('Could not load street geometry index for friend challenges:', error.message);
+    }
     streetIndex = rawStreetIndex.filter((entry) =>
         shouldKeepStreetForGame({
             name: entry?.name,
         })
     );
     streetChallengeIndex = streetIndex
-        .map((entry) => ({
-            name: String(entry?.name || '').trim(),
-            normalizedName: normalizeContentName(entry?.name),
-            arrondissementName: String(entry?.arrondissement || '').trim(),
-            arrondissementKey: normalizeArrondissementChallengeKey(entry?.arrondissement),
-        }))
-        .filter((entry) => entry.name && entry.normalizedName);
+        .map((entry) => {
+            const targetCentroid = normalizeCoordinatePair(entry?.centroid);
+            const normalizedEntryName = normalizeStreetLookupName(entry?.name);
+            const matchingFeature = rawStreetFeatures.find((feature) => {
+                if (normalizeStreetLookupName(feature?.properties?.name) !== normalizedEntryName) {
+                    return false;
+                }
+                if (!targetCentroid) {
+                    return true;
+                }
+                const featureCentroid = getStreetFeatureCentroid(feature);
+                return (
+                    featureCentroid &&
+                    Math.abs(featureCentroid[0] - targetCentroid[0]) <= 0.00001 &&
+                    Math.abs(featureCentroid[1] - targetCentroid[1]) <= 0.00001
+                );
+            });
+            const target = {
+                name: String(entry?.name || '').trim(),
+                featureId: matchingFeature ? getStreetFeatureId(matchingFeature) : '',
+                centroid: targetCentroid,
+                arrondissementName: String(entry?.arrondissement || '').trim() || null,
+            };
+            if (!target || !shouldKeepStreetForGame({ name: target.name })) {
+                return null;
+            }
+            return {
+                ...target,
+                normalizedName: normalizeContentName(target.name),
+                arrondissementKey: normalizeArrondissementChallengeKey(target.arrondissementName),
+            };
+        })
+        .filter((entry) => entry && entry.name && entry.normalizedName);
 
     streetIndexByNormalizedName.clear();
     streetChallengeIndex.forEach((entry) => {
@@ -2877,11 +2956,11 @@ async function buildFriendChallengeTargets({ mode, gameType, arrondissementName,
         if (normalizedMode === 'rues-principales') {
             pool = streetChallengeIndex
                 .filter((entry) => mainStreetSet.has(entry.normalizedName))
-                .map((entry) => entry.name);
+                .map(({ name, featureId, centroid, arrondissementName }) => ({ name, featureId, centroid, arrondissementName }));
         } else if (normalizedMode === 'rues-celebres') {
             pool = streetChallengeIndex
                 .filter((entry) => famousStreetSet.has(entry.normalizedName))
-                .map((entry) => entry.name);
+                .map(({ name, featureId, centroid, arrondissementName }) => ({ name, featureId, centroid, arrondissementName }));
         } else if (normalizedMode === 'arrondissement') {
             const arrondissementKey = normalizeArrondissementChallengeKey(arrondissementName);
             if (!arrondissementKey) {
@@ -2893,9 +2972,9 @@ async function buildFriendChallengeTargets({ mode, gameType, arrondissementName,
             } else {
                 effectiveArrondissementName = arrondissementName;
             }
-            pool = streetPool.map((entry) => entry.name);
+            pool = streetPool.map(({ name, featureId, centroid, arrondissementName }) => ({ name, featureId, centroid, arrondissementName }));
         } else {
-            pool = streetChallengeIndex.map((entry) => entry.name);
+            pool = streetChallengeIndex.map(({ name, featureId, centroid, arrondissementName }) => ({ name, featureId, centroid, arrondissementName }));
         }
     }
 

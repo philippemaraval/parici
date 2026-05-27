@@ -1258,11 +1258,31 @@ function normalizeFriendChallengePayload(payload) {
       .map((value) => String(value || "").trim())
       .filter(Boolean)
     : [];
+  const rawTargets = Array.isArray(payload?.targets) ? payload.targets : targetNames;
+  const targets = rawTargets
+    .map((value) => {
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const name = String(value.name || "").trim();
+        if (!name) return null;
+        const longitude = Array.isArray(value.centroid) ? Number(value.centroid[0]) : Number.NaN;
+        const latitude = Array.isArray(value.centroid) ? Number(value.centroid[1]) : Number.NaN;
+        return {
+          name,
+          featureId: String(value.featureId || value.id || value.osmId || value.osm_id || "").trim(),
+          centroid: Number.isFinite(longitude) && Number.isFinite(latitude) ? [longitude, latitude] : null,
+          arrondissementName: typeof value.arrondissementName === "string" ? value.arrondissementName.trim() : null,
+        };
+      }
+      const name = String(value || "").trim();
+      return name ? { name, featureId: "", centroid: null, arrondissementName: null } : null;
+    })
+    .filter(Boolean);
+  const resolvedTargetNames = targets.map((target) => target.name);
   if (
     !/^[A-Z0-9]{10}$/.test(code) ||
     !FRIEND_CHALLENGE_ALLOWED_ZONE_MODES.has(mode) ||
     !FRIEND_CHALLENGE_ALLOWED_GAME_MODES.has(gameType) ||
-    targetNames.length < 1
+    targets.length < 1
   ) {
     return null;
   }
@@ -1274,8 +1294,9 @@ function normalizeFriendChallengePayload(payload) {
     gameType,
     arrondissementName: typeof payload?.arrondissementName === "string" ? payload.arrondissementName.trim() : null,
     targetType,
-    targetNames,
-    itemCount: Number.parseInt(payload?.itemCount, 10) || targetNames.length,
+    targetNames: resolvedTargetNames,
+    targets,
+    itemCount: Number.parseInt(payload?.itemCount, 10) || targets.length,
     sharePath: typeof payload?.sharePath === "string" ? payload.sharePath : "",
     createdBy: normalizeFriendChallengeCreator(payload?.createdBy),
   };
@@ -1978,23 +1999,71 @@ async function initFriendChallengeModeFromUrl() {
   return friendChallengeInitPromise;
 }
 
+function getFeatureStableId(feature) {
+  return String(
+    feature?.properties?.id ||
+    feature?.properties?.osm_id ||
+    feature?.id ||
+    "",
+  ).trim();
+}
+
+function getFeatureCentroid(feature) {
+  const centroid = feature?.properties?.centroid || feature?.centroid;
+  if (!Array.isArray(centroid) || centroid.length < 2) return null;
+  const longitude = Number(centroid[0]);
+  const latitude = Number(centroid[1]);
+  return Number.isFinite(longitude) && Number.isFinite(latitude) ? [longitude, latitude] : null;
+}
+
+function areCentroidsClose(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right)) return !1;
+  const leftLng = Number(left[0]);
+  const leftLat = Number(left[1]);
+  const rightLng = Number(right[0]);
+  const rightLat = Number(right[1]);
+  if (![leftLng, leftLat, rightLng, rightLat].every(Number.isFinite)) return !1;
+  return Math.abs(leftLng - rightLng) <= 0.00001 && Math.abs(leftLat - rightLat) <= 0.00001;
+}
+
 function getFriendChallengeStreetTargets() {
-  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
+  const byId = new Map();
   const byName = new Map();
   allStreetFeatures.forEach((feature) => {
+    const featureId = getFeatureStableId(feature);
+    if (featureId && !byId.has(featureId)) {
+      byId.set(featureId, feature);
+    }
     const featureName = feature?.properties?.name;
     const key = normalizeChallengeNameKey(featureName);
     if (key && !byName.has(key)) {
       byName.set(key, feature);
     }
   });
-  return activeFriendChallenge.targetNames
-    .map((name) => byName.get(normalizeChallengeNameKey(name)))
-    .filter((feature) => !!feature);
+  return activeFriendChallenge.targets
+    .map((target) => {
+      if (!target) return null;
+      if (target.featureId && byId.has(target.featureId)) {
+        return byId.get(target.featureId);
+      }
+      const nameKey = normalizeChallengeNameKey(target.name);
+      if (nameKey && target.centroid) {
+        const matchingFeature = allStreetFeatures.find((feature) => {
+          const featureName = feature?.properties?.name;
+          return normalizeChallengeNameKey(featureName) === nameKey && areCentroidsClose(getFeatureCentroid(feature), target.centroid);
+        });
+        if (matchingFeature) {
+          return matchingFeature;
+        }
+      }
+      return byName.get(nameKey) || null;
+    })
+    .filter(Boolean);
 }
 
 function getFriendChallengeMonumentTargets() {
-  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
   const byName = new Map();
   allMonuments.forEach((feature) => {
     const featureName = feature?.properties?.name;
@@ -2003,13 +2072,13 @@ function getFriendChallengeMonumentTargets() {
       byName.set(key, feature);
     }
   });
-  return activeFriendChallenge.targetNames
-    .map((name) => byName.get(normalizeChallengeNameKey(name)))
+  return activeFriendChallenge.targets
+    .map((target) => byName.get(normalizeChallengeNameKey(target?.name)))
     .filter((feature) => !!feature);
 }
 
 function getFriendChallengeArrondissementTargets() {
-  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+  if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
   const byKey = new Map();
   allArrondissementFeatures.forEach((feature) => {
     const key = normalizeArrondissementKey(getArrondissementTargetName(feature));
@@ -2017,8 +2086,8 @@ function getFriendChallengeArrondissementTargets() {
       byKey.set(key, feature);
     }
   });
-  return activeFriendChallenge.targetNames
-    .map((name) => byKey.get(normalizeArrondissementKey(name)))
+  return activeFriendChallenge.targets
+    .map((target) => byKey.get(normalizeArrondissementKey(target?.name)))
     .filter((feature) => !!feature);
 }
 

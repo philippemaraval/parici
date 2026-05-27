@@ -4998,7 +4998,25 @@ Essaie de faire mieux sur parici.netlify.app`,
     const rawSerialCode = typeof (payload == null ? void 0 : payload.serialCode) === "string" ? payload.serialCode.trim() : "";
     const serialCode = serialNumber ? formatFriendChallengeSerial(serialNumber) : rawSerialCode;
     const targetNames = Array.isArray(payload == null ? void 0 : payload.targetNames) ? payload.targetNames.map((value) => String(value || "").trim()).filter(Boolean) : [];
-    if (!/^[A-Z0-9]{10}$/.test(code) || !FRIEND_CHALLENGE_ALLOWED_ZONE_MODES.has(mode) || !FRIEND_CHALLENGE_ALLOWED_GAME_MODES.has(gameType) || targetNames.length < 1) {
+    const rawTargets = Array.isArray(payload == null ? void 0 : payload.targets) ? payload.targets : targetNames;
+    const targets = rawTargets.map((value) => {
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const name2 = String(value.name || "").trim();
+        if (!name2) return null;
+        const longitude = Array.isArray(value.centroid) ? Number(value.centroid[0]) : Number.NaN;
+        const latitude = Array.isArray(value.centroid) ? Number(value.centroid[1]) : Number.NaN;
+        return {
+          name: name2,
+          featureId: String(value.featureId || value.id || value.osmId || value.osm_id || "").trim(),
+          centroid: Number.isFinite(longitude) && Number.isFinite(latitude) ? [longitude, latitude] : null,
+          arrondissementName: typeof value.arrondissementName === "string" ? value.arrondissementName.trim() : null
+        };
+      }
+      const name = String(value || "").trim();
+      return name ? { name, featureId: "", centroid: null, arrondissementName: null } : null;
+    }).filter(Boolean);
+    const resolvedTargetNames = targets.map((target) => target.name);
+    if (!/^[A-Z0-9]{10}$/.test(code) || !FRIEND_CHALLENGE_ALLOWED_ZONE_MODES.has(mode) || !FRIEND_CHALLENGE_ALLOWED_GAME_MODES.has(gameType) || targets.length < 1) {
       return null;
     }
     return {
@@ -5009,8 +5027,9 @@ Essaie de faire mieux sur parici.netlify.app`,
       gameType,
       arrondissementName: typeof (payload == null ? void 0 : payload.arrondissementName) === "string" ? payload.arrondissementName.trim() : null,
       targetType,
-      targetNames,
-      itemCount: Number.parseInt(payload == null ? void 0 : payload.itemCount, 10) || targetNames.length,
+      targetNames: resolvedTargetNames,
+      targets,
+      itemCount: Number.parseInt(payload == null ? void 0 : payload.itemCount, 10) || targets.length,
       sharePath: typeof (payload == null ? void 0 : payload.sharePath) === "string" ? payload.sharePath : "",
       createdBy: normalizeFriendChallengeCreator(payload == null ? void 0 : payload.createdBy)
     };
@@ -5641,21 +5660,66 @@ Essaie de faire mieux sur parici.netlify.app`,
     });
     return friendChallengeInitPromise;
   }
+  function getFeatureStableId(feature) {
+    var _a, _b;
+    return String(
+      ((_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.id) || ((_b = feature == null ? void 0 : feature.properties) == null ? void 0 : _b.osm_id) || (feature == null ? void 0 : feature.id) || ""
+    ).trim();
+  }
+  function getFeatureCentroid(feature) {
+    var _a;
+    const centroid = ((_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.centroid) || (feature == null ? void 0 : feature.centroid);
+    if (!Array.isArray(centroid) || centroid.length < 2) return null;
+    const longitude = Number(centroid[0]);
+    const latitude = Number(centroid[1]);
+    return Number.isFinite(longitude) && Number.isFinite(latitude) ? [longitude, latitude] : null;
+  }
+  function areCentroidsClose(left, right) {
+    if (!Array.isArray(left) || !Array.isArray(right)) return false;
+    const leftLng = Number(left[0]);
+    const leftLat = Number(left[1]);
+    const rightLng = Number(right[0]);
+    const rightLat = Number(right[1]);
+    if (![leftLng, leftLat, rightLng, rightLat].every(Number.isFinite)) return false;
+    return Math.abs(leftLng - rightLng) <= 1e-5 && Math.abs(leftLat - rightLat) <= 1e-5;
+  }
   function getFriendChallengeStreetTargets() {
-    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
+    const byId = /* @__PURE__ */ new Map();
     const byName = /* @__PURE__ */ new Map();
     allStreetFeatures.forEach((feature) => {
       var _a;
+      const featureId = getFeatureStableId(feature);
+      if (featureId && !byId.has(featureId)) {
+        byId.set(featureId, feature);
+      }
       const featureName = (_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.name;
       const key = normalizeChallengeNameKey(featureName);
       if (key && !byName.has(key)) {
         byName.set(key, feature);
       }
     });
-    return activeFriendChallenge.targetNames.map((name) => byName.get(normalizeChallengeNameKey(name))).filter((feature) => !!feature);
+    return activeFriendChallenge.targets.map((target) => {
+      if (!target) return null;
+      if (target.featureId && byId.has(target.featureId)) {
+        return byId.get(target.featureId);
+      }
+      const nameKey = normalizeChallengeNameKey(target.name);
+      if (nameKey && target.centroid) {
+        const matchingFeature = allStreetFeatures.find((feature) => {
+          var _a;
+          const featureName = (_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.name;
+          return normalizeChallengeNameKey(featureName) === nameKey && areCentroidsClose(getFeatureCentroid(feature), target.centroid);
+        });
+        if (matchingFeature) {
+          return matchingFeature;
+        }
+      }
+      return byName.get(nameKey) || null;
+    }).filter(Boolean);
   }
   function getFriendChallengeMonumentTargets() {
-    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
     const byName = /* @__PURE__ */ new Map();
     allMonuments.forEach((feature) => {
       var _a;
@@ -5665,10 +5729,10 @@ Essaie de faire mieux sur parici.netlify.app`,
         byName.set(key, feature);
       }
     });
-    return activeFriendChallenge.targetNames.map((name) => byName.get(normalizeChallengeNameKey(name))).filter((feature) => !!feature);
+    return activeFriendChallenge.targets.map((target) => byName.get(normalizeChallengeNameKey(target == null ? void 0 : target.name))).filter((feature) => !!feature);
   }
   function getFriendChallengeArrondissementTargets() {
-    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targetNames)) return [];
+    if (!activeFriendChallenge || !Array.isArray(activeFriendChallenge.targets)) return [];
     const byKey = /* @__PURE__ */ new Map();
     allArrondissementFeatures.forEach((feature) => {
       const key = normalizeArrondissementKey(getArrondissementTargetName(feature));
@@ -5676,7 +5740,7 @@ Essaie de faire mieux sur parici.netlify.app`,
         byKey.set(key, feature);
       }
     });
-    return activeFriendChallenge.targetNames.map((name) => byKey.get(normalizeArrondissementKey(name))).filter((feature) => !!feature);
+    return activeFriendChallenge.targets.map((target) => byKey.get(normalizeArrondissementKey(target == null ? void 0 : target.name))).filter((feature) => !!feature);
   }
   function updateModeDifficultyPill() {
     const e = document.getElementById("mode-select"), t = document.getElementById("mode-difficulty-pill");
