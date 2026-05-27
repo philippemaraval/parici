@@ -585,8 +585,8 @@ export function handleDailyShareImageRuntime({
   const topGradient = ctx.createLinearGradient(0, 0, 0, height);
   topGradient.addColorStop(0, "#f8dca5");
   topGradient.addColorStop(0.35, "#f2a900");
-  topGradient.addColorStop(0.68, "#4057b2");
-  topGradient.addColorStop(1, "#12297a");
+  topGradient.addColorStop(0.68, "#02273b");
+  topGradient.addColorStop(1, "#02273b");
   ctx.fillStyle = topGradient;
   ctx.fillRect(0, 0, width, height);
 

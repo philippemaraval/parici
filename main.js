@@ -15,9 +15,9 @@
     mapStreetHover: "#f8c870",
     mapCorrect: "#1f9d66",
     mapWrong: "#d2463c",
-    mapArrondissement: "#12297a",
+    mapArrondissement: "#02273b",
     mapMonumentStroke: "#dfe6ff",
-    mapMonumentFill: "#4057b2",
+    mapMonumentFill: "#02273b",
     timerSafe: "#1f9d66",
     timerWarn: "#a85a00",
     timerDanger: "#d2463c"
@@ -3624,8 +3624,8 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
     const topGradient = ctx.createLinearGradient(0, 0, 0, height);
     topGradient.addColorStop(0, "#f8dca5");
     topGradient.addColorStop(0.35, "#f2a900");
-    topGradient.addColorStop(0.68, "#4057b2");
-    topGradient.addColorStop(1, "#12297a");
+    topGradient.addColorStop(0.68, "#02273b");
+    topGradient.addColorStop(1, "#02273b");
     ctx.fillStyle = topGradient;
     ctx.fillRect(0, 0, width, height);
     const horizonY = height * 0.47;
