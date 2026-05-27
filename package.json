@@ -1,0 +1,27 @@
+{
+  "name": "paris-rues-frontend",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "sync-osm": "node scripts/sync_osm.js",
+    "daily:streetview": "node scripts/generate_daily_streetview_images.js",
+    "build": "node scripts/build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "osmtogeojson": "^3.0.0-beta.5"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "esbuild": "^0.27.0"
+  }
+}

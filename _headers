@@ -1,0 +1,22 @@
+# Service worker: always fetch latest, never long-cache
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
+
+# GeoJSON data files: cache 1 week (data changes via OSM sync + redeploy)
+/data/*
+  Cache-Control: public, max-age=604800, immutable
+  Content-Type: application/json; charset=utf-8
+
+# CSS/JS: cache long, URLs versionnées dans index.html
+/*.css
+  Cache-Control: public, max-age=604800, immutable
+
+/*.js
+  Cache-Control: public, max-age=604800, immutable
+
+# HTML: NO cache
+/*.html
+  Cache-Control: no-cache, must-revalidate
+/
+  Cache-Control: no-cache, must-revalidate

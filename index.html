@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parici - Jeu des rues de Paris</title>
+
+  <!-- Google Fonts : Montserrat (titres), Nunito (texte), JetBrains Mono (chiffres) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Montserrat:wght@600;800&family=Nunito:wght@400;600&display=swap"
+    rel="stylesheet">
+
+  <!-- Favicons pour toutes les plateformes -->
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="style.css?v=20260527a">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css">
+</head>
+
+<body>
+  <div id="app">
+    <div id="sidebar">
+      <!-- WRAPPER UNIQUE POUR DÉCALER TOUT LE CONTENU EN MOBILE -->
+      <div id="sidebar-content">
+        <!-- Offline / network error banner -->
+        <div id="offline-banner" class="offline-banner hidden">
+          ⚠️ Mode hors-ligne — les scores ne seront pas sauvegardés
+        </div>
+        <!-- Bandeau titre -->
+        <header class="panel header-panel">
+          <div class="header-main">
+            <h1 class="header-title"><a href="/" class="header-title-link">Parici</a></h1>
+            <p class="header-subtitle">Connaissez-vous vraiment votre ville ?</p>
+          </div>
+
+          <div id="app-version" class="app-version-pill" aria-label="Version du jeu">
+            v0.2.0
+          </div>
+
+          <!-- Petit statut carte, particulièrement utile sur mobile -->
+          <div id="map-status" class="map-status-pill" aria-live="polite">
+            <!-- rempli par le JS -->
+          </div>
+          <button id="sound-toggle" class="sound-toggle"
+            title="Activer/désactiver le son">🔊</button>
+          <button id="haptics-toggle" class="haptics-toggle"
+            title="Activer/désactiver les vibrations">📳</button>
+        </header>
+
+        <!-- Panneau profil / auth repliable -->
+        <section class="panel user-panel">
+          <details>
+            <summary class="panel-title">Profil <span id="login-hint"
+                class="login-hint">cliquer pour se connecter</span><span id="user-sticker" class="user-sticker"></span>
+            </summary>
+
+            <div class="info-block">
+              <div id="current-user-label" class="info-label">Non connecté.</div>
+            </div>
+
+            <div class="info-block auth-block">
+              <input id="auth-username" type="text" placeholder="Pseudo">
+              <div class="password-wrapper">
+                <input id="auth-password" type="password" placeholder="Mot de passe">
+                <button type="button" id="toggle-password" class="password-toggle"
+                  aria-label="Afficher le mot de passe">👁</button>
+              </div>
+              <div id="auth-feedback" class="auth-feedback"></div>
+              <div class="auth-buttons">
+                <button id="login-btn" class="btn-secondary">Connexion</button>
+                <button id="register-btn" class="btn-secondary">Inscription</button>
+                <button id="logout-btn" class="btn-tertiary hidden">Déconnexion</button>
+              </div>
+            </div>
+
+            <!-- Profile panel (visible when logged in) -->
+            <div id="profile-panel" class="profile-panel hidden">
+              <!-- Avatar Selection Modal (moved above dynamic content) -->
+              <div id="avatar-selector-modal" class="avatar-selector-modal hidden">
+                <div class="avatar-modal-content">
+                  <div class="avatar-modal-header">
+                    <h4>Choisir un Avatar</h4>
+                    <button class="avatar-modal-close" id="avatar-modal-close" type="button"
+                      aria-label="Fermer la sélection d'avatar">✕</button>
+                  </div>
+                  <div id="avatar-grid" class="avatar-grid"></div>
+                </div>
+              </div>
+
+              <div id="profile-content"></div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Onboarding banner (first visit) -->
+        <div id="onboarding-banner" class="onboarding-banner hidden">
+          <div class="onboarding-content">
+            <span class="onboarding-emoji">🗺️</span>
+            <div>
+              <strong>Bienvenue sur Parici !</strong><br>
+              Choisissez votre zone, sélectionnez un mode de jeu, puis lancez <strong>Commencer la session</strong>.
+              Objectif : trouver un maximum de rues, vite et juste.
+            </div>
+          </div>
+          <button id="onboarding-close" class="onboarding-close" title="Fermer">✕</button>
+        </div>
+
+        <!-- Incitation installation PWA (mobile web uniquement) -->
+        <div id="install-banner" class="install-banner hidden" role="region" aria-label="Installer Parici">
+          <div class="install-banner-content">
+            <strong>Installer Parici</strong><br>
+            Accès plus rapide depuis votre écran d’accueil.
+          </div>
+          <div class="install-banner-actions">
+            <button id="install-banner-action" class="btn-primary install-banner-btn" type="button">
+              Installer
+            </button>
+            <button id="install-banner-later" class="btn-tertiary install-banner-later-btn" type="button">
+              Plus tard
+            </button>
+          </div>
+        </div>
+
+        <!-- Panneau paramètres -->
+        <section class="panel panel-params">
+          <div class="panel-title-row">
+            <div class="panel-title panel-title--compact">Paramètres</div>
+            <button id="daily-mode-btn" class="btn-emphasis btn-emphasis--compact hidden">🏆
+              Daily</button>
+          </div>
+
+          <div class="info-block" id="mode-select-block">
+            <label>Zone de jeu <span class="tooltip-icon"
+                data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Paname entier (expert), monuments ou arrondissements (facile).">i</span></label>
+
+            <div id="mode-select-wrapper" class="custom-select">
+              <button id="mode-select-button" class="custom-select-button">
+                <span class="custom-select-label">Rues célèbres</span>
+                <span class="difficulty-pill difficulty-pill--very-easy">Facile</span>
+              </button>
+              <ul id="mode-select-list" class="custom-select-list">
+                <li data-value="rues-celebres">Rues célèbres <span
+                    class="difficulty-pill difficulty-pill--very-easy">Facile</span></li>
+                <li data-value="rues-principales">Rues principales <span
+                    class="difficulty-pill difficulty-pill--easy">Moins Facile</span></li>
+                <li data-value="arrondissement">Rues par arrondissement <span
+                    class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
+                <li data-value="ville">Paname entier <span
+                    class="difficulty-pill difficulty-pill--hard">Difficile</span></li>
+                <li data-value="monuments">Monuments <span
+                    class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
+                <li data-value="arrondissements-ville">Arrondissements <span
+                    class="difficulty-pill difficulty-pill--very-easy">Facile</span></li>
+              </ul>
+            </div>
+
+            <select id="mode-select" class="native-select">
+              <option value="rues-celebres" selected>Rues célèbres</option>
+              <option value="rues-principales">Rues principales</option>
+              <option value="arrondissement">Rues par arrondissement</option>
+              <option value="ville">Paname entier</option>
+              <option value="monuments">Monuments</option>
+              <option value="arrondissements-ville">Arrondissements</option>
+            </select>
+          </div>
+
+          <div class="info-block hidden" id="arrondissement-block">
+            <label for="arrondissement-select">Arrondissement :</label>
+
+            <!-- Faux select stylé pour les arrondissements (PAS de pastille) -->
+            <div id="arrondissement-select-wrapper" class="custom-select">
+              <button id="arrondissement-select-button" class="custom-select-button">
+                <span class="custom-select-label">Choisissez un arrondissement</span>
+              </button>
+              <ul id="arrondissement-select-list" class="custom-select-list"></ul>
+            </div>
+            <select id="arrondissement-select" class="native-select"></select>
+          </div>
+
+          <div class="info-block">
+            <label>Type de partie <span class="tooltip-icon"
+                data-tooltip="Classique = 20 rues, sans limite. Marathon = 3 erreurs max. Chrono = 60 secondes. Lecture = mode libre pour apprendre.">i</span></label>
+
+            <!-- Faux select stylé -->
+            <div id="game-mode-select-wrapper" class="custom-select">
+              <button id="game-mode-select-button" class="custom-select-button">
+                <span class="custom-select-label">Classique</span>
+                <span class="difficulty-pill gamepill--classique">20 rues</span>
+              </button>
+              <ul id="game-mode-select-list" class="custom-select-list">
+                <li data-value="classique">Classique <span class="difficulty-pill gamepill--classique">20 rues</span>
+                </li>
+                <li data-value="marathon">Marathon <span class="difficulty-pill gamepill--marathon">3 erreurs
+                    max</span></li>
+                <li data-value="chrono">Mode chrono <span class="difficulty-pill gamepill--chrono">1 minute</span>
+                </li>
+                <li data-value="lecture">Lecture <span class="difficulty-pill gamepill--lecture">Apprentissage</span>
+                </li>
+              </ul>
+            </div>
+
+            <select id="game-mode-select" class="native-select">
+              <option value="classique" selected>Classique</option>
+              <option value="marathon">Marathon</option>
+              <option value="chrono">Mode Chrono</option>
+              <option value="lecture">Lecture</option>
+              <option value="daily">Daily (7 essais)</option>
+            </select>
+          </div>
+
+          <div class="params-actions">
+            <button id="friends-challenge-toggle" type="button" class="btn-secondary btn-emphasis--compact friends-challenge-toggle hidden">
+              Défi amis OFF
+            </button>
+            <div id="friends-challenge-serial" class="friends-challenge-serial hidden" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- Boutons de session (séparés pour rester visibles en mode mobile session) -->
+        <div class="actions-row">
+          <button id="restart-btn" class="btn-primary">Commencer la session</button>
+          <button id="skip-btn" class="btn-skip hidden">Passer</button>
+          <button id="pause-btn" class="btn-secondary hidden">Pause</button>
+        </div>
+
+        <!-- Panneau Rue à trouver -->
+        <section class="panel target-panel">
+          <div id="target-panel-title" class="panel-title">
+            <span id="target-panel-title-text">Rue à trouver</span>
+            <span id="target-item-counter" class="target-item-counter hidden" aria-live="polite"></span>
+          </div>
+          <div id="target-street" class="target-name">—</div>
+          <div id="lecture-search" class="lecture-search hidden" role="search">
+            <label for="lecture-search-input" class="sr-only">Rechercher une rue</label>
+            <input id="lecture-search-input" class="lecture-search-input" type="search"
+              placeholder="Rechercher une rue (nom ou mot)" autocomplete="off" spellcheck="false">
+            <div id="lecture-search-results" class="lecture-search-results hidden"></div>
+          </div>
+          <div id="daily-guesses-history" class="hidden"></div>
+          <div id="daily-tries-counter" class="tries-counter hidden"></div>
+        </section>
+
+        <!-- Panneau infos rue -->
+        <section id="street-info-panel" class="panel info-panel">
+          <div id="street-info-title" class="panel-title">Infos rues principales</div>
+          <div id="street-info" class="street-info"></div>
+        </section>
+
+        <!-- Panneau performance : chronos + score -->
+        <section class="panel stats-panel">
+          <div class="panel-title">Performance</div>
+
+          <div class="stats-grid">
+            <div class="stats-column stats-column--timers">
+              <div class="stats-subtitle">⏱ Chronos</div>
+              <div class="mobile-timer-label">Chrono</div>
+              <div class="timers-row">
+                <div class="timer-block">
+                  <div class="timer-label">Session</div>
+                  <div id="total-time" class="timer-value">0.0 s</div>
+                </div>
+                <div class="timer-block">
+                  <div class="timer-label">Rue</div>
+                  <div id="street-time" class="timer-value">0.0 s</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-column stats-column--score">
+              <div class="stats-subtitle">★ Score</div>
+
+              <div class="info-block score-block">
+                <div class="info-label"></div>
+                <div class="info-value">
+                  <span id="score-pill" class="score-pill score-pill--neutral">
+                    <span id="score">0 / 0 (0 %)</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="info-block weighted-score-block">
+                <div class="weighted-score-container">
+                  <div class="weighted-score-header">
+                    <span id="weighted-score-label">Score pondéré</span>
+                    <span id="weighted-score" class="weighted-score">0.0</span>
+                  </div>
+
+                  <div class="weighted-score-progress" aria-hidden="true">
+                    <div id="weighted-score-bar" class="weighted-score-bar"></div>
+                  </div>
+
+                  <div class="weighted-score-meta">
+                    <small id="weighted-score-legend" class="weighted-score-legend">
+                      Le score s’affichera après votre première réponse.
+                    </small>
+
+                    <div class="weighted-score-help-wrapper">
+                      <button id="weighted-score-help-btn" type="button" class="weighted-score-help-btn"
+                        aria-label="Information sur le score pondéré">
+                        i
+                      </button>
+                      <div id="weighted-score-help" class="weighted-score-help">
+                        <strong>Score pondéré</strong><br>
+                        Chaque bonne réponse rapporte jusqu'à 10 points selon la rapidité : 1 point en moins toutes les
+                        2 secondes.
+                        <br>
+                        Au-delà de 20 secondes, aucun point.<br><br>
+
+                        Le score affiché est la somme de tous les points de la session.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="session-share-slot" class="session-share-slot hidden"></div>
+        </section>
+
+        <!-- Panneau de résultat Daily (affiché uniquement à la fin d'un daily) -->
+        <section id="daily-result-panel" class="panel hidden">
+          <div class="panel-title">Résultat Daily</div>
+          <div id="daily-result-content"></div>
+        </section>
+
+        <!-- Panneau leaderboard -->
+        <section class="panel leaderboard-panel">
+          <details open>
+            <summary class="panel-title">Leaderboard</summary>
+            <div id="friend-challenge-board-slot" class="friend-challenge-board-slot hidden"></div>
+            <div id="leaderboard" class="leaderboard"></div>
+          </details>
+        </section>
+
+        <!-- Panneau messages + récap -->
+        <section class="panel panel-feedback">
+          <div id="message" class="message" role="status" aria-live="polite"></div>
+          <div id="summary" class="summary hidden"></div>
+        </section>
+
+        <footer class="sidebar-footer" aria-label="Réseaux sociaux et crédits">
+          <p id="map-sync-meta" class="sidebar-map-sync" aria-live="polite">Sync carte : —</p>
+          <p class="sidebar-credit">Crafted in Paris by Philippe Maraval</p>
+          <div class="sidebar-visitors-row">
+            <p id="visitor-counter" class="sidebar-visitors">Visites : —</p>
+            <a class="sidebar-rules-link" href="/regles.html"
+              aria-label="Voir les règles et comment jouer">Règles</a>
+          </div>
+          <div class="sidebar-social-group sidebar-social-group--right">
+            <a class="sidebar-social-link" href="mailto:" aria-label="Contacter le jeu par mail">
+              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Zm2 .5v.4l7 4.8 7-4.8V7h-14Zm14 2.6-6.43 4.4a1 1 0 0 1-1.14 0L5 9.6v7.9h14V9.6Z" />
+              </svg>
+              <span class="sr-only">Mail</span>
+            </a>
+            <a class="sidebar-social-link" href="https://x.com/SunMediaParici" target="_blank" rel="noopener noreferrer"
+              aria-label="Compte X du jeu">
+              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M5 4h3.8l4 5.7L17.8 4H20l-6.2 7.2L20.5 20h-3.8l-4.4-6.2L6.9 20H4.7l6.5-7.5L5 4Zm3 1.8 9.2 12.4h1L9 5.8H8Z" />
+              </svg>
+              <span class="sr-only">X</span>
+            </a>
+            <a class="sidebar-social-link" href="https://www.instagram.com/" target="_blank"
+              rel="noopener noreferrer" aria-label="Compte Instagram du jeu">
+              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm4 3.3a3.7 3.7 0 1 1 0 7.4 3.7 3.7 0 0 1 0-7.4Zm0 2a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4.1-2.4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z" />
+              </svg>
+              <span class="sr-only">Instagram</span>
+            </a>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <button id="install-sticky-btn" class="install-sticky-btn hidden" type="button">
+    Installer l’app
+  </button>
+
+  <div id="install-ios-sheet" class="install-ios-sheet hidden" aria-hidden="true">
+    <div id="install-ios-backdrop" class="install-ios-backdrop"></div>
+    <section class="install-ios-panel" role="dialog" aria-modal="true" aria-labelledby="install-ios-title">
+      <h2 id="install-ios-title" class="install-ios-title">Ajouter Parici à l’écran d’accueil</h2>
+      <ol class="install-ios-steps">
+        <li>Touchez <strong>Partager</strong> dans Safari.</li>
+        <li>Choisissez <strong>Sur l’écran d’accueil</strong>.</li>
+        <li>Validez avec <strong>Ajouter</strong>.</li>
+      </ol>
+      <button id="install-ios-close" class="btn-secondary install-ios-close-btn" type="button">
+        Fermer
+      </button>
+    </section>
+  </div>
+
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script defer src="data_rules.js?v=20260504b"></script>
+  <script defer src="main.js?v=20260527a"></script>
+  <script>
+    (function () {
+      const syncMetaEl = document.getElementById("map-sync-meta");
+      if (!syncMetaEl) return;
+
+      function formatSyncDate(rawIso) {
+        if (typeof rawIso !== "string" || !rawIso.trim()) return null;
+        const parsed = new Date(rawIso);
+        if (Number.isNaN(parsed.getTime())) return null;
+        const formatter = new Intl.DateTimeFormat("fr-FR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: "Europe/Paris",
+        });
+        return formatter.format(parsed);
+      }
+
+      const apiBase =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.protocol === "file:"
+          ? "http://localhost:3000"
+          : "https://parici.onrender.com";
+
+      function fetchJson(url) {
+        return fetch(url, { cache: "no-store" }).then((response) => {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        });
+      }
+
+      fetchJson(apiBase + "/api/map-sync-meta")
+        .catch(() => fetchJson("data/map_sync_meta.json"))
+        .then((meta) => {
+          const formatted = formatSyncDate(meta && meta.lastSyncedAt);
+          syncMetaEl.textContent = formatted ? "Sync carte : " + formatted : "Sync carte : inconnue";
+        })
+        .catch(() => {
+          syncMetaEl.textContent = "Sync carte : inconnue";
+        });
+    })();
+  </script>
+</body>
+
+</html>

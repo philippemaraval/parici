@@ -1,0 +1,308 @@
+:root {
+  --bg: #f2f5f9;
+  --panel: #ffffff;
+  --text: #13233f;
+  --muted: #5c6883;
+  --line: #d5dcea;
+  --primary: #1e4cc9;
+  --primary-dark: #153c9f;
+  --danger: #b73838;
+  --danger-dark: #922b2b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Noto Sans", sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #eaf0fa 0%, var(--bg) 100%);
+}
+
+.admin-shell {
+  width: min(1200px, 100% - 24px);
+  margin: 24px auto 40px;
+  display: grid;
+  gap: 16px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.admin-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 4px 10px rgba(19, 35, 63, 0.05);
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.08rem;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #fff;
+  color: var(--text);
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  background: #f7f9fd;
+  color: var(--text);
+}
+
+button:hover {
+  background: #edf2fb;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: var(--danger-dark);
+}
+
+.form-grid {
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.role-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e6edff;
+  border: 1px solid #c9d8ff;
+  font-size: 0.82rem;
+}
+
+.status {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.status--info {
+  background: #edf3ff;
+  border-color: #c6d9ff;
+}
+
+.status--success {
+  background: #ebf9ef;
+  border-color: #bde7c6;
+}
+
+.status--error {
+  background: #feecef;
+  border-color: #f2c2c9;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.stat-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  background: #fbfcff;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 12px;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.command-output {
+  margin: 10px 0 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7f9fd;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.lists-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.lists-grid--streets {
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+}
+
+.monuments-table-wrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.monuments-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.monuments-table th,
+.monuments-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 10px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.monuments-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6f9ff;
+}
+
+.monument-name-cell {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.monument-coords {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.btn-danger-outline {
+  background: #fff;
+  color: var(--danger);
+  border-color: #e9b9bf;
+}
+
+.btn-danger-outline:hover {
+  background: #fff3f5;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .field-row,
+  .editor-grid,
+  .lists-grid,
+  .lists-grid--streets {
+    grid-template-columns: 1fr;
+  }
+
+  .monument-coords {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parici Admin - Edition Contenu</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <h1>Parici - Back-office contenu</h1>
+      <p class="admin-subtitle">Edition des fiches et des listes (rues celebres, rues principales, monuments).</p>
+      <p id="global-status" class="status status--info">Connectez-vous avec un compte editeur.</p>
+    </header>
+
+    <section id="login-section" class="card">
+      <h2>Connexion</h2>
+      <form id="login-form" class="form-grid">
+        <label>
+          Pseudo
+          <input id="login-username" type="text" autocomplete="username" required>
+        </label>
+        <label>
+          Mot de passe
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-btn" type="submit" class="btn btn-primary">Se connecter</button>
+      </form>
+      <p class="muted">L'acces requiert un role editeur ou admin.</p>
+    </section>
+
+    <section id="editor-section" class="hidden">
+      <div class="card toolbar">
+        <div>
+          <strong id="session-user">-</strong>
+          <span id="session-role" class="role-badge">-</span>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refresh-content-btn" type="button" class="btn">Actualiser</button>
+          <button id="logout-btn" type="button" class="btn">Deconnexion</button>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Synchronisation OSM</h2>
+        <p class="muted">Met a jour les rues depuis OpenStreetMap. L'operation peut durer 1 a 2 minutes.</p>
+        <div class="button-row">
+          <button id="run-osm-sync-btn" type="button" class="btn btn-primary">Lancer la sync OSM</button>
+        </div>
+        <pre id="osm-sync-output" class="command-output">Aucun lancement pour le moment.</pre>
+      </section>
+
+      <section class="card">
+        <h2>Statistiques contenu</h2>
+        <div id="stats-grid" class="stats-grid"></div>
+      </section>
+
+      <section class="card">
+        <h2>Fiches info</h2>
+        <div class="field-row">
+          <label>
+            Type de fiche
+            <select id="info-mode-select">
+              <option value="famous">Rues celebres</option>
+              <option value="main">Rues principales</option>
+            </select>
+          </label>
+          <label>
+            Rechercher
+            <input id="street-search-input" type="search" placeholder="Nom de rue">
+          </label>
+        </div>
+
+        <div class="editor-grid">
+          <div>
+            <label for="street-select">Rues</label>
+            <select id="street-select" size="18"></select>
+          </div>
+          <div>
+            <label>
+              Nom de la rue
+              <input id="street-name-input" type="text" placeholder="ex: rue de rome">
+            </label>
+            <label>
+              Texte de la fiche
+              <textarea id="street-info-text" rows="12" placeholder="Texte historique (optionnel)..."></textarea>
+            </label>
+            <div class="button-row">
+              <button id="save-street-info-btn" type="button" class="btn btn-primary">Enregistrer la fiche</button>
+              <button id="add-street-to-list-btn" type="button" class="btn">Ajouter a la liste active</button>
+              <button id="remove-street-from-list-btn" type="button" class="btn">Retirer de la liste active</button>
+              <button id="delete-street-info-btn" type="button" class="btn btn-danger">Supprimer la fiche</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Listes de jeu</h2>
+        <p class="muted">Une ligne = un nom. Les doublons sont supprimes automatiquement.</p>
+        <div class="lists-grid lists-grid--streets">
+          <label>
+            Rues celebres
+            <textarea id="famous-list-text" rows="14"></textarea>
+          </label>
+          <label>
+            Rues principales
+            <textarea id="main-list-text" rows="14"></textarea>
+          </label>
+        </div>
+        <div class="button-row">
+          <button id="save-lists-btn" type="button" class="btn btn-primary">Enregistrer les listes rues</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Monuments</h2>
+        <p class="muted">Tableau defilant en 2 colonnes: nom et localisation (longitude / latitude).</p>
+        <div class="monuments-table-wrap">
+          <table class="monuments-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Localisation</th>
+              </tr>
+            </thead>
+            <tbody id="monuments-table-body"></tbody>
+          </table>
+        </div>
+        <div class="button-row">
+          <button id="add-monument-row-btn" type="button" class="btn">Ajouter un monument</button>
+          <button id="save-monuments-btn" type="button" class="btn btn-primary">Enregistrer les monuments</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="/admin/admin.js?v=20260505b"></script>
+</body>
+
+</html>
