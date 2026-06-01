@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-04-02-latency-1';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-06-01-visitor-daily-stats';
 
 // Connect via DATABASE_URL (provided by Render PostgreSQL)
 const pool = new Pool({
@@ -249,6 +249,15 @@ async function initDb() {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS visitor_daily_stats (
+        day DATE PRIMARY KEY,
+        unique_visitors BIGINT NOT NULL DEFAULT 0,
+        total_visits BIGINT,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS app_settings (
         key TEXT PRIMARY KEY,
         value_text TEXT NOT NULL,
@@ -263,6 +272,18 @@ async function initDb() {
       SELECT 1, COUNT(*)::BIGINT
       FROM visitors_unique
       ON CONFLICT (id) DO NOTHING
+    `);
+
+    // Backfill daily unique visitors from the data that existed before daily hit tracking.
+    // Historical total visits cannot be reconstructed because only a global counter existed.
+    await client.query(`
+      INSERT INTO visitor_daily_stats (day, unique_visitors, total_visits, updated_at)
+      SELECT (first_seen AT TIME ZONE 'Europe/Paris')::DATE, COUNT(*)::BIGINT, NULL, NOW()
+      FROM visitors_unique
+      GROUP BY 1
+      ON CONFLICT (day) DO UPDATE SET
+        unique_visitors = GREATEST(visitor_daily_stats.unique_visitors, EXCLUDED.unique_visitors),
+        updated_at = NOW()
     `);
 
     await markSchemaBootstrapComplete(client);
@@ -1333,24 +1354,56 @@ async function getAnalytics(limit = 20) {
 }
 
 async function recordVisitHit(visitorHash) {
-  await pool.query(
-    `INSERT INTO visitors_unique (visitor_hash)
-     VALUES ($1)
-     ON CONFLICT (visitor_hash) DO UPDATE SET
-       last_seen = NOW(),
-       hits = visitors_unique.hits + 1`,
-    [visitorHash]
-  );
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
 
-  const total = await pool.query(
-    `INSERT INTO visitors_counter (id, total_visits, updated_at)
-     VALUES (1, (SELECT COUNT(*)::BIGINT FROM visitors_unique) + 1, NOW())
-     ON CONFLICT (id) DO UPDATE SET
-       total_visits = visitors_counter.total_visits + 1,
-       updated_at = NOW()
-     RETURNING total_visits`
-  );
-  return Number(total.rows[0]?.total_visits || 0);
+    const inserted = await client.query(
+      `INSERT INTO visitors_unique (visitor_hash)
+       VALUES ($1)
+       ON CONFLICT (visitor_hash) DO NOTHING
+       RETURNING visitor_hash`,
+      [visitorHash]
+    );
+    const isNewVisitor = inserted.rowCount > 0;
+
+    if (!isNewVisitor) {
+      await client.query(
+        `UPDATE visitors_unique
+         SET last_seen = NOW(),
+             hits = hits + 1
+         WHERE visitor_hash = $1`,
+        [visitorHash]
+      );
+    }
+
+    await client.query(
+      `INSERT INTO visitor_daily_stats (day, unique_visitors, total_visits, updated_at)
+       VALUES ((NOW() AT TIME ZONE 'Europe/Paris')::DATE, $1, 1, NOW())
+       ON CONFLICT (day) DO UPDATE SET
+         unique_visitors = visitor_daily_stats.unique_visitors + EXCLUDED.unique_visitors,
+         total_visits = COALESCE(visitor_daily_stats.total_visits, 0) + 1,
+         updated_at = NOW()`,
+      [isNewVisitor ? 1 : 0]
+    );
+
+    const total = await client.query(
+      `INSERT INTO visitors_counter (id, total_visits, updated_at)
+       VALUES (1, COALESCE((SELECT SUM(hits)::BIGINT FROM visitors_unique), 0), NOW())
+       ON CONFLICT (id) DO UPDATE SET
+         total_visits = visitors_counter.total_visits + 1,
+         updated_at = NOW()
+       RETURNING total_visits`
+    );
+
+    await client.query('COMMIT');
+    return Number(total.rows[0]?.total_visits || 0);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 async function getVisitCount() {
@@ -1367,6 +1420,28 @@ async function getVisitCount() {
      WHERE id = 1`
   );
   return Number(total.rows[0]?.total_visits || 0);
+}
+
+async function getDailyVisitStats() {
+  const rows = await pool.query(
+    `SELECT day,
+            unique_visitors,
+            total_visits,
+            updated_at
+     FROM visitor_daily_stats
+     ORDER BY day DESC`
+  );
+  const total = await getVisitCount();
+
+  return {
+    totalVisits: total,
+    rows: rows.rows.map((row) => ({
+      day: row.day instanceof Date ? row.day.toISOString().slice(0, 10) : String(row.day),
+      uniqueVisitors: Number(row.unique_visitors || 0),
+      totalVisits: row.total_visits === null ? null : Number(row.total_visits || 0),
+      updatedAt: row.updated_at,
+    })),
+  };
 }
 
 async function getAppSetting(key) {
@@ -1449,6 +1524,7 @@ module.exports = {
   getAnalytics,
   recordVisitHit,
   getVisitCount,
+  getDailyVisitStats,
   getAppSetting,
   setAppSetting,
   setAppSettingIfMissing,

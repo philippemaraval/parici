@@ -1999,6 +1999,15 @@ app.get('/api/editor/content', authenticateToken, requireContentEditor, asyncHan
     return res.json(snapshot);
 }));
 
+app.get('/api/editor/visits/daily', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+    const stats = await db.getDailyVisitStats();
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+        ...stats,
+        note: 'Les visiteurs uniques sont retrocalcules depuis first_seen. Les visites totales par jour sont suivies uniquement depuis la mise en place de visitor_daily_stats.',
+    });
+}));
+
 app.get('/api/editor/osm-sync/status', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
     const active = getActiveLocalOsmSyncState();
     let githubRun = null;

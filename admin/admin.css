@@ -207,6 +207,10 @@ button:hover {
   flex-wrap: wrap;
 }
 
+.button-row--top {
+  margin: 0 0 12px;
+}
+
 .command-output {
   margin: 10px 0 0;
   padding: 10px;
@@ -294,6 +298,93 @@ button:hover {
   display: none;
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(19, 35, 63, 0.55);
+}
+
+.modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(860px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 18px 48px rgba(19, 35, 63, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.modal-header h2 {
+  margin-bottom: 4px;
+}
+
+.visit-stats-note {
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid #c6d9ff;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #edf3ff;
+  font-size: 0.9rem;
+}
+
+.visit-stats-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.visit-stats-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.visit-stats-table th,
+.visit-stats-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.visit-stats-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6f9ff;
+}
+
+.visit-stats-table td:nth-child(2),
+.visit-stats-table td:nth-child(3) {
+  font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 960px) {
   .field-row,
   .editor-grid,
@@ -304,5 +395,18 @@ button:hover {
 
   .monument-coords {
     grid-template-columns: 1fr;
+  }
+
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-panel {
+    max-height: calc(100vh - 20px);
+  }
+
+  .modal-header {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

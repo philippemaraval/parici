@@ -37,6 +37,13 @@ const refs = {
   runOsmSyncBtn: document.getElementById("run-osm-sync-btn"),
   osmSyncOutput: document.getElementById("osm-sync-output"),
   statsGrid: document.getElementById("stats-grid"),
+  openVisitStatsBtn: document.getElementById("open-visit-stats-btn"),
+  visitStatsModal: document.getElementById("visit-stats-modal"),
+  visitStatsPanel: document.querySelector("#visit-stats-modal .modal-panel"),
+  closeVisitStatsBtn: document.getElementById("close-visit-stats-btn"),
+  visitStatsSummary: document.getElementById("visit-stats-summary"),
+  visitStatsNote: document.getElementById("visit-stats-note"),
+  visitStatsTableBody: document.getElementById("visit-stats-table-body"),
   infoModeSelect: document.getElementById("info-mode-select"),
   streetSearchInput: document.getElementById("street-search-input"),
   streetSelect: document.getElementById("street-select"),
@@ -119,6 +126,30 @@ function formatDateTime(value) {
   return date.toLocaleString("fr-FR", {
     dateStyle: "short",
     timeStyle: "medium",
+  });
+}
+
+function formatNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return "-";
+  }
+  return new Intl.NumberFormat("fr-FR").format(number);
+}
+
+function formatDay(value) {
+  if (!value) {
+    return "-";
+  }
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
@@ -641,6 +672,78 @@ function renderStats() {
     .join("");
 }
 
+function setVisitStatsLoading(message) {
+  if (refs.visitStatsSummary) {
+    refs.visitStatsSummary.textContent = message;
+  }
+  if (refs.visitStatsNote) {
+    refs.visitStatsNote.textContent = "";
+  }
+  if (refs.visitStatsTableBody) {
+    refs.visitStatsTableBody.innerHTML = "";
+  }
+}
+
+function renderVisitStats(payload) {
+  const rows = Array.isArray(payload?.rows) ? payload.rows : [];
+  if (refs.visitStatsSummary) {
+    const totalVisits = formatNumber(payload?.totalVisits);
+    const dayCount = formatNumber(rows.length);
+    refs.visitStatsSummary.textContent = `${totalVisits} visites au total, ${dayCount} jours affiches.`;
+  }
+  if (refs.visitStatsNote) {
+    refs.visitStatsNote.textContent =
+      payload?.note ||
+      "Les visites suivies par jour ne sont disponibles qu'a partir de l'activation du suivi quotidien.";
+  }
+  if (!refs.visitStatsTableBody) {
+    return;
+  }
+  if (!rows.length) {
+    refs.visitStatsTableBody.innerHTML =
+      '<tr><td colspan="3">Aucune donnee de visite disponible.</td></tr>';
+    return;
+  }
+  refs.visitStatsTableBody.innerHTML = rows
+    .map((row) => {
+      const visits =
+        row.totalVisits === null || row.totalVisits === undefined
+          ? "Non suivi"
+          : formatNumber(row.totalVisits);
+      return `
+        <tr>
+          <td>${formatDay(row.day)}</td>
+          <td>${visits}</td>
+          <td>${formatNumber(row.uniqueVisitors)}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+function closeVisitStatsModal() {
+  if (!refs.visitStatsModal) {
+    return;
+  }
+  refs.visitStatsModal.classList.add("hidden");
+}
+
+async function openVisitStatsModal() {
+  if (!refs.visitStatsModal) {
+    return;
+  }
+  refs.visitStatsModal.classList.remove("hidden");
+  refs.visitStatsPanel?.focus();
+  setVisitStatsLoading("Chargement des statistiques de visites...");
+
+  try {
+    const payload = await apiRequest("/api/editor/visits/daily");
+    renderVisitStats(payload);
+  } catch (error) {
+    setVisitStatsLoading(`Chargement impossible: ${error.message}`);
+  }
+}
+
 function updateEditorFieldsForStreet(streetName) {
   const mode = getCurrentMode();
   const infoMap = state.content?.streetInfos?.[mode] || {};
@@ -1117,6 +1220,22 @@ function bindEvents() {
   if (refs.runOsmSyncBtn) {
     refs.runOsmSyncBtn.addEventListener("click", onRunOsmSync);
   }
+  if (refs.openVisitStatsBtn) {
+    refs.openVisitStatsBtn.addEventListener("click", openVisitStatsModal);
+  }
+  if (refs.closeVisitStatsBtn) {
+    refs.closeVisitStatsBtn.addEventListener("click", closeVisitStatsModal);
+  }
+  refs.visitStatsModal?.addEventListener("click", (event) => {
+    if (event.target?.hasAttribute("data-close-visit-stats")) {
+      closeVisitStatsModal();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !refs.visitStatsModal?.classList.contains("hidden")) {
+      closeVisitStatsModal();
+    }
+  });
 }
 
 bindEvents();

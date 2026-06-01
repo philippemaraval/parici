@@ -55,6 +55,9 @@
 
       <section class="card">
         <h2>Statistiques contenu</h2>
+        <div class="button-row button-row--top">
+          <button id="open-visit-stats-btn" type="button" class="btn">Voir les visites par jour</button>
+        </div>
         <div id="stats-grid" class="stats-grid"></div>
       </section>
 
@@ -138,7 +141,34 @@
     </section>
   </main>
 
-  <script type="module" src="/admin/admin.js?v=20260505b"></script>
+  <div id="visit-stats-modal" class="modal hidden" role="dialog" aria-modal="true"
+    aria-labelledby="visit-stats-title">
+    <div class="modal-backdrop" data-close-visit-stats></div>
+    <section class="modal-panel" tabindex="-1">
+      <div class="modal-header">
+        <div>
+          <h2 id="visit-stats-title">Visites par jour</h2>
+          <p id="visit-stats-summary" class="muted">Chargement...</p>
+        </div>
+        <button id="close-visit-stats-btn" type="button" class="btn" aria-label="Fermer">Fermer</button>
+      </div>
+      <p id="visit-stats-note" class="visit-stats-note"></p>
+      <div class="visit-stats-table-wrap">
+        <table class="visit-stats-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Visites suivies</th>
+              <th>Nouveaux visiteurs</th>
+            </tr>
+          </thead>
+          <tbody id="visit-stats-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/admin/admin.js?v=20260601a"></script>
 </body>
 
 </html>
