@@ -1,3 +1,5 @@
+import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
+
 function getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank) {
   return [
     {
@@ -168,10 +170,21 @@ function getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank) {
 }
 
 export function computeBadgesRuntime(profile, hasReachedGlobalRank, hasReachedVilleRank) {
-  return getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank).map((definition) => ({
+  const baseBadges = getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank).map((definition) => ({
     ...definition,
     unlocked: definition.check(profile),
   }));
+  const existingIds = new Set(baseBadges.map((badge) => badge.id));
+  const referralBadges = (profile?.referrals?.badges || [])
+    .filter((badge) => badge?.source === "referral" && !existingIds.has(badge.id))
+    .map((badge) => ({
+      id: badge.id,
+      emoji: badge.emoji,
+      name: badge.name,
+      desc: "Récompense de parrainage",
+      unlocked: true,
+    }));
+  return [...baseBadges, ...referralBadges];
 }
 
 function toNumber(value, fallback = 0) {
@@ -198,6 +211,132 @@ function getProfileErrorMessage(error) {
 
 function isAuthFailureStatus(status) {
   return status === 401 || status === 403;
+}
+
+function hasReferralBadge(profile, badgeId) {
+  return (profile?.referrals?.badges || []).some((badge) => badge?.id === badgeId);
+}
+
+function getReferralCode(profile) {
+  const explicitCode = String(profile?.referrals?.code || profile?.referralCode || "").trim();
+  if (explicitCode) {
+    return explicitCode;
+  }
+  return "";
+}
+
+function buildReferralPanelHtml(profile) {
+  const code = escapeHtml(getReferralCode(profile));
+  const stats = profile?.referrals?.stats || {};
+  const tier1Count = parseInt(stats.tier1_referrals) || 0;
+  const totalCount = parseInt(stats.total_referrals) || 0;
+  const linkedLabel = profile?.referrals?.referredBy?.referrer_username
+    ? `<div class="profile-referral-linked">Parrainé par ${escapeHtml(profile.referrals.referredBy.referrer_username)}</div>`
+    : "";
+
+  return `
+    <section class="profile-referral-card">
+      <div class="profile-referral-header">
+        <div>
+          <div class="profile-referral-title">Parrainage</div>
+          <div class="profile-referral-code" title="Code de parrainage">${code || "—"}</div>
+        </div>
+        <div class="profile-referral-count">${tier1Count}/3</div>
+      </div>
+      <form id="referral-claim-form" class="profile-referral-form">
+        <input id="referral-code-input" type="text" inputmode="text" autocomplete="off" maxlength="32" placeholder="Code reçu" aria-label="Code de parrainage reçu">
+        <button type="submit" class="btn-secondary">Valider</button>
+      </form>
+      <div id="referral-claim-status" class="profile-referral-status">${totalCount} filleul${totalCount > 1 ? "s" : ""}</div>
+      ${linkedLabel}
+    </section>`;
+}
+
+function buildReferralHeaderHtml(profile) {
+  const code = escapeHtml(getReferralCode(profile));
+  if (!code) {
+    return "";
+  }
+
+  return `
+    <div class="profile-referral-header-code">
+      <span class="profile-referral-header-label">Code parrainage</span>
+      <button type="button" id="profile-referral-copy-btn" class="profile-referral-copy" data-referral-code="${code}" title="Copier le code de parrainage">
+        ${code}
+      </button>
+    </div>`;
+}
+
+function bindReferralCopyButton(profileContent) {
+  const button = profileContent.querySelector("#profile-referral-copy-btn");
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", async () => {
+    const referralCode = String(button.getAttribute("data-referral-code") || "").trim();
+    if (!referralCode) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(referralCode);
+      button.classList.add("is-copied");
+      button.title = "Code copié";
+      setTimeout(() => {
+        button.classList.remove("is-copied");
+        button.title = "Copier le code de parrainage";
+      }, 1400);
+    } catch (error) {
+      button.title = referralCode;
+    }
+  });
+}
+
+function bindReferralClaimForm({ profileContent, apiUrl, currentUser }) {
+  const form = profileContent.querySelector("#referral-claim-form");
+  const input = profileContent.querySelector("#referral-code-input");
+  const status = profileContent.querySelector("#referral-claim-status");
+  if (!form || !input || !status) {
+    return;
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const referralCode = String(input.value || "").trim();
+    if (!referralCode) {
+      status.textContent = "Code manquant";
+      status.classList.add("is-error");
+      return;
+    }
+
+    status.textContent = "Validation...";
+    status.classList.remove("is-error", "is-success");
+
+    fetch(`${apiUrl}/api/referrals/claim`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+      body: JSON.stringify({ referralCode }),
+    })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload?.error || "Code invalide");
+        }
+        return payload;
+      })
+      .then(() => {
+        status.textContent = "Parrainage lié";
+        status.classList.add("is-success");
+      })
+      .catch((error) => {
+        status.textContent = getProfileErrorMessage(error);
+        status.classList.add("is-error");
+      });
+  });
 }
 
 function weightedAverage(rows, key) {
@@ -302,7 +441,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
       </tr>`).join("")
     : '<tr><td colspan="3">Aucune donnée disponible.</td></tr>';
 
-  const orderedModes = ["rues-celebres", "arrondissements-ville", "rues-principales", "arrondissement", "ville", "monuments"];
+  const orderedModes = ["rues-celebres", "arrondissements-ville", "rues-principales", "arrondissement", "ville", "monuments", "lignes-transports-idf"];
   const difficultyMap = new Map(difficultyStats.map((row) => [row.mode, row]));
   const difficultyRows = orderedModes
     .filter((mode) => difficultyMap.has(mode))
@@ -441,6 +580,7 @@ export function updateUserUIRuntime({
   const authBlock = document.querySelector(".auth-block");
   const logoutBtn = document.getElementById("logout-btn");
   const dailyModeBtn = document.getElementById("daily-mode-btn");
+  const dailyLoginPrompt = document.getElementById("daily-login-prompt");
   const friendsChallengeBtn = document.getElementById("friends-challenge-toggle");
 
   if (currentUser && currentUser.username) {
@@ -465,6 +605,9 @@ export function updateUserUIRuntime({
     }
     if (dailyModeBtn) {
       dailyModeBtn.style.display = "inline-flex";
+    }
+    if (dailyLoginPrompt) {
+      dailyLoginPrompt.classList.add("hidden");
     }
     if (friendsChallengeBtn) {
       friendsChallengeBtn.style.display = "inline-flex";
@@ -499,6 +642,9 @@ export function updateUserUIRuntime({
   }
   if (dailyModeBtn) {
     dailyModeBtn.style.display = "none";
+  }
+  if (dailyLoginPrompt) {
+    dailyLoginPrompt.classList.remove("hidden");
   }
   if (friendsChallengeBtn) {
     friendsChallengeBtn.style.display = "none";
@@ -611,6 +757,7 @@ export function loadProfileRuntime({
                   ${globalTitle}
                 </a>
               </div>
+              ${buildReferralHeaderHtml(profile)}
             </div>
           </div>
 
@@ -633,6 +780,7 @@ export function loadProfileRuntime({
             </div>
           </div>`;
         html += buildProfileCompactStatsHTML(profile, zoneLabels);
+        html += buildReferralPanelHtml(profile);
 
         if (profile.modes && profile.modes.length > 0) {
           html += '<details class="profile-section-collapsible">';
@@ -712,8 +860,10 @@ export function loadProfileRuntime({
         html += `<div class="profile-member-since">Membre depuis le ${memberSince}</div>`;
 
         profileContent.innerHTML = html;
-        initAvatarSelector(profile.avatar || "👤", globalRankMeta.level);
+        initAvatarSelector(profile.avatar || "👤", globalRankMeta.level, profile);
         bindSingleOpenAccordion(profileContent);
+        bindReferralCopyButton(profileContent);
+        bindReferralClaimForm({ profileContent, apiUrl, currentUser });
         if (typeof onProfileRendered === "function") {
           onProfileRendered();
         }
@@ -772,6 +922,7 @@ export function renderAvatarGridRuntime({
   globalRankLevel,
   avatarUnlocks,
   titleNames,
+  unlockStats,
   currentUser,
   getGlobalRankLevelForTitleIndex,
   apiUrl,
@@ -791,7 +942,7 @@ export function renderAvatarGridRuntime({
     let isUnlocked = false;
 
     if (typeof avatarDef.check === "function") {
-      isUnlocked = avatarDef.check(currentUser);
+      isUnlocked = avatarDef.check(unlockStats || currentUser);
     } else {
       requiredLevel = getGlobalRankLevelForTitleIndex(avatarDef.reqTitleIdx);
       isUnlocked = globalRankLevel >= requiredLevel;
@@ -866,6 +1017,33 @@ export function renderAvatarGridRuntime({
     grid.appendChild(item);
   });
 }
+
+export const REFERRAL_AVATAR_UNLOCKS = [
+  {
+    emoji: "🫃",
+    name: "Recruteur",
+    desc: "Amener un filleul à réussir 5 Dailies dans ses 7 premiers jours",
+    check: (stats) => hasReferralBadge(stats, "referral_recruteur"),
+  },
+  {
+    emoji: "🧗‍♂️",
+    name: "Grand Frère",
+    desc: "Amener un filleul validé au rang Minot",
+    check: (stats) => hasReferralBadge(stats, "referral_grand_frere"),
+  },
+  {
+    emoji: "👴",
+    name: "L'Ancien des Anciens",
+    desc: "Amener un filleul validé au rang Vrai Parigot",
+    check: (stats) => hasReferralBadge(stats, "referral_ancien_des_anciens"),
+  },
+  {
+    emoji: "🥐",
+    name: "Passeur de Routine",
+    desc: "Amener 3 filleuls différents au premier palier",
+    check: (stats) => hasReferralBadge(stats, "referral_passeur_routine"),
+  },
+];
 
 export function sendScoreToServerRuntime({
   isDailyMode,

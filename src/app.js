@@ -25,6 +25,7 @@ import {
 import {
   initAvatarSelectorRuntime,
   loadProfileRuntime,
+  REFERRAL_AVATAR_UNLOCKS,
   renderAvatarGridRuntime,
   renderUserStickerRuntime,
   sendScoreToServerRuntime,
@@ -32,9 +33,9 @@ import {
 } from "./profile-runtime.js";
 import {
   calculateStreetLengthFromFeatures,
+  computeFeatureCollectionMidpoint,
   computeFeatureCentroid,
   getDistanceMeters,
-  getDistanceToFeature,
 } from "./map.js";
 import {
   buildUniqueStreetList as buildUniqueStreetListCore,
@@ -50,6 +51,7 @@ import {
 } from "./map-session-core.js";
 import {
   addTouchBufferForLayerRuntime,
+  loadBusLinesRuntime,
   loadMonumentsRuntime,
   loadArrondissementsRuntime,
   loadStreetsRuntime,
@@ -495,6 +497,10 @@ function getReminderErrorMessage(error, fallback) {
   return fallback;
 }
 
+function getPushSubscriptionEndpoint(subscription) {
+  return typeof subscription?.endpoint === "string" ? subscription.endpoint.trim() : "";
+}
+
 function handleReminderAuthError() {
   setDailyReminderStatus("Session expirée. Reconnectez-vous pour gérer les rappels.", "error");
   setDailyReminderButtons({
@@ -542,12 +548,17 @@ async function getNotificationConfig(forceReload = false) {
   return payload;
 }
 
-async function fetchNotificationStatus() {
+async function fetchNotificationStatus(endpoint = "") {
   if (!(currentUser && currentUser.token)) {
     return null;
   }
 
-  const response = await fetch(`${API_URL}/api/notifications/status`, {
+  const query = new URLSearchParams();
+  if (endpoint) {
+    query.set("endpoint", endpoint);
+  }
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  const response = await fetch(`${API_URL}/api/notifications/status${suffix}`, {
     headers: {
       Authorization: `Bearer ${currentUser.token}`,
     },
@@ -577,7 +588,7 @@ async function refreshDailyReminderControls() {
 
   if (requiresInstalledAppForMobilePush()) {
     setDailyReminderStatus(
-      "Sur iPhone/iPad, installe Parici via “Ajouter à l’écran d’accueil” pour activer les notifications.",
+      "Sur iPhone/iPad, installe Camino Paris via “Ajouter à l’écran d’accueil” pour activer les notifications.",
       "error",
     );
     setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -622,15 +633,19 @@ async function refreshDailyReminderControls() {
   }
 
   try {
-    const [serverStatus, browserSubscription] = await Promise.all([
-      fetchNotificationStatus(),
-      registration.pushManager.getSubscription(),
-    ]);
-
+    const browserSubscription = await registration.pushManager.getSubscription();
+    const browserEndpoint = getPushSubscriptionEndpoint(browserSubscription);
+    const serverStatus = await fetchNotificationStatus(browserEndpoint);
     const serverSubscribed = Boolean(serverStatus?.subscribed);
-    const serverEndpoint = typeof serverStatus?.endpoint === "string" ? serverStatus.endpoint : "";
-    const browserEndpoint = typeof browserSubscription?.endpoint === "string" ? browserSubscription.endpoint : "";
-    const isSubscribed = Boolean(serverSubscribed && browserEndpoint && browserEndpoint === serverEndpoint);
+    const isSubscribed = Boolean(serverStatus?.currentSubscribed && browserEndpoint);
+
+    if (browserSubscription && serverStatus?.staleVapidKey) {
+      await browserSubscription.unsubscribe().catch(() => { });
+      setDailyReminderStatus("Rappel à réactiver après mise à jour de l'application.");
+      setDailyReminderButtons({ canEnable: true, canDisable: false, loading: false });
+      return;
+    }
+
     if (isSubscribed) {
       setDailyReminderStatus("Rappel quotidien actif.", "success");
       setDailyReminderButtons({ canEnable: false, canDisable: true, loading: false });
@@ -669,7 +684,7 @@ async function enableDailyReminder() {
 
   if (requiresInstalledAppForMobilePush()) {
     setDailyReminderStatus(
-      "Installe Parici sur l’écran d’accueil pour activer les notifications sur iPhone/iPad.",
+      "Installe Camino Paris sur l’écran d’accueil pour activer les notifications sur iPhone/iPad.",
       "error",
     );
     setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -958,6 +973,12 @@ let map = null,
   arrondissementLayersByKey = new Map(),
   monumentsLayer = null,
   allMonuments = [],
+  busLinesLayer = null,
+  allBusLines = [],
+  busLineLayersByName = new Map(),
+  sessionBusLines = [],
+  currentBusLineIndex = 0,
+  currentBusLineTarget = null,
   sessionMonuments = [],
   currentMonumentIndex = 0,
   currentMonumentTarget = null,
@@ -987,7 +1008,12 @@ let sessionStreets = [],
   errorsCount = 0,
   highlightTimeoutId = null,
   highlightedLayers = [],
+  dimmedBusLineLayers = [],
   dailyLastGuessHighlightLayers = [],
+  dailyPendingGuessName = null,
+  dailyPendingGuessLayers = [],
+  dailyStreetMidpointMarker = null,
+  dailyStreetMidpointRenderer = null,
   messageTimeoutId = null,
   currentUser = null,
   isLectureMode = !1,
@@ -1003,11 +1029,13 @@ let areStreetsReady = false;
 let mapInvalidateTimeoutIds = [];
 let arrondissementsLoadingPromise = null;
 let monumentsLoadingPromise = null;
+let busLinesLoadingPromise = null;
 let monumentsContentSyncPromise = null;
 let monumentsSessionRefreshPending = !1;
 
 const FRIEND_CHALLENGE_QUERY_PARAM = "defi";
-const PENDING_FRIEND_CHALLENGE_STORAGE_KEY = "parici_pending_friend_challenge";
+const DAILY_STREET_MIDPOINT_MARKER_PANE = "dailyStreetMidpointMarkerPane";
+const PENDING_FRIEND_CHALLENGE_STORAGE_KEY = "camino_paris_pending_friend_challenge";
 const PENDING_FRIEND_CHALLENGE_MAX_AGE_MS = 48 * 60 * 60 * 1000;
 const FRIEND_CHALLENGE_ALLOWED_GAME_MODES = new Set(["classique", "marathon", "chrono"]);
 const FRIEND_CHALLENGE_ALLOWED_ZONE_MODES = new Set([
@@ -1017,12 +1045,15 @@ const FRIEND_CHALLENGE_ALLOWED_ZONE_MODES = new Set([
   "rues-principales",
   "rues-celebres",
   "monuments",
+  "lignes-transports-idf",
 ]);
 function getSessionScoreValue(e = getGameMode()) {
   return "classique" === e ? weightedScore : correctCount;
 }
 function getCurrentSessionPoolSize() {
-  return "monuments" === getZoneMode()
+  return "lignes-transports-idf" === getZoneMode()
+    ? sessionBusLines.length
+    : "monuments" === getZoneMode()
     ? sessionMonuments.length
     : "arrondissements-ville" === getZoneMode()
       ? sessionArrondissements.length
@@ -1035,6 +1066,8 @@ function getScoreMetricUIConfig(e = getGameMode()) {
       ? "Monuments"
       : "arrondissements-ville" === zoneMode
         ? "Arrondissements"
+        : "lignes-transports-idf" === zoneMode
+          ? "Lignes"
         : "Rues";
   const foundWord =
     "monuments" === zoneMode || "arrondissements-ville" === zoneMode
@@ -2141,7 +2174,9 @@ function updateTargetItemCounter() {
     );
   const r = getZoneMode(),
     a =
-      "monuments" === r
+      "lignes-transports-idf" === r
+        ? sessionBusLines.length
+      : "monuments" === r
         ? sessionMonuments.length
         : "arrondissements-ville" === r
           ? sessionArrondissements.length
@@ -2152,7 +2187,9 @@ function updateTargetItemCounter() {
       void e.classList.add("hidden")
     );
   const n =
-    "monuments" === r
+    "lignes-transports-idf" === r
+      ? currentBusLineIndex
+    : "monuments" === r
       ? currentMonumentIndex
       : "arrondissements-ville" === r
         ? currentArrondissementIndex
@@ -2168,6 +2205,8 @@ function updateTargetPanelTitle() {
         ? "Monument à explorer"
         : "arrondissements-ville" === e
           ? "Arrondissement à explorer"
+          : "lignes-transports-idf" === e
+            ? "Ligne à explorer"
           : "Recherche de rue",
     )
     : setTargetPanelTitleText(
@@ -2175,6 +2214,8 @@ function updateTargetPanelTitle() {
         ? "Monument à trouver"
         : "arrondissements-ville" === e
           ? "Arrondissement à trouver"
+          : "lignes-transports-idf" === e
+            ? "Ligne à trouver"
           : "Rue à trouver",
     ),
     updateTargetItemCounter());
@@ -2243,6 +2284,14 @@ function getLectureSearchCopy(e = getZoneMode()) {
       noResults: "Aucun arrondissement trouvé.",
       srLabel: "Rechercher un arrondissement",
     };
+  if ("lignes-transports-idf" === e)
+    return {
+      placeholder: "Rechercher une ligne (numéro)",
+      unavailable: "Aucune ligne de métro, RER ou Transilien disponible.",
+      notFound: "Ligne introuvable.",
+      noResults: "Aucune ligne trouvée.",
+      srLabel: "Rechercher une ligne de métro, RER ou Transilien",
+    };
   return {
     placeholder: "Rechercher une rue (nom ou mot)",
     unavailable: "Aucune rue disponible pour cette zone.",
@@ -2262,6 +2311,7 @@ function focusMonumentByName(e) {
 }
 function focusLectureSearchResultByName(e) {
   if (!e) return null;
+  if ("lignes-transports-idf" === getZoneMode()) return focusBusLineByName(e);
   if ("monuments" === getZoneMode()) return focusMonumentByName(e);
   if ("arrondissements-ville" === getZoneMode()) return focusArrondissementByName(e);
   const t = focusStreetByName(e);
@@ -2484,8 +2534,8 @@ function zoomMapBySingleStep(direction, aroundPoint = null) {
 function initDesktopDiscreteZoomControls() {
   if (!map || IS_TOUCH_DEVICE) return;
   const container = map.getContainer();
-  if (!container || container.__pariciDesktopDiscreteZoomBound) return;
-  container.__pariciDesktopDiscreteZoomBound = !0;
+  if (!container || container.__caminoParisDesktopDiscreteZoomBound) return;
+  container.__caminoParisDesktopDiscreteZoomBound = !0;
 
   let wheelAccumPx = 0;
   let wheelDirection = 0;
@@ -2593,8 +2643,8 @@ function initDesktopDiscreteZoomControls() {
 function initMobileTwoFingerDoubleTapZoomOut() {
   if (!map || !IS_TOUCH_DEVICE) return;
   const container = map.getContainer();
-  if (!container || container.__pariciMobileTwoFingerDoubleTapBound) return;
-  container.__pariciMobileTwoFingerDoubleTapBound = !0;
+  if (!container || container.__caminoParisMobileTwoFingerDoubleTapBound) return;
+  container.__caminoParisMobileTwoFingerDoubleTapBound = !0;
 
   let activeTwoFingerTap = null;
   let lastTwoFingerTap = null;
@@ -2666,7 +2716,7 @@ function initMobileTwoFingerDoubleTapZoomOut() {
         event.preventDefault();
         event.stopPropagation();
         const aroundPoint = clientPointToContainerPoint(center.x, center.y);
-        map.__pariciSuppressDblClickZoomUntil = now + MOBILE_TWO_FINGER_SUPPRESS_DBLCLICK_MS;
+        map.__caminoParisSuppressDblClickZoomUntil = now + MOBILE_TWO_FINGER_SUPPRESS_DBLCLICK_MS;
         zoomMapBySingleStep(-1, aroundPoint);
         lastTwoFingerTap = null;
         return;
@@ -2690,11 +2740,11 @@ function initMobileTwoFingerDoubleTapZoomOut() {
 }
 
 function initDiscreteDoubleTapZoomControls() {
-  if (!map || map.__pariciDiscreteDblClickBound) return;
-  map.__pariciDiscreteDblClickBound = !0;
+  if (!map || map.__caminoParisDiscreteDblClickBound) return;
+  map.__caminoParisDiscreteDblClickBound = !0;
   map.on("dblclick", (event) => {
     const now = performance.now();
-    if (now < (map.__pariciSuppressDblClickZoomUntil || 0)) return;
+    if (now < (map.__caminoParisSuppressDblClickZoomUntil || 0)) return;
     const originalEvent = event?.originalEvent || null;
     const direction = originalEvent?.shiftKey ? -1 : 1;
     const aroundPoint = originalEvent
@@ -2770,10 +2820,24 @@ function initUI() {
   const p = document.getElementById("mode-select-button"),
     g = document.getElementById("mode-select-list"),
     h = p ? p.querySelector(".custom-select-label") : null;
+  const setCustomSelectOpen = (list, open) => {
+    if (!list) return;
+    list.classList.toggle("visible", open);
+    const infoBlock = list.closest(".info-block");
+    infoBlock && infoBlock.classList.toggle("custom-select-open", open);
+  };
+  const toggleCustomSelect = (list) => {
+    if (!list) return;
+    const open = !list.classList.contains("visible");
+    document.querySelectorAll(".panel-params .custom-select-list.visible").forEach((otherList) => {
+      if (otherList !== list) setCustomSelectOpen(otherList, false);
+    });
+    setCustomSelectOpen(list, open);
+  };
   p &&
     g &&
     (p.addEventListener("click", (e) => {
-      (e.stopPropagation(), g.classList.toggle("visible"));
+      (e.stopPropagation(), toggleCustomSelect(g));
     }),
       g.querySelectorAll("li").forEach((e) => {
         e.addEventListener("click", () => {
@@ -2784,7 +2848,7 @@ function initUI() {
             r !== activeFriendChallenge.mode
           ) {
             showMessage("Les paramètres sont verrouillés pour ce défi amis.", "warning");
-            g.classList.remove("visible");
+            setCustomSelectOpen(g, false);
             return;
           }
           h && (h.textContent = e.childNodes[0].textContent.trim());
@@ -2795,7 +2859,7 @@ function initUI() {
             n ? n.replaceWith(e) : p.appendChild(e);
           }
           (t && ((t.value = r), t.dispatchEvent(new Event("change"))),
-            g.classList.remove("visible"));
+            setCustomSelectOpen(g, false));
         });
       }));
   const y = document.getElementById("game-mode-select-button"),
@@ -2806,7 +2870,7 @@ function initUI() {
     v &&
     b &&
     (y.addEventListener("click", (e) => {
-      (e.stopPropagation(), v.classList.toggle("visible"));
+      (e.stopPropagation(), toggleCustomSelect(v));
     }),
       v.querySelectorAll("li").forEach((e) => {
         e.addEventListener("click", () => {
@@ -2817,7 +2881,7 @@ function initUI() {
             t !== activeFriendChallenge.gameType
           ) {
             showMessage("Les paramètres sont verrouillés pour ce défi amis.", "warning");
-            v.classList.remove("visible");
+            setCustomSelectOpen(v, false);
             return;
           }
           f && (f.textContent = e.childNodes[0].textContent.trim());
@@ -2838,31 +2902,31 @@ function initUI() {
               updateLayoutSessionState()),
             updateGameModeControls(),
             (v.scrollTop = 0),
-            v.classList.remove("visible"),
+            setCustomSelectOpen(v, false),
             "lecture" === t && requestAnimationFrame(() => prepareAndStartNewSession()));
         });
       })),
     i &&
     l &&
     i.addEventListener("click", (e) => {
-      (e.stopPropagation(), l.classList.toggle("visible"));
+      (e.stopPropagation(), toggleCustomSelect(l));
     }),
     document.addEventListener("click", (e) => {
       (p &&
         g &&
         !p.contains(e.target) &&
         !g.contains(e.target) &&
-        g.classList.remove("visible"),
+        setCustomSelectOpen(g, false),
         y &&
         v &&
         !y.contains(e.target) &&
         !v.contains(e.target) &&
-        v.classList.remove("visible"),
+        setCustomSelectOpen(v, false),
         i &&
         l &&
         !i.contains(e.target) &&
         !l.contains(e.target) &&
-        l.classList.remove("visible"));
+        setCustomSelectOpen(l, false));
     }),
     (currentUser = loadCurrentUserFromStorage()),
     updateUserUI(),
@@ -2941,6 +3005,17 @@ function initUI() {
       };
 
       if (isSessionRunning && !isPaused) {
+        if ("lignes-transports-idf" === getZoneMode()) {
+          if (!currentBusLineTarget) return;
+          summaryData.push({ name: currentBusLineTarget.properties.name, correct: !1, time: 0 });
+          totalAnswered += 1;
+          updateScoreUI();
+          updateWeightedScoreUI();
+          if (applyMarathonSkipPenalty()) return void endSession();
+          currentBusLineIndex += 1;
+          setNewTarget();
+          return;
+        }
         if ("monuments" === getZoneMode()) {
           if (!currentMonumentTarget) return;
           summaryData.push({
@@ -3200,6 +3275,10 @@ async function prepareAndStartNewSession() {
     showMessage("Chargement des arrondissements...", "info");
     await loadArrondissements();
   }
+  if ("lignes-transports-idf" === zoneMode && !allBusLines.length) {
+    showMessage("Chargement des lignes de métro, RER et Transilien...", "info");
+    await loadBusLines();
+  }
   startNewSession();
 }
 
@@ -3234,7 +3313,7 @@ function startTimersLoop() {
       null !== streetStartTime &&
       isSessionRunning &&
       !isPaused &&
-      (currentTarget || currentMonumentTarget || currentArrondissementTarget)
+      (currentTarget || currentMonumentTarget || currentArrondissementTarget || currentBusLineTarget)
     ) {
       const t = performance.now(),
         r = (t - sessionStartTime) / 1e3,
@@ -3316,10 +3395,10 @@ function refreshStreetLayerStylesForZoom() {
   if (!streetsLayer || !streetLayersById || !streetLayersById.size) return;
   streetLayersById.forEach((e) => {
     if (!e || "function" != typeof e.setStyle) return;
-    if (e.__pariciLockedStyle) {
-      const t = e.__pariciLockedStyleBaseWeight || e.__pariciLockedStyle.weight || 7;
-      e.__pariciLockedStyle = { ...e.__pariciLockedStyle, weight: getAdaptiveStreetWeight(t) };
-      e.setStyle(e.__pariciLockedStyle);
+    if (e.__caminoParisLockedStyle) {
+      const t = e.__caminoParisLockedStyleBaseWeight || e.__caminoParisLockedStyle.weight || 7;
+      e.__caminoParisLockedStyle = { ...e.__caminoParisLockedStyle, weight: getAdaptiveStreetWeight(t) };
+      e.setStyle(e.__caminoParisLockedStyle);
       return;
     }
     if (isLayerHighlighted(e)) return;
@@ -3351,20 +3430,30 @@ function getArrondissementBaseStyle() {
 }
 function setZoneLayersVisibility(e = getZoneMode()) {
   if (!map) return;
+  if ("lignes-transports-idf" === e) {
+    monumentsLayer && map.hasLayer(monumentsLayer) && map.removeLayer(monumentsLayer);
+    arrondissementsLayer && map.hasLayer(arrondissementsLayer) && map.removeLayer(arrondissementsLayer);
+    streetsLayer && map.hasLayer(streetsLayer) && map.removeLayer(streetsLayer);
+    busLinesLayer && !map.hasLayer(busLinesLayer) && busLinesLayer.addTo(map);
+    return;
+  }
   if ("monuments" === e) {
     (arrondissementsLayer && map.hasLayer(arrondissementsLayer) && map.removeLayer(arrondissementsLayer),
       streetsLayer && map.hasLayer(streetsLayer) && map.removeLayer(streetsLayer),
+      busLinesLayer && map.hasLayer(busLinesLayer) && map.removeLayer(busLinesLayer),
       monumentsLayer && !map.hasLayer(monumentsLayer) && monumentsLayer.addTo(map));
     return;
   }
   if ("arrondissements-ville" === e) {
     (monumentsLayer && map.hasLayer(monumentsLayer) && map.removeLayer(monumentsLayer),
       streetsLayer && map.hasLayer(streetsLayer) && map.removeLayer(streetsLayer),
+      busLinesLayer && map.hasLayer(busLinesLayer) && map.removeLayer(busLinesLayer),
       arrondissementsLayer && !map.hasLayer(arrondissementsLayer) && arrondissementsLayer.addTo(map));
     return;
   }
   (monumentsLayer && map.hasLayer(monumentsLayer) && map.removeLayer(monumentsLayer),
     arrondissementsLayer && map.hasLayer(arrondissementsLayer) && map.removeLayer(arrondissementsLayer),
+    busLinesLayer && map.hasLayer(busLinesLayer) && map.removeLayer(busLinesLayer),
     streetsLayer && !map.hasLayer(streetsLayer) && streetsLayer.addTo(map));
 }
 function addTouchBufferForLayer(e) {
@@ -3519,6 +3608,34 @@ function loadMonuments() {
 
   return monumentsLoadingPromise;
 }
+function loadBusLines() {
+  if (busLinesLoadingPromise) return busLinesLoadingPromise;
+  if (allBusLines.length && busLinesLayer) return Promise.resolve(true);
+  busLinesLoadingPromise = loadBusLinesRuntime({
+    L,
+    map,
+    uiTheme: UI_THEME,
+    isTouchDevice: IS_TOUCH_DEVICE,
+    handleBusLineClick,
+  })
+    .then((result) => {
+      allBusLines = result.allBusLines;
+      busLinesLayer = result.busLinesLayer;
+      busLineLayersByName = result.busLineLayersByName;
+      setZoneLayersVisibility(getZoneMode());
+      refreshLectureTooltipsIfNeeded();
+      return true;
+    })
+    .catch((error) => {
+      console.error("Erreur lors du chargement des lignes de métro, RER et Transilien :", error);
+      showMessage("Erreur de chargement des lignes de métro, RER et Transilien.", "error");
+      return false;
+    })
+    .finally(() => {
+      busLinesLoadingPromise = null;
+    });
+  return busLinesLoadingPromise;
+}
 
 function refreshMonumentsContentAndLayer() {
   if (monumentsContentSyncPromise) {
@@ -3543,6 +3660,7 @@ function setLectureTooltipsEnabled(e) {
     streetsLayer,
     monumentsLayer,
     arrondissementsLayer,
+    busLinesLayer,
     getBaseStreetStyle,
     isStreetVisibleInCurrentMode,
     normalizeName,
@@ -3798,6 +3916,40 @@ function startNewSession(options = {}) {
     ((isLectureMode = !1),
       updateTargetPanelTitle(),
       refreshLectureStreetSearchForCurrentMode(),
+      "lignes-transports-idf" === t)
+  ) {
+    if (!allBusLines.length)
+      return void showMessage("Aucune ligne de métro, RER ou Transilien disponible.", "error");
+    sessionBusLines =
+      "marathon" === r || "chrono" === r
+        ? sampleWithoutReplacement(allBusLines, allBusLines.length)
+        : sampleWithoutReplacement(allBusLines, Math.min(SESSION_SIZE, allBusLines.length));
+    ((currentBusLineIndex = 0),
+      (currentBusLineTarget = null),
+      (currentTarget = null),
+      (currentMonumentTarget = null),
+      (currentArrondissementTarget = null),
+      setZoneLayersVisibility(t),
+      clearArrondissementOverlay(),
+      (sessionStartTime = performance.now()),
+      (streetStartTime = null),
+      (isSessionRunning = !0),
+      updateStartStopButton(),
+      updatePauseButton(),
+      updateLayoutSessionState(),
+      scrollSidebarToTargetPanel());
+    const busSkipButton = document.getElementById("skip-btn");
+    return (
+      busSkipButton && (busSkipButton.style.display = "inline-block"),
+      setNewTarget(),
+      showMessage("Session lignes de métro, RER et Transilien démarrée.", "info"),
+      void updateLayoutSessionState()
+    );
+  }
+  if (
+    ((isLectureMode = !1),
+      updateTargetPanelTitle(),
+      refreshLectureStreetSearchForCurrentMode(),
       "monuments" === t)
   ) {
     if (!allMonuments.length)
@@ -3878,6 +4030,7 @@ function startNewSession(options = {}) {
       (currentArrondissementTarget = null),
       (currentTarget = null),
       (currentMonumentTarget = null),
+      (currentBusLineTarget = null),
       setZoneLayersVisibility(t),
       clearArrondissementOverlay(),
       (sessionStartTime = performance.now()),
@@ -3963,6 +4116,26 @@ function buildUniqueStreetList(e) {
 }
 function setNewTarget() {
   const e = getGameMode();
+  if ("lignes-transports-idf" === getZoneMode()) {
+    if (currentBusLineIndex >= sessionBusLines.length) {
+      if ("chrono" !== e) return void endSession();
+      shuffle(sessionBusLines);
+      currentBusLineIndex = 0;
+    }
+    ((currentTarget = null),
+      (currentMonumentTarget = null),
+      (currentArrondissementTarget = null),
+      (currentBusLineTarget = sessionBusLines[currentBusLineIndex]),
+      (streetStartTime = performance.now()),
+      (hasAnsweredCurrentItem = !1),
+      resetWeightedBar());
+    const busTarget = document.getElementById("target-street");
+    busTarget &&
+      ((busTarget.textContent = currentBusLineTarget.properties.name || "—"),
+        requestAnimationFrame(fitTargetStreetText));
+    updateTargetItemCounter();
+    return void triggerTargetPulse();
+  }
   if ("monuments" === getZoneMode()) {
     if (currentMonumentIndex >= sessionMonuments.length) {
       if ("chrono" !== e) return void endSession();
@@ -4174,6 +4347,16 @@ function handleStreetClick(e, t, r) {
     if (a.success || (a.attempts_count || 0) >= 7 || window._dailyGameOver)
       return;
     if (window._dailyGuessInFlight) return;
+    const pendingGuessName = normalizeName(e.properties.name);
+    if (!pendingGuessName) return;
+    if (dailyPendingGuessName !== pendingGuessName) {
+      lockDailyPendingGuess(e.properties.name);
+      showDailyStreetMidpointMarker(e, t);
+      triggerHaptic('click');
+      showMessage(`Cliquez à nouveau sur « ${e.properties.name} » pour valider.`, "warning");
+      return;
+    }
+    clearDailyPendingGuess();
     window._dailyGuessInFlight = !0;
     const n =
       normalizeName(e.properties.name) ===
@@ -4186,20 +4369,21 @@ function handleStreetClick(e, t, r) {
       p = l[1];
     r && r.latlng && ((m = r.latlng.lng), (p = r.latlng.lat));
     if (!n) {
-      const a = normalizeName(dailyTargetData.streetName),
-        n = allStreetFeatures.find(
-          (e) => e.properties && normalizeName(e.properties.name) === a,
-        );
+      const targetFeatureCollection = buildDailyTargetFeatureCollection(dailyTargetData.streetName);
+      const guessFeatureCollection = buildDailyTargetFeatureCollection(e.properties.name);
+      const targetMidpoint = computeFeatureCollectionMidpoint(targetFeatureCollection);
+      const guessMidpoint = computeFeatureCollectionMidpoint(guessFeatureCollection) || [m, p];
       ((s =
-        n && n.geometry
-          ? getDistanceToFeature(p, m, n.geometry)
+        targetMidpoint && guessMidpoint
+          ? getDistanceMeters(guessMidpoint[1], guessMidpoint[0], targetMidpoint[1], targetMidpoint[0])
           : getDistanceMeters(p, m, o[1], o[0])),
-        (i = getDirectionArrow([m, p], o)));
+        (i = getDirectionArrow(guessMidpoint || [m, p], targetMidpoint || o)));
     }
     lockDailyLastGuessHighlight(
       e.properties.name,
       n ? UI_THEME.mapCorrect : UI_THEME.timerWarn,
     );
+    showDailyStreetMidpointMarker(e, t);
     (dailyGuessHistory.push({
       streetName: e.properties.name,
       distance: Math.round(s),
@@ -4455,6 +4639,53 @@ function handleArrondissementClick(e, t) {
       ? endSession()
       : ((currentArrondissementIndex += 1), setNewTarget()));
 }
+function handleBusLineClick(feature, layer, validLineNames = []) {
+  if ("lignes-transports-idf" !== getZoneMode() || isPaused || !currentBusLineTarget || !streetStartTime) return;
+  const gameMode = getGameMode();
+  const elapsed = (performance.now() - streetStartTime) / 1e3;
+  const targetName = currentBusLineTarget.properties.name;
+  const isCorrect =
+    feature.properties.name === targetName ||
+    validLineNames.includes(targetName);
+  if (isCorrect) {
+    correctCount += 1;
+    hasAnsweredCurrentItem = !0;
+    if ("classique" === gameMode) {
+      const points = computeItemPoints(elapsed);
+      weightedScore += points;
+      updateWeightedBar(points / 10);
+      showMessage(`Correct (${elapsed.toFixed(1)} s, +${points.toFixed(1)} pts)`, "success");
+    } else {
+      showMessage(`Correct (${correctCount} trouvées)`, "success");
+    }
+    updateSessionProgressBar();
+    highlightBusLineByName(targetName, UI_THEME.mapCorrect);
+    triggerHaptic("success");
+    feedbackCorrect();
+  } else {
+    errorsCount += 1;
+    showMessage(
+      "marathon" === gameMode && errorsCount >= MAX_ERRORS_MARATHON
+        ? `Incorrect (limite de ${MAX_ERRORS_MARATHON} erreurs atteinte)`
+        : "Incorrect",
+      "error",
+    );
+    highlightBusLineByName(targetName, UI_THEME.mapWrong);
+    "classique" === gameMode ? updateWeightedBar(0) : updateSessionProgressBar();
+    triggerHaptic("error");
+    feedbackError();
+  }
+  totalAnswered += 1;
+  summaryData.push({ name: targetName, correct: isCorrect, time: elapsed.toFixed(1) });
+  trackAnswer(targetName, "lignes-transports-idf", isCorrect, elapsed);
+  updateWeightedScoreUI();
+  updateScoreUI();
+  if (!isCorrect && "marathon" === gameMode && errorsCount >= MAX_ERRORS_MARATHON) endSession();
+  else {
+    currentBusLineIndex += 1;
+    setNewTarget();
+  }
+}
 function highlightMonument(e, t) {
   e &&
     (e.setStyle({ color: t, fillColor: t }),
@@ -4468,10 +4699,10 @@ function highlightMonument(e, t) {
 }
 function highlightArrondissementGuess(e, t) {
   e &&
-    (e.__pariciLockedStyle = !0,
+    (e.__caminoParisLockedStyle = !0,
       e.setStyle({ color: t, fillColor: t, fillOpacity: 0.28, weight: 3, opacity: 1 }),
       setTimeout(() => {
-        e.__pariciLockedStyle = !1;
+        e.__caminoParisLockedStyle = !1;
         e.setStyle &&
           e.setStyle(getArrondissementBaseStyle());
       }, 5e3));
@@ -4574,6 +4805,45 @@ function feedbackError() {
 function highlightStreet(e) {
   currentTarget && highlightStreetByName(currentTarget.properties.name, e);
 }
+function getBusLineBaseStyle(layer) {
+  return { color: `#${layer?.feature?.properties?.color || "009FE3"}`, weight: 3, opacity: 0.82 };
+}
+function clearBusLineHighlightEffects() {
+  dimmedBusLineLayers.forEach(({ layer, opacity }) => {
+    delete layer.__caminoBusDimmed;
+    layer?.setStyle?.({ opacity });
+  });
+  dimmedBusLineLayers = [];
+  highlightedLayers.forEach((layer) => {
+    delete layer.__caminoBusHighlightActive;
+    layer?.getElement?.()?.classList.remove("bus-line-highlight-halo");
+  });
+}
+function highlightBusLineByName(name, color) {
+  clearHighlight();
+  const layers = busLineLayersByName.get(name) || [];
+  if (!layers.length) return [];
+  highlightedLayers = layers;
+  const highlightedSet = new Set(layers);
+  busLinesLayer?.eachLayer((layer) => {
+    if (layer._isBusHitArea || highlightedSet.has(layer) || !layer.setStyle) return;
+    dimmedBusLineLayers.push({ layer, opacity: layer.options?.opacity ?? 0.82 });
+    layer.__caminoBusDimmed = true;
+    layer.setStyle({ opacity: 0.08 });
+  });
+  let bounds = null;
+  layers.forEach((layer) => {
+    layer.__caminoBusHighlightActive = true;
+    layer.setStyle({ color, weight: 6, opacity: 1 });
+    layer.getElement?.()?.classList.add("bus-line-highlight-halo");
+    layer.bringToFront?.();
+    const layerBounds = layer.getBounds?.();
+    if (layerBounds?.isValid?.()) bounds = bounds ? bounds.extend(layerBounds) : layerBounds;
+  });
+  bounds?.isValid?.() && map.fitBounds(bounds, { padding: [60, 60], animate: !0, duration: 1.2 });
+  highlightTimeoutId = setTimeout(clearHighlight, 1750);
+  return layers;
+}
 function highlightStreetByName(e, t) {
   clearHighlight();
   const r = normalizeName(e);
@@ -4633,10 +4903,11 @@ function findArrondissementLayersByName(e) {
 function clearHighlight() {
   (null !== highlightTimeoutId &&
     (clearTimeout(highlightTimeoutId), (highlightTimeoutId = null)),
+    clearBusLineHighlightEffects(),
     highlightedLayers &&
     highlightedLayers.length > 0 &&
     (highlightedLayers.forEach((e) => {
-      const t = getBaseStreetStyle(e);
+      const t = e.feature?.properties?.long_name ? getBusLineBaseStyle(e) : getBaseStreetStyle(e);
       e.setStyle({ color: t.color, weight: t.weight, opacity: t.opacity });
     }),
       (highlightedLayers = [])));
@@ -4646,12 +4917,148 @@ function clearDailyLastGuessHighlight() {
     dailyLastGuessHighlightLayers.length > 0 &&
     (dailyLastGuessHighlightLayers.forEach((e) => {
       if (!e || "function" != typeof e.setStyle) return;
-      delete e.__pariciLockedStyle;
-      delete e.__pariciLockedStyleBaseWeight;
+      delete e.__caminoParisLockedStyle;
+      delete e.__caminoParisLockedStyleBaseWeight;
       const t = getBaseStreetStyle(e);
       e.setStyle({ color: t.color, weight: t.weight, opacity: t.opacity });
     }),
       (dailyLastGuessHighlightLayers = []));
+}
+function clearDailyPendingGuess() {
+  dailyPendingGuessLayers.forEach(({ layer, lockedStyle, lockedStyleBaseWeight }) => {
+    if (!layer || "function" != typeof layer.setStyle) return;
+    if (lockedStyle) {
+      layer.__caminoLockedStyle = lockedStyle;
+      layer.__caminoLockedStyleBaseWeight = lockedStyleBaseWeight;
+      layer.setStyle(lockedStyle);
+      return;
+    }
+    delete layer.__caminoLockedStyle;
+    delete layer.__caminoLockedStyleBaseWeight;
+    const baseStyle = getBaseStreetStyle(layer);
+    layer.setStyle({
+      color: baseStyle.color,
+      weight: baseStyle.weight,
+      opacity: baseStyle.opacity,
+    });
+  });
+  dailyPendingGuessName = null;
+  dailyPendingGuessLayers = [];
+}
+function getStreetLayerStrokeWidth(layer) {
+  const baseStyle = layer ? getBaseStreetStyle(layer) : null;
+  const candidates = [
+    layer?.__caminoLockedStyle?.weight,
+    layer?.__caminoLockedStyleBaseWeight,
+    layer?.options?.weight,
+    baseStyle?.weight,
+  ];
+  const strokeWidth = candidates.find((value) => Number.isFinite(Number(value)) && Number(value) > 0);
+  return Number(strokeWidth || 6);
+}
+function collectLayerLatLngLines(latLngs, lines = []) {
+  if (!Array.isArray(latLngs) || latLngs.length === 0) return lines;
+  const directLine = latLngs
+    .filter((entry) => entry && Number.isFinite(entry.lat) && Number.isFinite(entry.lng))
+    .map((entry) => [entry.lng, entry.lat]);
+  if (directLine.length === latLngs.length) {
+    lines.push(directLine);
+    return lines;
+  }
+  latLngs.forEach((entry) => {
+    if (Array.isArray(entry)) {
+      collectLayerLatLngLines(entry, lines);
+    }
+  });
+  return lines;
+}
+function getLayerMidpoint(layer) {
+  if (!layer || "function" != typeof layer.getLatLngs) return null;
+  const lines = collectLayerLatLngLines(layer.getLatLngs()).filter((line) => line.length > 0);
+  if (lines.some((line) => line.length >= 2)) {
+    return computeFeatureCollectionMidpoint({
+      type: "MultiLineString",
+      coordinates: lines.filter((line) => line.length >= 2),
+    });
+  }
+  if (lines.length > 0 && lines[0].length === 1) {
+    return lines[0][0];
+  }
+  if ("function" == typeof layer.getBounds) {
+    const center = layer.getBounds()?.getCenter?.();
+    if (center && Number.isFinite(center.lat) && Number.isFinite(center.lng)) {
+      return [center.lng, center.lat];
+    }
+  }
+  return null;
+}
+function removeDailyStreetMidpointMarker() {
+  if (dailyStreetMidpointMarker && map) {
+    map.removeLayer(dailyStreetMidpointMarker);
+  }
+  dailyStreetMidpointMarker = null;
+}
+function getDailyStreetMidpointRenderer() {
+  if (!map || !L) return null;
+  let pane = map.getPane(DAILY_STREET_MIDPOINT_MARKER_PANE);
+  if (!pane) {
+    pane = map.createPane(DAILY_STREET_MIDPOINT_MARKER_PANE);
+  }
+  pane.style.zIndex = "625";
+  pane.style.pointerEvents = "none";
+  if (!dailyStreetMidpointRenderer) {
+    dailyStreetMidpointRenderer = L.svg({
+      pane: DAILY_STREET_MIDPOINT_MARKER_PANE,
+      padding: 0.1,
+    });
+  }
+  return dailyStreetMidpointRenderer;
+}
+function showDailyStreetMidpointMarker(feature, layer) {
+  if (!map || !L) return null;
+  const midpoint = computeFeatureCollectionMidpoint(layer?.feature || feature) || getLayerMidpoint(layer);
+  if (!midpoint) return null;
+  const renderer = getDailyStreetMidpointRenderer();
+  const strokeWidth = getStreetLayerStrokeWidth(layer);
+  removeDailyStreetMidpointMarker();
+  dailyStreetMidpointMarker = L.circleMarker([midpoint[1], midpoint[0]], {
+    radius: Math.max(5, strokeWidth / 2),
+    stroke: true,
+    color: "#FFFFFF",
+    weight: 2,
+    opacity: 1,
+    fill: true,
+    fillColor: "#FF0000",
+    fillOpacity: 1,
+    interactive: false,
+    pane: DAILY_STREET_MIDPOINT_MARKER_PANE,
+    renderer,
+  }).addTo(map);
+  if (typeof dailyStreetMidpointMarker.bringToFront === "function") {
+    dailyStreetMidpointMarker.bringToFront();
+  }
+  return dailyStreetMidpointMarker;
+}
+function lockDailyPendingGuess(e) {
+  clearDailyPendingGuess();
+  const normalizedName = normalizeName(e);
+  if (!normalizedName || !streetLayersByName || !streetLayersByName.has(normalizedName)) return [];
+  const pendingStyle = getStreetHighlightStyle(UI_THEME.mapPending, 8);
+  dailyPendingGuessName = normalizedName;
+  dailyPendingGuessLayers = (streetLayersByName.get(normalizedName) || [])
+    .filter((layer) => layer && "function" == typeof layer.setStyle)
+    .map((layer) => {
+      const previousState = {
+        layer,
+        lockedStyle: layer.__caminoLockedStyle ? { ...layer.__caminoLockedStyle } : null,
+        lockedStyleBaseWeight: layer.__caminoLockedStyleBaseWeight,
+      };
+      layer.__caminoLockedStyle = { ...pendingStyle };
+      layer.__caminoLockedStyleBaseWeight = 8;
+      layer.setStyle(pendingStyle);
+      return previousState;
+    });
+  return dailyPendingGuessLayers.map(({ layer }) => layer);
 }
 function lockDailyLastGuessHighlight(e, t = UI_THEME.timerWarn) {
   const r = normalizeName(e);
@@ -4662,7 +5069,7 @@ function lockDailyLastGuessHighlight(e, t = UI_THEME.timerWarn) {
   );
   return (
     n.forEach((e) => {
-      ((e.__pariciLockedStyle = { ...a }), (e.__pariciLockedStyleBaseWeight = 7), e.setStyle(a));
+      ((e.__caminoParisLockedStyle = { ...a }), (e.__caminoParisLockedStyleBaseWeight = 7), e.setStyle(a));
       dailyLastGuessHighlightLayers.includes(e) || dailyLastGuessHighlightLayers.push(e);
     }),
     n
@@ -4713,7 +5120,7 @@ function endSession() {
     (isSessionRunning = !1),
     (isChronoMode = !1),
     (chronoEndTime = null),
-    isDailyMode && ((isDailyMode = !1), updateDailyUI()),
+    isDailyMode && (clearDailyPendingGuess(), (isDailyMode = !1), updateDailyUI()),
     (isLectureMode = !1),
     updateTargetPanelTitle(),
     updateLayoutSessionState(),
@@ -4769,7 +5176,9 @@ function endSession() {
   const m = document.createElement("h2");
   const zoneLabel = ZONE_LABELS[o] || o;
   const foundItemsLabel =
-    "monuments" === o
+    "lignes-transports-idf" === o
+      ? "Lignes trouvées"
+    : "monuments" === o
       ? "Monuments trouvés"
       : "arrondissements-ville" === o
         ? "Arrondissements trouvés"
@@ -4912,6 +5321,10 @@ function endSession() {
         t.addEventListener("click", () => {
           if ("arrondissements-ville" === o) {
             focusArrondissementByName(e.name);
+            return;
+          }
+          if ("lignes-transports-idf" === o) {
+            focusBusLineByName(e.name);
             return;
           }
           const t = focusStreetByName(e.name);
@@ -5109,22 +5522,23 @@ function loadProfile() {
   });
 }
 
-function initAvatarSelector(currentAvatar, globalRankLevel) {
+function initAvatarSelector(currentAvatar, globalRankLevel, profileStats) {
   initAvatarSelectorRuntime({
     currentAvatar,
     globalRankLevel,
     renderAvatarGrid: (avatar, rankLevel) => {
-      renderAvatarGrid(avatar, rankLevel);
+      renderAvatarGrid(avatar, rankLevel, profileStats);
     },
   });
 }
 
-function renderAvatarGrid(currentAvatar, globalRankLevel) {
+function renderAvatarGrid(currentAvatar, globalRankLevel, profileStats = currentUser) {
   renderAvatarGridRuntime({
     currentAvatar,
     globalRankLevel,
-    avatarUnlocks: AVATAR_UNLOCKS,
+    avatarUnlocks: [...AVATAR_UNLOCKS, ...REFERRAL_AVATAR_UNLOCKS],
     titleNames: TITLE_NAMES,
+    unlockStats: profileStats,
     currentUser,
     getGlobalRankLevelForTitleIndex,
     apiUrl: API_URL,
@@ -5226,6 +5640,7 @@ let dailyTargetData = null,
   dailyGuessHistory = [];
 function startDailySession(e) {
   document.body.classList.remove("session-ended", "daily-game-over");
+  removeDailyStreetMidpointMarker();
   ((dailyTargetData = e), (dailyTargetGeoJson = JSON.parse(e.targetGeoJson)));
   saveDailyMetaToStorage();
   const t = e.userStatus || {};
@@ -5252,6 +5667,7 @@ function startDailySession(e) {
     cleanOldDailyGuessStorage(e.date),
     isSessionRunning && endSession(),
     clearSessionShareSlot(),
+    clearDailyPendingGuess(),
     clearDailyLastGuessHighlight(),
     removeDailyHighlight(),
     (currentZoneMode = "ville"));
@@ -5307,7 +5723,9 @@ function endDailySession() {
     (isSessionRunning = !1),
     (window._dailyGameOver = !1),
     (window._dailyGuessInFlight = !1));
+  clearDailyPendingGuess();
   clearDailyLastGuessHighlight();
+  removeDailyStreetMidpointMarker();
   (updateTargetPanelTitle(),
     refreshLectureStreetSearchForCurrentMode(),
     updateStartStopButton(),
@@ -5450,6 +5868,7 @@ function highlightDailyTarget(e, t) {
     L,
     uiTheme: UI_THEME,
     dailyHighlightLayer,
+    fitBounds: false,
   });
 }
 function buildDailyTargetFeatureCollection(e) {
@@ -5498,8 +5917,16 @@ function fitTargetStreetText() {
 
     updateHapticsUI();
 
-    const userPanelDetails = document.querySelector('.user-panel details');
+    const userPanelDetails = document.getElementById("user-panel-details");
     if (userPanelDetails) {
+      const syncUserPanelDetails = () => {
+        const isMobileProfileView =
+          window.matchMedia("(max-width: 900px)").matches &&
+          document.documentElement.dataset.mobileView === "profile";
+        userPanelDetails.open = isMobileProfileView;
+      };
+      syncUserPanelDetails();
+      window.addEventListener("resize", syncUserPanelDetails);
       userPanelDetails.addEventListener('toggle', () => {
         triggerHaptic('click');
       });

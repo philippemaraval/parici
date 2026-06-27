@@ -1,8 +1,16 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-06-01-visitor-daily-stats';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-06-27-camino-paris';
+const EXPLORER_REMOVALS_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-explorer-removals.sql');
+const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
+const MPHIL_DAILY_FIX_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-mphil-fix.sql');
+const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
+const EXPLORER_SEED_SQL_PATHS = [];
 
 // Connect via DATABASE_URL (provided by Render PostgreSQL)
 const pool = new Pool({
@@ -42,10 +50,144 @@ async function ping() {
   await pool.query('SELECT 1');
 }
 
+async function seedExplorerRiddles(client) {
+  for (const seedPath of EXPLORER_SEED_SQL_PATHS) {
+    if (!fs.existsSync(seedPath)) {
+      console.warn('Explorer seed SQL not found:', seedPath);
+      continue;
+    }
+
+    const seedSql = fs.readFileSync(seedPath, 'utf8');
+    if (!seedSql.trim()) {
+      continue;
+    }
+
+    await client.query(seedSql);
+  }
+}
+
+async function removeExcludedExplorerRiddles(client) {
+  const tableCheck = await client.query(
+    `SELECT to_regclass('public.explorer_riddles') AS explorer_riddles_table`
+  );
+  if (!tableCheck.rows[0]?.explorer_riddles_table || !fs.existsSync(EXPLORER_REMOVALS_SQL_PATH)) {
+    return;
+  }
+
+  const removalSql = fs.readFileSync(EXPLORER_REMOVALS_SQL_PATH, 'utf8');
+  if (removalSql.trim()) {
+    await client.query(removalSql);
+  }
+}
+
+async function renameUserIfNeeded(client) {
+  const tableCheck = await client.query(
+    `SELECT to_regclass('public.users') AS users_table`
+  );
+  if (!tableCheck.rows[0]?.users_table || !fs.existsSync(USER_RENAME_SQL_PATH)) {
+    return;
+  }
+
+  const renameSql = fs.readFileSync(USER_RENAME_SQL_PATH, 'utf8');
+  if (renameSql.trim()) {
+    await client.query(renameSql);
+  }
+}
+
+async function applyMPhilDailyFix(client) {
+  if (!fs.existsSync(MPHIL_DAILY_FIX_SQL_PATH)) {
+    return;
+  }
+
+  const fixSql = fs.readFileSync(MPHIL_DAILY_FIX_SQL_PATH, 'utf8');
+  if (fixSql.trim()) {
+    await client.query(fixSql);
+  }
+}
+
+async function applyReferralSchema(client) {
+  if (!fs.existsSync(REFERRALS_SQL_PATH)) {
+    return;
+  }
+
+  const tableCheck = await client.query(
+    `SELECT to_regclass('public.users') AS users_table`
+  );
+  if (!tableCheck.rows[0]?.users_table) {
+    return;
+  }
+
+  const referralSql = fs.readFileSync(REFERRALS_SQL_PATH, 'utf8');
+  if (referralSql.trim()) {
+    await client.query(referralSql);
+  }
+}
+
+async function applyPushNotificationSchema(client) {
+  const tableCheck = await client.query(
+    `SELECT to_regclass('public.users') AS users_table`
+  );
+  if (!tableCheck.rows[0]?.users_table) {
+    return;
+  }
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      endpoint TEXT UNIQUE NOT NULL,
+      subscription_json JSONB NOT NULL,
+      vapid_public_key TEXT,
+      enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      last_notified_on DATE,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS vapid_public_key TEXT`);
+  await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS enabled BOOLEAN NOT NULL DEFAULT TRUE`);
+  await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_notified_on DATE`);
+  await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`);
+
+  await client.query(`
+    CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_id
+    ON push_subscriptions (user_id)
+  `);
+}
+
 // Initialize database tables
 async function initDb() {
   const client = await pool.connect();
   try {
+    // This lightweight migration must run even when the main bootstrap is current.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS visitor_sessions (
+        session_hash TEXT PRIMARY KEY,
+        visitor_hash TEXT NOT NULL,
+        first_seen TIMESTAMPTZ DEFAULT NOW(),
+        last_seen TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_visitor_sessions_visitor_hash
+      ON visitor_sessions (visitor_hash)
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS visitor_daily_uniques (
+        day DATE NOT NULL,
+        visitor_hash TEXT NOT NULL,
+        first_seen_at TIMESTAMPTZ DEFAULT NOW(),
+        PRIMARY KEY (day, visitor_hash)
+      )
+    `);
+
+    await removeExcludedExplorerRiddles(client);
+    await renameUserIfNeeded(client);
+    await applyMPhilDailyFix(client);
+    await applyReferralSchema(client);
+    await applyPushNotificationSchema(client);
+
     if (await hasCurrentSchemaBootstrap(client)) {
       console.log('Database schema already up to date.');
       return;
@@ -61,6 +203,8 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
+    await applyReferralSchema(client);
+    await applyPushNotificationSchema(client);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS scores (
@@ -143,11 +287,29 @@ async function initDb() {
         user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         endpoint TEXT UNIQUE NOT NULL,
         subscription_json JSONB NOT NULL,
+        vapid_public_key TEXT,
         enabled BOOLEAN NOT NULL DEFAULT TRUE,
         last_notified_on DATE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id BIGSERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token_hash TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        used_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_active
+      ON password_reset_tokens (user_id, expires_at DESC)
+      WHERE used_at IS NULL
     `);
 
     await client.query(`
@@ -169,11 +331,13 @@ async function initDb() {
     const migrations = [
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar TEXT DEFAULT '👤'",
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'player'",
+      'ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code TEXT',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS items_correct INTEGER DEFAULT 0',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS items_total INTEGER DEFAULT 0',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS time_sec REAL DEFAULT 0',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS session_id TEXT',
       'ALTER TABLE daily_targets ADD COLUMN IF NOT EXISTS geometry_json TEXT',
+      'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS vapid_public_key TEXT',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS enabled BOOLEAN NOT NULL DEFAULT TRUE',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_notified_on DATE',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()'
@@ -265,6 +429,84 @@ async function initDb() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS explorer_riddles (
+        id SERIAL PRIMARY KEY,
+        way_id INT NOT NULL,
+        street_name_clean VARCHAR(255) NOT NULL,
+        riddle_text TEXT NOT NULL,
+        hint_text TEXT NOT NULL,
+        explanation_text TEXT NOT NULL DEFAULT '',
+        image_url TEXT NOT NULL,
+        latitude DOUBLE PRECISION,
+        longitude DOUBLE PRECISION,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS explorer_user_progress (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        riddle_id INT REFERENCES explorer_riddles(id) ON DELETE CASCADE,
+        started_at TIMESTAMP NOT NULL,
+        solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        hints_used INT DEFAULT 0,
+        points_earned INT NOT NULL,
+        walking_time_seconds INT DEFAULT 0,
+        client_payload JSONB DEFAULT '{}'::jsonb,
+        CONSTRAINT unique_user_riddle UNIQUE (user_id, riddle_id)
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS explorer_leaderboard (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        total_score INT NOT NULL,
+        total_walking_time_seconds INT NOT NULL,
+        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await client.query(`
+      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION
+    `);
+    await client.query(`
+      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION
+    `);
+    await client.query(`
+      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS explanation_text TEXT NOT NULL DEFAULT ''
+    `);
+    await client.query(`
+      ALTER TABLE explorer_user_progress ADD COLUMN IF NOT EXISTS walking_time_seconds INT DEFAULT 0
+    `);
+    await client.query(`
+      ALTER TABLE explorer_user_progress ADD COLUMN IF NOT EXISTS client_payload JSONB DEFAULT '{}'::jsonb
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_explorer_riddles_way_id
+      ON explorer_riddles (way_id)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_explorer_riddles_coordinates
+      ON explorer_riddles (latitude, longitude)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_explorer_progress_user_solved
+      ON explorer_user_progress (user_id, solved_at DESC)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_explorer_leaderboard_score
+      ON explorer_leaderboard (total_score DESC, total_walking_time_seconds ASC, completed_at ASC)
+    `);
+
+    await seedExplorerRiddles(client);
+
     // Seed total visits from current unique visitors once.
     // ON CONFLICT avoids duplicate-key crashes on concurrent starts.
     await client.query(`
@@ -303,13 +545,92 @@ async function createUser(username, password) {
       'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id',
       [username, hash]
     );
-    return res.rows[0].id;
+    const userId = res.rows[0].id;
+    await ensureReferralCodeForUser(userId);
+    return userId;
   } catch (err) {
     if (err.code === '23505') { // PostgreSQL unique_violation
       throw new Error('Username already taken');
     }
     throw err;
   }
+}
+
+const REFERRAL_CODE_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const REFERRAL_CODE_LENGTH = 5;
+const REFERRAL_CODE_PATTERN = /^[0-9A-Z]{5}$/;
+const LEGACY_REFERRAL_CODE_PATTERN = /^CAMINO[0-9A-Z]+$/;
+
+function generateReferralCode() {
+  let code = '';
+  for (let i = 0; i < REFERRAL_CODE_LENGTH; i += 1) {
+    code += REFERRAL_CODE_ALPHABET[crypto.randomInt(REFERRAL_CODE_ALPHABET.length)];
+  }
+  return code;
+}
+
+function isCurrentReferralCodeFormat(code) {
+  return REFERRAL_CODE_PATTERN.test(String(code || '').trim().toUpperCase());
+}
+
+function shouldRefreshReferralCode(code) {
+  const normalizedCode = String(code || '').trim().toUpperCase();
+  return !isCurrentReferralCodeFormat(normalizedCode) || LEGACY_REFERRAL_CODE_PATTERN.test(normalizedCode);
+}
+
+async function ensureReferralCodeForUser(userId) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    throw new Error('Invalid user id');
+  }
+
+  const existing = await pool.query('SELECT referral_code FROM users WHERE id = $1', [normalizedUserId]);
+  if (existing.rowCount === 0) {
+    throw new Error('User not found');
+  }
+
+  const existingCode = String(existing.rows[0]?.referral_code || '').trim().toUpperCase();
+  if (!shouldRefreshReferralCode(existingCode)) {
+    if (existing.rows[0].referral_code !== existingCode) {
+      await pool.query('UPDATE users SET referral_code = $2 WHERE id = $1', [normalizedUserId, existingCode]);
+    }
+    return existingCode;
+  }
+
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const code = generateReferralCode();
+    try {
+      const result = await pool.query(
+        `UPDATE users
+         SET referral_code = $2
+         WHERE id = $1
+           AND (
+             referral_code IS NULL
+             OR TRIM(referral_code) = ''
+             OR UPPER(referral_code) !~ '^[0-9A-Z]{5}$'
+             OR UPPER(referral_code) LIKE 'CAMINO%'
+           )
+         RETURNING referral_code`,
+        [normalizedUserId, code]
+      );
+
+      if (result.rowCount > 0) {
+        return result.rows[0].referral_code;
+      }
+
+      const refreshed = await pool.query('SELECT referral_code FROM users WHERE id = $1', [normalizedUserId]);
+      const refreshedCode = String(refreshed.rows[0]?.referral_code || '').trim().toUpperCase();
+      if (isCurrentReferralCodeFormat(refreshedCode)) {
+        return refreshedCode;
+      }
+    } catch (err) {
+      if (err.code !== '23505') {
+        throw err;
+      }
+    }
+  }
+
+  throw new Error('Unable to generate a unique referral code');
 }
 
 async function getUser(username) {
@@ -348,6 +669,81 @@ async function setUserRole(username, role) {
 
 function verifyPassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
+}
+
+async function createPasswordResetToken(username, tokenHash, expiresAt) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const userResult = await client.query(
+      'SELECT id, username FROM users WHERE username = $1 FOR UPDATE',
+      [String(username || '').trim()]
+    );
+    const user = userResult.rows[0] || null;
+    if (!user) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+
+    await client.query(
+      `UPDATE password_reset_tokens
+       SET used_at = NOW()
+       WHERE user_id = $1 AND used_at IS NULL`,
+      [user.id]
+    );
+    await client.query(
+      `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+       VALUES ($1, $2, $3)`,
+      [user.id, tokenHash, expiresAt]
+    );
+    await client.query('COMMIT');
+    return user;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function resetPasswordWithToken(tokenHash, password) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const tokenResult = await client.query(
+      `SELECT token.id, token.user_id
+       FROM password_reset_tokens token
+       WHERE token.token_hash = $1
+         AND token.used_at IS NULL
+         AND token.expires_at > NOW()
+       FOR UPDATE`,
+      [tokenHash]
+    );
+    const token = tokenResult.rows[0] || null;
+    if (!token) {
+      await client.query('ROLLBACK');
+      return false;
+    }
+
+    const hash = bcrypt.hashSync(password, 10);
+    await client.query(
+      'UPDATE users SET password_hash = $1 WHERE id = $2',
+      [hash, token.user_id]
+    );
+    await client.query(
+      `UPDATE password_reset_tokens
+       SET used_at = NOW()
+       WHERE user_id = $1 AND used_at IS NULL`,
+      [token.user_id]
+    );
+    await client.query('COMMIT');
+    return true;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 // ── Score Helpers ──
@@ -842,14 +1238,30 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess) {
      )
      VALUES ($1, $2, 1, $3, $4, NOW())
      ON CONFLICT (user_id, date) DO UPDATE SET
-       attempts_count = daily_user_attempts.attempts_count + 1,
+       attempts_count = CASE
+         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE OR COALESCE(daily_user_attempts.attempts_count, 0) >= 7
+           THEN daily_user_attempts.attempts_count
+         ELSE COALESCE(daily_user_attempts.attempts_count, 0) + 1
+       END,
        best_distance_meters = CASE
+         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE
+           OR (COALESCE(daily_user_attempts.attempts_count, 0) >= 7 AND EXCLUDED.success = FALSE)
+           THEN daily_user_attempts.best_distance_meters
          WHEN daily_user_attempts.best_distance_meters IS NULL THEN EXCLUDED.best_distance_meters
          WHEN EXCLUDED.best_distance_meters < daily_user_attempts.best_distance_meters THEN EXCLUDED.best_distance_meters
          ELSE daily_user_attempts.best_distance_meters
        END,
-       success = (daily_user_attempts.success OR EXCLUDED.success),
-       last_attempt_at = NOW()
+       success = CASE
+         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE
+           THEN daily_user_attempts.success
+         ELSE (COALESCE(daily_user_attempts.success, FALSE) OR EXCLUDED.success)
+       END,
+       last_attempt_at = CASE
+         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE
+           OR (COALESCE(daily_user_attempts.attempts_count, 0) >= 7 AND EXCLUDED.success = FALSE)
+           THEN daily_user_attempts.last_attempt_at
+         ELSE NOW()
+       END
      RETURNING attempts_count, best_distance_meters, success`,
     [userId, date, distanceMeters, Boolean(isSuccess)]
   );
@@ -859,13 +1271,18 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess) {
 
 async function getDailyLeaderboard(date) {
   const res = await pool.query(
-    `SELECT u.username, u.avatar, d.attempts_count, d.success, d.best_distance_meters
+    `SELECT
+       u.username,
+       u.avatar,
+       LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
+       d.success,
+       d.best_distance_meters
      FROM daily_user_attempts d
      JOIN users u ON d.user_id = u.id
      WHERE d.date = $1 AND (d.success = TRUE OR d.attempts_count >= 7)
      ORDER BY 
        d.success DESC,
-       CASE WHEN d.success = TRUE THEN d.attempts_count ELSE NULL END ASC,
+       CASE WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7) ELSE NULL END ASC,
        CASE WHEN d.success = FALSE THEN d.best_distance_meters ELSE NULL END ASC,
        d.last_attempt_at ASC
      LIMIT 20`,
@@ -880,7 +1297,7 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
     `WITH completed AS (
        SELECT
          d.user_id,
-         d.attempts_count,
+         LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
          d.success,
          d.best_distance_meters,
          d.last_attempt_at
@@ -924,35 +1341,68 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
 
 // ── Push Notifications Helpers ──
 
-async function upsertPushSubscription(userId, subscription) {
+async function upsertPushSubscription(userId, subscription, options = {}) {
   const endpoint = String(subscription?.endpoint || '').trim();
   if (!endpoint) {
     throw new Error('Invalid push subscription endpoint');
   }
+  const vapidPublicKey = String(options?.vapidPublicKey || '').trim() || null;
 
   await pool.query(
-    `INSERT INTO push_subscriptions (user_id, endpoint, subscription_json, enabled, updated_at)
-     VALUES ($1, $2, $3::jsonb, TRUE, NOW())
+    `INSERT INTO push_subscriptions (user_id, endpoint, subscription_json, vapid_public_key, enabled, updated_at)
+     VALUES ($1, $2, $3::jsonb, $4, TRUE, NOW())
      ON CONFLICT (endpoint)
      DO UPDATE SET
        user_id = EXCLUDED.user_id,
        subscription_json = EXCLUDED.subscription_json,
+       vapid_public_key = EXCLUDED.vapid_public_key,
        enabled = TRUE,
        updated_at = NOW()`,
-    [userId, endpoint, JSON.stringify(subscription)]
+    [userId, endpoint, JSON.stringify(subscription), vapidPublicKey]
   );
 }
 
-async function getPushSubscriptionStatusForUser(userId) {
+async function getPushSubscriptionStatusForUser(userId, options = {}) {
+  const endpoint = String(options?.endpoint || '').trim();
+  const vapidPublicKey = String(options?.vapidPublicKey || '').trim();
+  const params = [userId];
+  const endpointFilter = endpoint ? 'AND endpoint = $2' : '';
+  if (endpoint) {
+    params.push(endpoint);
+  }
+  const orderBy = vapidPublicKey
+    ? `ORDER BY
+         CASE
+           WHEN enabled = TRUE AND (vapid_public_key IS NULL OR vapid_public_key = $${params.length + 1}) THEN 0
+           WHEN enabled = TRUE THEN 1
+           ELSE 2
+         END,
+         updated_at DESC`
+    : 'ORDER BY updated_at DESC';
+  if (vapidPublicKey) {
+    params.push(vapidPublicKey);
+  }
+
   const res = await pool.query(
-    `SELECT endpoint, enabled, updated_at
+    `SELECT endpoint, enabled, vapid_public_key, updated_at
      FROM push_subscriptions
-     WHERE user_id = $1 AND enabled = TRUE
-     ORDER BY updated_at DESC
+     WHERE user_id = $1 ${endpointFilter}
+     ${orderBy}
      LIMIT 1`,
-    [userId]
+    params
   );
-  return res.rows[0] || null;
+  const row = res.rows[0] || null;
+  if (!row) {
+    return null;
+  }
+
+  const storedPublicKey = String(row.vapid_public_key || '').trim();
+  const hasMatchingVapidKey = !vapidPublicKey || !storedPublicKey || storedPublicKey === vapidPublicKey;
+  return {
+    ...row,
+    active: Boolean(row.enabled && hasMatchingVapidKey),
+    stale_vapid_key: Boolean(row.enabled && !hasMatchingVapidKey),
+  };
 }
 
 async function removePushSubscriptionForUser(userId, endpoint) {
@@ -984,11 +1434,21 @@ async function removePushSubscriptionByEndpoint(endpoint) {
   );
 }
 
-async function listPushSubscriptionsDueForDate(dateStr) {
+async function listPushSubscriptionsDueForDate(dateStr, options = {}) {
+  const vapidPublicKey = String(options?.vapidPublicKey || '').trim();
+  const params = [dateStr];
+  const vapidFilter = vapidPublicKey
+    ? 'AND (ps.vapid_public_key IS NULL OR ps.vapid_public_key = $2)'
+    : '';
+  if (vapidPublicKey) {
+    params.push(vapidPublicKey);
+  }
+
   const res = await pool.query(
     `SELECT ps.endpoint, ps.subscription_json
      FROM push_subscriptions ps
      WHERE ps.enabled = TRUE
+       ${vapidFilter}
        AND (ps.last_notified_on IS NULL OR ps.last_notified_on < $1::date)
        AND NOT EXISTS (
          SELECT 1
@@ -998,7 +1458,7 @@ async function listPushSubscriptionsDueForDate(dateStr) {
            AND COALESCE(dua.attempts_count, 0) > 0
        )
      ORDER BY ps.updated_at ASC`,
-    [dateStr]
+    params
   );
   return res.rows;
 }
@@ -1295,6 +1755,257 @@ async function updateUserAvatar(userId, avatar) {
   await pool.query('UPDATE users SET avatar = $1 WHERE id = $2', [avatar, userId]);
 }
 
+// ── Referral Helpers ──
+
+async function createReferralByCode(referredUserId, referralCode) {
+  const normalizedReferredUserId = Number.parseInt(referredUserId, 10);
+  const normalizedCode = String(referralCode || '').trim().toUpperCase();
+  if (!Number.isInteger(normalizedReferredUserId) || normalizedReferredUserId <= 0) {
+    throw new Error('Invalid referred user id');
+  }
+  if (!normalizedCode) {
+    throw new Error('Missing referral code');
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const referrerResult = await client.query(
+      `SELECT id, username, referral_code
+       FROM users
+       WHERE UPPER(referral_code) = $1
+       FOR UPDATE`,
+      [normalizedCode]
+    );
+    const referrer = referrerResult.rows[0] || null;
+    if (!referrer) {
+      await client.query('ROLLBACK');
+      const error = new Error('Referral code not found');
+      error.code = 'REFERRER_NOT_FOUND';
+      throw error;
+    }
+    if (Number(referrer.id) === normalizedReferredUserId) {
+      await client.query('ROLLBACK');
+      const error = new Error('A player cannot use their own referral code');
+      error.code = 'REFERRAL_SELF_LINK';
+      throw error;
+    }
+
+    const existingResult = await client.query(
+      `SELECT id, referrer_user_id, referred_user_id, referral_code, created_at
+       FROM referrals
+       WHERE referred_user_id = $1`,
+      [normalizedReferredUserId]
+    );
+    if (existingResult.rows[0]) {
+      await client.query('COMMIT');
+      return { referral: existingResult.rows[0], alreadyLinked: true };
+    }
+
+    const insertResult = await client.query(
+      `INSERT INTO referrals (referrer_user_id, referred_user_id, referral_code)
+       VALUES ($1, $2, $3)
+       RETURNING id, referrer_user_id, referred_user_id, referral_code, created_at`,
+      [referrer.id, normalizedReferredUserId, referrer.referral_code]
+    );
+
+    await client.query('COMMIT');
+    return { referral: insertResult.rows[0], alreadyLinked: false };
+  } catch (error) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackError) {
+      // Ignore rollback errors and surface the original failure.
+    }
+    if (error?.code === '23505') {
+      const duplicate = new Error('This player is already linked to a referrer');
+      duplicate.code = 'REFERRAL_ALREADY_LINKED';
+      throw duplicate;
+    }
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getReferralByReferredUserId(referredUserId) {
+  const normalizedUserId = Number.parseInt(referredUserId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    return null;
+  }
+
+  const result = await pool.query(
+    `SELECT
+       r.*,
+       referrer.username AS referrer_username,
+       referred.username AS referred_username,
+       referred.created_at AS referred_created_at
+     FROM referrals r
+     JOIN users referrer ON referrer.id = r.referrer_user_id
+     JOIN users referred ON referred.id = r.referred_user_id
+     WHERE r.referred_user_id = $1`,
+    [normalizedUserId]
+  );
+  return result.rows[0] || null;
+}
+
+async function countFirstWeekSuccessfulDailies(userId) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    return 0;
+  }
+
+  const result = await pool.query(
+    `SELECT COUNT(DISTINCT dua.date)::int AS successful_dailies
+     FROM users u
+     JOIN daily_user_attempts dua ON dua.user_id = u.id
+     WHERE u.id = $1
+       AND dua.success = TRUE
+       AND dua.date ~ '^\\d{4}-\\d{2}-\\d{2}$'
+       AND dua.date::date >= (u.created_at AT TIME ZONE 'Europe/Paris')::date
+       AND dua.date::date < ((u.created_at AT TIME ZONE 'Europe/Paris')::date + INTERVAL '7 days')`,
+    [normalizedUserId]
+  );
+  return Number(result.rows[0]?.successful_dailies || 0);
+}
+
+async function awardUserBadge(userId, badge, metadata = {}) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0 || !badge?.id) {
+    throw new Error('Invalid badge award');
+  }
+
+  const result = await pool.query(
+    `INSERT INTO user_badges (user_id, badge_id, badge_name, badge_emoji, source, metadata)
+     VALUES ($1, $2, $3, $4, $5, $6::jsonb)
+     ON CONFLICT (user_id, badge_id) DO NOTHING
+     RETURNING id, user_id, badge_id, badge_name, badge_emoji, source, metadata, unlocked_at`,
+    [
+      normalizedUserId,
+      badge.id,
+      badge.name,
+      badge.emoji,
+      badge.source || 'referral',
+      JSON.stringify(metadata || {}),
+    ]
+  );
+  return result.rows[0] || null;
+}
+
+async function completeReferralTier(referralId, tierNumber, dailyCount = null) {
+  const normalizedReferralId = Number.parseInt(referralId, 10);
+  const normalizedTier = Number.parseInt(tierNumber, 10);
+  if (!Number.isInteger(normalizedReferralId) || normalizedReferralId <= 0 || ![1, 2, 3].includes(normalizedTier)) {
+    throw new Error('Invalid referral tier update');
+  }
+
+  const column = `tier${normalizedTier}_completed_at`;
+  const dailyCountSet = normalizedTier === 1 ? ', tier1_daily_count = GREATEST(tier1_daily_count, $2)' : '';
+  const params = normalizedTier === 1
+    ? [normalizedReferralId, Number.parseInt(dailyCount, 10) || 0]
+    : [normalizedReferralId];
+
+  const result = await pool.query(
+    `UPDATE referrals
+     SET ${column} = COALESCE(${column}, NOW()),
+         updated_at = NOW()
+         ${dailyCountSet}
+     WHERE id = $1
+     RETURNING *`,
+    params
+  );
+  return result.rows[0] || null;
+}
+
+async function updateReferralTier1DailyCount(referralId, dailyCount) {
+  const normalizedReferralId = Number.parseInt(referralId, 10);
+  const normalizedCount = Math.max(0, Number.parseInt(dailyCount, 10) || 0);
+  if (!Number.isInteger(normalizedReferralId) || normalizedReferralId <= 0) {
+    return null;
+  }
+
+  const result = await pool.query(
+    `UPDATE referrals
+     SET tier1_daily_count = GREATEST(tier1_daily_count, $2),
+         updated_at = NOW()
+     WHERE id = $1
+     RETURNING *`,
+    [normalizedReferralId, normalizedCount]
+  );
+  return result.rows[0] || null;
+}
+
+async function countTier1ReferralsForReferrer(referrerUserId) {
+  const normalizedUserId = Number.parseInt(referrerUserId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    return 0;
+  }
+
+  const result = await pool.query(
+    `SELECT COUNT(*)::int AS tier1_referrals
+     FROM referrals
+     WHERE referrer_user_id = $1
+       AND tier1_completed_at IS NOT NULL`,
+    [normalizedUserId]
+  );
+  return Number(result.rows[0]?.tier1_referrals || 0);
+}
+
+async function getReferralProfileForUser(userId) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    return null;
+  }
+
+  const referralCode = await ensureReferralCodeForUser(normalizedUserId);
+  const [badgesResult, referralStatsResult, referredByResult] = await Promise.all([
+    pool.query(
+      `SELECT badge_id, badge_name, badge_emoji, source, metadata, unlocked_at
+       FROM user_badges
+       WHERE user_id = $1
+       ORDER BY unlocked_at ASC, badge_id ASC`,
+      [normalizedUserId]
+    ),
+    pool.query(
+      `SELECT
+         COUNT(*)::int AS total_referrals,
+         COUNT(*) FILTER (WHERE tier1_completed_at IS NOT NULL)::int AS tier1_referrals,
+         COUNT(*) FILTER (WHERE tier2_completed_at IS NOT NULL)::int AS tier2_referrals,
+         COUNT(*) FILTER (WHERE tier3_completed_at IS NOT NULL)::int AS tier3_referrals
+       FROM referrals
+       WHERE referrer_user_id = $1`,
+      [normalizedUserId]
+    ),
+    pool.query(
+      `SELECT r.id, r.referrer_user_id, u.username AS referrer_username, r.created_at
+       FROM referrals r
+       JOIN users u ON u.id = r.referrer_user_id
+       WHERE r.referred_user_id = $1`,
+      [normalizedUserId]
+    ),
+  ]);
+
+  return {
+    code: referralCode,
+    stats: referralStatsResult.rows[0] || {
+      total_referrals: 0,
+      tier1_referrals: 0,
+      tier2_referrals: 0,
+      tier3_referrals: 0,
+    },
+    referredBy: referredByResult.rows[0] || null,
+    badges: badgesResult.rows.map((row) => ({
+      id: row.badge_id,
+      name: row.badge_name,
+      emoji: row.badge_emoji,
+      source: row.source,
+      metadata: row.metadata || {},
+      unlockedAt: row.unlocked_at,
+    })),
+  };
+}
+
 // ── Analytics ──
 
 async function trackStreetAnswer(streetName, mode, correct, timeSec) {
@@ -1353,10 +2064,19 @@ async function getAnalytics(limit = 20) {
   };
 }
 
-async function recordVisitHit(visitorHash) {
+async function recordVisitHit(visitorHash, visitHash) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+
+    const visitSession = await client.query(
+      `INSERT INTO visitor_sessions (session_hash, visitor_hash)
+       VALUES ($1, $2)
+       ON CONFLICT (session_hash) DO NOTHING
+       RETURNING session_hash`,
+      [visitHash, visitorHash]
+    );
+    const isNewVisit = visitSession.rowCount > 0;
 
     const inserted = await client.query(
       `INSERT INTO visitors_unique (visitor_hash)
@@ -1371,20 +2091,51 @@ async function recordVisitHit(visitorHash) {
       await client.query(
         `UPDATE visitors_unique
          SET last_seen = NOW(),
-             hits = hits + 1
+             hits = hits + $2
          WHERE visitor_hash = $1`,
-        [visitorHash]
+        [visitorHash, isNewVisit ? 1 : 0]
       );
     }
+
+    if (!isNewVisit) {
+      await client.query(
+        `UPDATE visitor_sessions
+         SET last_seen = NOW()
+         WHERE session_hash = $1 AND visitor_hash = $2`,
+        [visitHash, visitorHash]
+      );
+      const currentTotal = await client.query(
+        `INSERT INTO visitors_counter (id, total_visits)
+         SELECT 1, COALESCE(SUM(hits)::BIGINT, 0)
+         FROM visitors_unique
+         ON CONFLICT (id) DO UPDATE SET
+           total_visits = visitors_counter.total_visits
+         RETURNING total_visits`
+      );
+      await client.query('COMMIT');
+      return Number(currentTotal.rows[0]?.total_visits || 0);
+    }
+
+    const dailyUnique = await client.query(
+      `INSERT INTO visitor_daily_uniques (day, visitor_hash, first_seen_at)
+       VALUES ((NOW() AT TIME ZONE 'Europe/Paris')::DATE, $1, NOW())
+       ON CONFLICT (day, visitor_hash) DO NOTHING
+       RETURNING visitor_hash`,
+      [visitorHash]
+    );
+    const isDailyUniqueVisitor = dailyUnique.rowCount > 0;
 
     await client.query(
       `INSERT INTO visitor_daily_stats (day, unique_visitors, total_visits, updated_at)
        VALUES ((NOW() AT TIME ZONE 'Europe/Paris')::DATE, $1, 1, NOW())
        ON CONFLICT (day) DO UPDATE SET
          unique_visitors = visitor_daily_stats.unique_visitors + EXCLUDED.unique_visitors,
-         total_visits = COALESCE(visitor_daily_stats.total_visits, 0) + 1,
+         total_visits = GREATEST(
+           COALESCE(visitor_daily_stats.total_visits, 0) + 1,
+           visitor_daily_stats.unique_visitors + EXCLUDED.unique_visitors
+         ),
          updated_at = NOW()`,
-      [isNewVisitor ? 1 : 0]
+      [isDailyUniqueVisitor ? 1 : 0]
     );
 
     const total = await client.query(
@@ -1489,12 +2240,16 @@ async function clearAllScores() {
 }
 
 module.exports = {
+  pool,
   initDb,
   ping,
   createUser,
+  ensureReferralCodeForUser,
   getUser,
   getUserById,
   verifyPassword,
+  createPasswordResetToken,
+  resetPasswordWithToken,
   addScore,
   getLeaderboard,
   getAllLeaderboards,
@@ -1520,6 +2275,14 @@ module.exports = {
   listPushSubscriptionsDueForDate,
   markPushSubscriptionNotified,
   getUserStats,
+  createReferralByCode,
+  getReferralByReferredUserId,
+  countFirstWeekSuccessfulDailies,
+  awardUserBadge,
+  completeReferralTier,
+  updateReferralTier1DailyCount,
+  countTier1ReferralsForReferrer,
+  getReferralProfileForUser,
   trackStreetAnswer,
   getAnalytics,
   recordVisitHit,

@@ -1,6 +1,6 @@
 import { triggerHaptic } from "./haptics.js";
 
-const SOUND_STORAGE_KEY = "parici-sound";
+const SOUND_STORAGE_KEY = "camino-paris-sound";
 
 let soundEnabled = localStorage.getItem(SOUND_STORAGE_KEY) !== "off";
 let audioContext = null;

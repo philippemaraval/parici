@@ -1,5 +1,5 @@
-const INSTALL_BANNER_SEEN_KEY = "parici_install_banner_seen";
-const INSTALL_BANNER_REMIND_AT_KEY = "parici_install_banner_remind_at";
+const INSTALL_BANNER_SEEN_KEY = "camino_paris_install_banner_seen";
+const INSTALL_BANNER_REMIND_AT_KEY = "camino_paris_install_banner_remind_at";
 
 const LATER_REMIND_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
 const IOS_SHEET_REMIND_DELAY_MS = 3 * 24 * 60 * 60 * 1000;

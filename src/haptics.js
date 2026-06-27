@@ -1,4 +1,4 @@
-const HAPTICS_ENABLED_KEY = "parici_haptics_enabled";
+const HAPTICS_ENABLED_KEY = "camino_paris_haptics_enabled";
 
 export function isHapticsEnabled() {
   // Enabled by default unless explicitly disabled in storage.

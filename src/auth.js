@@ -1,4 +1,4 @@
-const USER_STORAGE_KEY = "parici_user";
+const USER_STORAGE_KEY = "camino_paris_user";
 
 export function saveCurrentUserToStorage(user) {
   if (!user) {

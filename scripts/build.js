@@ -25,18 +25,20 @@ const DIST_INCLUDE = [
   "index.html",
   "arbre-rangs.html",
   "regles.html",
+  "reset-password.html",
   "main.js",
   "main.js.map",
   "main.js.min",
   "style.css",
   "style.css.min",
   "admin",
+  "src/public",
   "data_rules.js",
   "data_rules.js.min",
   "sw.js",
   "sw.js.min",
   "site.webmanifest",
-  "parici-favicon.ico",
+  "camino-paris-favicon.ico",
   "data",
 ];
 
@@ -147,7 +149,7 @@ function minifyCss(relativePath) {
 }
 
 async function build() {
-  console.log("🔨 Building Parici...\n");
+  console.log("🔨 Building Camino Paris...\n");
 
   await buildFrontendBundle();
   await minifyJsFile("data_rules.js");

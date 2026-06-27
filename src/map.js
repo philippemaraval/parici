@@ -124,38 +124,144 @@ export function getDistanceToFeature(lat, lon, geometry) {
   return Number.isFinite(minDistance) ? minDistance : 0;
 }
 
-export function calculateStreetLengthFromFeatures(streetName, allStreetFeatures, normalizeName) {
+function interpolateCoordinates(fromCoords, toCoords, ratio) {
+  const [fromLon, fromLat] = fromCoords;
+  const [toLon, toLat] = toCoords;
+  return [
+    fromLon + (toLon - fromLon) * ratio,
+    fromLat + (toLat - fromLat) * ratio,
+  ];
+}
+
+function collectLineSegmentsFromGeometry(geometry, segments) {
+  if (!geometry || !Array.isArray(segments)) {
+    return;
+  }
+
+  function inspectLine(lineCoords) {
+    if (!Array.isArray(lineCoords)) {
+      return;
+    }
+    for (let index = 0; index < lineCoords.length - 1; index++) {
+      const fromCoords = lineCoords[index];
+      const toCoords = lineCoords[index + 1];
+      if (!Array.isArray(fromCoords) || !Array.isArray(toCoords)) {
+        continue;
+      }
+      const lengthMeters = getDistanceMeters(
+        fromCoords[1],
+        fromCoords[0],
+        toCoords[1],
+        toCoords[0],
+      );
+      if (Number.isFinite(lengthMeters) && lengthMeters > 0) {
+        segments.push({ fromCoords, toCoords, lengthMeters });
+      }
+    }
+  }
+
+  if (geometry.type === "LineString") {
+    inspectLine(geometry.coordinates);
+  } else if (geometry.type === "MultiLineString") {
+    geometry.coordinates.forEach(inspectLine);
+  } else if (geometry.type === "Polygon") {
+    geometry.coordinates.forEach(inspectLine);
+  } else if (geometry.type === "MultiPolygon") {
+    geometry.coordinates.forEach((polygonCoords) => polygonCoords.forEach(inspectLine));
+  }
+}
+
+export function computeFeatureCollectionMidpoint(featureCollection) {
+  const features =
+    featureCollection?.type === "FeatureCollection"
+      ? Array.isArray(featureCollection.features)
+        ? featureCollection.features
+        : []
+      : Array.isArray(featureCollection)
+        ? featureCollection
+        : featureCollection
+          ? [featureCollection]
+          : [];
+  const segments = [];
+
+  features.forEach((feature) => {
+    collectLineSegmentsFromGeometry(feature?.geometry || feature, segments);
+  });
+
+  if (segments.length === 0) {
+    const firstPointFeature = features.find(
+      (feature) => (feature?.geometry || feature)?.type === "Point",
+    );
+    if (firstPointFeature) {
+      return (firstPointFeature.geometry || firstPointFeature).coordinates;
+    }
+    return null;
+  }
+
+  const totalMeters = segments.reduce((sum, segment) => sum + segment.lengthMeters, 0);
+  let remainingMeters = totalMeters / 2;
+
+  for (const segment of segments) {
+    if (remainingMeters <= segment.lengthMeters) {
+      return interpolateCoordinates(
+        segment.fromCoords,
+        segment.toCoords,
+        remainingMeters / segment.lengthMeters,
+      );
+    }
+    remainingMeters -= segment.lengthMeters;
+  }
+
+  return segments[segments.length - 1].toCoords;
+}
+
+export function calculateStreetLengthFromFeatures(streetTarget, allStreetFeatures, normalizeName) {
   try {
-    if (!streetName || !Array.isArray(allStreetFeatures)) {
+    if (!streetTarget || !Array.isArray(allStreetFeatures)) {
       return 0;
     }
 
+    const targetProperties = streetTarget.properties || streetTarget;
+    const streetId = String(
+      targetProperties.street_id || targetProperties.streetId || targetProperties.id || "",
+    ).trim();
+    const streetName =
+      typeof streetTarget === "string"
+        ? streetTarget
+        : targetProperties.streetName || targetProperties.name || "";
     const normalizedStreetName = normalizeName(streetName);
-    const feature = allStreetFeatures.find(
-      (candidate) =>
-        candidate &&
-        candidate.properties &&
+    const features = allStreetFeatures.filter((candidate) => {
+      if (!candidate?.properties || !candidate.geometry) {
+        return false;
+      }
+      if (streetId) {
+        return candidate.properties.street_id === streetId || candidate.properties.id === streetId;
+      }
+      return (
         candidate.properties.name &&
-        normalizeName(candidate.properties.name) === normalizedStreetName,
-    );
-    if (!feature || !feature.geometry || !feature.geometry.coordinates) {
+        normalizeName(candidate.properties.name) === normalizedStreetName
+      );
+    });
+    if (features.length === 0) {
       return 0;
     }
 
     let totalMeters = 0;
-    const geometry = feature.geometry;
-    if (geometry.type === "LineString") {
-      for (let index = 0; index < geometry.coordinates.length - 1; index++) {
-        const [lon1, lat1] = geometry.coordinates[index];
-        const [lon2, lat2] = geometry.coordinates[index + 1];
-        totalMeters += getDistanceMeters(lat1, lon1, lat2, lon2);
-      }
-    } else if (geometry.type === "MultiLineString") {
-      for (const line of geometry.coordinates) {
-        for (let index = 0; index < line.length - 1; index++) {
-          const [lon1, lat1] = line[index];
-          const [lon2, lat2] = line[index + 1];
+    for (const feature of features) {
+      const geometry = feature.geometry;
+      if (geometry.type === "LineString") {
+        for (let index = 0; index < geometry.coordinates.length - 1; index++) {
+          const [lon1, lat1] = geometry.coordinates[index];
+          const [lon2, lat2] = geometry.coordinates[index + 1];
           totalMeters += getDistanceMeters(lat1, lon1, lat2, lon2);
+        }
+      } else if (geometry.type === "MultiLineString") {
+        for (const line of geometry.coordinates) {
+          for (let index = 0; index < line.length - 1; index++) {
+            const [lon1, lat1] = line[index];
+            const [lon2, lat2] = line[index + 1];
+            totalMeters += getDistanceMeters(lat1, lon1, lat2, lon2);
+          }
         }
       }
     }

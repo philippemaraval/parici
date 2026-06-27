@@ -8,6 +8,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const webPush = require('web-push');
 const db = require('./database');
+const { REFERRAL_EVENTS, createReferralService } = require('./referrals');
 const { shouldKeepStreetForGame } = require('../street_filter');
 const {
     FAMOUS_STREET_NAMES: DEFAULT_FAMOUS_STREET_NAMES,
@@ -74,9 +75,15 @@ const PUSH_REMINDER_HOUR = readEnvIntegerInRange('PUSH_REMINDER_HOUR', 10, 0, 23
 const PUSH_REMINDER_MINUTE = readEnvIntegerInRange('PUSH_REMINDER_MINUTE', 0, 0, 59);
 const PUSH_REMINDER_TIMEZONE = process.env.PUSH_REMINDER_TIMEZONE || 'Europe/Paris';
 const DAILY_TIMEZONE = process.env.DAILY_TIMEZONE || PUSH_REMINDER_TIMEZONE || 'Europe/Paris';
+const DAILY_ROLLOVER_HOUR = readEnvIntegerInRange('DAILY_ROLLOVER_HOUR', 3, 0, 23);
 const LOGIN_RATE_LIMIT_WINDOW_MS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_WINDOW_MS', 10 * 60 * 1000, 1_000, 3_600_000);
 const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_MAX_ATTEMPTS', 8, 1, 100);
 const LOGIN_RATE_LIMIT_BLOCK_MS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_BLOCK_MS', 10 * 60 * 1000, 1_000, 3_600_000);
+const PASSWORD_RESET_EXPIRATION_HOURS = readEnvIntegerInRange('PASSWORD_RESET_EXPIRATION_HOURS', 24, 1, 168);
+const PASSWORD_RESET_FRONTEND_URL = readFirstDefinedEnv([
+    'PASSWORD_RESET_FRONTEND_URL',
+    'FRONTEND_URL',
+], 'https://camino-ajm.pages.dev');
 const DEFAULT_EDITOR_USERNAMES = new Set(['mphil', 'mphil12', 'mgm']);
 const DEFAULT_EDITOR_USERNAME_PATTERNS = [
     /^mphil\d*$/i,
@@ -140,7 +147,7 @@ const GITHUB_OSM_SYNC_REPOSITORY = readFirstDefinedEnv([
     'GITHUB_OSM_SYNC_REPOSITORY',
     'GITHUB_SYNC_REPOSITORY',
     'GITHUB_REPOSITORY',
-], 'philippemaraval/Parici');
+], 'philippemaraval/parici');
 const GITHUB_OSM_SYNC_WORKFLOW_ID = process.env.GITHUB_OSM_SYNC_WORKFLOW_ID || 'sync-osm.yml';
 const GITHUB_OSM_SYNC_REF = process.env.GITHUB_OSM_SYNC_REF || 'main';
 const GITHUB_API_TIMEOUT_MS = readEnvIntegerInRange('GITHUB_API_TIMEOUT_MS', 15_000, 1_000, 60_000);
@@ -161,6 +168,7 @@ const allLeaderboardsCache = createAsyncTtlCache(LEADERBOARDS_CACHE_TTL_MS);
 const monthlyLeaderboardsCache = createAsyncTtlCache(LEADERBOARDS_CACHE_TTL_MS);
 const dailyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const dailyWeeklyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
+const referralService = createReferralService(db);
 
 if (!JWT_SECRET_KEY) {
     if (IS_PRODUCTION) {
@@ -294,8 +302,8 @@ function warmCriticalCachesInBackground() {
         getCachedPublicContentSnapshot(),
         getCachedLeaderboards('all'),
         getCachedLeaderboards('month'),
-        getCachedDailyLeaderboard(getDateKeyInZone(DAILY_TIMEZONE)),
-        getCachedDailyWeeklyLeaderboard(getDateKeyInZone(DAILY_TIMEZONE)),
+        getCachedDailyLeaderboard(getDailyDateKey()),
+        getCachedDailyWeeklyLeaderboard(getDailyDateKey()),
     ]).catch(() => {
         // Promise.allSettled should not reject, but keep background warming silent.
     });
@@ -470,7 +478,7 @@ app.use((err, req, res, next) => {
     return next(err);
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '8mb' }));
 
 app.get('/api/health', asyncHandler(async (req, res) => {
     const startedAtMs = Date.now();
@@ -624,6 +632,7 @@ async function getCurrentAuthenticatedUser(authUser) {
         username: String(user.username || ''),
         role: normalizeUserRole(user.role),
         avatar: user.avatar || '👤',
+        referralCode: user.referral_code || null,
     };
 }
 
@@ -653,6 +662,13 @@ function getTimePartsInZone(date, timeZone) {
 
 function getDateKeyInZone(timeZone) {
     return getTimePartsInZone(new Date(), timeZone).dateStr;
+}
+
+function getDailyDateKey(date = new Date()) {
+    return getTimePartsInZone(
+        new Date(date.getTime() - DAILY_ROLLOVER_HOUR * 60 * 60 * 1000),
+        DAILY_TIMEZONE
+    ).dateStr;
 }
 
 function slugifyDailyStreetName(streetName) {
@@ -738,6 +754,56 @@ function parseCsvRows(raw) {
     return rows;
 }
 
+function parseCsvRows(raw) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+
+    for (let index = 0; index < raw.length; index += 1) {
+        const char = raw[index];
+        const next = raw[index + 1];
+
+        if (char === '"') {
+            if (inQuotes && next === '"') {
+                field += '"';
+                index += 1;
+            } else {
+                inQuotes = !inQuotes;
+            }
+            continue;
+        }
+
+        if (char === ',' && !inQuotes) {
+            row.push(field);
+            field = '';
+            continue;
+        }
+
+        if ((char === '\n' || char === '\r') && !inQuotes) {
+            if (char === '\r' && next === '\n') {
+                index += 1;
+            }
+            row.push(field);
+            if (row.some((value) => String(value || '').trim())) {
+                rows.push(row);
+            }
+            row = [];
+            field = '';
+            continue;
+        }
+
+        field += char;
+    }
+
+    row.push(field);
+    if (row.some((value) => String(value || '').trim())) {
+        rows.push(row);
+    }
+
+    return rows;
+}
+
 function isValidPushSubscription(subscription) {
     if (!subscription || typeof subscription !== 'object') {
         return false;
@@ -754,7 +820,7 @@ function isValidPushSubscription(subscription) {
 
 function getDailyReminderPayload() {
     return JSON.stringify({
-        title: 'Parici Daily',
+        title: 'Camino Paris Daily',
         body: 'Le Daily est dispo. Lance ta partie du jour !',
         url: '/',
         tag: 'parici-daily-reminder',
@@ -1081,7 +1147,7 @@ function githubJsonRequest({ method, apiPath, token, body = null }) {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Content-Length': Buffer.byteLength(requestBody),
-                    'User-Agent': 'Parici-OSM-Sync',
+                    'User-Agent': 'Camino-Paris-OSM-Sync',
                     'X-GitHub-Api-Version': '2022-11-28',
                 },
             },
@@ -1554,8 +1620,9 @@ const SCORE_MODE_ALIASES = {
     main: 'rues-principales',
     famous: 'rues-celebres',
 };
-const ALLOWED_SCORE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments']);
+const ALLOWED_SCORE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'lignes-transports-idf']);
 const ALLOWED_SCORE_GAME_TYPES = new Set(['classique', 'marathon', 'chrono']);
+const ALLOWED_FRIEND_CHALLENGE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'lignes-transports-idf']);
 const ALLOWED_FRIEND_CHALLENGE_GAME_TYPES = new Set(['classique', 'marathon', 'chrono']);
 const MAX_SCORE_ITEMS = 100000;
 const MAX_SCORE_SECONDS = 24 * 60 * 60;
@@ -1689,7 +1756,7 @@ function parseFriendChallengeCreateSubmission(body) {
     const rawMode = String(body?.mode || '').trim();
     const mode = SCORE_MODE_ALIASES[rawMode] || rawMode;
     const gameType = String(body?.gameType || '').trim();
-    if (!ALLOWED_SCORE_MODES.has(mode) || !ALLOWED_FRIEND_CHALLENGE_GAME_TYPES.has(gameType)) {
+    if (!ALLOWED_FRIEND_CHALLENGE_MODES.has(mode) || !ALLOWED_FRIEND_CHALLENGE_GAME_TYPES.has(gameType)) {
         return { ok: false, error: 'Invalid mode or gameType' };
     }
 
@@ -1874,22 +1941,69 @@ function clearLoginRateLimit(key) {
     loginRateLimitStore.delete(key);
 }
 
+function hashPasswordResetToken(token) {
+    return crypto.createHash('sha256').update(String(token || ''), 'utf8').digest('hex');
+}
+
 // ----------------------
 // Auth Routes
 // ----------------------
 
 app.post('/api/register', asyncHandler(async (req, res) => {
     const { username, password } = req.body;
+    const referralCode = String(req.body?.referralCode || '').trim();
     if (!username || !password) return res.status(400).json({ error: 'Missing fields' });
 
     try {
         const userId = await db.createUser(username, password);
+        let referral = null;
+        let referralWarning = null;
+        if (referralCode) {
+            try {
+                referral = await db.createReferralByCode(userId, referralCode);
+            } catch (referralError) {
+                referralWarning = referralError?.code || 'REFERRAL_LINK_FAILED';
+            }
+        }
         const role = USER_ROLE_PLAYER;
+        const createdReferralCode = await db.ensureReferralCodeForUser(userId);
         const token = jwt.sign({ id: userId, username, role }, EFFECTIVE_JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, username, avatar: '👤', role });
+        res.json({ token, id: userId, username, avatar: '👤', role, referralCode: createdReferralCode, referral, referralWarning });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
+}));
+
+app.post('/api/referrals/claim', authenticateToken, asyncHandler(async (req, res) => {
+    const referralCode = String(req.body?.referralCode || '').trim();
+    if (!referralCode) {
+        return res.status(400).json({ error: 'Missing referral code', code: 'REFERRAL_CODE_MISSING' });
+    }
+
+    try {
+        const result = await db.createReferralByCode(req.user.id, referralCode);
+        return res.json({ success: true, ...result });
+    } catch (error) {
+        const status = error?.code === 'REFERRER_NOT_FOUND' ? 404 : 400;
+        return res.status(status).json({
+            error: error?.message || 'Failed to claim referral code',
+            code: error?.code || 'REFERRAL_LINK_FAILED',
+        });
+    }
+}));
+
+app.post('/api/admin/referrals/progress', requireAdminApiKey, asyncHandler(async (req, res) => {
+    const filleulId = Number.parseInt(req.body?.filleulId, 10);
+    const eventType = String(req.body?.eventType || '').trim();
+    if (!Number.isInteger(filleulId) || filleulId <= 0) {
+        return res.status(400).json({ error: 'Invalid filleul id', code: 'REFERRAL_FILLEUL_INVALID' });
+    }
+    if (!REFERRAL_EVENTS.has(eventType)) {
+        return res.status(400).json({ error: 'Unsupported referral event', code: 'REFERRAL_EVENT_UNSUPPORTED' });
+    }
+
+    const result = await referralService.checkReferralProgress(filleulId, eventType);
+    return res.json({ success: true, ...result });
 }));
 
 app.post('/api/login', asyncHandler(async (req, res) => {
@@ -1916,8 +2030,30 @@ app.post('/api/login', asyncHandler(async (req, res) => {
 
     clearLoginRateLimit(rateKey);
     const role = normalizeUserRole(user.role);
+    const referralCode = await db.ensureReferralCodeForUser(user.id);
     const token = jwt.sign({ id: user.id, username: user.username, role }, EFFECTIVE_JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, username: user.username, avatar: user.avatar || '👤', role });
+    res.json({ token, id: user.id, username: user.username, avatar: user.avatar || '👤', role, referralCode });
+}));
+
+app.post('/api/password-reset', asyncHandler(async (req, res) => {
+    const token = String(req.body?.token || '').trim();
+    const password = String(req.body?.password || '');
+    if (!token || !password) {
+        return res.status(400).json({ error: 'Missing fields' });
+    }
+    if (token.length < 32 || token.length > 256) {
+        return res.status(400).json({ error: 'Invalid or expired reset link' });
+    }
+    if (password.length < 8 || password.length > 200) {
+        return res.status(400).json({ error: 'Password must contain between 8 and 200 characters' });
+    }
+
+    const didReset = await db.resetPasswordWithToken(hashPasswordResetToken(token), password);
+    if (!didReset) {
+        return res.status(400).json({ error: 'Invalid or expired reset link' });
+    }
+
+    return res.json({ success: true });
 }));
 
 function normalizeStreetInfoMode(mode) {
@@ -2359,10 +2495,12 @@ app.get('/api/notifications/public-key', asyncHandler(async (req, res) => {
 app.get('/api/notifications/status', authenticateToken, async (req, res) => {
     try {
         await ensurePushRuntimeReady();
+        const endpoint = String(req.query?.endpoint || '').trim();
         if (!pushRuntime.enabled) {
             return res.json({
                 enabled: false,
                 subscribed: false,
+                currentSubscribed: false,
                 reminder: {
                     hour: PUSH_REMINDER_HOUR,
                     minute: PUSH_REMINDER_MINUTE,
@@ -2371,11 +2509,17 @@ app.get('/api/notifications/status', authenticateToken, async (req, res) => {
             });
         }
 
-        const subscription = await db.getPushSubscriptionStatusForUser(req.user.id);
+        const subscription = await db.getPushSubscriptionStatusForUser(req.user.id, {
+            endpoint,
+            vapidPublicKey: pushRuntime.publicKey,
+        });
+        const subscribed = Boolean(subscription?.active);
         return res.json({
             enabled: true,
-            subscribed: Boolean(subscription),
+            subscribed,
+            currentSubscribed: endpoint ? Boolean(subscription?.active && subscription.endpoint === endpoint) : subscribed,
             endpoint: subscription?.endpoint || null,
+            staleVapidKey: Boolean(subscription?.stale_vapid_key),
             source: pushRuntime.source,
             reminder: {
                 hour: PUSH_REMINDER_HOUR,
@@ -2385,7 +2529,17 @@ app.get('/api/notifications/status', authenticateToken, async (req, res) => {
         });
     } catch (err) {
         console.error('Push status error:', err);
-        return res.status(500).json({ error: 'Failed to load notification status' });
+        return res.json({
+            enabled: false,
+            subscribed: false,
+            currentSubscribed: false,
+            warning: 'notification_status_unavailable',
+            reminder: {
+                hour: PUSH_REMINDER_HOUR,
+                minute: PUSH_REMINDER_MINUTE,
+                timezone: PUSH_REMINDER_TIMEZONE,
+            },
+        });
     }
 });
 
@@ -2401,7 +2555,9 @@ app.post('/api/notifications/subscribe', authenticateToken, asyncHandler(async (
     }
 
     try {
-        await db.upsertPushSubscription(req.user.id, subscription);
+        await db.upsertPushSubscription(req.user.id, subscription, {
+            vapidPublicKey: pushRuntime.publicKey,
+        });
         return res.json({
             success: true,
             reminder: {
@@ -2650,8 +2806,10 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     }
 
     const payload = {
+        userId: currentUser.id,
         username: currentUser.username,
         avatar: currentUser.avatar || '👤',
+        referralCode: currentUser.referralCode || null,
         ...getEmptyProfileStats(),
     };
 
@@ -2667,6 +2825,18 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             message: err?.message || 'Unknown profile stats error',
         });
         payload.profileWarning = 'partial_profile_stats_unavailable';
+    }
+
+    try {
+        payload.referrals = await db.getReferralProfileForUser(currentUser.id);
+        payload.referralCode = payload.referrals?.code || payload.referralCode;
+    } catch (err) {
+        console.error('Profile referral error:', {
+            userId: currentUser.id,
+            username: currentUser.username,
+            message: err?.message || 'Unknown referral profile error',
+        });
+        payload.referralWarning = 'referral_profile_unavailable';
     }
 
     return res.json(payload);
@@ -2722,16 +2892,34 @@ function extractVisitorId(req) {
     return '';
 }
 
+function extractVisitId(req) {
+    if (typeof req.body?.visitId === 'string') {
+        return req.body.visitId.trim();
+    }
+    if (typeof req.query?.visitId === 'string') {
+        return req.query.visitId.trim();
+    }
+    return '';
+}
+
 async function handleVisitorHit(req, res) {
     const visitorId = extractVisitorId(req);
+    const visitId = extractVisitId(req);
 
     if (!/^[a-zA-Z0-9_-]{16,128}$/.test(visitorId)) {
         return res.status(400).json({ error: 'Invalid visitor id' });
     }
+    if (visitId && !/^[a-zA-Z0-9_-]{16,128}$/.test(visitId)) {
+        return res.status(400).json({ error: 'Invalid visit id' });
+    }
 
     try {
         const visitorHash = crypto.createHash('sha256').update(visitorId).digest('hex');
-        const visits = await db.recordVisitHit(visitorHash);
+        const visitHash = crypto
+            .createHash('sha256')
+            .update(visitId || `legacy:${visitorHash}`)
+            .digest('hex');
+        const visits = await db.recordVisitHit(visitorHash, visitHash);
         res.json({ visits });
     } catch (err) {
         console.error('Visitor counter error:', err);
@@ -3393,7 +3581,7 @@ function dateHash(dateStr) {
 }
 
 async function ensureDailyTarget() {
-    const date = getDateKeyInZone(DAILY_TIMEZONE);
+    const date = getDailyDateKey();
     let target = await db.getDailyTarget(date);
     const manifestEntry = getDailyManifestEntryByDate(date);
 
@@ -3561,6 +3749,10 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
             invalidateAsyncTtlCache(dailyWeeklyLeaderboardCache);
         }
 
+        if (result.success) {
+            result.referralProgress = await referralService.checkReferralProgress(req.user.id, 'daily_completed');
+        }
+
         return res.json(result);
     } catch (err) {
         console.error('Daily guess error:', err);
@@ -3570,7 +3762,7 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
 
 app.get('/api/daily/leaderboard', async (req, res) => {
     try {
-        const date = getDateKeyInZone(DAILY_TIMEZONE);
+        const date = getDailyDateKey();
         const rows = await getCachedDailyLeaderboard(date);
         res.json(rows);
     } catch (err) {
@@ -3581,7 +3773,7 @@ app.get('/api/daily/leaderboard', async (req, res) => {
 
 app.get('/api/daily/leaderboard/weekly', async (req, res) => {
     try {
-        const date = getDateKeyInZone(DAILY_TIMEZONE);
+        const date = getDailyDateKey();
         const payload = await getCachedDailyWeeklyLeaderboard(date);
         res.json(payload);
     } catch (err) {
@@ -3596,7 +3788,9 @@ async function sendDailyReminderPushesForDate(dateStr) {
     }
 
     const payload = getDailyReminderPayload();
-    const subscriptions = await db.listPushSubscriptionsDueForDate(dateStr);
+    const subscriptions = await db.listPushSubscriptionsDueForDate(dateStr, {
+        vapidPublicKey: pushRuntime.publicKey,
+    });
 
     let sent = 0;
     let removed = 0;
@@ -3612,9 +3806,9 @@ async function sendDailyReminderPushesForDate(dateStr) {
             sent += 1;
         } catch (err) {
             const statusCode = Number(err?.statusCode || 0);
-            // 404/410 = endpoint gone; 401/403 = VAPID key mismatch (stale subscription).
-            // In all cases the subscription is unrecoverable and must be removed.
-            if (statusCode === 404 || statusCode === 410 || statusCode === 401 || statusCode === 403) {
+            // 404/410 means the push service says the endpoint is gone.
+            // 401/403 can also be transient server/VAPID auth trouble, so keep the row and retry.
+            if (statusCode === 404 || statusCode === 410) {
                 await db.removePushSubscriptionByEndpoint(endpoint);
                 removed += 1;
             } else {
@@ -3744,6 +3938,29 @@ app.post('/api/admin/users/role', requireAdminApiKey, asyncHandler(async (req, r
     return res.json({
         success: true,
         user: updatedUser,
+    });
+}));
+
+app.post('/api/admin/users/password-reset-link', requireAdminApiKey, asyncHandler(async (req, res) => {
+    const username = String(req.body?.username || '').trim();
+    if (!username) {
+        return res.status(400).json({ error: 'Missing username' });
+    }
+
+    const token = crypto.randomBytes(32).toString('base64url');
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_EXPIRATION_HOURS * 60 * 60 * 1000);
+    const user = await db.createPasswordResetToken(username, hashPasswordResetToken(token), expiresAt);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const resetUrl = new URL('/reset-password.html', PASSWORD_RESET_FRONTEND_URL);
+    resetUrl.searchParams.set('token', token);
+    return res.json({
+        success: true,
+        username: user.username,
+        resetUrl: resetUrl.toString(),
+        expiresAt: expiresAt.toISOString(),
     });
 }));
 

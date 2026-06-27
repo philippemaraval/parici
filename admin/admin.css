@@ -93,6 +93,17 @@ button:hover {
   background: #edf2fb;
 }
 
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text);
+  text-decoration: none;
+}
+
 .btn-primary {
   background: var(--primary);
   border-color: var(--primary);

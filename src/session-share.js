@@ -35,7 +35,9 @@ function getSessionResultLine({
   poolSize,
 }) {
   const itemLabel =
-    zoneMode === "monuments"
+    zoneMode === "lignes-transports-idf"
+      ? "lignes"
+    : zoneMode === "monuments"
       ? "monuments"
       : zoneMode === "arrondissements-ville"
         ? "arrondissements"
@@ -78,7 +80,7 @@ export function buildSessionShareText({
     year: "numeric",
   }).format(now);
 
-  let header = `🗺️ Parici — ${dateLabel}`;
+  let header = `🗺️ Camino Paris — ${dateLabel}`;
   header += `\n🧩 ${modeLabel} • ${zoneLabel}`;
   if (arrondissementName) {
     header += ` (${arrondissementName})`;
@@ -130,7 +132,7 @@ export async function shareSessionShareText(text) {
 
   try {
     await navigator.share({
-      title: "Parici - Résultat de session",
+      title: "Camino Paris - Résultat de session",
       text,
     });
     return true;

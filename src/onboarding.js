@@ -1,10 +1,14 @@
 import { API_URL } from "./config.js";
 
-const ONBOARDING_SEEN_KEY = "parici-onboarding-seen";
-const ONBOARDING_LEGACY_KEY = "parici-onboarded";
+const ONBOARDING_SEEN_KEY = "camino-paris-onboarding-seen";
+const ONBOARDING_LEGACY_KEY = "camino-paris-onboarded";
 const ONBOARDING_COOKIE_MAX_AGE_SECONDS = 31536000;
-const VISITOR_ID_STORAGE_KEY = "parici_visitor_id";
-const VISITOR_COUNT_CACHE_KEY = "parici_visits_cache";
+const VISITOR_ID_STORAGE_KEY = "camino_paris_visitor_id";
+const VISIT_SESSION_STORAGE_KEY = "camino_paris_visit_session";
+const VISITOR_COUNT_CACHE_KEY = "camino_paris_visits_cache";
+const VISIT_SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+const VISIT_SESSION_HEARTBEAT_MS = 60 * 1000;
+let visitSessionHeartbeatId = null;
 
 function readPersistentFlag(flagKey) {
   try {
@@ -80,6 +84,64 @@ function getOrCreateVisitorId() {
   return newVisitorId;
 }
 
+function getOrCreateVisitId() {
+  const now = Date.now();
+
+  try {
+    const storedSession = JSON.parse(
+      localStorage.getItem(VISIT_SESSION_STORAGE_KEY) || "null",
+    );
+    if (
+      isValidVisitorId(storedSession?.id) &&
+      Number.isFinite(storedSession?.lastSeenAt) &&
+      now - storedSession.lastSeenAt < VISIT_SESSION_TIMEOUT_MS
+    ) {
+      localStorage.setItem(
+        VISIT_SESSION_STORAGE_KEY,
+        JSON.stringify({ id: storedSession.id, lastSeenAt: now }),
+      );
+      return storedSession.id;
+    }
+  } catch (error) {}
+
+  const visitId = generateVisitorId();
+  if (!isValidVisitorId(visitId)) {
+    return "";
+  }
+
+  try {
+    localStorage.setItem(
+      VISIT_SESSION_STORAGE_KEY,
+      JSON.stringify({ id: visitId, lastSeenAt: now }),
+    );
+  } catch (error) {}
+
+  return visitId;
+}
+
+function startVisitSessionHeartbeat(visitId) {
+  if (visitSessionHeartbeatId !== null) {
+    return;
+  }
+
+  visitSessionHeartbeatId = window.setInterval(() => {
+    try {
+      const storedSession = JSON.parse(
+        localStorage.getItem(VISIT_SESSION_STORAGE_KEY) || "null",
+      );
+      if (storedSession?.id !== visitId) {
+        window.clearInterval(visitSessionHeartbeatId);
+        visitSessionHeartbeatId = null;
+        return;
+      }
+      localStorage.setItem(
+        VISIT_SESSION_STORAGE_KEY,
+        JSON.stringify({ id: visitId, lastSeenAt: Date.now() }),
+      );
+    } catch (error) {}
+  }, VISIT_SESSION_HEARTBEAT_MS);
+}
+
 function updateVisitorCounterLabel(visits) {
   const counter = document.getElementById("visitor-counter");
   if (!counter || !Number.isFinite(visits) || visits < 0) {
@@ -143,7 +205,8 @@ export async function loadUniqueVisitorCounter() {
   }
 
   const visitorId = getOrCreateVisitorId();
-  if (!visitorId) {
+  const visitId = getOrCreateVisitId();
+  if (!visitorId || !visitId) {
     const fallbackCount = await fetchVisits(`${API_URL}/api/visitors/count`);
     if (fallbackCount !== null) {
       updateVisitorCounterLabel(fallbackCount);
@@ -151,11 +214,12 @@ export async function loadUniqueVisitorCounter() {
     }
     return;
   }
+  startVisitSessionHeartbeat(visitId);
 
   const postHitVisits = await fetchVisits(`${API_URL}/api/visitors/hit`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ visitorId }),
+    body: JSON.stringify({ visitorId, visitId }),
   });
   if (postHitVisits !== null) {
     updateVisitorCounterLabel(postHitVisits);
@@ -164,7 +228,7 @@ export async function loadUniqueVisitorCounter() {
   }
 
   const getHitVisits = await fetchVisits(
-    `${API_URL}/api/visitors/hit?visitorId=${encodeURIComponent(visitorId)}`,
+    `${API_URL}/api/visitors/hit?visitorId=${encodeURIComponent(visitorId)}&visitId=${encodeURIComponent(visitId)}`,
   );
   if (getHitVisits !== null) {
     updateVisitorCounterLabel(getHitVisits);

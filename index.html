@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parici - Jeu des rues de Paris</title>
+  <title>Camino Paris - Jeu des rues de Paris</title>
 
   <!-- Google Fonts : Montserrat (titres), Nunito (texte), JetBrains Mono (chiffres) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,12 +16,12 @@
     rel="stylesheet">
 
   <!-- Favicons pour toutes les plateformes -->
-  <link rel="icon" type="image/x-icon" href="/parici-favicon.ico/favicon.ico">
-  <link rel="icon" type="image/png" href="/parici-favicon.ico/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="/parici-favicon.ico/favicon-16x16.png" sizes="16x16">
-  <link rel="apple-touch-icon" sizes="180x180" href="/parici-favicon.ico/apple-icon-180x180.png">
+  <link rel="icon" type="image/x-icon" href="/camino-paris-favicon.ico/favicon.ico">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/camino-paris-favicon.ico/apple-icon-180x180.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta name="msapplication-config" content="/parici-favicon.ico/browserconfig.xml">
+  <meta name="msapplication-config" content="/camino-paris-favicon.ico/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
   <link rel="stylesheet" href="style.css?v=20260527a">
@@ -40,69 +40,126 @@
           ⚠️ Mode hors-ligne — les scores ne seront pas sauvegardés
         </div>
         <!-- Bandeau titre -->
-        <header class="panel header-panel">
+        <header class="panel header-panel site-header">
           <div class="header-main">
-            <h1 class="header-title"><a href="/" class="header-title-link">Parici</a></h1>
+            <h1 class="header-title"><a href="/" class="header-title-link">Camino Paris</a></h1>
             <p class="header-subtitle">Connaissez-vous vraiment votre ville ?</p>
           </div>
 
-          <div id="app-version" class="app-version-pill" aria-label="Version du jeu">
-            v0.2.0
+          <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">
+            V0.3.7
           </div>
 
           <!-- Petit statut carte, particulièrement utile sur mobile -->
           <div id="map-status" class="map-status-pill" aria-live="polite">
             <!-- rempli par le JS -->
           </div>
-          <button id="sound-toggle" class="sound-toggle"
+          <button id="sound-toggle" class="sound-toggle site-header__control site-header__control--sound"
             title="Activer/désactiver le son">🔊</button>
-          <button id="haptics-toggle" class="haptics-toggle"
+          <button id="haptics-toggle" class="haptics-toggle site-header__control site-header__control--haptics"
             title="Activer/désactiver les vibrations">📳</button>
         </header>
 
+        <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
+          <a class="mobile-mode-nav__home" href="/" aria-label="Accueil Camino">Accueil</a>
+          <a href="/?view=camino">Camino</a>
+          <a href="/?view=daily">Daily</a>
+          <a href="/?view=profile#profile">Profil</a>
+          <a href="/regles.html">Règles</a>
+        </nav>
+
         <!-- Panneau profil / auth repliable -->
-        <section class="panel user-panel">
-          <details>
+        <section id="profile" class="panel user-panel">
+          <details id="user-panel-details">
             <summary class="panel-title">Profil <span id="login-hint"
-                class="login-hint">cliquer pour se connecter</span><span id="user-sticker" class="user-sticker"></span>
-            </summary>
-
-            <div class="info-block">
-              <div id="current-user-label" class="info-label">Non connecté.</div>
-            </div>
-
-            <div class="info-block auth-block">
-              <input id="auth-username" type="text" placeholder="Pseudo">
-              <div class="password-wrapper">
-                <input id="auth-password" type="password" placeholder="Mot de passe">
-                <button type="button" id="toggle-password" class="password-toggle"
-                  aria-label="Afficher le mot de passe">👁</button>
+                class="login-hint">Connectez-vous pour retrouver votre progression</span><span id="user-sticker"
+                class="user-sticker"></span></summary>
+            <div class="profile-page-content">
+              <div class="profile-page-heading">
+                <p>Compte joueur</p>
+                <h2>Profil</h2>
               </div>
-              <div id="auth-feedback" class="auth-feedback"></div>
-              <div class="auth-buttons">
-                <button id="login-btn" class="btn-secondary">Connexion</button>
-                <button id="register-btn" class="btn-secondary">Inscription</button>
-                <button id="logout-btn" class="btn-tertiary hidden">Déconnexion</button>
-              </div>
-            </div>
 
-            <!-- Profile panel (visible when logged in) -->
-            <div id="profile-panel" class="profile-panel hidden">
-              <!-- Avatar Selection Modal (moved above dynamic content) -->
-              <div id="avatar-selector-modal" class="avatar-selector-modal hidden">
-                <div class="avatar-modal-content">
-                  <div class="avatar-modal-header">
-                    <h4>Choisir un Avatar</h4>
-                    <button class="avatar-modal-close" id="avatar-modal-close" type="button"
-                      aria-label="Fermer la sélection d'avatar">✕</button>
-                  </div>
-                  <div id="avatar-grid" class="avatar-grid"></div>
+              <div class="info-block">
+                <div id="current-user-label" class="info-label">Non connecté.</div>
+              </div>
+
+              <div class="info-block auth-block">
+                <input id="auth-username" type="text" placeholder="Pseudo">
+                <div class="password-wrapper">
+                  <input id="auth-password" type="password" placeholder="Mot de passe">
+                  <button type="button" id="toggle-password" class="password-toggle"
+                    aria-label="Afficher le mot de passe">👁</button>
+                </div>
+                <div id="auth-feedback" class="auth-feedback"></div>
+                <div class="auth-buttons">
+                  <button id="login-btn" class="btn-secondary">Connexion</button>
+                  <button id="register-btn" class="btn-secondary">Inscription</button>
+                  <button id="logout-btn" class="btn-tertiary hidden">Déconnexion</button>
                 </div>
               </div>
 
-              <div id="profile-content"></div>
+              <!-- Profile panel (visible when logged in) -->
+              <div id="profile-panel" class="profile-panel hidden">
+                <div id="avatar-selector-modal" class="avatar-selector-modal hidden">
+                  <div class="avatar-modal-content">
+                    <div class="avatar-modal-header">
+                      <h4>Choisir un Avatar</h4>
+                      <button class="avatar-modal-close" id="avatar-modal-close" type="button"
+                        aria-label="Fermer la sélection d'avatar">✕</button>
+                    </div>
+                    <div id="avatar-grid" class="avatar-grid"></div>
+                  </div>
+                </div>
+                <div id="profile-content"></div>
+              </div>
             </div>
           </details>
+        </section>
+
+        <main class="mobile-home" aria-labelledby="mobile-home-title">
+          <div class="mobile-home__intro">
+            <h2 id="mobile-home-title">Comment voulez-vous jouer ?</h2>
+            <p>Deux façons distinctes de découvrir Paris, chacune avec son propre espace.</p>
+          </div>
+          <div class="mobile-home__modes">
+            <a class="mobile-mode-card mobile-mode-card--camino" href="/?view=camino">
+              <span class="mobile-mode-card__icon" aria-hidden="true">C</span>
+              <span>
+                <strong>Camino</strong>
+                <small>Le jeu complet : rues, arrondissements, transports, monuments et défis entre amis.</small>
+              </span>
+              <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
+            </a>
+            <a class="mobile-mode-card mobile-mode-card--daily" href="/?view=daily">
+              <span class="mobile-mode-card__icon" aria-hidden="true">D</span>
+              <span>
+                <strong>Daily</strong>
+                <small>Le défi du jour en 7 essais et ses classements.</small>
+              </span>
+              <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
+            </a>
+          </div>
+        </main>
+
+        <section class="mobile-mode-intro mobile-mode-intro--camino site-mode-intro">
+          <p>Mode de jeu</p>
+          <h2>Camino</h2>
+          <span>Découvrez les rues, arrondissements, transports et monuments de Paris</span>
+          <div class="site-mode-intro__details">
+            <strong>Choisissez votre terrain de jeu, puis retrouvez chaque lieu directement sur la carte.</strong>
+            <span>Enchaînez les bonnes réponses, gagnez des points selon votre précision et votre rapidité, ou lancez un défi à vos amis.</span>
+          </div>
+        </section>
+
+        <section class="mobile-mode-intro mobile-mode-intro--daily site-mode-intro">
+          <p>Mode de jeu</p>
+          <h2>Daily</h2>
+          <span>Une rue mystère différente chaque jour dans Paris</span>
+          <div class="site-mode-intro__details">
+            <strong>Retrouvez la même rue mystère que tous les joueurs en 7 essais maximum.</strong>
+            <span>Chaque réponse révèle une distance et une direction pour guider la suivante. Trouvez la rue, partagez votre résultat et comparez votre performance au classement du jour.</span>
+          </div>
         </section>
 
         <!-- Onboarding banner (first visit) -->
@@ -110,7 +167,7 @@
           <div class="onboarding-content">
             <span class="onboarding-emoji">🗺️</span>
             <div>
-              <strong>Bienvenue sur Parici !</strong><br>
+              <strong>Bienvenue sur Camino Paris !</strong><br>
               Choisissez votre zone, sélectionnez un mode de jeu, puis lancez <strong>Commencer la session</strong>.
               Objectif : trouver un maximum de rues, vite et juste.
             </div>
@@ -119,9 +176,9 @@
         </div>
 
         <!-- Incitation installation PWA (mobile web uniquement) -->
-        <div id="install-banner" class="install-banner hidden" role="region" aria-label="Installer Parici">
+        <div id="install-banner" class="install-banner hidden" role="region" aria-label="Installer Camino Paris">
           <div class="install-banner-content">
-            <strong>Installer Parici</strong><br>
+            <strong>Installer Camino Paris</strong><br>
             Accès plus rapide depuis votre écran d’accueil.
           </div>
           <div class="install-banner-actions">
@@ -137,10 +194,17 @@
         <!-- Panneau paramètres -->
         <section class="panel panel-params">
           <div class="panel-title-row">
-            <div class="panel-title panel-title--compact">Paramètres</div>
+            <div class="panel-title panel-title--compact">
+              <span class="panel-title--camino">Paramètres</span>
+              <span class="panel-title--daily">Daily</span>
+            </div>
             <button id="daily-mode-btn" class="btn-emphasis btn-emphasis--compact hidden">🏆
               Daily</button>
+            <p id="daily-login-prompt" class="daily-login-prompt hidden">
+              <a href="/?view=profile#profile">Connectez-vous</a> pour jouer au Daily.
+            </p>
           </div>
+          <p class="daily-mode-intro">Trouvez la rue mystère du jour en 7 essais maximum.</p>
 
           <div class="info-block" id="mode-select-block">
             <label>Zone de jeu <span class="tooltip-icon"
@@ -164,6 +228,8 @@
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
                 <li data-value="arrondissements-ville">Arrondissements <span
                     class="difficulty-pill difficulty-pill--very-easy">Facile</span></li>
+                <li data-value="lignes-transports-idf">Métro, RER et Transilien <span
+                    class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
               </ul>
             </div>
 
@@ -174,6 +240,7 @@
               <option value="ville">Paname entier</option>
               <option value="monuments">Monuments</option>
               <option value="arrondissements-ville">Arrondissements</option>
+              <option value="lignes-transports-idf">Métro, RER et Transilien</option>
             </select>
           </div>
 
@@ -190,7 +257,7 @@
             <select id="arrondissement-select" class="native-select"></select>
           </div>
 
-          <div class="info-block">
+          <div class="info-block" id="game-mode-select-block">
             <label>Type de partie <span class="tooltip-icon"
                 data-tooltip="Classique = 20 rues, sans limite. Marathon = 3 erreurs max. Chrono = 60 secondes. Lecture = mode libre pour apprendre.">i</span></label>
 
@@ -367,7 +434,7 @@
               </svg>
               <span class="sr-only">Mail</span>
             </a>
-            <a class="sidebar-social-link" href="https://x.com/SunMediaParici" target="_blank" rel="noopener noreferrer"
+            <a class="sidebar-social-link" href="https://x.com/sunmediaparici" target="_blank" rel="noopener noreferrer"
               aria-label="Compte X du jeu">
               <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path
@@ -376,13 +443,7 @@
               <span class="sr-only">X</span>
             </a>
             <a class="sidebar-social-link" href="https://www.instagram.com/" target="_blank"
-              rel="noopener noreferrer" aria-label="Compte Instagram du jeu">
-              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm4 3.3a3.7 3.7 0 1 1 0 7.4 3.7 3.7 0 0 1 0-7.4Zm0 2a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4.1-2.4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z" />
-              </svg>
-              <span class="sr-only">Instagram</span>
-            </a>
+              rel="noopener noreferrer" aria-label="Compte Instagram du jeu">Instagram</a>
           </div>
         </footer>
       </div>
@@ -397,7 +458,7 @@
   <div id="install-ios-sheet" class="install-ios-sheet hidden" aria-hidden="true">
     <div id="install-ios-backdrop" class="install-ios-backdrop"></div>
     <section class="install-ios-panel" role="dialog" aria-modal="true" aria-labelledby="install-ios-title">
-      <h2 id="install-ios-title" class="install-ios-title">Ajouter Parici à l’écran d’accueil</h2>
+      <h2 id="install-ios-title" class="install-ios-title">Ajouter Camino Paris à l’écran d’accueil</h2>
       <ol class="install-ios-steps">
         <li>Touchez <strong>Partager</strong> dans Safari.</li>
         <li>Choisissez <strong>Sur l’écran d’accueil</strong>.</li>
@@ -410,6 +471,7 @@
   </div>
 
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="/src/public/js/leaflet.polylineoffset.js?v=1"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script defer src="data_rules.js?v=20260504b"></script>

@@ -14,12 +14,13 @@ export const MAX_POINTS_PER_ITEM = 10;
 export const LEADERBOARD_VISIBLE_ROWS = 3;
 export const MAX_LECTURE_SEARCH_RESULTS = 8;
 
-export const DAILY_GUESSES_STORAGE_PREFIX = "parici_daily_guesses_";
-export const DAILY_META_STORAGE_PREFIX = "parici_daily_meta_";
+export const DAILY_GUESSES_STORAGE_PREFIX = "camino_paris_daily_guesses_";
+export const DAILY_META_STORAGE_PREFIX = "camino_paris_daily_meta_";
 
 export const UI_THEME = {
   mapStreet: "#f2a900",
   mapStreetHover: "#f8c870",
+  mapPending: "#ffd400",
   mapCorrect: "#1f9d66",
   mapWrong: "#d2463c",
   mapArrondissement: "#02273b",

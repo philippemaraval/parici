@@ -1,4 +1,5 @@
 import { API_URL, LEADERBOARD_VISIBLE_ROWS } from "./config.js";
+import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
 
 const TITLE_THRESHOLDS_BY_MODE = {
   classique: {
@@ -35,7 +36,8 @@ export const TITLE_NAMES = [
 ];
 
 const SCORING_GAME_TYPES = ["classique", "marathon", "chrono"];
-const SCORING_ZONES = ["rues-celebres", "rues-principales", "arrondissement", "monuments", "arrondissements-ville"];
+const SCORING_ZONES = ["rues-celebres", "rues-principales", "arrondissement", "monuments", "arrondissements-ville", "lignes-transports-idf"];
+const SCORING_COMBO_ZONES = [...SCORING_ZONES, "ville"];
 
 export const ZONE_LABELS = {
   ville: "Paname entier",
@@ -44,6 +46,7 @@ export const ZONE_LABELS = {
   "arrondissements-ville": "Arrondissements",
   arrondissement: "Rues par arrondissement",
   monuments: "Monuments",
+  "lignes-transports-idf": "Métro, RER et Transilien",
 };
 
 export const GAME_LABELS = {
@@ -53,7 +56,7 @@ export const GAME_LABELS = {
   lecture: "Lecture",
 };
 
-const ZONE_ORDER = ["rues-celebres", "rues-principales", "arrondissement", "ville", "monuments", "arrondissements-ville"];
+const ZONE_ORDER = ["rues-celebres", "rues-principales", "arrondissement", "ville", "monuments", "arrondissements-ville", "lignes-transports-idf"];
 const GAME_ORDER = ["classique", "marathon", "chrono", "lecture"];
 
 export function buildArrondissementMarathonThresholds(maxItems) {
@@ -107,7 +110,7 @@ function getGlobalRankTitleFromLevel(level) {
 function buildScoringComboMap(userStats) {
   const combos = new Map();
   (userStats?.modes || []).forEach((modeStats) => {
-    if (!modeStats || !SCORING_GAME_TYPES.includes(modeStats.game_type) || !SCORING_ZONES.includes(modeStats.mode)) {
+    if (!modeStats || !SCORING_GAME_TYPES.includes(modeStats.game_type) || !SCORING_COMBO_ZONES.includes(modeStats.mode)) {
       return;
     }
     combos.set(`${modeStats.mode}|${modeStats.game_type}`, modeStats);
@@ -151,6 +154,19 @@ export function getGlobalRankMeta(userStats) {
 export function hasReachedVilleRank(userStats, rankLetter) {
   const combos = buildScoringComboMap(userStats);
   return SCORING_GAME_TYPES.every((gameType) => {
+    const combo = combos.get(`ville|${gameType}`);
+    if (!combo) {
+      return false;
+    }
+    const thresholds = getTitleThresholds("ville", gameType, combo.best_items_total || 0);
+    const scoreValue = getTitleScoreValue(combo.high_score, combo.best_items_correct, gameType);
+    return typeof thresholds?.[rankLetter] === "number" && scoreValue >= thresholds[rankLetter];
+  });
+}
+
+export function hasReachedVilleRankInAnyMode(userStats, rankLetter) {
+  const combos = buildScoringComboMap(userStats);
+  return SCORING_GAME_TYPES.some((gameType) => {
     const combo = combos.get(`ville|${gameType}`);
     if (!combo) {
       return false;
@@ -434,7 +450,7 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   }
 
   const table = document.createElement("table");
-  table.className = "leaderboard-table";
+  table.className = "leaderboard-table weekly-daily-leaderboard";
   table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Réussites</th><th>Essais</th><th>Meilleur écart</th></tr></thead>";
 
   const tbody = document.createElement("tbody");
@@ -442,11 +458,15 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
     const tr = document.createElement("tr");
     const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
     const playerAvatar = row.avatar || "👤";
+    const firstWeeklyWinnerBadge =
+      row.username?.trim().toLocaleLowerCase("fr-FR") === "stban"
+        ? ' <span title="à jamais le premier" aria-label="à jamais le premier">☝️</span>'
+        : "";
     const bestDistance =
       row.best_distance_meters === null || row.best_distance_meters === undefined
         ? "—"
         : `${Math.round(row.best_distance_meters)}m`;
-    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily joué${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${bestDistance}</td>`;
+    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily joué${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${bestDistance}</td>`;
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -473,6 +493,9 @@ export function loadAllLeaderboards() {
   if (!leaderboardRoot) {
     return;
   }
+  const requestedView = new URLSearchParams(window.location.search).get("view");
+  const showDailyLeaderboards = requestedView !== "camino";
+  const showCaminoLeaderboards = requestedView !== "daily";
 
   leaderboardRoot.innerHTML =
     '<div class="skeleton skeleton-line skeleton-line--50"></div><div class="skeleton skeleton-block"></div><div class="skeleton skeleton-block"></div>';
@@ -503,14 +526,16 @@ export function loadAllLeaderboards() {
       const hasDailyRows = !!(dailyRows && dailyRows.length > 0);
       const hasWeeklyRows = Array.isArray(weeklyDaily?.rows) && weeklyDaily.rows.length > 0;
 
-      if (!hasAllTimeRows && !hasMonthlyRows && !hasDailyRows && !hasWeeklyRows) {
+      const hasVisibleDailyRows = showDailyLeaderboards && (hasDailyRows || hasWeeklyRows);
+      const hasVisibleCaminoRows = showCaminoLeaderboards && (hasAllTimeRows || hasMonthlyRows);
+      if (!hasVisibleDailyRows && !hasVisibleCaminoRows) {
         leaderboardRoot.innerHTML = "<p>Aucun score enregistré.</p>";
         return;
       }
 
       leaderboardRoot.innerHTML = "";
 
-      if (hasDailyRows) {
+      if (showDailyLeaderboards && hasDailyRows) {
         const dailyDetails = document.createElement("details");
         dailyDetails.className = "leaderboard-zone-details";
         dailyDetails.open = true;
@@ -561,30 +586,34 @@ export function loadAllLeaderboards() {
         leaderboardRoot.appendChild(dailyDetails);
       }
 
-      appendWeeklyDailyLeaderboard(leaderboardRoot, weeklyDaily);
+      if (showDailyLeaderboards) {
+        appendWeeklyDailyLeaderboard(leaderboardRoot, weeklyDaily);
+      }
 
-      if (hasAllTimeRows) {
+      if (showCaminoLeaderboards && hasAllTimeRows) {
         appendZoneLeaderboards(leaderboardRoot, allBoards);
       }
 
-      const monthlyDetails = document.createElement("details");
-      monthlyDetails.className = "leaderboard-zone-details";
-      monthlyDetails.open = true;
-      const monthlySummary = document.createElement("summary");
-      monthlySummary.innerHTML = `<span class="leaderboard-zone-title">Classement mensuel — ${getCurrentMonthlyLeaderboardLabel()}</span>`;
-      monthlyDetails.appendChild(monthlySummary);
+      if (showCaminoLeaderboards) {
+        const monthlyDetails = document.createElement("details");
+        monthlyDetails.className = "leaderboard-zone-details";
+        monthlyDetails.open = true;
+        const monthlySummary = document.createElement("summary");
+        monthlySummary.innerHTML = `<span class="leaderboard-zone-title">Classement mensuel — ${getCurrentMonthlyLeaderboardLabel()}</span>`;
+        monthlyDetails.appendChild(monthlySummary);
 
-      const monthlyContent = document.createElement("div");
-      monthlyContent.className = "leaderboard-zone-content";
-      if (hasMonthlyRows) {
-        appendZoneLeaderboards(monthlyContent, monthlyBoards);
-      } else {
-        monthlyContent.innerHTML = "<p>Aucun score ce mois-ci.</p>";
+        const monthlyContent = document.createElement("div");
+        monthlyContent.className = "leaderboard-zone-content";
+        if (hasMonthlyRows) {
+          appendZoneLeaderboards(monthlyContent, monthlyBoards);
+        } else {
+          monthlyContent.innerHTML = "<p>Aucun score ce mois-ci.</p>";
+        }
+        monthlyDetails.appendChild(monthlyContent);
+        leaderboardRoot.appendChild(monthlyDetails);
       }
-      monthlyDetails.appendChild(monthlyContent);
-      leaderboardRoot.appendChild(monthlyDetails);
 
-      if (!hasDailyRows) {
+      if (!showDailyLeaderboards || !hasDailyRows) {
         const firstDetails = leaderboardRoot.querySelector("details");
         if (firstDetails) {
           firstDetails.open = true;

@@ -1,12 +1,13 @@
 {
-  "name": "paris-rues-frontend",
+  "name": "camino-paris-frontend",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
     "sync-osm": "node scripts/sync_osm.js",
+    "sync-transit": "node scripts/sync_paris_transit_lines.js",
     "daily:streetview": "node scripts/generate_daily_streetview_images.js",
     "build": "node scripts/build.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test tests/*.test.js"
   },
   "keywords": [],
   "author": "",

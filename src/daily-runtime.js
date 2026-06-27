@@ -6,6 +6,19 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+export function getDailySuccessComment(attempts) {
+  if (attempts <= 1) {
+    return "Coup de maître !";
+  }
+  if (attempts <= 3) {
+    return "Excellent sens de l'orientation !";
+  }
+  if (attempts <= 5) {
+    return "Il faut plus se concentrer !";
+  }
+  return "Ouf, sur le fil !";
+}
+
 export function saveDailyMetaToStorageRuntime(dailyTargetData, getDailyMetaStorageKey) {
   if (dailyTargetData && dailyTargetData.date) {
     try {
@@ -118,6 +131,7 @@ export function highlightDailyTargetRuntime({
   L,
   uiTheme,
   dailyHighlightLayer,
+  fitBounds = true,
 }) {
   let nextLayer = removeDailyHighlightRuntime(map, dailyHighlightLayer);
   if (!targetGeometry || !map) {
@@ -168,6 +182,10 @@ export function highlightDailyTargetRuntime({
   nextLayer = L.geoJSON(geoJsonPayload, {
     style: { color, weight: 6, opacity: 1, dashArray: isSuccess ? null : "8, 4" },
   }).addTo(map);
+
+  if (!fitBounds) {
+    return nextLayer;
+  }
 
   try {
     if (nextLayer && Object.keys(nextLayer._layers).length > 0) {
@@ -419,12 +437,12 @@ export function handleDailyShareTextRuntime({
       ? Math.min(...dailyGuessHistory.map((guess) => guess.distance))
       : null;
 
-  let text = `🗺️ Parici Daily — ${dateLabel}\n📍 Rue: ${streetName}\n${result.success ? "✅" : "❌"} Résultat: ${scoreLabel}/7\n\n`;
+  let text = `🗺️ Camino Paris Daily — ${dateLabel}\n📍 Rue: ${streetName}\n${result.success ? "✅" : "❌"} Résultat: ${scoreLabel}/7\n\n`;
 
   if (dailyGuessHistory.length > 0) {
     dailyGuessHistory.forEach((guess, index) => {
       if (result.success && index === dailyGuessHistory.length - 1) {
-        text += "🟩 🏁\n";
+        text += "🟩 Trouvé !\n";
         return;
       }
 
@@ -434,13 +452,15 @@ export function handleDailyShareTextRuntime({
       } else if (guess.distance < 2000) {
         tile = "🟨";
       }
-      text += `${tile} ${guess.arrow || "•"}\n`;
+      text += `${tile} ${formatDailyDistanceForShare(guess.distance)}\n`;
     });
   } else {
     text += "Aucun essai enregistré.\n";
   }
 
-  if (minDistance !== null && Number.isFinite(minDistance)) {
+  if (result.success) {
+    text += `\n🎯 ${getDailySuccessComment(result.attempts)}\n`;
+  } else if (minDistance !== null && Number.isFinite(minDistance)) {
     text += `\n🎯 Meilleure distance: ${formatDailyDistanceForShare(minDistance)}\n`;
   }
 
@@ -505,10 +525,12 @@ export function handleDailyShareImageRuntime({
     typeof dailyTargetData.dailyImageUrl === "string"
       ? dailyTargetData.dailyImageUrl.trim()
       : "";
-  const bestDistanceLabel =
-    minDistance !== null && Number.isFinite(minDistance)
-      ? formatDailyDistanceForShare(minDistance)
-      : "—";
+  const performanceLabel =
+    result.success
+      ? getDailySuccessComment(result.attempts)
+      : minDistance !== null && Number.isFinite(minDistance)
+        ? `Meilleure distance: ${formatDailyDistanceForShare(minDistance)}`
+        : "Meilleure distance: —";
 
   function drawWrappedCenterText(text, center, context, maxWidth, startY, lineHeight, maxLines) {
     const lines = [];
@@ -715,15 +737,11 @@ export function handleDailyShareImageRuntime({
       ctx.roundRect(rowX + 112, rowY + 14, 42, 42, 10);
       ctx.fill();
 
-      ctx.fillStyle = "#f8fafc";
-      ctx.font = '600 34px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
-      ctx.fillText(isFinalSuccessRow ? "🏁" : guess.arrow || "•", rowX + 174, rowY + 49);
-
       ctx.fillStyle = isFinalSuccessRow ? "#86efac" : "#e2e8f0";
       ctx.font = '600 30px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
       ctx.fillText(
         isFinalSuccessRow ? "Trouvé !" : formatDailyDistanceForShare(guess.distance),
-        rowX + 224,
+        rowX + 174,
         rowY + 48,
       );
     });
@@ -778,7 +796,7 @@ export function handleDailyShareImageRuntime({
 
   ctx.fillStyle = "#cbd5e1";
   ctx.font = '500 22px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
-  ctx.fillText(`🎯 Meilleure distance: ${bestDistanceLabel}`, bestCenterX, photoDistanceY);
+  ctx.fillText(`🎯 ${performanceLabel}`, bestCenterX, photoDistanceY, photoPanel.w - 30);
   ctx.fillText("Essaie de faire mieux sur", bestCenterX, photoTryAgainY);
 
   ctx.fillStyle = "#93c5fd";
@@ -792,12 +810,12 @@ export function handleDailyShareImageRuntime({
         return;
       }
 
-      const file = new File([blob], "parici-daily.png", { type: "image/png" });
+      const file = new File([blob], "camino-paris-daily.png", { type: "image/png" });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
-            title: "Parici - Défi Quotidien",
+            title: "Camino Paris - Défi Quotidien",
             text: `${dailyTargetData.streetName} • ${resultLabel}/7\nEssaie de faire mieux sur parici.netlify.app`,
             files: [file],
           });
@@ -823,7 +841,7 @@ export function handleDailyShareImageRuntime({
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
-      anchor.download = "parici-daily.png";
+      anchor.download = "camino-paris-daily.png";
       anchor.click();
       URL.revokeObjectURL(objectUrl);
       showMessage("Image téléchargée !", "success");
@@ -998,6 +1016,11 @@ export function fitTargetStreetTextRuntime(targetStreetElementId = "target-stree
   targetStreetEl.style.whiteSpace = "normal";
   targetStreetEl.style.overflowWrap = "anywhere";
   targetStreetEl.style.wordBreak = "break-word";
+
+  const targetPanelEl = targetStreetEl.closest(".target-panel");
+  if (targetPanelEl && !targetPanelEl.classList.contains("target-panel--daily-image-open")) {
+    targetPanelEl.scrollTop = 0;
+  }
 
   let low = 12;
   let high = 18;

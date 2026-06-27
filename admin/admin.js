@@ -10,7 +10,7 @@ const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
 const OSM_SYNC_POLL_INTERVAL_MS = 8000;
 const OSM_SYNC_POLL_TIMEOUT_MS = 12 * 60 * 1000;
 
-const STORAGE_KEY = "parici_editor_user";
+const STORAGE_KEY = "camino_paris_editor_user";
 
 const state = {
   token: "",

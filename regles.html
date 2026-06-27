@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camino - Règles et comment jouer</title>
+  <meta name="description"
+    content="Règles détaillées de Camino : objectifs, modes de jeu, système de score et guide complet pour bien démarrer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Montserrat:wght@600;800&family=Nunito:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --brand-sea-950: #0c1d57;
+      --brand-sea-900: #12297a;
+      --brand-sea-600: #4057b2;
+      --brand-sun-500: #f2a900;
+      --brand-terra-500: #c96b3b;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --surface: rgba(255, 252, 247, 0.78);
+      --surface-soft: #edf1fb;
+      --border: rgba(196, 212, 218, 0.66);
+      --shadow: 0 8px 32px rgba(18, 41, 122, 0.12);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Nunito", system-ui, sans-serif;
+      color: var(--text-primary);
+      background:
+        radial-gradient(1200px 520px at 10% -10%, rgba(242, 169, 0, 0.14), transparent 60%),
+        radial-gradient(1100px 420px at 100% 0%, rgba(64, 87, 178, 0.18), transparent 62%),
+        linear-gradient(135deg, #fefbf5 0%, #eef3ff 100%);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 18px 42px;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: clamp(27px, 4.4vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--brand-sea-950);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--text-secondary);
+      font-size: 16px;
+      max-width: 72ch;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--brand-sea-900);
+      border: 1px solid rgba(18, 41, 122, 0.16);
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-weight: 700;
+    }
+
+    section {
+      max-width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-top: 14px;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 21px;
+      line-height: 1.2;
+      color: var(--brand-sea-950);
+      letter-spacing: -0.015em;
+    }
+
+    h3 {
+      margin: 16px 0 6px;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 16px;
+      color: var(--brand-sea-900);
+    }
+
+    p {
+      margin: 0 0 10px;
+      overflow-wrap: anywhere;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 10px;
+      padding-left: 20px;
+      overflow-wrap: anywhere;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .highlight {
+      border-left: 4px solid var(--brand-sun-500);
+      background: #fff9ee;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .formula {
+      background: #111f57;
+      color: #f8fbff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 13px;
+      margin: 10px 0;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 8px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(18, 41, 122, 0.08);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: var(--surface-soft);
+      color: var(--brand-sea-900);
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .pill-score {
+      background: #fff4dc;
+      border-color: rgba(242, 169, 0, 0.35);
+      color: #7a4f09;
+    }
+
+    .pill-danger {
+      background: #fde8e6;
+      border-color: rgba(210, 70, 60, 0.4);
+      color: #8b2a23;
+    }
+
+    .pill-info {
+      background: #e8efff;
+      border-color: rgba(18, 41, 122, 0.35);
+      color: var(--brand-sea-900);
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 12px 12px 28px;
+      }
+
+      .hero,
+      section {
+        padding: 14px;
+      }
+
+      th,
+      td {
+        font-size: 13px;
+        padding: 8px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260609-version-daily-spacing">
+  <script defer src="/src/public/js/site-shell.js?v=20260609-visit-sessions"></script>
+</head>
+
+<body class="site-shell-page">
+  <div class="site-shell-top">
+    <header class="site-header">
+      <div>
+        <h1 class="site-header__title"><a href="/">Camino</a></h1>
+        <p class="site-header__subtitle">Connaissez-vous vraiment votre ville ?</p>
+      </div>
+      <div class="site-header__version">v0.3.0</div>
+      <button class="site-header__control site-header__control--sound" type="button" aria-label="Son">🔊</button>
+      <button class="site-header__control site-header__control--haptics" type="button" aria-label="Vibrations">📳</button>
+    </header>
+
+    <nav class="site-nav" aria-label="Navigation des modes de jeu">
+      <a href="/">Accueil</a>
+      <a href="/?view=camino">Camino</a>
+      <a href="/?view=daily">Daily</a>
+      <a href="/explorer.html">Explorer</a>
+      <a href="/?view=profile#profile">Profil</a>
+      <a class="is-active--utility" href="/regles.html" aria-current="page">Règles</a>
+    </nav>
+  </div>
+
+  <main class="page">
+    <div class="site-mode-intro">
+      <p>Informations</p>
+      <h1>Règles</h1>
+      <span>Tout ce qu'il faut savoir pour jouer à Camino</span>
+    </div>
+
+    <header class="hero">
+      <p class="subtitle">
+        Version courte et pratique: l'essentiel pour jouer vite, comprendre le score, le Daily et les classements.
+      </p>
+      <ul class="toc" aria-label="Sommaire">
+        <li><a href="#essentiel">1. À retenir en 30 secondes</a></li>
+        <li><a href="#jouer">2. Comment jouer</a></li>
+        <li><a href="#zones-modes">3. Zones et modes</a></li>
+        <li><a href="#daily">4. Défi Daily</a></li>
+        <li><a href="#explorer">5. Mode Explorer</a></li>
+        <li><a href="#rangs">6. Rangs et avatars</a></li>
+        <li><a href="#classements">7. Classements</a></li>
+        <li><a href="#compte">8. Connexion, sauvegarde et rappels</a></li>
+        <li><a href="#faq">9. FAQ courte</a></li>
+      </ul>
+    </header>
+
+    <section id="essentiel">
+      <h2>1. À retenir en 30 secondes</h2>
+      <div class="highlight">
+        <ul>
+          <li>Classique: jusqu'à 20 items, score pondéré par vitesse.</li>
+          <li>Marathon: fin de partie à la 3e erreur (le bouton Passer compte comme erreur).</li>
+          <li>Chrono: 60 secondes pour trouver un maximum d'items.</li>
+          <li>Daily: 1 rue commune par jour, 7 essais max.</li>
+          <li>Transports : identifiez les lignes de métro, RER et Transilien sur la carte.</li>
+          <li>Formule Classique officielle: <code>points = max(0, 10 - floor(temps / 2))</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="jouer">
+      <h2>2. Comment jouer</h2>
+      <ol>
+        <li>Choisissez une zone puis un mode.</li>
+        <li>Cliquez sur <strong>Commencer la session</strong>.</li>
+        <li>Trouvez l'item affiché sur la carte.</li>
+      </ol>
+      <p>
+        Vocabulaire: dans cette page, <strong>item</strong> = rue, monument ou quartier selon la zone sélectionnée.
+      </p>
+      <h3>Conseils express</h3>
+      <ul>
+        <li>Débutez en Rues célèbres + Classique.</li>
+        <li>En Classique, la vitesse est clé dans les 10 premières secondes.</li>
+        <li>Utilisez Lecture pour mémoriser sans pression.</li>
+        <li>Jouez le Daily régulièrement pour progresser en précision.</li>
+      </ul>
+    </section>
+
+    <section id="zones-modes">
+      <h2>3. Zones et modes</h2>
+      <table aria-label="Zones de jeu">
+        <thead>
+          <tr>
+            <th>Zone</th>
+            <th>Usage conseillé</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Rues célèbres</td><td>Découverte rapide</td></tr>
+          <tr><td>Rues principales</td><td>Niveau intermédiaire</td></tr>
+          <tr><td>Rues par quartier</td><td>Travail ciblé par secteur</td></tr>
+          <tr><td>Ville entière</td><td>Mode expert</td></tr>
+          <tr><td>Monuments</td><td>Repères culturels</td></tr>
+          <tr><td>Quartiers de la ville</td><td>Apprendre les 111 quartiers</td></tr>
+          <tr><td>Métro, RER et Transilien</td><td>Identifier les lignes et variantes par leur numéro complet</td></tr>
+        </tbody>
+      </table>
+      <table aria-label="Modes de partie">
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th>Règle clé</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Classique</td><td>Jusqu'à 20 items, score pondéré.</td></tr>
+          <tr><td>Marathon</td><td>Fin à la 3e erreur.</td></tr>
+          <tr><td>Chrono</td><td>60 secondes.</td></tr>
+          <tr><td>Lecture</td><td>Apprentissage libre, sans score compétitif.</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Le bouton <strong>Pause</strong> fige les chronos; <strong>Passer</strong> avance au prochain objectif.
+      </p>
+      <h3>Score Classique (référence officielle)</h3>
+      <div class="formula">points = max(0, 10 - floor(temps_en_secondes / 2))</div>
+      <ul>
+        <li>Exemple rapide: 1.2 s → 10 points.</li>
+        <li>Exemple moyen: 6.7 s → 7 points.</li>
+        <li>Exemple lent: 12.4 s → 4 points.</li>
+      </ul>
+      <p>À partir de 20 secondes: 0 point.</p>
+    </section>
+
+    <section id="daily">
+      <h2>4. Défi Daily</h2>
+      <h3>Règles</h3>
+      <ul>
+        <li>Une cible commune par jour pour tous les joueurs.</li>
+        <li>Maximum <strong>7 essais</strong>.</li>
+        <li>Connexion au profil requise.</li>
+      </ul>
+      <h3>Indices et partage</h3>
+      <ul>
+        <li>Après un raté: distance + flèche de direction.</li>
+        <li>Indices progressifs possibles: arrondissement, quartier, longueur de rue.</li>
+        <li>Indice visuel (photo) possible selon la rue du jour.</li>
+        <li>En fin de Daily: partage texte/image.</li>
+      </ul>
+    </section>
+
+    <section id="explorer">
+      <h2>5. Mode Explorer</h2>
+      <p>
+        Métro, RER et Transilien est un mode de reconnaissance des lignes franciliennes, conçu pour être joué sur téléphone
+        pendant une promenade.
+      </p>
+      <ol>
+        <li>Lisez l'énigme historique et observez l'image associée.</li>
+        <li>Rendez-vous dans la rue recherchée avant la fin du chronomètre.</li>
+        <li>Photographiez sa plaque : Camino vérifie le nom et votre proximité géographique.</li>
+        <li>Découvrez l'explication historique, puis poursuivez vers l'énigme suivante.</li>
+      </ol>
+      <ul>
+        <li>Un indice peut être demandé contre un malus de 15 points.</li>
+        <li>Le score récompense la rapidité et pénalise l'utilisation d'un indice.</li>
+        <li>La progression est conservée localement et synchronisée avec le profil connecté.</li>
+        <li>Le classement Explorer se met à jour après chaque rue trouvée, puis conserve le score final une fois le parcours terminé.</li>
+      </ul>
+    </section>
+
+    <section id="rangs">
+      <h2>6. Rangs et avatars</h2>
+      <p>
+        Rangs: <strong>Titi Parisien</strong>, <strong>Habitué des Quais</strong>, <strong>Vrai Parigot</strong>,
+        <strong>Maire de la Ville</strong>.
+      </p>
+      <ul>
+        <li>Rang global: valider les 5 zones globales sur Classique + Marathon + Chrono.</li>
+        <li>Exception: <strong>Ville entière</strong> donne des badges dédiés, séparés du rang global.</li>
+      </ul>
+
+      <details>
+        <summary>Seuils détaillés Classique</summary>
+        <table aria-label="Seuils Classique">
+          <thead>
+            <tr><th>Zone</th><th>M</th><th>H</th><th>V</th><th>MV</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Rues célèbres</td><td>60</td><td>100</td><td>140</td><td>180</td></tr>
+            <tr><td>Rues principales</td><td>50</td><td>90</td><td>130</td><td>170</td></tr>
+            <tr><td>Rues par quartier</td><td>40</td><td>80</td><td>120</td><td>160</td></tr>
+            <tr><td>Monuments</td><td>40</td><td>80</td><td>120</td><td>160</td></tr>
+            <tr><td>Quartiers de la ville</td><td>60</td><td>100</td><td>140</td><td>180</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>Seuils détaillés Marathon</summary>
+        <table aria-label="Seuils Marathon">
+          <thead>
+            <tr><th>Zone</th><th>M</th><th>H</th><th>V</th><th>MV</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Rues célèbres</td><td>10</td><td>20</td><td>35</td><td>55</td></tr>
+            <tr><td>Rues principales</td><td>9</td><td>18</td><td>30</td><td>48</td></tr>
+            <tr><td>Rues par quartier</td><td>10%</td><td>20%</td><td>35%</td><td>55%</td></tr>
+            <tr><td>Monuments</td><td>9</td><td>18</td><td>30</td><td>46</td></tr>
+            <tr><td>Quartiers de la ville</td><td>10</td><td>20</td><td>35</td><td>55</td></tr>
+          </tbody>
+        </table>
+        <p>Rues par quartier: seuils dynamiques selon la taille du pool.</p>
+      </details>
+
+      <details>
+        <summary>Seuils détaillés Chrono</summary>
+        <table aria-label="Seuils Chrono">
+          <thead>
+            <tr><th>Zone</th><th>M</th><th>H</th><th>V</th><th>MV</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Rues célèbres</td><td>7</td><td>11</td><td>16</td><td>22</td></tr>
+            <tr><td>Rues principales</td><td>6</td><td>10</td><td>14</td><td>19</td></tr>
+            <tr><td>Rues par quartier</td><td>5</td><td>8</td><td>12</td><td>16</td></tr>
+            <tr><td>Monuments</td><td>5</td><td>8</td><td>12</td><td>16</td></tr>
+            <tr><td>Quartiers de la ville</td><td>7</td><td>11</td><td>16</td><td>22</td></tr>
+          </tbody>
+        </table>
+      </details>
+
+      <details>
+        <summary>Ville entière: badges spéciaux</summary>
+        <table aria-label="Seuils Ville entière">
+          <thead>
+            <tr><th>Mode</th><th>M</th><th>H</th><th>V</th><th>MV</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Classique</td><td>30</td><td>70</td><td>110</td><td>150</td></tr>
+            <tr><td>Marathon</td><td>8</td><td>16</td><td>28</td><td>44</td></tr>
+            <tr><td>Chrono</td><td>4</td><td>7</td><td>10</td><td>14</td></tr>
+          </tbody>
+        </table>
+        <table aria-label="Badges Ville entière">
+          <thead>
+            <tr><th>Badge</th><th>Nom</th><th>Condition</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🚀</td><td>Astronaute</td><td>Minot sur Ville entière en Classique + Marathon + Chrono</td></tr>
+            <tr><td>⭐️</td><td>Étoile</td><td>Habitué sur Ville entière en Classique + Marathon + Chrono</td></tr>
+            <tr><td>🛸</td><td>Extraterrestre</td><td>Vrai sur Ville entière en Classique + Marathon + Chrono</td></tr>
+            <tr><td>👽</td><td>L'Ovni</td><td>Maire sur Ville entière en Classique + Marathon + Chrono</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </section>
+
+    <section id="classements">
+      <h2>7. Classements</h2>
+      <ul>
+        <li>Classement global par zone et mode.</li>
+        <li>Classement mensuel dédié.</li>
+        <li>Classement Daily séparé.</li>
+        <li>Classement Explorer séparé et mis à jour en direct, ordonné par score puis temps de marche.</li>
+        <li>Fin de session: récap complet (temps, score, détail des réponses).</li>
+      </ul>
+      <details>
+        <summary>Défi amis (avancé)</summary>
+        <ul>
+          <li>Création depuis la configuration courante (hors Lecture).</li>
+          <li>Paramètres verrouillés pendant le défi.</li>
+          <li>Lien partageable avec code de défi.</li>
+          <li>Expiration automatique (environ 24 h).</li>
+          <li>Mini leaderboard du défi après première partie terminée.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section id="compte">
+      <h2>8. Connexion, sauvegarde et rappels</h2>
+      <ul>
+        <li>Connecté: scores enregistrés (classements, rangs, stats, avatars, badges).</li>
+        <li>Non connecté: jeu possible, mais pas d'envoi de scores serveur.</li>
+        <li>Mode hors-ligne: possible de jouer, sauvegarde serveur indisponible.</li>
+        <li>Rappel push Daily activable depuis le profil (si navigateur/appareil compatible).</li>
+        <li>Sur iPhone/iPad: installation écran d'accueil requise pour les notifications push.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2>9. FAQ courte</h2>
+      <h3>Le mode Lecture donne-t-il un score compétitif ?</h3>
+      <p>Non.</p>
+      <h3>Le mode Chrono dure combien de temps ?</h3>
+      <p>60 secondes.</p>
+      <h3>Quand le Marathon s'arrête-t-il ?</h3>
+      <p>À la 3e erreur (Passer consomme aussi une erreur).</p>
+      <h3>La connexion est-elle obligatoire ?</h3>
+      <p>Obligatoire pour Daily, classements et progression serveur; facultative pour jouer localement.</p>
+      <h3>Pourquoi Explorer demande-t-il la caméra et la position ?</h3>
+      <p>Pour reconnaître la plaque photographiée et confirmer que vous êtes à proximité de la rue recherchée.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" aria-label="Réseaux sociaux et crédits">
+    <p class="site-footer__visitors">Visites : —</p>
+    <p class="site-footer__sync">Sync carte : —</p>
+    <p class="site-footer__credit">Crafted in Paris by Philippe Maraval</p>
+    <div class="site-footer__social">
+      <a href="mailto:" aria-label="Contacter le jeu par mail">Mail</a>
+      <a href="https://x.com/SunMediaCamino" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    </div>
+  </footer>
+</body>
+
+</html>

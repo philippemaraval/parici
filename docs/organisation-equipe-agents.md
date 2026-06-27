@@ -1,6 +1,6 @@
-# Organisation de l'equipe d'agents Parici
+# Organisation de l'equipe d'agents Camino Paris
 
-Ce document decrit l'organisation des agents/sous-agents utilises pour maintenir Parici, leurs responsabilites, et les regles de collaboration.
+Ce document decrit l'organisation des agents/sous-agents utilises pour maintenir Camino Paris, leurs responsabilites, et les regles de collaboration.
 
 ## Organigramme
 

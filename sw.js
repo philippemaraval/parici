@@ -1,17 +1,20 @@
-const CACHE_NAME = "parici-v10";
+const CACHE_NAME = "camino-paris-v1";
 
 const CORE_PRECACHE_URLS = [
   "/",
   "/index.html",
-  "/style.css",
-  "/main.js",
+  "/style.css?v=20260614-rtm-highlight",
+  "/main.js?v=20260617-push-repair",
+  "/src/public/js/leaflet.polylineoffset.js?v=1",
+  "/src/public/css/site-shell.css?v=20260610-mode-details",
+  "/src/public/js/site-shell.js?v=20260609-visit-sessions",
   "/data_rules.js",
   "/site.webmanifest",
-  "/parici-favicon.ico/favicon.ico",
-  "/parici-favicon.ico/favicon-16x16.png",
-  "/parici-favicon.ico/favicon-32x32.png",
-  "/parici-favicon.ico/android-icon-192x192.png",
-  "/parici-favicon.ico/apple-icon-180x180.png",
+  "/camino-paris-favicon.ico/favicon.ico",
+  "/camino-paris-favicon.ico/favicon-16x16.png",
+  "/camino-paris-favicon.ico/favicon-32x32.png",
+  "/camino-paris-favicon.ico/android-icon-192x192.png",
+  "/camino-paris-favicon.ico/apple-icon-180x180.png",
 ];
 
 const OPTIONAL_CDN_PRECACHE_URLS = [
@@ -62,7 +65,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key.startsWith("parici-") && key !== CACHE_NAME)
+            .filter((key) => key.startsWith("camino-paris-") && key !== CACHE_NAME)
             .map((key) => caches.delete(key)),
         ),
       )
@@ -164,6 +167,17 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
+self.addEventListener("sync", (event) => {
+  if (event.tag !== "camino-explorer-sync") return;
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      windowClients.forEach((client) => {
+        client.postMessage({ type: "CAMINO_EXPLORER_SYNC" });
+      });
+    }),
+  );
+});
+
 self.addEventListener("push", (event) => {
   let payload = {};
   try {
@@ -174,18 +188,23 @@ self.addEventListener("push", (event) => {
     };
   }
 
-  const title = payload.title || "Parici";
+  const title = payload.title || "Camino Paris";
   const body = payload.body || "Le Daily du jour est disponible.";
   const targetUrl = normalizeSameOriginPath(payload.url || "/");
+  const notificationTag = payload.tag || "camino-notification";
 
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: "/parici-favicon.ico/android-icon-192x192.png",
-      badge: "/parici-favicon.ico/favicon-32x32.png",
-      tag: payload.tag || "parici-notification",
+      icon: "/camino-paris-favicon.ico/android-icon-192x192.png",
+      badge: "/camino-paris-favicon.ico/favicon-32x32.png",
+      tag: notificationTag,
       renotify: true,
-      data: { url: targetUrl },
+      timestamp: Date.now(),
+      data: {
+        url: targetUrl,
+        tag: notificationTag,
+      },
     }),
   );
 });
@@ -193,6 +212,7 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const targetUrl = normalizeSameOriginPath(event.notification?.data?.url || "/");
+  const absoluteTargetUrl = new URL(targetUrl, self.location.origin).href;
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
@@ -201,13 +221,13 @@ self.addEventListener("notificationclick", (event) => {
         const sameOrigin = client.url && client.url.startsWith(self.location.origin);
         if (sameOrigin) {
           return client
-            .navigate(targetUrl)
+            .navigate(absoluteTargetUrl)
             .catch(() => undefined)
             .then(() => client.focus());
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
+        return clients.openWindow(absoluteTargetUrl);
       }
       return undefined;
     }),

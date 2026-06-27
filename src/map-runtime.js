@@ -151,8 +151,8 @@ export async function loadStreetsRuntime({
               return;
             }
             (streetLayersByName.get(normalizedStreetName) || []).forEach((candidateLayer) => {
-              if (candidateLayer.__pariciLockedStyle) {
-                candidateLayer.setStyle(candidateLayer.__pariciLockedStyle);
+              if (candidateLayer.__caminoParisLockedStyle) {
+                candidateLayer.setStyle(candidateLayer.__caminoParisLockedStyle);
                 return;
               }
               const highlightStyle =
@@ -171,8 +171,8 @@ export async function loadStreetsRuntime({
               return;
             }
             (streetLayersByName.get(normalizedStreetName) || []).forEach((candidateLayer) => {
-              if (candidateLayer.__pariciLockedStyle) {
-                candidateLayer.setStyle(candidateLayer.__pariciLockedStyle);
+              if (candidateLayer.__caminoParisLockedStyle) {
+                candidateLayer.setStyle(candidateLayer.__caminoParisLockedStyle);
                 return;
               }
               if (isLayerHighlighted(candidateLayer)) {
@@ -278,24 +278,24 @@ export async function loadArrondissementsRuntime({
         let hoverTimeoutId = null;
 
         layer.on("mouseover", () => {
-          if (layer.__pariciLockedStyle) {
+          if (layer.__caminoParisLockedStyle) {
             return;
           }
           clearTimeout(hoverTimeoutId);
           hoverTimeoutId = setTimeout(() => {
-            if (!layer.__pariciLockedStyle) {
+            if (!layer.__caminoParisLockedStyle) {
               layer.setStyle(getArrondissementHoverStyle(uiTheme));
             }
           }, 30);
         });
 
         layer.on("mouseout", () => {
-          if (layer.__pariciLockedStyle) {
+          if (layer.__caminoParisLockedStyle) {
             return;
           }
           clearTimeout(hoverTimeoutId);
           hoverTimeoutId = setTimeout(() => {
-            if (!layer.__pariciLockedStyle) {
+            if (!layer.__caminoParisLockedStyle) {
               layer.setStyle(getArrondissementBaseStyle(uiTheme));
             }
           }, 30);
@@ -418,10 +418,165 @@ export async function loadMonumentsRuntime({
   return { allMonuments, monumentsLayer };
 }
 
+export async function loadBusLinesRuntime({
+  L,
+  map,
+  uiTheme,
+  isTouchDevice,
+  handleBusLineClick,
+}) {
+  const response = await fetch("data/paris_transit_lines.geojson?v=3", { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Impossible de charger les lignes de métro, RER et Transilien (HTTP ${response.status}).`);
+  }
+
+  const payload = await response.json();
+  const allBusLines = (payload.features || []).filter(
+    (feature) =>
+      feature?.properties?.name &&
+      (feature?.geometry?.type === "LineString" || feature?.geometry?.type === "MultiLineString"),
+  );
+  const segmentKey = (left, right) =>
+    [left.join(","), right.join(",")].sort().join("|");
+  const segmentLineNames = new Map();
+  allBusLines.forEach((feature) => {
+    const lineName = feature.properties.name;
+    const lines =
+      feature.geometry.type === "LineString"
+        ? [feature.geometry.coordinates]
+        : feature.geometry.coordinates;
+    lines.forEach((line) => {
+      for (let index = 1; index < line.length; index += 1) {
+        const key = segmentKey(line[index - 1], line[index]);
+        if (!segmentLineNames.has(key)) segmentLineNames.set(key, new Set());
+        segmentLineNames.get(key).add(lineName);
+      }
+    });
+  });
+
+  const busLineLayersByName = new Map();
+  const busLinesLayer = L.featureGroup();
+  const getBusCorridorMaxWidth = () => {
+    const zoom = map?.getZoom?.() ?? 16;
+    if (zoom <= 11) return 3;
+    if (zoom === 12) return 5;
+    if (zoom === 13) return 8;
+    if (zoom === 14) return 14;
+    if (zoom === 15) return 22;
+    return 32;
+  };
+  const applyBusSegmentZoomStyle = (layer) => {
+    if (layer._isBusHitArea) return;
+    const sharedLineCount = layer._sharedBusLineCount || 1;
+    const spacing =
+      sharedLineCount > 1
+        ? Math.min(5, getBusCorridorMaxWidth() / (sharedLineCount - 1))
+        : 0;
+    layer.setOffset(
+      ((layer._sharedBusLineIndex || 0) - (sharedLineCount - 1) / 2) *
+        spacing *
+        (layer._busSegmentDirection || 1),
+    );
+  };
+  allBusLines.forEach((feature) => {
+    const lineName = feature.properties.name;
+    const color = `#${feature.properties.color || uiTheme.mapBusLine.replace("#", "")}`;
+    const lines =
+      feature.geometry.type === "LineString"
+        ? [feature.geometry.coordinates]
+        : feature.geometry.coordinates;
+    if (!busLineLayersByName.has(lineName)) busLineLayersByName.set(lineName, []);
+
+    lines.forEach((line) => {
+      let activeRun = null;
+      const flushRun = () => {
+        if (!activeRun || activeRun.coordinates.length < 2) return;
+        const validNames = activeRun.validNames;
+        const layer = L.polyline(
+          activeRun.coordinates.map(([lon, lat]) => [lat, lon]),
+          {
+            color,
+            weight: 3,
+            opacity: 0.82,
+            offset: 0,
+          },
+        );
+        layer.feature = feature;
+        layer._validBusLineNames = validNames;
+        layer._sharedBusLineCount = validNames.length;
+        layer._sharedBusLineIndex = activeRun.lineIndex;
+        layer._busSegmentDirection = activeRun.direction;
+        applyBusSegmentZoomStyle(layer);
+        busLineLayersByName.get(lineName).push(layer);
+        layer.on("mouseover", () => {
+          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+            layer.setStyle({ weight: 6, opacity: 1 });
+          }
+        });
+        layer.on("mouseout", () => {
+          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+            layer.setStyle({ color, weight: 3, opacity: 0.82 });
+          }
+        });
+        layer.on("click", () => handleBusLineClick(feature, layer, validNames));
+        busLinesLayer.addLayer(layer);
+      };
+
+      for (let index = 1; index < line.length; index += 1) {
+        const startCoordinate = line[index - 1].join(",");
+        const endCoordinate = line[index].join(",");
+        const direction = startCoordinate <= endCoordinate ? 1 : -1;
+        const validNames = Array.from(
+          segmentLineNames.get(segmentKey(line[index - 1], line[index])) || [lineName],
+        ).sort((left, right) => left.localeCompare(right, "fr", { numeric: true }));
+        const signature = `${validNames.join("|")}::${direction}`;
+        const lineIndex = validNames.indexOf(lineName);
+        if (!activeRun || activeRun.signature !== signature) {
+          flushRun();
+          activeRun = {
+            signature,
+            validNames,
+            lineIndex,
+            direction,
+            coordinates: [line[index - 1], line[index]],
+          };
+        } else {
+          activeRun.coordinates.push(line[index]);
+        }
+      }
+      flushRun();
+    });
+  });
+
+  if (isTouchDevice) {
+    const visibleLayers = [];
+    busLinesLayer.eachLayer((layer) => visibleLayers.push(layer));
+    visibleLayers.forEach((layer) => {
+      const hitArea = L.polyline(layer.getLatLngs(), {
+        color: "#000000",
+        weight: 28,
+        opacity: 0,
+        interactive: true,
+      });
+      hitArea._isBusHitArea = true;
+      hitArea._visibleBusLine = layer;
+      hitArea.on("click", () =>
+        handleBusLineClick(layer.feature, layer, layer._validBusLineNames),
+      );
+      busLinesLayer.addLayer(hitArea);
+    });
+  }
+  map?.on("zoomend", () => {
+    busLinesLayer.eachLayer(applyBusSegmentZoomStyle);
+  });
+  return { allBusLines, busLinesLayer, busLineLayersByName };
+}
+
 export function setLectureTooltipsEnabledRuntime(enabled, {
   streetsLayer,
   monumentsLayer,
   arrondissementsLayer,
+  busLinesLayer,
   getBaseStreetStyle,
   isStreetVisibleInCurrentMode,
   normalizeName,
@@ -479,7 +634,7 @@ export function setLectureTooltipsEnabledRuntime(enabled, {
         if (isVisibleInCurrentMode) {
           if (!layer.getTooltip()) {
             layer.bindTooltip(streetName, {
-              direction: "top",
+              direction: isTouchDevice ? "center" : "top",
               sticky: !isTouchDevice,
               opacity: 0.9,
               className: "street-tooltip",
@@ -567,7 +722,7 @@ export function setLectureTooltipsEnabledRuntime(enabled, {
       if (enabled) {
         if (!layer.getTooltip()) {
           layer.bindTooltip(monumentName, {
-            direction: "top",
+            direction: isTouchDevice ? "center" : "top",
             sticky: false,
             permanent: false,
             opacity: 0.9,
@@ -619,6 +774,52 @@ export function setLectureTooltipsEnabledRuntime(enabled, {
             direction: "top",
             sticky: !isTouchDevice,
             permanent: false,
+            opacity: 0.9,
+            className: "street-tooltip",
+          });
+        }
+      } else if (layer.getTooltip()) {
+        layer.closeTooltip();
+        layer.unbindTooltip();
+      }
+    });
+  }
+
+  if (busLinesLayer) {
+    busLinesLayer.eachLayer((layer) => {
+      if (layer._isBusHitArea) {
+        if (enabled && isTouchDevice && !layer.__hitAreaTooltipBound) {
+          layer.__hitAreaTooltipBound = true;
+          layer.on(
+            "click",
+            (layer.__hitAreaTooltipFn = () => {
+              const visibleBusLine = layer._visibleBusLine;
+              if (!visibleBusLine?.getTooltip()) return;
+              busLinesLayer.eachLayer((candidateLayer) => {
+                if (
+                  candidateLayer !== visibleBusLine &&
+                  !candidateLayer._isBusHitArea &&
+                  candidateLayer.getTooltip?.()
+                ) {
+                  candidateLayer.closeTooltip();
+                }
+              });
+              visibleBusLine.toggleTooltip();
+            }),
+          );
+        } else if (!enabled || !isTouchDevice) {
+          unbindHitAreaTap(layer);
+        }
+        return;
+      }
+      const name = layer.feature?.properties?.name || "";
+      const longName = layer.feature?.properties?.long_name || "";
+      if (!name) return;
+      if (enabled) {
+        if (!layer.getTooltip()) {
+          layer.bindTooltip(longName ? `${name} · ${longName}` : name, {
+            direction: isTouchDevice ? "center" : "top",
+            sticky: !isTouchDevice,
             opacity: 0.9,
             className: "street-tooltip",
           });

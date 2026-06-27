@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Synchronise les données Parici depuis OpenStreetMap.
+ * Synchronise les données Camino Paris depuis OpenStreetMap.
  *
  * Génère :
  * - data/paris_rues_enrichi.geojson
@@ -180,7 +180,7 @@ function httpPost(url, body) {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "PariciParis/1.0",
+        "User-Agent": "Camino-Paris/1.0",
       },
     }, (res) => {
       const chunks = [];
@@ -462,7 +462,7 @@ function writeJson(filePath, data) {
 
 async function main() {
   ensureDirs();
-  console.log("🗺️  Synchronisation OSM → Parici");
+  console.log("🗺️  Synchronisation OSM → Camino Paris");
   console.log("================================\n");
 
   console.log("📍 Chargement des arrondissements de Paris...");
@@ -504,7 +504,7 @@ async function main() {
   writeJson(BACKEND_MONUMENTS, monuments);
   writeJson(STREETS_INDEX, buildStreetIndex(lightFeatures));
 
-  console.log("\n✅ Synchronisation Parici terminée.");
+  console.log("\n✅ Synchronisation Camino Paris terminée.");
 }
 
 main().catch((error) => {

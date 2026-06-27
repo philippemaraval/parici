@@ -1,4 +1,4 @@
-# Back-office d'edition Parici
+# Back-office d'edition Camino Paris
 
 Le back-office est disponible sur `/admin`.
 
