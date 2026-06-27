@@ -48,3 +48,10 @@ test("the installed application uses Camino Paris as its exact name", () => {
   assert.equal(manifest.name, "Camino Paris");
   assert.equal(manifest.short_name, "Camino Paris");
 });
+
+test("the displayed application version is V0.2.3", () => {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const rules = fs.readFileSync(path.join(root, "regles.html"), "utf8");
+  assert.match(html, />\s*V0\.2\.3\s*</);
+  assert.match(rules, />V0\.2\.3</);
+});
