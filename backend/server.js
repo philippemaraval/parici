@@ -21,7 +21,6 @@ const DAILY_IMAGES_PUBLIC_DIR = '/data/daily_images';
 const DAILY_IMAGES_ABSOLUTE_DIR = path.join(__dirname, '..', 'data', 'daily_images');
 const DAILY_MANIFEST_ABSOLUTE_PATH = path.join(
     __dirname,
-    '..',
     'data',
     'daily_images',
     'manifest_next_30.csv',
