@@ -38,6 +38,7 @@ const DIST_INCLUDE = [
   "sw.js",
   "sw.js.min",
   "site.webmanifest",
+  "apple-touch-icon.png",
   "camino-paris-favicon.ico",
   "data",
 ];

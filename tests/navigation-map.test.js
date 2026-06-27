@@ -23,6 +23,15 @@ test("all linked standalone pages are included in the deploy build", () => {
   assert.ok(fs.existsSync(path.join(root, "regles.html")));
 });
 
+test("the iOS home-screen icon is declared and included in the deploy build", () => {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const buildScript = fs.readFileSync(path.join(root, "scripts", "build.js"), "utf8");
+  assert.match(html, /rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png/);
+  assert.match(html, /apple-mobile-web-app-title" content="Camino Paris"/);
+  assert.match(buildScript, /"apple-touch-icon\.png"/);
+  assert.ok(fs.existsSync(path.join(root, "apple-touch-icon.png")));
+});
+
 test("map zoom keeps tiles and vector streets on one non-animated frame", () => {
   const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
   assert.match(app, /zoomAnimation: !1/);
