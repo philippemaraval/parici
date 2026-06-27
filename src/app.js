@@ -2755,6 +2755,19 @@ function initDiscreteDoubleTapZoomControls() {
     zoomMapBySingleStep(direction, aroundPoint);
   });
 }
+
+function synchronizeMapLayersAfterZoom() {
+  refreshStreetLayerStylesForZoom();
+  requestAnimationFrame(() => {
+    [streetsLayer, monumentsLayer, arrondissementsLayer, busLinesLayer].forEach((group) => {
+      group?.eachLayer?.((layer) => {
+        layer?.redraw?.();
+        layer?.touchBuffer?.redraw?.();
+      });
+    });
+  });
+}
+
 function initMap() {
   if (
     ((map = L.map("map", {
@@ -2764,13 +2777,22 @@ function initMap() {
       scrollWheelZoom: !1,
       zoomSnap: 1,
       zoomDelta: 1,
+      zoomAnimation: !1,
+      fadeAnimation: !1,
+      markerZoomAnimation: !1,
       maxBounds: MAP_REGION_MAX_BOUNDS,
       maxBoundsViscosity: 1,
       renderer: L.canvas({ padding: 0.5 }),
     }).setView([48.8566, 2.3522], 12)),
       L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        { maxZoom: 19, attribution: "Tiles © Esri" },
+        {
+          maxZoom: 19,
+          attribution: "Tiles © Esri",
+          updateWhenZooming: !1,
+          updateWhenIdle: !0,
+          keepBuffer: 2,
+        },
       ).addTo(map),
       void 0 !== L.Control.MiniMap)
   ) {
@@ -2794,7 +2816,7 @@ function initMap() {
     initDesktopDiscreteZoomControls(),
     initMobileTwoFingerDoubleTapZoomOut(),
     map.whenReady(enforceRegionalMapBounds),
-    map.on("zoomend", refreshStreetLayerStylesForZoom),
+    map.on("zoomend", synchronizeMapLayersAfterZoom),
     map.on("resize", enforceRegionalMapBounds));
 }
 function initUI() {

@@ -6659,6 +6659,19 @@ Essaie de faire mieux sur parici.netlify.app`,
       zoomMapBySingleStep(direction, aroundPoint);
     });
   }
+  function synchronizeMapLayersAfterZoom() {
+    refreshStreetLayerStylesForZoom();
+    requestAnimationFrame(() => {
+      [streetsLayer, monumentsLayer, arrondissementsLayer, busLinesLayer].forEach((group) => {
+        var _a;
+        (_a = group == null ? void 0 : group.eachLayer) == null ? void 0 : _a.call(group, (layer) => {
+          var _a2, _b, _c;
+          (_a2 = layer == null ? void 0 : layer.redraw) == null ? void 0 : _a2.call(layer);
+          (_c = (_b = layer == null ? void 0 : layer.touchBuffer) == null ? void 0 : _b.redraw) == null ? void 0 : _c.call(_b);
+        });
+      });
+    });
+  }
   function initMap() {
     if (map = L.map("map", {
       tap: true,
@@ -6667,12 +6680,21 @@ Essaie de faire mieux sur parici.netlify.app`,
       scrollWheelZoom: false,
       zoomSnap: 1,
       zoomDelta: 1,
+      zoomAnimation: false,
+      fadeAnimation: false,
+      markerZoomAnimation: false,
       maxBounds: MAP_REGION_MAX_BOUNDS,
       maxBoundsViscosity: 1,
       renderer: L.canvas({ padding: 0.5 })
     }).setView([48.8566, 2.3522], 12), L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 19, attribution: "Tiles \xA9 Esri" }
+      {
+        maxZoom: 19,
+        attribution: "Tiles \xA9 Esri",
+        updateWhenZooming: false,
+        updateWhenIdle: true,
+        keepBuffer: 2
+      }
     ).addTo(map), void 0 !== L.Control.MiniMap) {
       const e = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
@@ -6690,7 +6712,7 @@ Essaie de faire mieux sur parici.netlify.app`,
         collapsedHeight: 24
       }).addTo(map);
     }
-    initDiscreteDoubleTapZoomControls(), initDesktopDiscreteZoomControls(), initMobileTwoFingerDoubleTapZoomOut(), map.whenReady(enforceRegionalMapBounds), map.on("zoomend", refreshStreetLayerStylesForZoom), map.on("resize", enforceRegionalMapBounds);
+    initDiscreteDoubleTapZoomControls(), initDesktopDiscreteZoomControls(), initMobileTwoFingerDoubleTapZoomOut(), map.whenReady(enforceRegionalMapBounds), map.on("zoomend", synchronizeMapLayersAfterZoom), map.on("resize", enforceRegionalMapBounds);
   }
   function initUI() {
     IS_TOUCH_DEVICE && document.body.classList.add("touch-mode"), initMobilePullToRefresh();

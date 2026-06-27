@@ -23,7 +23,16 @@
   <meta name="msapplication-config" content="/camino-paris-favicon.ico/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
-  <link rel="stylesheet" href="style.css?v=20260527a">
+  <script>
+    (function () {
+      const requestedView = new URLSearchParams(window.location.search).get("view");
+      const allowedViews = ["camino", "daily", "profile"];
+      document.documentElement.dataset.mobileView = allowedViews.includes(requestedView) ? requestedView : "home";
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css?v=20260627-pages-map-alignment">
+  <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260627-pages-map-alignment">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css">
@@ -41,8 +50,8 @@
         <!-- Bandeau titre -->
         <header class="panel header-panel site-header">
           <div class="header-main">
-            <h1 class="header-title"><a href="/" class="header-title-link">Camino Paris</a></h1>
-            <p class="header-subtitle">Connaissez-vous vraiment votre ville ?</p>
+            <h1 class="header-title site-header__title"><a href="/" class="header-title-link">Camino Paris</a></h1>
+            <p class="header-subtitle site-header__subtitle">Connaissez-vous vraiment votre ville ?</p>
           </div>
 
           <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">
@@ -417,30 +426,15 @@
           <div id="summary" class="summary hidden"></div>
         </section>
 
-        <footer class="sidebar-footer" aria-label="Réseaux sociaux et crédits">
-          <p id="map-sync-meta" class="sidebar-map-sync" aria-live="polite">Sync carte : —</p>
-          <p class="sidebar-credit">Crafted in Paris by Philippe Maraval</p>
-          <div class="sidebar-visitors-row">
-            <p id="visitor-counter" class="sidebar-visitors">Visites : —</p>
-            <a class="sidebar-rules-link" href="/regles.html"
-              aria-label="Voir les règles et comment jouer">Règles</a>
-          </div>
-          <div class="sidebar-social-group sidebar-social-group--right">
-            <a class="sidebar-social-link" href="mailto:" aria-label="Contacter le jeu par mail">
-              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Zm2 .5v.4l7 4.8 7-4.8V7h-14Zm14 2.6-6.43 4.4a1 1 0 0 1-1.14 0L5 9.6v7.9h14V9.6Z" />
-              </svg>
-              <span class="sr-only">Mail</span>
-            </a>
+        <footer class="sidebar-footer site-footer" aria-label="Réseaux sociaux et crédits">
+          <p id="visitor-counter" class="sidebar-visitors site-footer__visitors">Visites : —</p>
+          <p id="map-sync-meta" class="sidebar-map-sync site-footer__sync" aria-live="polite">Sync carte : —</p>
+          <p class="sidebar-credit site-footer__credit">Crafted in Paris by Philippe Maraval</p>
+          <div class="sidebar-social-group sidebar-social-group--right site-footer__social">
+            <a class="sidebar-social-link" href="/regles.html" aria-label="Voir les règles">Règles</a>
+            <a class="sidebar-social-link" href="mailto:" aria-label="Contacter le jeu par mail">Mail</a>
             <a class="sidebar-social-link" href="https://x.com/sunmediaparici" target="_blank" rel="noopener noreferrer"
-              aria-label="Compte X du jeu">
-              <svg class="sidebar-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M5 4h3.8l4 5.7L17.8 4H20l-6.2 7.2L20.5 20h-3.8l-4.4-6.2L6.9 20H4.7l6.5-7.5L5 4Zm3 1.8 9.2 12.4h1L9 5.8H8Z" />
-              </svg>
-              <span class="sr-only">X</span>
-            </a>
+              aria-label="Compte X du jeu">X</a>
             <a class="sidebar-social-link" href="https://www.instagram.com/" target="_blank"
               rel="noopener noreferrer" aria-label="Compte Instagram du jeu">Instagram</a>
           </div>
@@ -474,7 +468,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script defer src="data_rules.js?v=20260504b"></script>
-  <script defer src="main.js?v=20260527a"></script>
+  <script defer src="main.js?v=20260627-pages-map-alignment"></script>
   <script>
     (function () {
       const syncMetaEl = document.getElementById("map-sync-meta");

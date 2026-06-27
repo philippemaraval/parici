@@ -5,11 +5,11 @@
   const hapticsButton = document.querySelector(".site-header__control--haptics");
   const visitorCounter = document.querySelector(".site-footer__visitors");
   const syncMeta = document.querySelector(".site-footer__sync");
-  const soundKey = "camino-sound";
-  const hapticsKey = "camino_haptics_enabled";
-  const visitorIdKey = "camino_visitor_id";
-  const visitSessionKey = "camino_visit_session";
-  const visitorCountKey = "camino_visits_cache";
+  const soundKey = "camino-paris-sound";
+  const hapticsKey = "camino_paris_haptics_enabled";
+  const visitorIdKey = "camino_paris_visitor_id";
+  const visitSessionKey = "camino_paris_visit_session";
+  const visitorCountKey = "camino_paris_visits_cache";
   const visitSessionTimeoutMs = 30 * 60 * 1000;
   const visitSessionHeartbeatMs = 60 * 1000;
   const apiOrigin =

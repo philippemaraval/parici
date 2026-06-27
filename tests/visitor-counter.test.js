@@ -77,9 +77,9 @@ test("site pages reuse one active visit and create a new one after inactivity", 
   assert.equal(secondPage.visitId, firstPage.visitId);
   assert.equal(secondPage.visitorId, firstPage.visitorId);
 
-  const storedVisit = JSON.parse(storage.getItem("camino_visit_session"));
+  const storedVisit = JSON.parse(storage.getItem("camino_paris_visit_session"));
   storage.setItem(
-    "camino_visit_session",
+    "camino_paris_visit_session",
     JSON.stringify({ ...storedVisit, lastSeenAt: Date.now() - 31 * 60 * 1000 }),
   );
 
