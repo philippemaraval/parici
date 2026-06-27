@@ -2157,7 +2157,7 @@
     normalizeName: normalizeName2,
     getBaseStreetStyle: getBaseStreetStyle3,
     isStreetVisibleInCurrentMode: isStreetVisibleInCurrentMode3,
-    isLayerHighlighted: isLayerHighlighted2,
+    isLayerHighlighted,
     handleStreetClick: handleStreetClick2,
     addTouchBufferForLayer: addTouchBufferForLayer2,
     getStreetHighlightStyle: getStreetHighlightStyle2
@@ -2248,7 +2248,7 @@
                   candidateLayer.setStyle(candidateLayer.__caminoParisLockedStyle);
                   return;
                 }
-                if (isLayerHighlighted2(candidateLayer)) {
+                if (isLayerHighlighted(candidateLayer)) {
                   return;
                 }
                 const baseStyle = getBaseStreetStyle3(candidateLayer);
@@ -6659,19 +6659,6 @@ Essaie de faire mieux sur parici.netlify.app`,
       zoomMapBySingleStep(direction, aroundPoint);
     });
   }
-  function synchronizeMapLayersAfterZoom() {
-    refreshStreetLayerStylesForZoom();
-    requestAnimationFrame(() => {
-      [streetsLayer, monumentsLayer, arrondissementsLayer, busLinesLayer].forEach((group) => {
-        var _a;
-        (_a = group == null ? void 0 : group.eachLayer) == null ? void 0 : _a.call(group, (layer) => {
-          var _a2, _b, _c;
-          (_a2 = layer == null ? void 0 : layer.redraw) == null ? void 0 : _a2.call(layer);
-          (_c = (_b = layer == null ? void 0 : layer.touchBuffer) == null ? void 0 : _b.redraw) == null ? void 0 : _c.call(_b);
-        });
-      });
-    });
-  }
   function initMap() {
     if (map = L.map("map", {
       tap: true,
@@ -6712,7 +6699,7 @@ Essaie de faire mieux sur parici.netlify.app`,
         collapsedHeight: 24
       }).addTo(map);
     }
-    initDiscreteDoubleTapZoomControls(), initDesktopDiscreteZoomControls(), initMobileTwoFingerDoubleTapZoomOut(), map.whenReady(enforceRegionalMapBounds), map.on("zoomend", synchronizeMapLayersAfterZoom), map.on("resize", enforceRegionalMapBounds);
+    initDiscreteDoubleTapZoomControls(), initDesktopDiscreteZoomControls(), initMobileTwoFingerDoubleTapZoomOut(), map.whenReady(enforceRegionalMapBounds), map.on("resize", enforceRegionalMapBounds);
   }
   function initUI() {
     IS_TOUCH_DEVICE && document.body.classList.add("touch-mode"), initMobilePullToRefresh();
@@ -7069,21 +7056,6 @@ Essaie de faire mieux sur parici.netlify.app`,
   }
   function getStreetHighlightStyle(e, t = 7) {
     return { color: e, weight: getAdaptiveStreetWeight(t), opacity: 1 };
-  }
-  function refreshStreetLayerStylesForZoom() {
-    if (!streetsLayer || !streetLayersById || !streetLayersById.size) return;
-    streetLayersById.forEach((e) => {
-      if (!e || "function" != typeof e.setStyle) return;
-      if (e.__caminoParisLockedStyle) {
-        const t2 = e.__caminoParisLockedStyleBaseWeight || e.__caminoParisLockedStyle.weight || 7;
-        e.__caminoParisLockedStyle = { ...e.__caminoParisLockedStyle, weight: getAdaptiveStreetWeight(t2) };
-        e.setStyle(e.__caminoParisLockedStyle);
-        return;
-      }
-      if (isLayerHighlighted(e)) return;
-      const t = getBaseStreetStyle2(e);
-      e.setStyle({ color: t.color, weight: t.weight, opacity: t.opacity });
-    });
   }
   function isStreetVisibleInCurrentMode2(e, t) {
     return isStreetVisibleInCurrentMode({

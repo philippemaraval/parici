@@ -32,11 +32,19 @@ test("the iOS home-screen icon is declared and included in the deploy build", ()
   assert.ok(fs.existsSync(path.join(root, "apple-touch-icon.png")));
 });
 
-test("map zoom keeps tiles and vector streets on one non-animated frame", () => {
+test("map zoom keeps tiles and vector streets non-animated without rewriting street styles", () => {
   const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
   assert.match(app, /zoomAnimation: !1/);
   assert.match(app, /fadeAnimation: !1/);
   assert.match(app, /updateWhenZooming: !1/);
-  assert.match(app, /map\.on\("zoomend", synchronizeMapLayersAfterZoom\)/);
-  assert.match(app, /layer\?\.redraw\?\.\(\)/);
+  assert.doesNotMatch(app, /map\.on\("zoomend", (?:synchronizeMapLayersAfterZoom|refreshStreetLayerStylesForZoom)\)/);
+  assert.doesNotMatch(app, /function synchronizeMapLayersAfterZoom/);
+});
+
+test("the installed application uses Camino Paris as its exact name", () => {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, "site.webmanifest"), "utf8"));
+  assert.match(html, /<title>Camino Paris<\/title>/);
+  assert.equal(manifest.name, "Camino Paris");
+  assert.equal(manifest.short_name, "Camino Paris");
 });

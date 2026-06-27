@@ -2756,18 +2756,6 @@ function initDiscreteDoubleTapZoomControls() {
   });
 }
 
-function synchronizeMapLayersAfterZoom() {
-  refreshStreetLayerStylesForZoom();
-  requestAnimationFrame(() => {
-    [streetsLayer, monumentsLayer, arrondissementsLayer, busLinesLayer].forEach((group) => {
-      group?.eachLayer?.((layer) => {
-        layer?.redraw?.();
-        layer?.touchBuffer?.redraw?.();
-      });
-    });
-  });
-}
-
 function initMap() {
   if (
     ((map = L.map("map", {
@@ -2816,7 +2804,6 @@ function initMap() {
     initDesktopDiscreteZoomControls(),
     initMobileTwoFingerDoubleTapZoomOut(),
     map.whenReady(enforceRegionalMapBounds),
-    map.on("zoomend", synchronizeMapLayersAfterZoom),
     map.on("resize", enforceRegionalMapBounds));
 }
 function initUI() {
@@ -3412,21 +3399,6 @@ function getAdaptiveStreetWeight(e) {
 }
 function getStreetHighlightStyle(e, t = 7) {
   return { color: e, weight: getAdaptiveStreetWeight(t), opacity: 1 };
-}
-function refreshStreetLayerStylesForZoom() {
-  if (!streetsLayer || !streetLayersById || !streetLayersById.size) return;
-  streetLayersById.forEach((e) => {
-    if (!e || "function" != typeof e.setStyle) return;
-    if (e.__caminoParisLockedStyle) {
-      const t = e.__caminoParisLockedStyleBaseWeight || e.__caminoParisLockedStyle.weight || 7;
-      e.__caminoParisLockedStyle = { ...e.__caminoParisLockedStyle, weight: getAdaptiveStreetWeight(t) };
-      e.setStyle(e.__caminoParisLockedStyle);
-      return;
-    }
-    if (isLayerHighlighted(e)) return;
-    const t = getBaseStreetStyle(e);
-    e.setStyle({ color: t.color, weight: t.weight, opacity: t.opacity });
-  });
 }
 function isStreetVisibleInCurrentMode(e, t) {
   return isStreetVisibleInCurrentModeCore({

@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v5";
+const CACHE_NAME = "camino-paris-v6";
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -7,7 +7,7 @@ const CORE_PRECACHE_URLS = [
   "/arbre-rangs.html",
   "/reset-password.html",
   "/style.css?v=20260627-pages-map-alignment",
-  "/main.js?v=20260627-pages-map-alignment",
+  "/main.js?v=20260627-street-layer-fix",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
   "/src/public/css/site-shell.css?v=20260627-pages-map-alignment",
   "/src/public/js/site-shell.js?v=20260609-visit-sessions",
