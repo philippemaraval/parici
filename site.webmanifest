@@ -7,14 +7,16 @@
     "scope": "/",
     "icons": [
         {
-            "src": "/camino-paris-favicon.ico/android-icon-192x192.png",
+            "src": "/camino-paris-favicon.ico/icon-192x192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
-            "src": "/camino-paris-favicon.ico/apple-icon.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "src": "/camino-paris-favicon.ico/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
         }
     ],
     "theme_color": "#ffffff",

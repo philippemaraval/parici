@@ -3,7 +3,7 @@ const API_BASE_CANDIDATES =
   window.location.hostname === "127.0.0.1" ||
   window.location.protocol === "file:"
     ? ["http://localhost:3000"]
-    : ["https://parici.onrender.com"];
+    : ["https://camino-paris.onrender.com"];
 
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;

@@ -10,11 +10,11 @@ const CORE_PRECACHE_URLS = [
   "/src/public/js/site-shell.js?v=20260609-visit-sessions",
   "/data_rules.js",
   "/site.webmanifest",
-  "/camino-paris-favicon.ico/favicon.ico",
-  "/camino-paris-favicon.ico/favicon-16x16.png",
-  "/camino-paris-favicon.ico/favicon-32x32.png",
-  "/camino-paris-favicon.ico/android-icon-192x192.png",
-  "/camino-paris-favicon.ico/apple-icon-180x180.png",
+  "/camino-paris-favicon.ico/icon-16x16.png",
+  "/camino-paris-favicon.ico/icon-32x32.png",
+  "/camino-paris-favicon.ico/icon-180x180.png",
+  "/camino-paris-favicon.ico/icon-192x192.png",
+  "/camino-paris-favicon.ico/icon-512x512.png",
 ];
 
 const OPTIONAL_CDN_PRECACHE_URLS = [
@@ -196,8 +196,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: "/camino-paris-favicon.ico/android-icon-192x192.png",
-      badge: "/camino-paris-favicon.ico/favicon-32x32.png",
+      icon: "/camino-paris-favicon.ico/icon-192x192.png",
+      badge: "/camino-paris-favicon.ico/icon-32x32.png",
       tag: notificationTag,
       renotify: true,
       timestamp: Date.now(),

@@ -439,6 +439,7 @@ const allowedOrigins = new Set([
     'https://parici7.netlify.app',
     'https://parici8.netlify.app',
     'https://parici.netlify.app',
+    'https://camino-paris.netlify.app',
     process.env.FRONTEND_URL,
     ...(process.env.CORS_ALLOWED_ORIGINS || '')
         .split(',')

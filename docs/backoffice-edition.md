@@ -17,7 +17,7 @@ Option B (pilotage par role en base)
 - Promouvoir un utilisateur:
 
 ```bash
-curl -X POST "https://parici.onrender.com/api/admin/users/role" \
+curl -X POST "https://camino-paris.onrender.com/api/admin/users/role" \
   -H "Content-Type: application/json" \
   -H "x-admin-key: <ADMIN_API_KEY>" \
   -d '{"username":"ami","role":"editor"}'

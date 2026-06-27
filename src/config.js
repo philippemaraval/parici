@@ -3,7 +3,7 @@ export const API_URL =
   window.location.hostname === "127.0.0.1" ||
   window.location.protocol === "file:"
     ? "http://localhost:3000"
-    : "https://parici.onrender.com";
+    : "https://camino-paris.onrender.com";
 
 export const SESSION_SIZE = 20;
 export const MAX_ERRORS_MARATHON = 3;

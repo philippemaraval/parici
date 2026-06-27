@@ -1,6 +1,6 @@
 (() => {
   // src/config.js
-  var API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:" ? "http://localhost:3000" : "https://parici.onrender.com";
+  var API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:" ? "http://localhost:3000" : "https://camino-paris.onrender.com";
   var SESSION_SIZE = 20;
   var MAX_ERRORS_MARATHON = 3;
   var MAX_TIME_SECONDS = 500;
