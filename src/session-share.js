@@ -80,7 +80,7 @@ export function buildSessionShareText({
     year: "numeric",
   }).format(now);
 
-  let header = `🗺️ Camino Paris — ${dateLabel}`;
+  let header = `🗺️ Parici — ${dateLabel}`;
   header += `\n🧩 ${modeLabel} • ${zoneLabel}`;
   if (arrondissementName) {
     header += ` (${arrondissementName})`;
@@ -132,7 +132,7 @@ export async function shareSessionShareText(text) {
 
   try {
     await navigator.share({
-      title: "Camino Paris - Résultat de session",
+      title: "Parici - Résultat de session",
       text,
     });
     return true;

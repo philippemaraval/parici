@@ -813,11 +813,10 @@ export function setLectureTooltipsEnabledRuntime(enabled, {
         return;
       }
       const name = layer.feature?.properties?.name || "";
-      const longName = layer.feature?.properties?.long_name || "";
       if (!name) return;
       if (enabled) {
         if (!layer.getTooltip()) {
-          layer.bindTooltip(longName ? `${name} · ${longName}` : name, {
+          layer.bindTooltip(name, {
             direction: isTouchDevice ? "center" : "top",
             sticky: !isTouchDevice,
             opacity: 0.9,

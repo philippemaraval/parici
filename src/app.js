@@ -115,8 +115,8 @@ const DEFAULT_REMINDER_CONFIG = {
   timezone: "Europe/Paris",
 };
 const MAP_REGION_MAX_BOUNDS = [
-  [48.805, 2.215], // SW: Paris et petite marge intra-muros
-  [48.91, 2.47], // NE: Paris et bois limitrophes
+  [48.25, 1.3], // SW: terminus franciliens occidentaux et méridionaux
+  [49.32, 3.45], // NE: terminus franciliens septentrionaux et orientaux
 ];
 let swRegistrationPromise = null;
 let notificationConfigCache = null;
@@ -588,7 +588,7 @@ async function refreshDailyReminderControls() {
 
   if (requiresInstalledAppForMobilePush()) {
     setDailyReminderStatus(
-      "Sur iPhone/iPad, installe Camino Paris via “Ajouter à l’écran d’accueil” pour activer les notifications.",
+      "Sur iPhone/iPad, installe Parici via “Ajouter à l’écran d’accueil” pour activer les notifications.",
       "error",
     );
     setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -684,7 +684,7 @@ async function enableDailyReminder() {
 
   if (requiresInstalledAppForMobilePush()) {
     setDailyReminderStatus(
-      "Installe Camino Paris sur l’écran d’accueil pour activer les notifications sur iPhone/iPad.",
+      "Installe Parici sur l’écran d’accueil pour activer les notifications sur iPhone/iPad.",
       "error",
     );
     setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -2770,6 +2770,7 @@ function initMap() {
       markerZoomAnimation: !1,
       maxBounds: MAP_REGION_MAX_BOUNDS,
       maxBoundsViscosity: 1,
+      minZoom: 7,
       renderer: L.canvas({ padding: 0.5 }),
     }).setView([48.8566, 2.3522], 12)),
       L.tileLayer(

@@ -192,7 +192,7 @@ self.addEventListener("push", (event) => {
     };
   }
 
-  const title = payload.title || "Camino Paris";
+  const title = payload.title || "Parici";
   const body = payload.body || "Le Daily du jour est disponible.";
   const targetUrl = normalizeSameOriginPath(payload.url || "/");
   const notificationTag = payload.tag || "camino-notification";

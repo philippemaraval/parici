@@ -27,7 +27,7 @@ test("the iOS home-screen icon is declared and included in the deploy build", ()
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const buildScript = fs.readFileSync(path.join(root, "scripts", "build.js"), "utf8");
   assert.match(html, /rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png/);
-  assert.match(html, /apple-mobile-web-app-title" content="Camino Paris"/);
+  assert.match(html, /apple-mobile-web-app-title" content="Parici"/);
   assert.match(buildScript, /"apple-touch-icon\.png"/);
   assert.ok(fs.existsSync(path.join(root, "apple-touch-icon.png")));
 });
@@ -41,12 +41,12 @@ test("map zoom keeps tiles and vector streets non-animated without rewriting str
   assert.doesNotMatch(app, /function synchronizeMapLayersAfterZoom/);
 });
 
-test("the installed application uses Camino Paris as its exact name", () => {
+test("the installed application uses Parici as its exact name", () => {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "site.webmanifest"), "utf8"));
-  assert.match(html, /<title>Camino Paris<\/title>/);
-  assert.equal(manifest.name, "Camino Paris");
-  assert.equal(manifest.short_name, "Camino Paris");
+  assert.match(html, /<title>Parici<\/title>/);
+  assert.equal(manifest.name, "Parici");
+  assert.equal(manifest.short_name, "Parici");
 });
 
 test("the displayed application version is V0.2.3", () => {

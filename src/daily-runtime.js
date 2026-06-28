@@ -437,7 +437,7 @@ export function handleDailyShareTextRuntime({
       ? Math.min(...dailyGuessHistory.map((guess) => guess.distance))
       : null;
 
-  let text = `🗺️ Camino Paris Daily — ${dateLabel}\n📍 Rue: ${streetName}\n${result.success ? "✅" : "❌"} Résultat: ${scoreLabel}/7\n\n`;
+  let text = `🗺️ Parici Daily — ${dateLabel}\n📍 Rue: ${streetName}\n${result.success ? "✅" : "❌"} Résultat: ${scoreLabel}/7\n\n`;
 
   if (dailyGuessHistory.length > 0) {
     dailyGuessHistory.forEach((guess, index) => {
@@ -605,29 +605,29 @@ export function handleDailyShareImageRuntime({
   }
 
   const topGradient = ctx.createLinearGradient(0, 0, 0, height);
-  topGradient.addColorStop(0, "#f8dca5");
-  topGradient.addColorStop(0.35, "#f2a900");
-  topGradient.addColorStop(0.68, "#02273b");
-  topGradient.addColorStop(1, "#02273b");
+  topGradient.addColorStop(0, "#d9f1e8");
+  topGradient.addColorStop(0.35, "#1f9d66");
+  topGradient.addColorStop(0.68, "#0f6f49");
+  topGradient.addColorStop(1, "#064e3b");
   ctx.fillStyle = topGradient;
   ctx.fillRect(0, 0, width, height);
 
   const horizonY = height * 0.47;
 
   ctx.globalAlpha = 0.3;
-  ctx.fillStyle = "#fff5cc";
+  ctx.fillStyle = "#ecfdf5";
   ctx.beginPath();
   ctx.arc(200, 190, 110, 0, 2 * Math.PI);
   ctx.fill();
   ctx.globalAlpha = 1;
 
   const seaGradient = ctx.createLinearGradient(0, horizonY, 0, height);
-  seaGradient.addColorStop(0, "rgba(18,41,122,0.85)");
-  seaGradient.addColorStop(1, "rgba(12,29,87,0.95)");
+  seaGradient.addColorStop(0, "rgba(15,111,73,0.88)");
+  seaGradient.addColorStop(1, "rgba(6,78,59,0.97)");
   ctx.fillStyle = seaGradient;
   ctx.fillRect(0, horizonY, width, height - horizonY);
 
-  ctx.fillStyle = "rgba(10,23,69,0.55)";
+  ctx.fillStyle = "rgba(2,44,34,0.58)";
   ctx.beginPath();
   ctx.moveTo(0, horizonY + 30);
   ctx.lineTo(120, horizonY + 8);
@@ -655,7 +655,7 @@ export function handleDailyShareImageRuntime({
   }
 
   const panel = { x: 60, y: 60, w: width - 120, h: height - 120 };
-  ctx.fillStyle = "rgba(2, 6, 23, 0.68)";
+  ctx.fillStyle = "rgba(2, 44, 34, 0.72)";
   ctx.beginPath();
   ctx.roundRect(panel.x, panel.y, panel.w, panel.h, 36);
   ctx.fill();
@@ -666,13 +666,13 @@ export function handleDailyShareImageRuntime({
   ctx.textAlign = "center";
   ctx.fillStyle = "#f8fafc";
   ctx.font = '700 66px "Montserrat", "Avenir Next", "Segoe UI", sans-serif';
-  ctx.fillText("CAMINO DAILY", centerX, 170);
+  ctx.fillText("PARICI DAILY", centerX, 170);
 
   ctx.fillStyle = "rgba(226,232,240,0.95)";
   ctx.font = '500 32px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
   ctx.fillText(`Défi du ${dateLabel}`, centerX, 220);
 
-  ctx.fillStyle = "#fde68a";
+  ctx.fillStyle = "#a7f3d0";
   ctx.font = '600 32px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
   ctx.fillText("Rue du jour", centerX, 280);
 
@@ -799,7 +799,7 @@ export function handleDailyShareImageRuntime({
   ctx.fillText(`🎯 ${performanceLabel}`, bestCenterX, photoDistanceY, photoPanel.w - 30);
   ctx.fillText("Essaie de faire mieux sur", bestCenterX, photoTryAgainY);
 
-  ctx.fillStyle = "#93c5fd";
+  ctx.fillStyle = "#6ee7b7";
   ctx.font = '700 24px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
   ctx.fillText("parici.netlify.app", bestCenterX, photoHostY);
 
@@ -810,12 +810,12 @@ export function handleDailyShareImageRuntime({
         return;
       }
 
-      const file = new File([blob], "camino-paris-daily.png", { type: "image/png" });
+      const file = new File([blob], "parici-daily.png", { type: "image/png" });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
-            title: "Camino Paris - Défi Quotidien",
+            title: "Parici - Défi Quotidien",
             text: `${dailyTargetData.streetName} • ${resultLabel}/7\nEssaie de faire mieux sur parici.netlify.app`,
             files: [file],
           });
@@ -841,7 +841,7 @@ export function handleDailyShareImageRuntime({
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
-      anchor.download = "camino-paris-daily.png";
+      anchor.download = "parici-daily.png";
       anchor.click();
       URL.revokeObjectURL(objectUrl);
       showMessage("Image téléchargée !", "success");

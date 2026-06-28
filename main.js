@@ -2771,7 +2771,7 @@
     }
     if (busLinesLayer2) {
       busLinesLayer2.eachLayer((layer) => {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (layer._isBusHitArea) {
           if (enabled && isTouchDevice && !layer.__hitAreaTooltipBound) {
             layer.__hitAreaTooltipBound = true;
@@ -2795,11 +2795,10 @@
           return;
         }
         const name = ((_b = (_a = layer.feature) == null ? void 0 : _a.properties) == null ? void 0 : _b.name) || "";
-        const longName = ((_d = (_c = layer.feature) == null ? void 0 : _c.properties) == null ? void 0 : _d.long_name) || "";
         if (!name) return;
         if (enabled) {
           if (!layer.getTooltip()) {
-            layer.bindTooltip(longName ? `${name} \xB7 ${longName}` : name, {
+            layer.bindTooltip(name, {
               direction: isTouchDevice ? "center" : "top",
               sticky: !isTouchDevice,
               opacity: 0.9,
@@ -3478,7 +3477,7 @@
       month: "2-digit",
       year: "numeric"
     }).format(now);
-    let header = `\u{1F5FA}\uFE0F Camino Paris \u2014 ${dateLabel}`;
+    let header = `\u{1F5FA}\uFE0F Parici \u2014 ${dateLabel}`;
     header += `
 \u{1F9E9} ${modeLabel} \u2022 ${zoneLabel}`;
     if (arrondissementName) {
@@ -3529,7 +3528,7 @@ Essaie de faire mieux sur ${host}`;
     }
     try {
       await navigator.share({
-        title: "Camino Paris - R\xE9sultat de session",
+        title: "Parici - R\xE9sultat de session",
         text
       });
       return true;
@@ -3905,7 +3904,7 @@ Essaie de faire mieux sur ${host}`;
     const dateLabel = getDailyShareDateLabel(dailyTargetData2 == null ? void 0 : dailyTargetData2.date);
     const streetName = dailyTargetData2.streetName || "Rue inconnue";
     const minDistance = dailyGuessHistory2.length > 0 ? Math.min(...dailyGuessHistory2.map((guess) => guess.distance)) : null;
-    let text = `\u{1F5FA}\uFE0F Camino Paris Daily \u2014 ${dateLabel}
+    let text = `\u{1F5FA}\uFE0F Parici Daily \u2014 ${dateLabel}
 \u{1F4CD} Rue: ${streetName}
 ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
 
@@ -4047,25 +4046,25 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
       context.restore();
     }
     const topGradient = ctx.createLinearGradient(0, 0, 0, height);
-    topGradient.addColorStop(0, "#f8dca5");
-    topGradient.addColorStop(0.35, "#f2a900");
-    topGradient.addColorStop(0.68, "#02273b");
-    topGradient.addColorStop(1, "#02273b");
+    topGradient.addColorStop(0, "#d9f1e8");
+    topGradient.addColorStop(0.35, "#1f9d66");
+    topGradient.addColorStop(0.68, "#0f6f49");
+    topGradient.addColorStop(1, "#064e3b");
     ctx.fillStyle = topGradient;
     ctx.fillRect(0, 0, width, height);
     const horizonY = height * 0.47;
     ctx.globalAlpha = 0.3;
-    ctx.fillStyle = "#fff5cc";
+    ctx.fillStyle = "#ecfdf5";
     ctx.beginPath();
     ctx.arc(200, 190, 110, 0, 2 * Math.PI);
     ctx.fill();
     ctx.globalAlpha = 1;
     const seaGradient = ctx.createLinearGradient(0, horizonY, 0, height);
-    seaGradient.addColorStop(0, "rgba(18,41,122,0.85)");
-    seaGradient.addColorStop(1, "rgba(12,29,87,0.95)");
+    seaGradient.addColorStop(0, "rgba(15,111,73,0.88)");
+    seaGradient.addColorStop(1, "rgba(6,78,59,0.97)");
     ctx.fillStyle = seaGradient;
     ctx.fillRect(0, horizonY, width, height - horizonY);
-    ctx.fillStyle = "rgba(10,23,69,0.55)";
+    ctx.fillStyle = "rgba(2,44,34,0.58)";
     ctx.beginPath();
     ctx.moveTo(0, horizonY + 30);
     ctx.lineTo(120, horizonY + 8);
@@ -4091,7 +4090,7 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
       ctx.stroke();
     }
     const panel = { x: 60, y: 60, w: width - 120, h: height - 120 };
-    ctx.fillStyle = "rgba(2, 6, 23, 0.68)";
+    ctx.fillStyle = "rgba(2, 44, 34, 0.72)";
     ctx.beginPath();
     ctx.roundRect(panel.x, panel.y, panel.w, panel.h, 36);
     ctx.fill();
@@ -4101,11 +4100,11 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
     ctx.textAlign = "center";
     ctx.fillStyle = "#f8fafc";
     ctx.font = '700 66px "Montserrat", "Avenir Next", "Segoe UI", sans-serif';
-    ctx.fillText("CAMINO DAILY", centerX, 170);
+    ctx.fillText("PARICI DAILY", centerX, 170);
     ctx.fillStyle = "rgba(226,232,240,0.95)";
     ctx.font = '500 32px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
     ctx.fillText(`D\xE9fi du ${dateLabel}`, centerX, 220);
-    ctx.fillStyle = "#fde68a";
+    ctx.fillStyle = "#a7f3d0";
     ctx.font = '600 32px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
     ctx.fillText("Rue du jour", centerX, 280);
     ctx.fillStyle = "#ffffff";
@@ -4213,7 +4212,7 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
     ctx.font = '500 22px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
     ctx.fillText(`\u{1F3AF} ${performanceLabel}`, bestCenterX, photoDistanceY, photoPanel.w - 30);
     ctx.fillText("Essaie de faire mieux sur", bestCenterX, photoTryAgainY);
-    ctx.fillStyle = "#93c5fd";
+    ctx.fillStyle = "#6ee7b7";
     ctx.font = '700 24px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
     ctx.fillText("parici.netlify.app", bestCenterX, photoHostY);
     const finalizeShareImage = () => {
@@ -4222,11 +4221,11 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
           showMessage2("Erreur lors de la g\xE9n\xE9ration", "error");
           return;
         }
-        const file = new File([blob], "camino-paris-daily.png", { type: "image/png" });
+        const file = new File([blob], "parici-daily.png", { type: "image/png" });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
-              title: "Camino Paris - D\xE9fi Quotidien",
+              title: "Parici - D\xE9fi Quotidien",
               text: `${dailyTargetData2.streetName} \u2022 ${resultLabel}/7
 Essaie de faire mieux sur parici.netlify.app`,
               files: [file]
@@ -4250,7 +4249,7 @@ Essaie de faire mieux sur parici.netlify.app`,
         const objectUrl = URL.createObjectURL(blob);
         const anchor = document.createElement("a");
         anchor.href = objectUrl;
-        anchor.download = "camino-paris-daily.png";
+        anchor.download = "parici-daily.png";
         anchor.click();
         URL.revokeObjectURL(objectUrl);
         showMessage2("Image t\xE9l\xE9charg\xE9e !", "success");
@@ -4488,10 +4487,10 @@ Essaie de faire mieux sur parici.netlify.app`,
     timezone: "Europe/Paris"
   };
   var MAP_REGION_MAX_BOUNDS = [
-    [48.805, 2.215],
-    // SW: Paris et petite marge intra-muros
-    [48.91, 2.47]
-    // NE: Paris et bois limitrophes
+    [48.25, 1.3],
+    // SW: terminus franciliens occidentaux et méridionaux
+    [49.32, 3.45]
+    // NE: terminus franciliens septentrionaux et orientaux
   ];
   var swRegistrationPromise = null;
   var notificationConfigCache = null;
@@ -4880,7 +4879,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     }
     if (requiresInstalledAppForMobilePush()) {
       setDailyReminderStatus(
-        "Sur iPhone/iPad, installe Camino Paris via \u201CAjouter \xE0 l\u2019\xE9cran d\u2019accueil\u201D pour activer les notifications.",
+        "Sur iPhone/iPad, installe Parici via \u201CAjouter \xE0 l\u2019\xE9cran d\u2019accueil\u201D pour activer les notifications.",
         "error"
       );
       setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -4967,7 +4966,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     }
     if (requiresInstalledAppForMobilePush()) {
       setDailyReminderStatus(
-        "Installe Camino Paris sur l\u2019\xE9cran d\u2019accueil pour activer les notifications sur iPhone/iPad.",
+        "Installe Parici sur l\u2019\xE9cran d\u2019accueil pour activer les notifications sur iPhone/iPad.",
         "error"
       );
       setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
@@ -6672,6 +6671,7 @@ Essaie de faire mieux sur parici.netlify.app`,
       markerZoomAnimation: false,
       maxBounds: MAP_REGION_MAX_BOUNDS,
       maxBoundsViscosity: 1,
+      minZoom: 7,
       renderer: L.canvas({ padding: 0.5 })
     }).setView([48.8566, 2.3522], 12), L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",

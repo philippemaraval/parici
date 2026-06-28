@@ -820,7 +820,7 @@ function isValidPushSubscription(subscription) {
 
 function getDailyReminderPayload() {
     return JSON.stringify({
-        title: 'Camino Paris Daily',
+        title: 'Parici Daily',
         body: 'Le Daily est dispo. Lance ta partie du jour !',
         url: '/',
         tag: 'parici-daily-reminder',
