@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v11";
+const CACHE_NAME = "camino-paris-v12";
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -12,13 +12,13 @@ const CORE_PRECACHE_URLS = [
   "/src/public/css/site-shell.css?v=20260627-pages-map-alignment",
   "/src/public/js/site-shell.js?v=20260609-visit-sessions",
   "/data_rules.js",
-  "/site.webmanifest?v=20260628-parici",
-  "/apple-touch-icon.png?v=20260628-parici",
-  "/camino-paris-favicon.ico/icon-16x16.png",
-  "/camino-paris-favicon.ico/icon-32x32.png",
-  "/camino-paris-favicon.ico/icon-180x180.png",
-  "/camino-paris-favicon.ico/icon-192x192.png",
-  "/camino-paris-favicon.ico/icon-512x512.png",
+  "/site.webmanifest?v=20260628-centered",
+  "/apple-touch-icon.png?v=20260628-centered",
+  "/camino-paris-favicon.ico/icon-16x16.png?v=20260628-centered",
+  "/camino-paris-favicon.ico/icon-32x32.png?v=20260628-centered",
+  "/camino-paris-favicon.ico/icon-180x180.png?v=20260628-centered",
+  "/camino-paris-favicon.ico/icon-192x192.png?v=20260628-centered",
+  "/camino-paris-favicon.ico/icon-512x512.png?v=20260628-centered",
 ];
 
 const OPTIONAL_CDN_PRECACHE_URLS = [
@@ -200,8 +200,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: "/camino-paris-favicon.ico/icon-192x192.png",
-      badge: "/camino-paris-favicon.ico/icon-32x32.png",
+      icon: "/camino-paris-favicon.ico/icon-192x192.png?v=20260628-centered",
+      badge: "/camino-paris-favicon.ico/icon-32x32.png?v=20260628-centered",
       tag: notificationTag,
       renotify: true,
       timestamp: Date.now(),
