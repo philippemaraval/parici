@@ -24,6 +24,38 @@
     timerDanger: "#d2463c"
   };
 
+  // src/rank-avatar-definitions.js
+  var VILLE_RANK_AVATAR_DEFINITIONS = [
+    {
+      badgeId: "ville_minot",
+      emoji: "\u{1F680}",
+      name: "Astronaute",
+      desc: "Atteindre Titi Parisien sur Paname entier",
+      rankLetter: "M"
+    },
+    {
+      badgeId: "ville_habitue",
+      emoji: "\u2B50\uFE0F",
+      name: "\xC9toile",
+      desc: "Atteindre Habitu\xE9 des Quais sur Paname entier",
+      rankLetter: "H"
+    },
+    {
+      badgeId: "ville_vrai",
+      emoji: "\u{1F6F8}",
+      name: "Extraterrestre",
+      desc: "Atteindre Vrai Parigot sur Paname entier",
+      rankLetter: "V"
+    },
+    {
+      badgeId: "ville_maire",
+      emoji: "\u{1F47D}",
+      name: "L'Ovni",
+      desc: "Atteindre Pr\xE9fet de Paris sur Paname entier",
+      rankLetter: "MV"
+    }
+  ];
+
   // src/leaderboard.js
   var TITLE_THRESHOLDS_BY_MODE = {
     classique: {
@@ -149,6 +181,18 @@
       return typeof (thresholds == null ? void 0 : thresholds[rankLetter]) === "number" && scoreValue >= thresholds[rankLetter];
     });
   }
+  function hasReachedVilleRankInAnyMode(userStats, rankLetter) {
+    const combos = buildScoringComboMap(userStats);
+    return SCORING_GAME_TYPES.some((gameType) => {
+      const combo = combos.get(`ville|${gameType}`);
+      if (!combo) {
+        return false;
+      }
+      const thresholds = getTitleThresholds("ville", gameType, combo.best_items_total || 0);
+      const scoreValue = getTitleScoreValue(combo.high_score, combo.best_items_correct, gameType);
+      return typeof (thresholds == null ? void 0 : thresholds[rankLetter]) === "number" && scoreValue >= thresholds[rankLetter];
+    });
+  }
   var AVATAR_UNLOCKS = [
     { emoji: "\u{1F464}", reqScore: 0, reqTitleIdx: 4 },
     { emoji: "\u{1F9D1}", reqScore: 0, reqTitleIdx: 4 },
@@ -168,30 +212,12 @@
     { emoji: "\u{1F985}", reqScore: 150, reqTitleIdx: 0, desc: "Gabian" },
     { emoji: "\u26BD", reqScore: 150, reqTitleIdx: 0 },
     { emoji: "\u{1F451}", reqScore: 150, reqTitleIdx: 0 },
-    {
-      emoji: "\u{1F680}",
-      name: "Astronaute",
-      desc: "Atteindre Titi Parisien sur la Paname entier (Classique, Marathon, Chrono)",
-      check: (userStats) => hasReachedVilleRank(userStats, "M")
-    },
-    {
-      emoji: "\u2B50\uFE0F",
-      name: "\xC9toile",
-      desc: "Atteindre Habitu\xE9 sur la Paname entier (Classique, Marathon, Chrono)",
-      check: (userStats) => hasReachedVilleRank(userStats, "H")
-    },
-    {
-      emoji: "\u{1F6F8}",
-      name: "Extraterrestre",
-      desc: "Atteindre Vrai Parigot sur la Paname entier (Classique, Marathon, Chrono)",
-      check: (userStats) => hasReachedVilleRank(userStats, "V")
-    },
-    {
-      emoji: "\u{1F47D}",
-      name: "L'Ovni",
-      desc: "Atteindre Pr\xE9fet de Paris sur la Paname entier (Classique, Marathon, Chrono)",
-      check: (userStats) => hasReachedVilleRank(userStats, "MV")
-    }
+    ...VILLE_RANK_AVATAR_DEFINITIONS.map(({ emoji, name, desc, rankLetter }) => ({
+      emoji,
+      name,
+      desc,
+      check: (userStats) => hasReachedVilleRankInAnyMode(userStats, rankLetter)
+    }))
   ];
   function getPlayerTitle(score, zoneMode, gameType = "classique", itemsTotal = 0, itemsCorrect = null) {
     const thresholds = getTitleThresholds(zoneMode, gameType, itemsTotal);
@@ -275,6 +301,9 @@
           hiddenTbody.style.display = "none";
           sectionData.rows.forEach((row, index) => {
             const tr = document.createElement("tr");
+            if (index === 0) {
+              tr.classList.add("leaderboard-first-place");
+            }
             const rank = (index === 0 ? "\u{1F947} " : index === 1 ? "\u{1F948} " : index === 2 ? "\u{1F949} " : "") || `${index + 1}`;
             const title = getPlayerTitle(
               row.high_score || 0,
@@ -370,6 +399,9 @@
     weeklyRows.forEach((row, index) => {
       var _a;
       const tr = document.createElement("tr");
+      if (index === 0) {
+        tr.classList.add("leaderboard-first-place");
+      }
       const rank = (index === 0 ? "\u{1F947} " : index === 1 ? "\u{1F948} " : index === 2 ? "\u{1F949} " : "") || `${index + 1}`;
       const playerAvatar = row.avatar || "\u{1F464}";
       const firstWeeklyWinnerBadge = ((_a = row.username) == null ? void 0 : _a.trim().toLocaleLowerCase("fr-FR")) === "stban" ? ' <span title="\xE0 jamais le premier" aria-label="\xE0 jamais le premier">\u261D\uFE0F</span>' : "";
@@ -448,6 +480,9 @@
         const tbody = document.createElement("tbody");
         dailyRows.forEach((row, index) => {
           const tr = document.createElement("tr");
+          if (index === 0) {
+            tr.classList.add("leaderboard-first-place");
+          }
           const rank = (index === 0 ? "\u{1F947} " : index === 1 ? "\u{1F948} " : index === 2 ? "\u{1F949} " : "") || `${index + 1}`;
           const playerAvatar = row.avatar || "\u{1F464}";
           const resultText = row.success ? `${row.attempts_count}/7` : `\u274C ${Math.round(row.best_distance_meters || 0)}m`;
@@ -578,34 +613,13 @@
         desc: "Atteindre Pr\xE9fet de Paris dans tous les modes et toutes les zones globales (hors Paname entier)",
         check: (profile) => hasReachedGlobalRank2(profile, "MV")
       },
-      {
-        id: "ville_minot",
-        emoji: "\u{1F680}",
-        name: "Astronaute",
-        desc: "Atteindre Titi Parisien sur Paname entier (Classique, Marathon, Chrono)",
-        check: (profile) => hasReachedVilleRank2(profile, "M")
-      },
-      {
-        id: "ville_habitue",
-        emoji: "\u2B50\uFE0F",
-        name: "\xC9toile",
-        desc: "Atteindre Habitu\xE9 sur Paname entier (Classique, Marathon, Chrono)",
-        check: (profile) => hasReachedVilleRank2(profile, "H")
-      },
-      {
-        id: "ville_vrai",
-        emoji: "\u{1F6F8}",
-        name: "Extraterrestre",
-        desc: "Atteindre Vrai Parigot sur Paname entier (Classique, Marathon, Chrono)",
-        check: (profile) => hasReachedVilleRank2(profile, "V")
-      },
-      {
-        id: "ville_maire",
-        emoji: "\u{1F47D}",
-        name: "L'Ovni",
-        desc: "Atteindre Pr\xE9fet de Paris sur Paname entier (Classique, Marathon, Chrono)",
-        check: (profile) => hasReachedVilleRank2(profile, "MV")
-      },
+      ...VILLE_RANK_AVATAR_DEFINITIONS.map(({ badgeId, emoji, name, desc, rankLetter }) => ({
+        id: badgeId,
+        emoji,
+        name,
+        desc,
+        check: (profile) => hasReachedVilleRank2(profile, rankLetter)
+      })),
       {
         id: "celebres",
         emoji: "\u2B50",
