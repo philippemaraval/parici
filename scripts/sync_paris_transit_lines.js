@@ -22,6 +22,12 @@ const FALLBACK_COLORS = {
   "A": "E2231A", "B": "4B92DB", "C": "F3D311", "D": "00814F", "E": "A0006E",
 };
 
+const ALLOWED_REFS = {
+  Métro: new Set(["1", "2", "3", "3BIS", "4", "5", "6", "7", "7BIS", "8", "9", "10", "11", "12", "13", "14"]),
+  RER: new Set(["A", "B", "C", "D", "E"]),
+  Transilien: new Set(["H", "J", "K", "L", "N", "P", "R", "U", "V"]),
+};
+
 function normalizeRef(tags) {
   return String(tags.ref || tags.name || "")
     .replace(/^Métro\\s*/i, "")
@@ -67,7 +73,7 @@ async function main() {
     const ref = normalizeRef(tags);
     const type = classify(tags);
     const lines = geometryLines(element);
-    if (!ref || !lines.length) continue;
+    if (!ref || !lines.length || !ALLOWED_REFS[type]?.has(ref)) continue;
 
     const key = `${type}:${ref}`;
     if (!grouped.has(key)) {
