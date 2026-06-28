@@ -40,7 +40,7 @@ const SCORING_ZONES = ["rues-celebres", "rues-principales", "arrondissement", "m
 const SCORING_COMBO_ZONES = [...SCORING_ZONES, "ville"];
 
 export const ZONE_LABELS = {
-  ville: "Paname entier",
+  ville: "Ville entière",
   "rues-principales": "Rues principales",
   "rues-celebres": "Rues célèbres",
   "arrondissements-ville": "Arrondissements",
@@ -204,25 +204,25 @@ export const AVATAR_UNLOCKS = [
   {
     emoji: "🚀",
     name: "Astronaute",
-    desc: "Atteindre Titi Parisien sur la Paname entier (Classique, Marathon, Chrono)",
+    desc: "Atteindre Titi Parisien sur la Ville entière (Classique, Marathon, Chrono)",
     check: (userStats) => hasReachedVilleRank(userStats, "M"),
   },
   {
     emoji: "⭐️",
     name: "Étoile",
-    desc: "Atteindre Habitué sur la Paname entier (Classique, Marathon, Chrono)",
+    desc: "Atteindre Habitué sur la Ville entière (Classique, Marathon, Chrono)",
     check: (userStats) => hasReachedVilleRank(userStats, "H"),
   },
   {
     emoji: "🛸",
     name: "Extraterrestre",
-    desc: "Atteindre Vrai Parigot sur la Paname entier (Classique, Marathon, Chrono)",
+    desc: "Atteindre Vrai Parigot sur la Ville entière (Classique, Marathon, Chrono)",
     check: (userStats) => hasReachedVilleRank(userStats, "V"),
   },
   {
     emoji: "👽",
     name: "L'Ovni",
-    desc: "Atteindre Préfet de Paris sur la Paname entier (Classique, Marathon, Chrono)",
+    desc: "Atteindre Préfet de Paris sur la Ville entière (Classique, Marathon, Chrono)",
     check: (userStats) => hasReachedVilleRank(userStats, "MV"),
   },
 ];

@@ -61,7 +61,7 @@
   var SCORING_ZONES = ["rues-celebres", "rues-principales", "arrondissement", "monuments", "arrondissements-ville", "lignes-transports-idf"];
   var SCORING_COMBO_ZONES = [...SCORING_ZONES, "ville"];
   var ZONE_LABELS = {
-    ville: "Paname entier",
+    ville: "Ville enti\xE8re",
     "rues-principales": "Rues principales",
     "rues-celebres": "Rues c\xE9l\xE8bres",
     "arrondissements-ville": "Arrondissements",
@@ -171,25 +171,25 @@
     {
       emoji: "\u{1F680}",
       name: "Astronaute",
-      desc: "Atteindre Titi Parisien sur la Paname entier (Classique, Marathon, Chrono)",
+      desc: "Atteindre Titi Parisien sur la Ville enti\xE8re (Classique, Marathon, Chrono)",
       check: (userStats) => hasReachedVilleRank(userStats, "M")
     },
     {
       emoji: "\u2B50\uFE0F",
       name: "\xC9toile",
-      desc: "Atteindre Habitu\xE9 sur la Paname entier (Classique, Marathon, Chrono)",
+      desc: "Atteindre Habitu\xE9 sur la Ville enti\xE8re (Classique, Marathon, Chrono)",
       check: (userStats) => hasReachedVilleRank(userStats, "H")
     },
     {
       emoji: "\u{1F6F8}",
       name: "Extraterrestre",
-      desc: "Atteindre Vrai Parigot sur la Paname entier (Classique, Marathon, Chrono)",
+      desc: "Atteindre Vrai Parigot sur la Ville enti\xE8re (Classique, Marathon, Chrono)",
       check: (userStats) => hasReachedVilleRank(userStats, "V")
     },
     {
       emoji: "\u{1F47D}",
       name: "L'Ovni",
-      desc: "Atteindre Pr\xE9fet de Paris sur la Paname entier (Classique, Marathon, Chrono)",
+      desc: "Atteindre Pr\xE9fet de Paris sur la Ville enti\xE8re (Classique, Marathon, Chrono)",
       check: (userStats) => hasReachedVilleRank(userStats, "MV")
     }
   ];
@@ -554,56 +554,56 @@
         id: "minot",
         emoji: "\u{1F9D2}",
         name: "Titi Parisien",
-        desc: "Atteindre Titi Parisien dans tous les modes et toutes les zones globales (hors Paname entier)",
+        desc: "Atteindre Titi Parisien dans tous les modes et toutes les zones globales (hors Ville enti\xE8re)",
         check: (profile) => hasReachedGlobalRank2(profile, "M")
       },
       {
         id: "habitue",
         emoji: "\u2693",
         name: "Habitu\xE9 des Quais",
-        desc: "Atteindre Habitu\xE9 dans tous les modes et toutes les zones globales (hors Paname entier)",
+        desc: "Atteindre Habitu\xE9 dans tous les modes et toutes les zones globales (hors Ville enti\xE8re)",
         check: (profile) => hasReachedGlobalRank2(profile, "H")
       },
       {
         id: "vrai",
         emoji: "\u{1F4AA}",
         name: "Vrai Parigot",
-        desc: "Atteindre Vrai Parigot dans tous les modes et toutes les zones globales (hors Paname entier)",
+        desc: "Atteindre Vrai Parigot dans tous les modes et toutes les zones globales (hors Ville enti\xE8re)",
         check: (profile) => hasReachedGlobalRank2(profile, "V")
       },
       {
         id: "maire",
         emoji: "\u{1F3DB}\uFE0F",
         name: "Pr\xE9fet de Paris",
-        desc: "Atteindre Pr\xE9fet de Paris dans tous les modes et toutes les zones globales (hors Paname entier)",
+        desc: "Atteindre Pr\xE9fet de Paris dans tous les modes et toutes les zones globales (hors Ville enti\xE8re)",
         check: (profile) => hasReachedGlobalRank2(profile, "MV")
       },
       {
         id: "ville_minot",
         emoji: "\u{1F680}",
         name: "Astronaute",
-        desc: "Atteindre Titi Parisien sur Paname entier (Classique, Marathon, Chrono)",
+        desc: "Atteindre Titi Parisien sur Ville enti\xE8re (Classique, Marathon, Chrono)",
         check: (profile) => hasReachedVilleRank2(profile, "M")
       },
       {
         id: "ville_habitue",
         emoji: "\u2B50\uFE0F",
         name: "\xC9toile",
-        desc: "Atteindre Habitu\xE9 sur Paname entier (Classique, Marathon, Chrono)",
+        desc: "Atteindre Habitu\xE9 sur Ville enti\xE8re (Classique, Marathon, Chrono)",
         check: (profile) => hasReachedVilleRank2(profile, "H")
       },
       {
         id: "ville_vrai",
         emoji: "\u{1F6F8}",
         name: "Extraterrestre",
-        desc: "Atteindre Vrai Parigot sur Paname entier (Classique, Marathon, Chrono)",
+        desc: "Atteindre Vrai Parigot sur Ville enti\xE8re (Classique, Marathon, Chrono)",
         check: (profile) => hasReachedVilleRank2(profile, "V")
       },
       {
         id: "ville_maire",
         emoji: "\u{1F47D}",
         name: "L'Ovni",
-        desc: "Atteindre Pr\xE9fet de Paris sur Paname entier (Classique, Marathon, Chrono)",
+        desc: "Atteindre Pr\xE9fet de Paris sur Ville enti\xE8re (Classique, Marathon, Chrono)",
         check: (profile) => hasReachedVilleRank2(profile, "MV")
       },
       {
@@ -617,7 +617,7 @@
         id: "ville",
         emoji: "\u{1F3D9}\uFE0F",
         name: "Explorateur de Paname",
-        desc: "Jouer en Paname entier",
+        desc: "Jouer en Ville enti\xE8re",
         check: (profile) => (profile.modes || []).some((modeEntry) => modeEntry.mode === "ville")
       },
       {
