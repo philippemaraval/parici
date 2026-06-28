@@ -5,10 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-06-27-camino-paris';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-06-28-reset-changed-daily';
 const EXPLORER_REMOVALS_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-explorer-removals.sql');
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
-const MPHIL_DAILY_FIX_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-mphil-fix.sql');
+const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
 const EXPLORER_SEED_SQL_PATHS = [];
 
@@ -94,14 +94,21 @@ async function renameUserIfNeeded(client) {
   }
 }
 
-async function applyMPhilDailyFix(client) {
-  if (!fs.existsSync(MPHIL_DAILY_FIX_SQL_PATH)) {
+async function applyChangedDailyReset(client) {
+  if (!fs.existsSync(DAILY_RESET_SQL_PATH)) {
     return;
   }
 
-  const fixSql = fs.readFileSync(MPHIL_DAILY_FIX_SQL_PATH, 'utf8');
-  if (fixSql.trim()) {
-    await client.query(fixSql);
+  const tableCheck = await client.query(
+    `SELECT to_regclass('public.daily_user_attempts') AS daily_attempts_table`
+  );
+  if (!tableCheck.rows[0]?.daily_attempts_table) {
+    return;
+  }
+
+  const resetSql = fs.readFileSync(DAILY_RESET_SQL_PATH, 'utf8');
+  if (resetSql.trim()) {
+    await client.query(resetSql);
   }
 }
 
@@ -190,7 +197,6 @@ async function initDb() {
 
     await removeExcludedExplorerRiddles(client);
     await renameUserIfNeeded(client);
-    await applyMPhilDailyFix(client);
     await applyReferralSchema(client);
     await applyPushNotificationSchema(client);
 
@@ -529,6 +535,7 @@ async function initDb() {
         updated_at = NOW()
     `);
 
+    await applyChangedDailyReset(client);
     await markSchemaBootstrapComplete(client);
 
     console.log('Database initialized successfully.');
