@@ -45,8 +45,11 @@ test("map zoom keeps Leaflet animations enabled without rewriting street styles"
 test("the Daily share artwork uses the Parici green palette without a sun", () => {
   const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
   assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);
+  assert.match(dailyRuntime, /const eiffelCenterX = 865/);
+  assert.match(dailyRuntime, /ctx\.lineTo\(307, horizonY - 38\)/);
   assert.doesNotMatch(dailyRuntime, /#f2a900|#fde68a|#fff5cc|#a85a00/);
   assert.doesNotMatch(dailyRuntime, /ctx\.arc\(200, 190, 110/);
+  assert.doesNotMatch(dailyRuntime, /ctx\.bezierCurveTo/);
 });
 
 test("all lecture tooltips stay horizontal and on one line", () => {
