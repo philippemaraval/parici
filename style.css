@@ -55,7 +55,7 @@
   --leaderboard-zone-max-h: min(82vh, 840px);
   --leaderboard-mode-max-h: min(76vh, 780px);
   --leaderboard-section-max-h: min(70vh, 720px);
-  --footer-muted: #64748b;
+  --footer-muted: #b0b8c4;
 }
 
 body,
@@ -3480,7 +3480,7 @@ select:focus:not(:focus-visible) {
   grid-template-areas:
     "visitors social"
     "sync social"
-    "credit credit";
+    "credit social";
   align-items: start;
   column-gap: 8px;
   row-gap: 3px;
@@ -3535,16 +3535,14 @@ select:focus:not(:focus-visible) {
 .sidebar-credit {
   grid-area: credit;
   text-align: left;
-  font-size: 11px;
-  line-height: 1.35;
-  color: #475569;
-  margin: 3px 0 0;
-  padding-top: 5px;
-  border-top: 1px solid rgba(100, 116, 139, 0.18);
+  font-size: 10px;
+  color: var(--footer-muted);
+  margin: 0;
   font-style: italic;
   letter-spacing: 0.02em;
-  white-space: normal;
-  overflow: visible;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-map-sync {

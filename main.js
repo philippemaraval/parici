@@ -4099,37 +4099,48 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
       }
     });
     const eiffelCenterX = 874;
-    const eiffelTopY = horizonY - 238;
-    const eiffelBaseY = horizonY + 58;
+    const eiffelTopY = horizonY - 250;
+    const eiffelBaseY = horizonY + 62;
     ctx.save();
-    ctx.strokeStyle = "rgba(217,241,232,0.42)";
-    ctx.fillStyle = "rgba(217,241,232,0.38)";
+    ctx.fillStyle = "rgba(2,44,34,0.9)";
+    ctx.strokeStyle = "rgba(167,243,208,0.34)";
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.moveTo(eiffelCenterX, eiffelTopY);
-    ctx.quadraticCurveTo(eiffelCenterX - 10, horizonY - 84, eiffelCenterX - 82, eiffelBaseY);
-    ctx.moveTo(eiffelCenterX, eiffelTopY);
-    ctx.quadraticCurveTo(eiffelCenterX + 10, horizonY - 84, eiffelCenterX + 82, eiffelBaseY);
-    ctx.stroke();
-    ctx.lineWidth = 5;
+    ctx.moveTo(eiffelCenterX - 3, eiffelTopY);
+    ctx.quadraticCurveTo(eiffelCenterX - 10, horizonY - 100, eiffelCenterX - 88, eiffelBaseY);
+    ctx.lineTo(eiffelCenterX - 48, eiffelBaseY);
+    ctx.quadraticCurveTo(eiffelCenterX - 15, horizonY - 95, eiffelCenterX, eiffelTopY + 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(eiffelCenterX + 3, eiffelTopY);
+    ctx.quadraticCurveTo(eiffelCenterX + 10, horizonY - 100, eiffelCenterX + 88, eiffelBaseY);
+    ctx.lineTo(eiffelCenterX + 48, eiffelBaseY);
+    ctx.quadraticCurveTo(eiffelCenterX + 15, horizonY - 95, eiffelCenterX, eiffelTopY + 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillRect(eiffelCenterX - 15, eiffelTopY + 62, 30, 7);
+    ctx.fillRect(eiffelCenterX - 38, horizonY - 76, 76, 10);
+    ctx.fillRect(eiffelCenterX - 71, horizonY - 7, 142, 13);
+    ctx.lineWidth = 3;
     [
-      { y: horizonY - 118, half: 23 },
-      { y: horizonY - 48, half: 49 },
-      { y: horizonY + 9, half: 70 }
+      { y: eiffelTopY + 93, half: 17 },
+      { y: horizonY - 112, half: 30 },
+      { y: horizonY - 42, half: 55 },
+      { y: horizonY + 26, half: 76 }
     ].forEach(({ y, half }) => {
       ctx.beginPath();
       ctx.moveTo(eiffelCenterX - half, y);
       ctx.lineTo(eiffelCenterX + half, y);
       ctx.stroke();
     });
-    ctx.lineWidth = 2.5;
-    for (let level = 0; level < 5; level += 1) {
-      const upperY = eiffelTopY + 42 + level * 45;
-      const lowerY = upperY + 45;
-      const upperHalf = 8 + level * 11;
-      const lowerHalf = upperHalf + 12;
+    ctx.lineWidth = 2;
+    for (let level = 0; level < 6; level += 1) {
+      const upperY = eiffelTopY + 70 + level * 38;
+      const lowerY = upperY + 38;
+      const upperHalf = 11 + level * 10;
+      const lowerHalf = upperHalf + 10;
       ctx.beginPath();
       ctx.moveTo(eiffelCenterX - upperHalf, upperY);
       ctx.lineTo(eiffelCenterX + lowerHalf, lowerY);
@@ -4137,7 +4148,9 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
       ctx.lineTo(eiffelCenterX - lowerHalf, lowerY);
       ctx.stroke();
     }
-    ctx.fillRect(eiffelCenterX - 3, eiffelTopY - 24, 6, 28);
+    ctx.fillStyle = "rgba(2,44,34,0.95)";
+    ctx.fillRect(eiffelCenterX - 3, eiffelTopY - 29, 6, 32);
+    ctx.fillRect(eiffelCenterX - 7, eiffelTopY + 45, 14, 20);
     ctx.restore();
     const panel = { x: 60, y: 60, w: width - 120, h: height - 120 };
     ctx.fillStyle = "rgba(2, 44, 34, 0.64)";

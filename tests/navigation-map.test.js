@@ -71,12 +71,13 @@ test("all lecture tooltips stay horizontal and on one line", () => {
 });
 
 test("the footer keeps its full credit readable", () => {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
   const creditRule = styles.match(/\.sidebar-credit\s*\{([^}]*)\}/s)?.[1] || "";
-  assert.match(styles, /"credit credit"/);
-  assert.match(creditRule, /white-space:\s*normal/);
-  assert.match(creditRule, /overflow:\s*visible/);
-  assert.doesNotMatch(creditRule, /text-overflow:\s*ellipsis/);
+  assert.match(styles, /"credit social"/);
+  assert.match(creditRule, /white-space:\s*nowrap/);
+  assert.match(creditRule, /text-overflow:\s*ellipsis/);
+  assert.doesNotMatch(html, /class="sidebar-social-link" href="\/regles\.html"/);
 });
 
 test("the installed application uses Parici as its exact name", () => {
