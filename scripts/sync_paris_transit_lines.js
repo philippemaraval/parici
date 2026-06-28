@@ -28,6 +28,10 @@ const ALLOWED_REFS = {
   Transilien: new Set(["H", "J", "K", "L", "N", "P", "R", "U", "V"]),
 };
 
+// About one metre around Paris: enough detail at the maximum game zoom while
+// avoiding hundreds of thousands of points inherited from railway infrastructure.
+const SIMPLIFICATION_TOLERANCE = 0.00001;
+
 function normalizeRef(tags) {
   return String(tags.ref || tags.name || "")
     .replace(/^Métro\\s*/i, "")
@@ -53,6 +57,66 @@ function geometryLines(element) {
     if (coordinates.length >= 2) lines.push(coordinates);
   }
   return lines;
+}
+
+function squaredSegmentDistance(point, start, end) {
+  let x = start[0];
+  let y = start[1];
+  let dx = end[0] - x;
+  let dy = end[1] - y;
+
+  if (dx || dy) {
+    const ratio = ((point[0] - x) * dx + (point[1] - y) * dy) / (dx * dx + dy * dy);
+    if (ratio > 1) {
+      x = end[0];
+      y = end[1];
+    } else if (ratio > 0) {
+      x += dx * ratio;
+      y += dy * ratio;
+    }
+  }
+
+  dx = point[0] - x;
+  dy = point[1] - y;
+  return dx * dx + dy * dy;
+}
+
+function simplifyLine(coordinates, tolerance = SIMPLIFICATION_TOLERANCE) {
+  if (coordinates.length <= 2) return coordinates;
+
+  let furthestIndex = 0;
+  let furthestDistance = 0;
+  for (let index = 1; index < coordinates.length - 1; index += 1) {
+    const distance = squaredSegmentDistance(
+      coordinates[index],
+      coordinates[0],
+      coordinates[coordinates.length - 1],
+    );
+    if (distance > furthestDistance) {
+      furthestDistance = distance;
+      furthestIndex = index;
+    }
+  }
+
+  if (furthestDistance <= tolerance * tolerance) {
+    return [coordinates[0], coordinates[coordinates.length - 1]];
+  }
+
+  const left = simplifyLine(coordinates.slice(0, furthestIndex + 1), tolerance);
+  const right = simplifyLine(coordinates.slice(furthestIndex), tolerance);
+  return left.slice(0, -1).concat(right);
+}
+
+function optimizeGeometryLines(lines) {
+  const uniqueLines = new Map();
+  for (const coordinates of lines) {
+    const simplified = simplifyLine(coordinates);
+    const forwardKey = JSON.stringify(simplified);
+    const reverseKey = JSON.stringify([...simplified].reverse());
+    const key = forwardKey < reverseKey ? forwardKey : reverseKey;
+    if (!uniqueLines.has(key)) uniqueLines.set(key, simplified);
+  }
+  return [...uniqueLines.values()];
 }
 
 async function main() {
@@ -94,7 +158,11 @@ async function main() {
   }
 
   const order = { Métro: 0, RER: 1, Transilien: 2 };
-  const features = [...grouped.values()].sort(
+  const features = [...grouped.values()];
+  features.forEach((feature) => {
+    feature.geometry.coordinates = optimizeGeometryLines(feature.geometry.coordinates);
+  });
+  features.sort(
     (a, b) =>
       order[a.properties.transport_type] - order[b.properties.transport_type] ||
       a.properties.short_name.localeCompare(b.properties.short_name, "fr", { numeric: true }),
@@ -103,7 +171,11 @@ async function main() {
   console.log(`Wrote ${features.length} Paris transit lines to ${OUTPUT_PATH}`);
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}
+
+module.exports = { optimizeGeometryLines, simplifyLine };

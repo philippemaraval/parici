@@ -425,7 +425,7 @@ export async function loadBusLinesRuntime({
   isTouchDevice,
   handleBusLineClick,
 }) {
-  const response = await fetch("data/paris_transit_lines.geojson?v=3", { cache: "no-store" });
+  const response = await fetch("data/paris_transit_lines.geojson?v=4", { cache: "force-cache" });
   if (!response.ok) {
     throw new Error(`Impossible de charger les lignes de métro, RER et Transilien (HTTP ${response.status}).`);
   }
@@ -486,40 +486,59 @@ export async function loadBusLinesRuntime({
         ? [feature.geometry.coordinates]
         : feature.geometry.coordinates;
     if (!busLineLayersByName.has(lineName)) busLineLayersByName.set(lineName, []);
+    const unsharedRuns = [];
+    const sharedRunsByStyle = new Map();
+
+    const addLineLayer = (coordinates, validNames, lineIndex = 0, direction = 1) => {
+      const layer = L.polyline(
+        coordinates.map((line) => line.map(([lon, lat]) => [lat, lon])),
+        {
+          color,
+          weight: 3,
+          opacity: 0.82,
+          offset: 0,
+        },
+      );
+      layer.feature = feature;
+      layer._validBusLineNames = validNames;
+      layer._sharedBusLineCount = validNames.length;
+      layer._sharedBusLineIndex = lineIndex;
+      layer._busSegmentDirection = direction;
+      applyBusSegmentZoomStyle(layer);
+      busLineLayersByName.get(lineName).push(layer);
+      layer.on("mouseover", () => {
+        if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+          layer.setStyle({ weight: 6, opacity: 1 });
+        }
+      });
+      layer.on("mouseout", () => {
+        if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+          layer.setStyle({ color, weight: 3, opacity: 0.82 });
+        }
+      });
+      layer.on("click", () => handleBusLineClick(feature, layer, validNames));
+      busLinesLayer.addLayer(layer);
+    };
 
     lines.forEach((line) => {
       let activeRun = null;
       const flushRun = () => {
         if (!activeRun || activeRun.coordinates.length < 2) return;
         const validNames = activeRun.validNames;
-        const layer = L.polyline(
-          activeRun.coordinates.map(([lon, lat]) => [lat, lon]),
-          {
-            color,
-            weight: 3,
-            opacity: 0.82,
-            offset: 0,
-          },
-        );
-        layer.feature = feature;
-        layer._validBusLineNames = validNames;
-        layer._sharedBusLineCount = validNames.length;
-        layer._sharedBusLineIndex = activeRun.lineIndex;
-        layer._busSegmentDirection = activeRun.direction;
-        applyBusSegmentZoomStyle(layer);
-        busLineLayersByName.get(lineName).push(layer);
-        layer.on("mouseover", () => {
-          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-            layer.setStyle({ weight: 6, opacity: 1 });
+        if (validNames.length === 1) {
+          unsharedRuns.push(activeRun.coordinates);
+        } else {
+          const styleKey = `${activeRun.signature}::${activeRun.lineIndex}`;
+          if (!sharedRunsByStyle.has(styleKey)) {
+            sharedRunsByStyle.set(styleKey, {
+              coordinates: [],
+              validNames,
+              lineIndex: activeRun.lineIndex,
+              direction: activeRun.direction,
+            });
           }
-        });
-        layer.on("mouseout", () => {
-          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-            layer.setStyle({ color, weight: 3, opacity: 0.82 });
-          }
-        });
-        layer.on("click", () => handleBusLineClick(feature, layer, validNames));
-        busLinesLayer.addLayer(layer);
+          sharedRunsByStyle.get(styleKey).coordinates.push(activeRun.coordinates);
+        }
       };
 
       for (let index = 1; index < line.length; index += 1) {
@@ -545,6 +564,10 @@ export async function loadBusLinesRuntime({
         }
       }
       flushRun();
+    });
+    if (unsharedRuns.length) addLineLayer(unsharedRuns, [lineName]);
+    sharedRunsByStyle.forEach(({ coordinates, validNames, lineIndex, direction }) => {
+      addLineLayer(coordinates, validNames, lineIndex, direction);
     });
   });
 

@@ -2450,7 +2450,7 @@
     isTouchDevice,
     handleBusLineClick: handleBusLineClick2
   }) {
-    const response = await fetch("data/paris_transit_lines.geojson?v=3", { cache: "no-store" });
+    const response = await fetch("data/paris_transit_lines.geojson?v=4", { cache: "force-cache" });
     if (!response.ok) {
       throw new Error(`Impossible de charger les lignes de m\xE9tro, RER et Transilien (HTTP ${response.status}).`);
     }
@@ -2499,39 +2499,57 @@
       const color = `#${feature.properties.color || uiTheme.mapBusLine.replace("#", "")}`;
       const lines = feature.geometry.type === "LineString" ? [feature.geometry.coordinates] : feature.geometry.coordinates;
       if (!busLineLayersByName2.has(lineName)) busLineLayersByName2.set(lineName, []);
+      const unsharedRuns = [];
+      const sharedRunsByStyle = /* @__PURE__ */ new Map();
+      const addLineLayer = (coordinates, validNames, lineIndex = 0, direction = 1) => {
+        const layer = L2.polyline(
+          coordinates.map((line) => line.map(([lon, lat]) => [lat, lon])),
+          {
+            color,
+            weight: 3,
+            opacity: 0.82,
+            offset: 0
+          }
+        );
+        layer.feature = feature;
+        layer._validBusLineNames = validNames;
+        layer._sharedBusLineCount = validNames.length;
+        layer._sharedBusLineIndex = lineIndex;
+        layer._busSegmentDirection = direction;
+        applyBusSegmentZoomStyle(layer);
+        busLineLayersByName2.get(lineName).push(layer);
+        layer.on("mouseover", () => {
+          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+            layer.setStyle({ weight: 6, opacity: 1 });
+          }
+        });
+        layer.on("mouseout", () => {
+          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
+            layer.setStyle({ color, weight: 3, opacity: 0.82 });
+          }
+        });
+        layer.on("click", () => handleBusLineClick2(feature, layer, validNames));
+        busLinesLayer2.addLayer(layer);
+      };
       lines.forEach((line) => {
         let activeRun = null;
         const flushRun = () => {
           if (!activeRun || activeRun.coordinates.length < 2) return;
           const validNames = activeRun.validNames;
-          const layer = L2.polyline(
-            activeRun.coordinates.map(([lon, lat]) => [lat, lon]),
-            {
-              color,
-              weight: 3,
-              opacity: 0.82,
-              offset: 0
+          if (validNames.length === 1) {
+            unsharedRuns.push(activeRun.coordinates);
+          } else {
+            const styleKey = `${activeRun.signature}::${activeRun.lineIndex}`;
+            if (!sharedRunsByStyle.has(styleKey)) {
+              sharedRunsByStyle.set(styleKey, {
+                coordinates: [],
+                validNames,
+                lineIndex: activeRun.lineIndex,
+                direction: activeRun.direction
+              });
             }
-          );
-          layer.feature = feature;
-          layer._validBusLineNames = validNames;
-          layer._sharedBusLineCount = validNames.length;
-          layer._sharedBusLineIndex = activeRun.lineIndex;
-          layer._busSegmentDirection = activeRun.direction;
-          applyBusSegmentZoomStyle(layer);
-          busLineLayersByName2.get(lineName).push(layer);
-          layer.on("mouseover", () => {
-            if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-              layer.setStyle({ weight: 6, opacity: 1 });
-            }
-          });
-          layer.on("mouseout", () => {
-            if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-              layer.setStyle({ color, weight: 3, opacity: 0.82 });
-            }
-          });
-          layer.on("click", () => handleBusLineClick2(feature, layer, validNames));
-          busLinesLayer2.addLayer(layer);
+            sharedRunsByStyle.get(styleKey).coordinates.push(activeRun.coordinates);
+          }
         };
         for (let index = 1; index < line.length; index += 1) {
           const startCoordinate = line[index - 1].join(",");
@@ -2556,6 +2574,10 @@
           }
         }
         flushRun();
+      });
+      if (unsharedRuns.length) addLineLayer(unsharedRuns, [lineName]);
+      sharedRunsByStyle.forEach(({ coordinates, validNames, lineIndex, direction }) => {
+        addLineLayer(coordinates, validNames, lineIndex, direction);
       });
     });
     if (isTouchDevice) {
