@@ -201,30 +201,12 @@ export const AVATAR_UNLOCKS = [
   { emoji: "⚽", reqScore: 150, reqTitleIdx: 0 },
   { emoji: "👑", reqScore: 150, reqTitleIdx: 0 },
 
-  {
-    emoji: "🚀",
-    name: "Astronaute",
-    desc: "Atteindre Titi Parisien sur la Paname entier (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "M"),
-  },
-  {
-    emoji: "⭐️",
-    name: "Étoile",
-    desc: "Atteindre Habitué sur la Paname entier (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "H"),
-  },
-  {
-    emoji: "🛸",
-    name: "Extraterrestre",
-    desc: "Atteindre Vrai Parigot sur la Paname entier (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "V"),
-  },
-  {
-    emoji: "👽",
-    name: "L'Ovni",
-    desc: "Atteindre Préfet de Paris sur la Paname entier (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "MV"),
-  },
+  ...VILLE_RANK_AVATAR_DEFINITIONS.map(({ emoji, name, desc, rankLetter }) => ({
+    emoji,
+    name,
+    desc,
+    check: (userStats) => hasReachedVilleRankInAnyMode(userStats, rankLetter),
+  })),
 ];
 
 export function getPlayerTitle(score, zoneMode, gameType = "classique", itemsTotal = 0, itemsCorrect = null) {
@@ -339,6 +321,9 @@ function appendZoneLeaderboards(rootElement, boards) {
 
         sectionData.rows.forEach((row, index) => {
           const tr = document.createElement("tr");
+          if (index === 0) {
+            tr.classList.add("leaderboard-first-place");
+          }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const title = getPlayerTitle(
             row.high_score || 0,
@@ -456,6 +441,9 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   const tbody = document.createElement("tbody");
   weeklyRows.forEach((row, index) => {
     const tr = document.createElement("tr");
+    if (index === 0) {
+      tr.classList.add("leaderboard-first-place");
+    }
     const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
     const playerAvatar = row.avatar || "👤";
     const firstWeeklyWinnerBadge =
@@ -559,6 +547,9 @@ export function loadAllLeaderboards() {
         const tbody = document.createElement("tbody");
         dailyRows.forEach((row, index) => {
           const tr = document.createElement("tr");
+          if (index === 0) {
+            tr.classList.add("leaderboard-first-place");
+          }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const playerAvatar = row.avatar || "👤";
           const resultText = row.success 

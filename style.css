@@ -2258,9 +2258,14 @@ button {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.leaderboard-table tbody tr:first-child td {
+.leaderboard-table tr.leaderboard-first-place td {
   font-weight: 600;
   color: var(--accent);
+}
+
+.leaderboard-table .leaderboard-hidden-rows tr td {
+  font-weight: 400;
+  color: inherit;
 }
 
 .leaderboard-zone-details>summary {
