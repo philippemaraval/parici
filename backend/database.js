@@ -160,7 +160,13 @@ async function applyPushNotificationSchema(client) {
 async function initDb() {
   const client = await pool.connect();
   try {
-    // This lightweight migration must run even when the main bootstrap is current.
+    // Keep the common startup path fast. Any schema change must bump
+    // SCHEMA_BOOTSTRAP_VERSION so the migration block below runs exactly once.
+    if (await hasCurrentSchemaBootstrap(client)) {
+      console.log('Database schema already up to date.');
+      return;
+    }
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS visitor_sessions (
         session_hash TEXT PRIMARY KEY,
@@ -187,11 +193,6 @@ async function initDb() {
     await applyMPhilDailyFix(client);
     await applyReferralSchema(client);
     await applyPushNotificationSchema(client);
-
-    if (await hasCurrentSchemaBootstrap(client)) {
-      console.log('Database schema already up to date.');
-      return;
-    }
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
