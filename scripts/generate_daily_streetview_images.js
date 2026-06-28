@@ -128,7 +128,11 @@ function readManifest(manifestPath) {
         .map((row) => ({
             date: String(row[headerIndex.get('date')] || '').trim(),
             streetName: String(row[headerIndex.get('street_name')] || '').trim(),
-            quartier: String(row[headerIndex.get('quartier')] || '').trim(),
+            quartier: String(
+                row[headerIndex.get('arrondissement')] ||
+                row[headerIndex.get('quartier')] ||
+                ''
+            ).trim(),
             fileName: String(row[headerIndex.get('file_name')] || '').trim(),
             missingImageStreet: String(row[headerIndex.get('missing_image_street')] || '').trim(),
         }))

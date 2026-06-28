@@ -683,9 +683,17 @@ function slugifyDailyStreetName(streetName) {
         .replace(/^-+|-+$/g, '');
 }
 
-function resolveDailyImageUrl(date, streetName) {
+function resolveDailyImageUrl(date, streetName, manifestEntry = null) {
     if (!date || !streetName) {
         return null;
+    }
+
+    const manifestFileName = path.basename(String(manifestEntry?.fileName || '').trim());
+    if (manifestFileName) {
+        const manifestImagePath = path.join(DAILY_IMAGES_ABSOLUTE_DIR, manifestFileName);
+        if (fs.existsSync(manifestImagePath)) {
+            return `${DAILY_IMAGES_PUBLIC_DIR}/${manifestFileName}`;
+        }
     }
 
     const slug = slugifyDailyStreetName(streetName);
@@ -3697,6 +3705,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
     try {
         const date = await ensureDailyTarget();
         const target = await db.getDailyTarget(date);
+        const manifestEntry = getDailyManifestEntryByDate(date);
         const status = await db.getDailyUserStatus(req.user.id, date);
         const userStatus = status || { attempts_count: 0, success: false, best_distance_meters: null };
 
@@ -3704,7 +3713,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
             date,
             streetName: target.street_name,
             arrondissement: target.arrondissement,
-            dailyImageUrl: resolveDailyImageUrl(date, target.street_name),
+            dailyImageUrl: resolveDailyImageUrl(date, target.street_name, manifestEntry),
             targetGeoJson: target.coordinates_json,
             userStatus
         };

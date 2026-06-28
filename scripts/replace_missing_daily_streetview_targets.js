@@ -439,7 +439,9 @@ function readManifestRows() {
 }
 
 function getRecentArrondissements(rows, rowIndex, column, arrondissementLookup) {
-    const quartierIndex = column.get('quartier');
+    const quartierIndex = column.has('arrondissement')
+        ? column.get('arrondissement')
+        : column.get('quartier');
     const forbidden = new Set();
     for (let index = rowIndex - 1; index >= 1 && forbidden.size < 5; index -= 1) {
         const arrondissement = getArrondissementForQuartier(rows[index][quartierIndex], arrondissementLookup);
@@ -498,7 +500,9 @@ async function run() {
     const { rows, column } = readManifestRows();
     const dateIndex = column.get('date');
     const streetIndex = column.get('street_name');
-    const quartierIndex = column.get('quartier');
+    const quartierIndex = column.has('arrondissement')
+        ? column.get('arrondissement')
+        : column.get('quartier');
     const fileIndex = column.get('file_name');
     const missingIndex = column.get('missing_image_street');
     const geometryIndex = loadStreetGeometryIndex();

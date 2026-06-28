@@ -13,7 +13,6 @@ const BACKEND_MANIFEST_PATH = path.join(
   "daily_images",
   "manifest_next_30.csv",
 );
-const DATA_RULES_PATH = path.join(ROOT_DIR, "data_rules.js");
 const DEFAULT_DAYS = 120;
 
 function parseArgs(argv) {
@@ -56,17 +55,12 @@ function seededRank(value) {
   return hash >>> 0;
 }
 
-function buildStreetPool(entries, preferredNames) {
+function buildStreetPool(entries) {
   const unique = new Map();
   for (const entry of entries) {
     const name = String(entry?.name || "").trim();
     const normalized = normalizeName(name);
-    if (
-      !name ||
-      !normalized ||
-      unique.has(normalized) ||
-      (preferredNames.size && !preferredNames.has(normalized))
-    ) continue;
+    if (!name || !normalized || unique.has(normalized)) continue;
     unique.set(normalized, {
       name,
       arrondissement: String(entry?.arrondissement || entry?.quartier || "").trim(),
@@ -80,6 +74,56 @@ function buildStreetPool(entries, preferredNames) {
   );
 }
 
+function buildBalancedSchedule(pool, days, seed) {
+  const streetsByArrondissement = new Map();
+  for (const street of pool) {
+    if (!street.arrondissement) continue;
+    if (!streetsByArrondissement.has(street.arrondissement)) {
+      streetsByArrondissement.set(street.arrondissement, []);
+    }
+    streetsByArrondissement.get(street.arrondissement).push(street);
+  }
+
+  const arrondissements = [...streetsByArrondissement.keys()];
+  if (arrondissements.length < 2) {
+    throw new Error("At least two arrondissements are required for a balanced Daily schedule.");
+  }
+
+  for (const [arrondissement, streets] of streetsByArrondissement) {
+    streets.sort(
+      (left, right) =>
+        seededRank(`${seed}:${arrondissement}:${left.normalized}`) -
+          seededRank(`${seed}:${arrondissement}:${right.normalized}`) ||
+        left.name.localeCompare(right.name, "fr"),
+    );
+  }
+
+  const schedule = [];
+  const offsets = new Map(arrondissements.map((arrondissement) => [arrondissement, 0]));
+  let cycle = 0;
+  while (schedule.length < days) {
+    const cycleOrder = [...arrondissements].sort(
+      (left, right) =>
+        seededRank(`${seed}:cycle:${cycle}:${left}`) -
+          seededRank(`${seed}:cycle:${cycle}:${right}`) ||
+        left.localeCompare(right, "fr"),
+    );
+    if (schedule.length && cycleOrder[0] === schedule.at(-1).arrondissement) {
+      [cycleOrder[0], cycleOrder[1]] = [cycleOrder[1], cycleOrder[0]];
+    }
+
+    for (const arrondissement of cycleOrder) {
+      if (schedule.length >= days) break;
+      const streets = streetsByArrondissement.get(arrondissement);
+      const offset = offsets.get(arrondissement);
+      schedule.push(streets[offset % streets.length]);
+      offsets.set(arrondissement, offset + 1);
+    }
+    cycle += 1;
+  }
+  return schedule;
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const start = args.from ? new Date(`${args.from}T12:00:00Z`) : new Date();
@@ -89,20 +133,17 @@ function main() {
   if (Number.isNaN(start.getTime())) throw new Error("Invalid --from date (expected YYYY-MM-DD).");
 
   const entries = JSON.parse(fs.readFileSync(indexPath, "utf8"));
-  const rules = fs.existsSync(DATA_RULES_PATH) ? require(DATA_RULES_PATH) : {};
-  const preferredNames = new Set(
-    [...(rules.FAMOUS_STREET_NAMES || []), ...(rules.MAIN_STREET_NAMES || [])].map(normalizeName),
-  );
-  const pool = buildStreetPool(entries, preferredNames);
+  const pool = buildStreetPool(entries);
   if (pool.length < days) {
     throw new Error(`Not enough unique streets: ${pool.length} available for ${days} days.`);
   }
+  const schedule = buildBalancedSchedule(pool, days, dateString(start));
 
-  const rows = [["date", "street_name", "quartier", "file_name", "missing_image_street"]];
+  const rows = [["date", "street_name", "arrondissement", "file_name", "missing_image_street"]];
   for (let offset = 0; offset < days; offset += 1) {
     const date = new Date(start);
     date.setUTCDate(date.getUTCDate() + offset);
-    const street = pool[offset];
+    const street = schedule[offset];
     const day = dateString(date);
     rows.push([
       day,
