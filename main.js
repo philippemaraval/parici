@@ -4058,61 +4058,89 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
     seaGradient.addColorStop(1, "rgba(6,78,59,0.97)");
     ctx.fillStyle = seaGradient;
     ctx.fillRect(0, horizonY, width, height - horizonY);
-    const eiffelCenterX = 865;
-    const eiffelTopY = horizonY - 185;
-    const eiffelBaseY = horizonY + 34;
-    ctx.fillStyle = "rgba(2,44,34,0.82)";
+    const roofscape = [
+      { x: -20, w: 145, top: 2, roof: 44, chimneys: [24, 104] },
+      { x: 118, w: 132, top: 14, roof: 34, chimneys: [38] },
+      { x: 242, w: 168, top: -6, roof: 50, chimneys: [32, 126] },
+      { x: 402, w: 142, top: 10, roof: 38, chimneys: [98] },
+      { x: 536, w: 172, top: -2, roof: 47, chimneys: [35, 139] },
+      { x: 700, w: 130, top: 13, roof: 35, chimneys: [28] },
+      { x: 822, w: 160, top: 3, roof: 45, chimneys: [119] },
+      { x: 974, w: 130, top: 16, roof: 34, chimneys: [42, 94] }
+    ];
+    roofscape.forEach(({ x, w, top, roof, chimneys }, buildingIndex) => {
+      const roofBaseY = horizonY + top;
+      const bodyBottomY = horizonY + 112;
+      ctx.fillStyle = buildingIndex % 2 ? "rgba(3, 72, 54, 0.78)" : "rgba(2, 61, 47, 0.82)";
+      ctx.fillRect(x, roofBaseY, w, bodyBottomY - roofBaseY);
+      ctx.fillStyle = buildingIndex % 2 ? "rgba(217,241,232,0.25)" : "rgba(167,243,208,0.22)";
+      ctx.beginPath();
+      ctx.moveTo(x - 8, roofBaseY);
+      ctx.lineTo(x + 20, roofBaseY - roof);
+      ctx.lineTo(x + w - 20, roofBaseY - roof);
+      ctx.lineTo(x + w + 8, roofBaseY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "rgba(2,44,34,0.72)";
+      chimneys.forEach((offset, chimneyIndex) => {
+        const chimneyHeight = 18 + chimneyIndex % 2 * 8;
+        ctx.fillRect(x + offset, roofBaseY - roof - chimneyHeight + 5, 12, chimneyHeight);
+        ctx.fillRect(x + offset - 2, roofBaseY - roof - chimneyHeight + 2, 16, 5);
+      });
+      ctx.fillStyle = "rgba(236,253,245,0.2)";
+      for (let dormerX = x + 31; dormerX < x + w - 20; dormerX += 42) {
+        ctx.fillRect(dormerX, roofBaseY - 24, 14, 17);
+        ctx.beginPath();
+        ctx.moveTo(dormerX - 2, roofBaseY - 24);
+        ctx.lineTo(dormerX + 7, roofBaseY - 34);
+        ctx.lineTo(dormerX + 16, roofBaseY - 24);
+        ctx.closePath();
+        ctx.fill();
+      }
+    });
+    const eiffelCenterX = 874;
+    const eiffelTopY = horizonY - 238;
+    const eiffelBaseY = horizonY + 58;
+    ctx.save();
+    ctx.strokeStyle = "rgba(217,241,232,0.42)";
+    ctx.fillStyle = "rgba(217,241,232,0.38)";
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.moveTo(eiffelCenterX, eiffelTopY);
-    ctx.lineTo(eiffelCenterX - 13, horizonY - 78);
-    ctx.lineTo(eiffelCenterX - 70, eiffelBaseY);
-    ctx.lineTo(eiffelCenterX - 38, eiffelBaseY);
-    ctx.lineTo(eiffelCenterX, horizonY - 67);
-    ctx.lineTo(eiffelCenterX + 38, eiffelBaseY);
-    ctx.lineTo(eiffelCenterX + 70, eiffelBaseY);
-    ctx.lineTo(eiffelCenterX + 13, horizonY - 78);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillRect(eiffelCenterX - 34, horizonY - 82, 68, 9);
-    ctx.fillRect(eiffelCenterX - 58, horizonY - 24, 116, 12);
-    ctx.fillRect(eiffelCenterX - 3, eiffelTopY - 18, 6, 24);
-    ctx.fillStyle = "rgba(2,44,34,0.62)";
-    ctx.beginPath();
-    ctx.moveTo(0, horizonY + 56);
-    ctx.lineTo(0, horizonY + 5);
-    ctx.lineTo(82, horizonY + 5);
-    ctx.lineTo(110, horizonY - 28);
-    ctx.lineTo(144, horizonY + 5);
-    ctx.lineTo(214, horizonY + 5);
-    ctx.lineTo(214, horizonY - 16);
-    ctx.lineTo(229, horizonY - 16);
-    ctx.lineTo(229, horizonY + 5);
-    ctx.lineTo(274, horizonY + 5);
-    ctx.lineTo(307, horizonY - 38);
-    ctx.lineTo(344, horizonY + 5);
-    ctx.lineTo(425, horizonY + 5);
-    ctx.lineTo(452, horizonY - 25);
-    ctx.lineTo(484, horizonY + 5);
-    ctx.lineTo(565, horizonY + 5);
-    ctx.lineTo(565, horizonY - 22);
-    ctx.lineTo(582, horizonY - 22);
-    ctx.lineTo(582, horizonY + 5);
-    ctx.lineTo(636, horizonY + 5);
-    ctx.lineTo(672, horizonY - 42);
-    ctx.lineTo(710, horizonY + 5);
-    ctx.lineTo(786, horizonY + 5);
-    ctx.lineTo(811, horizonY - 24);
-    ctx.lineTo(838, horizonY + 5);
-    ctx.lineTo(930, horizonY + 5);
-    ctx.lineTo(966, horizonY - 34);
-    ctx.lineTo(1003, horizonY + 5);
-    ctx.lineTo(1080, horizonY + 5);
-    ctx.lineTo(1080, horizonY + 90);
-    ctx.lineTo(0, horizonY + 90);
-    ctx.closePath();
-    ctx.fill();
+    ctx.quadraticCurveTo(eiffelCenterX - 10, horizonY - 84, eiffelCenterX - 82, eiffelBaseY);
+    ctx.moveTo(eiffelCenterX, eiffelTopY);
+    ctx.quadraticCurveTo(eiffelCenterX + 10, horizonY - 84, eiffelCenterX + 82, eiffelBaseY);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    [
+      { y: horizonY - 118, half: 23 },
+      { y: horizonY - 48, half: 49 },
+      { y: horizonY + 9, half: 70 }
+    ].forEach(({ y, half }) => {
+      ctx.beginPath();
+      ctx.moveTo(eiffelCenterX - half, y);
+      ctx.lineTo(eiffelCenterX + half, y);
+      ctx.stroke();
+    });
+    ctx.lineWidth = 2.5;
+    for (let level = 0; level < 5; level += 1) {
+      const upperY = eiffelTopY + 42 + level * 45;
+      const lowerY = upperY + 45;
+      const upperHalf = 8 + level * 11;
+      const lowerHalf = upperHalf + 12;
+      ctx.beginPath();
+      ctx.moveTo(eiffelCenterX - upperHalf, upperY);
+      ctx.lineTo(eiffelCenterX + lowerHalf, lowerY);
+      ctx.moveTo(eiffelCenterX + upperHalf, upperY);
+      ctx.lineTo(eiffelCenterX - lowerHalf, lowerY);
+      ctx.stroke();
+    }
+    ctx.fillRect(eiffelCenterX - 3, eiffelTopY - 24, 6, 28);
+    ctx.restore();
     const panel = { x: 60, y: 60, w: width - 120, h: height - 120 };
-    ctx.fillStyle = "rgba(2, 44, 34, 0.72)";
+    ctx.fillStyle = "rgba(2, 44, 34, 0.64)";
     ctx.beginPath();
     ctx.roundRect(panel.x, panel.y, panel.w, panel.h, 36);
     ctx.fill();

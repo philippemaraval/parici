@@ -45,8 +45,9 @@ test("map zoom keeps Leaflet animations enabled without rewriting street styles"
 test("the Daily share artwork uses the Parici green palette without a sun", () => {
   const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
   assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);
-  assert.match(dailyRuntime, /const eiffelCenterX = 865/);
-  assert.match(dailyRuntime, /ctx\.lineTo\(307, horizonY - 38\)/);
+  assert.match(dailyRuntime, /const eiffelCenterX = 874/);
+  assert.match(dailyRuntime, /const roofscape = \[/);
+  assert.match(dailyRuntime, /ctx\.quadraticCurveTo/);
   assert.doesNotMatch(dailyRuntime, /#f2a900|#fde68a|#fff5cc|#a85a00/);
   assert.doesNotMatch(dailyRuntime, /ctx\.arc\(200, 190, 110/);
   assert.doesNotMatch(dailyRuntime, /ctx\.bezierCurveTo/);
@@ -67,6 +68,15 @@ test("all lecture tooltips stay horizontal and on one line", () => {
   )?.[1] || "";
   assert.match(tooltipRule, /text-overflow:\s*ellipsis/);
   assert.doesNotMatch(tooltipRule, /overflow-wrap:\s*anywhere/);
+});
+
+test("the footer keeps its full credit readable", () => {
+  const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
+  const creditRule = styles.match(/\.sidebar-credit\s*\{([^}]*)\}/s)?.[1] || "";
+  assert.match(styles, /"credit credit"/);
+  assert.match(creditRule, /white-space:\s*normal/);
+  assert.match(creditRule, /overflow:\s*visible/);
+  assert.doesNotMatch(creditRule, /text-overflow:\s*ellipsis/);
 });
 
 test("the installed application uses Parici as its exact name", () => {
