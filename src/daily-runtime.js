@@ -614,13 +614,6 @@ export function handleDailyShareImageRuntime({
 
   const horizonY = height * 0.47;
 
-  ctx.globalAlpha = 0.3;
-  ctx.fillStyle = "#ecfdf5";
-  ctx.beginPath();
-  ctx.arc(200, 190, 110, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.globalAlpha = 1;
-
   const seaGradient = ctx.createLinearGradient(0, horizonY, 0, height);
   seaGradient.addColorStop(0, "rgba(15,111,73,0.88)");
   seaGradient.addColorStop(1, "rgba(6,78,59,0.97)");
@@ -715,7 +708,7 @@ export function handleDailyShareImageRuntime({
       if (isFinalSuccessRow || guess.distance < 500) {
         accent = "#1f9d66";
       } else if (guess.distance < 2000) {
-        accent = "#a85a00";
+        accent = "#34d399";
       }
 
       ctx.fillStyle = "rgba(15,23,42,0.62)";

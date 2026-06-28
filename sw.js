@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v8";
+const CACHE_NAME = "camino-paris-v9";
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -6,14 +6,14 @@ const CORE_PRECACHE_URLS = [
   "/regles.html",
   "/arbre-rangs.html",
   "/reset-password.html",
-  "/style.css?v=20260627-pages-map-alignment",
-  "/main.js?v=20260627-street-layer-fix",
+  "/style.css?v=20260628-parici",
+  "/main.js?v=20260628-parici",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
   "/src/public/css/site-shell.css?v=20260627-pages-map-alignment",
   "/src/public/js/site-shell.js?v=20260609-visit-sessions",
   "/data_rules.js",
-  "/site.webmanifest?v=20260627-camino-small",
-  "/apple-touch-icon.png?v=20260627-camino-small",
+  "/site.webmanifest?v=20260628-parici",
+  "/apple-touch-icon.png?v=20260628-parici",
   "/camino-paris-favicon.ico/icon-16x16.png",
   "/camino-paris-favicon.ico/icon-32x32.png",
   "/camino-paris-favicon.ico/icon-180x180.png",

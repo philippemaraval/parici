@@ -32,13 +32,21 @@ test("the iOS home-screen icon is declared and included in the deploy build", ()
   assert.ok(fs.existsSync(path.join(root, "apple-touch-icon.png")));
 });
 
-test("map zoom keeps tiles and vector streets non-animated without rewriting street styles", () => {
+test("map zoom keeps Leaflet animations enabled without rewriting street styles", () => {
   const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
-  assert.match(app, /zoomAnimation: !1/);
-  assert.match(app, /fadeAnimation: !1/);
-  assert.match(app, /updateWhenZooming: !1/);
+  assert.doesNotMatch(app, /zoomAnimation: !1/);
+  assert.doesNotMatch(app, /fadeAnimation: !1/);
+  assert.doesNotMatch(app, /markerZoomAnimation: !1/);
+  assert.doesNotMatch(app, /updateWhenZooming: !1/);
   assert.doesNotMatch(app, /map\.on\("zoomend", (?:synchronizeMapLayersAfterZoom|refreshStreetLayerStylesForZoom)\)/);
   assert.doesNotMatch(app, /function synchronizeMapLayersAfterZoom/);
+});
+
+test("the Daily share artwork uses the Parici green palette without a sun", () => {
+  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
+  assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);
+  assert.doesNotMatch(dailyRuntime, /#f2a900|#fde68a|#fff5cc|#a85a00/);
+  assert.doesNotMatch(dailyRuntime, /ctx\.arc\(200, 190, 110/);
 });
 
 test("the installed application uses Parici as its exact name", () => {

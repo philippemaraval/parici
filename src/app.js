@@ -2765,9 +2765,6 @@ function initMap() {
       scrollWheelZoom: !1,
       zoomSnap: 1,
       zoomDelta: 1,
-      zoomAnimation: !1,
-      fadeAnimation: !1,
-      markerZoomAnimation: !1,
       maxBounds: MAP_REGION_MAX_BOUNDS,
       maxBoundsViscosity: 1,
       minZoom: 7,
@@ -2778,9 +2775,6 @@ function initMap() {
         {
           maxZoom: 19,
           attribution: "Tiles © Esri",
-          updateWhenZooming: !1,
-          updateWhenIdle: !0,
-          keepBuffer: 2,
         },
       ).addTo(map),
       void 0 !== L.Control.MiniMap)
