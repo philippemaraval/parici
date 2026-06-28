@@ -2085,20 +2085,16 @@ button {
   font-size: var(--fs-xs);
   border-radius: 4px;
   padding: 4px 8px;
-  max-width: min(260px, calc(100vw - 32px));
-  white-space: normal;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  white-space: nowrap;
   writing-mode: horizontal-tb;
   text-orientation: mixed;
-  overflow-wrap: anywhere;
-  text-align: center;
-}
-
-.leaflet-tooltip.bus-line-tooltip {
-  width: max-content;
-  max-width: none;
-  white-space: nowrap;
+  overflow: hidden;
   overflow-wrap: normal;
   word-break: normal;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .leaflet-tooltip-top:before {
