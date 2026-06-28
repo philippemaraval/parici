@@ -1,5 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const {
   optimizeGeometryLines,
@@ -34,4 +36,16 @@ test("transit geometry optimization removes reversed duplicate ways", () => {
       [2.002, 48.002],
     ],
   ]);
+});
+
+test("transport lines are prepared in the background and rendered on canvas", () => {
+  const appSource = fs.readFileSync(path.join(__dirname, "../src/app.js"), "utf8");
+  const mapRuntimeSource = fs.readFileSync(
+    path.join(__dirname, "../src/map-runtime.js"),
+    "utf8",
+  );
+
+  assert.match(appSource, /scheduleAfterStartup\(\(\) => \{\s*loadBusLines\(\);/);
+  assert.match(mapRuntimeSource, /const busLineRenderer = L\.canvas/);
+  assert.match(mapRuntimeSource, /renderer: busLineRenderer/);
 });

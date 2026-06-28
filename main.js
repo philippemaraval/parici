@@ -2476,6 +2476,7 @@
     });
     const busLineLayersByName2 = /* @__PURE__ */ new Map();
     const busLinesLayer2 = L2.featureGroup();
+    const busLineRenderer = L2.canvas({ padding: 0.5 });
     const getBusCorridorMaxWidth = () => {
       var _a, _b;
       const zoom = (_b = (_a = map2 == null ? void 0 : map2.getZoom) == null ? void 0 : _a.call(map2)) != null ? _b : 16;
@@ -2508,7 +2509,8 @@
             color,
             weight: 3,
             opacity: 0.82,
-            offset: 0
+            offset: 0,
+            renderer: busLineRenderer
           }
         );
         layer.feature = feature;
@@ -2588,7 +2590,8 @@
           color: "#000000",
           weight: 28,
           opacity: 0,
-          interactive: true
+          interactive: true,
+          renderer: busLineRenderer
         });
         hitArea._isBusHitArea = true;
         hitArea._visibleBusLine = layer;
@@ -7081,6 +7084,9 @@ Essaie de faire mieux sur parici.netlify.app`,
       loadMonuments();
       loadAllLeaderboards();
     }, 1200);
+    scheduleAfterStartup(() => {
+      loadBusLines();
+    }, 1600);
   });
   var infoEl = document.getElementById("street-info");
   function startTimersLoop() {

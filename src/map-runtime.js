@@ -456,6 +456,7 @@ export async function loadBusLinesRuntime({
 
   const busLineLayersByName = new Map();
   const busLinesLayer = L.featureGroup();
+  const busLineRenderer = L.canvas({ padding: 0.5 });
   const getBusCorridorMaxWidth = () => {
     const zoom = map?.getZoom?.() ?? 16;
     if (zoom <= 11) return 3;
@@ -497,6 +498,7 @@ export async function loadBusLinesRuntime({
           weight: 3,
           opacity: 0.82,
           offset: 0,
+          renderer: busLineRenderer,
         },
       );
       layer.feature = feature;
@@ -580,6 +582,7 @@ export async function loadBusLinesRuntime({
         weight: 28,
         opacity: 0,
         interactive: true,
+        renderer: busLineRenderer,
       });
       hitArea._isBusHitArea = true;
       hitArea._visibleBusLine = layer;

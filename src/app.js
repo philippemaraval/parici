@@ -3308,6 +3308,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadMonuments();
     loadAllLeaderboards();
   }, 1200);
+
+  // Prepare the transport canvas while the home screen is idle so selecting
+  // this game zone only has to reveal an already-built layer.
+  scheduleAfterStartup(() => {
+    loadBusLines();
+  }, 1600);
 });
 const infoEl = document.getElementById("street-info");
 function startTimersLoop() {
