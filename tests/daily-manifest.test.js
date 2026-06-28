@@ -7,7 +7,7 @@ const test = require("node:test");
 
 const ROOT = path.resolve(__dirname, "..");
 
-test("Daily manifest uses diverse streets and rotates every arrondissement", () => {
+test("Daily manifest uses diverse streets and rotates through administrative quartiers", () => {
   const output = path.join(os.tmpdir(), `parici-daily-${process.pid}.csv`);
   execFileSync(
     process.execPath,
@@ -33,7 +33,7 @@ test("Daily manifest uses diverse streets and rotates every arrondissement", () 
   });
   assert.equal(rows.length, 120);
   assert.equal(new Set(rows.map(({ street }) => street)).size, 120);
-  assert.equal(new Set(rows.map(({ arrondissement }) => arrondissement)).size, 20);
+  assert.equal(new Set(rows.map(({ arrondissement }) => arrondissement)).size, 80);
   rows.forEach((row, index) => {
     const previousTwelve = rows
       .slice(Math.max(0, index - 12), index)

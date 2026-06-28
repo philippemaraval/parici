@@ -13,13 +13,17 @@ const BACKEND_MANIFEST_PATH = path.join(
   "daily_images",
   "manifest_next_30.csv",
 );
-const DEFAULT_DAYS = 120;
+const DEFAULT_DAYS = 365;
 
 function parseArgs(argv) {
   const args = {};
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (!token.startsWith("--")) continue;
+    if (token === "--append") {
+      args.append = true;
+      continue;
+    }
     args[token.slice(2)] = argv[index + 1];
     index += 1;
   }
@@ -75,7 +79,7 @@ function buildStreetPool(entries) {
 }
 
 function buildBalancedSchedule(pool, days, seed) {
-  const exclusionWindowDays = 12;
+  const exclusionWindowDays = 20;
   const streetsByArrondissement = new Map();
   for (const street of pool) {
     if (!street.arrondissement) continue;
@@ -160,7 +164,12 @@ function main() {
   }
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  const csv = `${rows.map((row) => row.map(csvCell).join(",")).join("\n")}\n`;
+  let csv = `${rows.map((row) => row.map(csvCell).join(",")).join("\n")}\n`;
+  if (args.append && fs.existsSync(outputPath)) {
+    const existing = fs.readFileSync(outputPath, "utf8").trimEnd();
+    const additions = csv.split("\n").slice(1).filter(Boolean).join("\n");
+    csv = `${existing}\n${additions}\n`;
+  }
   fs.writeFileSync(outputPath, csv);
   if (outputPath === DEFAULT_OUTPUT_PATH) {
     fs.mkdirSync(path.dirname(BACKEND_MANIFEST_PATH), { recursive: true });

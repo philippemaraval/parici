@@ -9,6 +9,7 @@ const QUERY = `
 [out:json][timeout:180];
 (
   relation["type"="route"]["route"="subway"](48.10,1.40,49.30,3.60);
+  relation["type"="route"]["route"="tram"](48.10,1.40,49.30,3.60);
   relation["type"="route"]["route"="train"]["network"~"RER|Transilien|Île-de-France Mobilités|SNCF",i](48.10,1.40,49.30,3.60);
 );
 out geom;
@@ -20,12 +21,17 @@ const FALLBACK_COLORS = {
   "7B": "6ECA97", "8": "E19BDF", "9": "B6BD00", "10": "C9910D",
   "11": "704B1C", "12": "007852", "13": "6EC4E8", "14": "62259D",
   "A": "E2231A", "B": "4B92DB", "C": "F3D311", "D": "00814F", "E": "A0006E",
+  "T1": "0064B0", "T2": "D9A900", "T3A": "F28E42", "T3B": "00814F",
+  "T4": "E3B32A", "T5": "6E491E", "T6": "E2231A", "T7": "6ECA97",
+  "T8": "9B59B6", "T9": "007852", "T10": "A0006E", "T11": "F3D311",
+  "T12": "837902", "T13": "CF009E", "T14": "4057B2",
 };
 
 const ALLOWED_REFS = {
   Métro: new Set(["1", "2", "3", "3BIS", "4", "5", "6", "7", "7BIS", "8", "9", "10", "11", "12", "13", "14"]),
   RER: new Set(["A", "B", "C", "D", "E"]),
   Transilien: new Set(["H", "J", "K", "L", "N", "P", "R", "U", "V"]),
+  Tramway: new Set(["T1", "T2", "T3A", "T3B", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12", "T13", "T14"]),
 };
 
 // About one metre around Paris: enough detail at the maximum game zoom while
@@ -37,12 +43,14 @@ function normalizeRef(tags) {
     .replace(/^Métro\\s*/i, "")
     .replace(/^RER\\s*/i, "")
     .replace(/^Transilien\\s*/i, "")
+    .replace(/^Tram(?:way)?\\s*/i, "T")
     .trim()
     .toUpperCase();
 }
 
 function classify(tags) {
   if (tags.route === "subway") return "Métro";
+  if (tags.route === "tram") return "Tramway";
   if (/RER/i.test(`${tags.network || ""} ${tags.name || ""}`)) return "RER";
   return "Transilien";
 }
@@ -157,7 +165,7 @@ async function main() {
     grouped.get(key).geometry.coordinates.push(...lines);
   }
 
-  const order = { Métro: 0, RER: 1, Transilien: 2 };
+  const order = { Métro: 0, Tramway: 1, RER: 2, Transilien: 3 };
   const features = [...grouped.values()];
   features.forEach((feature) => {
     feature.geometry.coordinates = optimizeGeometryLines(feature.geometry.coordinates);

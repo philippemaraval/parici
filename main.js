@@ -6313,9 +6313,9 @@ Essaie de faire mieux sur parici.netlify.app`,
   function updateTargetPanelTitle() {
     const e = getZoneMode();
     isLectureMode ? setTargetPanelTitleText(
-      "monuments" === e ? "Monument \xE0 explorer" : "arrondissements-ville" === e ? "Arrondissement \xE0 explorer" : "lignes-transports-idf" === e ? "Ligne \xE0 explorer" : "Recherche de rue"
+      "monuments" === e ? "Monument \xE0 explorer" : "arrondissements-ville" === e ? "Quartier \xE0 explorer" : "lignes-transports-idf" === e ? "Ligne \xE0 explorer" : "Recherche de rue"
     ) : setTargetPanelTitleText(
-      "monuments" === e ? "Monument \xE0 trouver" : "arrondissements-ville" === e ? "Arrondissement \xE0 trouver" : "lignes-transports-idf" === e ? "Ligne \xE0 trouver" : "Rue \xE0 trouver"
+      "monuments" === e ? "Monument \xE0 trouver" : "arrondissements-ville" === e ? "Quartier \xE0 trouver" : "lignes-transports-idf" === e ? "Ligne \xE0 trouver" : "Rue \xE0 trouver"
     ), updateTargetItemCounter();
   }
   function getGameMode() {
@@ -6360,19 +6360,19 @@ Essaie de faire mieux sur parici.netlify.app`,
       };
     if ("arrondissements-ville" === e)
       return {
-        placeholder: "Rechercher un arrondissement (nom ou mot)",
-        unavailable: "Aucun arrondissement disponible pour cette zone.",
-        notFound: "Arrondissement introuvable dans la zone actuelle.",
-        noResults: "Aucun arrondissement trouv\xE9.",
-        srLabel: "Rechercher un arrondissement"
+        placeholder: "Rechercher un quartier (nom ou mot)",
+        unavailable: "Aucun quartier disponible pour cette zone.",
+        notFound: "Quartier introuvable dans la zone actuelle.",
+        noResults: "Aucun quartier trouv\xE9.",
+        srLabel: "Rechercher un quartier"
       };
     if ("lignes-transports-idf" === e)
       return {
         placeholder: "Rechercher une ligne (num\xE9ro)",
-        unavailable: "Aucune ligne de m\xE9tro, RER ou Transilien disponible.",
+        unavailable: "Aucune ligne de m\xE9tro, tramway, RER ou Transilien disponible.",
         notFound: "Ligne introuvable.",
         noResults: "Aucune ligne trouv\xE9e.",
-        srLabel: "Rechercher une ligne de m\xE9tro, RER ou Transilien"
+        srLabel: "Rechercher une ligne de m\xE9tro, tramway, RER ou Transilien"
       };
     return {
       placeholder: "Rechercher une rue (nom ou mot)",
@@ -7498,17 +7498,17 @@ Essaie de faire mieux sur parici.netlify.app`,
       r2 && (r2.disabled = true, r2.textContent = "Pause");
       const a2 = document.getElementById("skip-btn");
       return a2 && (a2.style.display = "none"), updateStartStopButton(), updatePauseButton(), updateTimeUI(0, 0), setLectureTooltipsEnabled(true), void showMessage(
-        "arrondissements-ville" === t ? "Mode lecture : survolez les arrondissements pour voir leur nom." : "Mode lecture : utilisez la recherche ou survolez la carte pour voir les noms.",
+        "arrondissements-ville" === t ? "Mode lecture : survolez les quartiers pour voir leur nom." : "Mode lecture : utilisez la recherche ou survolez la carte pour voir les noms.",
         "info"
       );
     }
     if (isLectureMode = false, updateTargetPanelTitle(), refreshLectureStreetSearchForCurrentMode(), "lignes-transports-idf" === t) {
       if (!allBusLines.length)
-        return void showMessage("Aucune ligne de m\xE9tro, RER ou Transilien disponible.", "error");
+        return void showMessage("Aucune ligne de m\xE9tro, tramway, RER ou Transilien disponible.", "error");
       sessionBusLines = "marathon" === r || "chrono" === r ? sampleWithoutReplacement(allBusLines, allBusLines.length) : sampleWithoutReplacement(allBusLines, Math.min(SESSION_SIZE, allBusLines.length));
       currentBusLineIndex = 0, currentBusLineTarget = null, currentTarget = null, currentMonumentTarget = null, currentArrondissementTarget = null, setZoneLayersVisibility(t), clearArrondissementOverlay(), sessionStartTime = performance.now(), streetStartTime = null, isSessionRunning = true, updateStartStopButton(), updatePauseButton(), updateLayoutSessionState(), scrollSidebarToTargetPanel();
       const busSkipButton = document.getElementById("skip-btn");
-      return busSkipButton && (busSkipButton.style.display = "inline-block"), setNewTarget(), showMessage("Session lignes de m\xE9tro, RER et Transilien d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
+      return busSkipButton && (busSkipButton.style.display = "inline-block"), setNewTarget(), showMessage("Session lignes de m\xE9tro, tramway, RER et Transilien d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
     }
     if (isLectureMode = false, updateTargetPanelTitle(), refreshLectureStreetSearchForCurrentMode(), "monuments" === t) {
       if (!allMonuments.length)
@@ -7539,7 +7539,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     if (isLectureMode = false, isMonumentsMode = false, "arrondissements-ville" === t) {
       if (!allArrondissementFeatures.length)
         return void showMessage(
-          "Aucun arrondissement disponible (v\xE9rifiez data/paris_arrondissements.geojson).",
+          "Aucun quartier disponible (v\xE9rifiez data/paris_arrondissements.geojson).",
           "error"
         );
       if (activeFriendChallenge) {
@@ -7552,12 +7552,12 @@ Essaie de faire mieux sur parici.netlify.app`,
       }
       if (!sessionArrondissements.length)
         return void showMessage(
-          activeFriendChallenge ? "Impossible de d\xE9marrer ce d\xE9fi amis (arrondissements introuvables)." : "Aucun arrondissement disponible pour cette session.",
+          activeFriendChallenge ? "Impossible de d\xE9marrer ce d\xE9fi amis (quartiers introuvables)." : "Aucun quartier disponible pour cette session.",
           "error"
         );
       currentArrondissementIndex = 0, currentArrondissementTarget = null, currentTarget = null, currentMonumentTarget = null, currentBusLineTarget = null, setZoneLayersVisibility(t), clearArrondissementOverlay(), sessionStartTime = performance.now(), streetStartTime = null, isSessionRunning = true, updateStartStopButton(), updatePauseButton(), updateLayoutSessionState(), scrollSidebarToTargetPanel();
       const e2 = document.getElementById("skip-btn");
-      return e2 && (e2.style.display = "inline-block"), setNewTarget(), showMessage("Session arrondissements d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
+      return e2 && (e2.style.display = "inline-block"), setNewTarget(), showMessage("Session quartiers d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
     }
     if (isLectureMode = false, isMonumentsMode = false, 0 === allStreetFeatures.length)
       return void showMessage(

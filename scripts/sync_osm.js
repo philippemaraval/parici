@@ -5,7 +5,7 @@
  * Génère :
  * - data/paris_rues_enrichi.geojson
  * - data/paris_rues_light.geojson
- * - data/paris_arrondissements.geojson
+ * - data/paris_arrondissements.geojson (80 quartiers administratifs)
  * - data/paris_monuments.geojson
  * - backend/data/paris_rues_light.geojson
  * - backend/data/paris_arrondissements.geojson
@@ -57,10 +57,10 @@ out body;
 out skel qt;
 `;
 
-const ARRONDISSEMENTS_QUERY = `
+const QUARTIERS_QUERY = `
 [out:json][timeout:300];
 area["ref:INSEE"="75056"]->.paris;
-rel(area.paris)["boundary"="administrative"]["admin_level"="9"]["ref:INSEE"~"^751"];
+rel(area.paris)["boundary"="administrative"]["admin_level"="10"];
 out geom;
 `;
 
@@ -165,6 +165,19 @@ const STATIC_MONUMENTS = [
   ["Collège de France", 2.3458, 48.8493],
   ["Sorbonne", 2.3431, 48.8488],
   ["École militaire", 2.3048, 48.851],
+  ["Cimetière du Père-Lachaise", 2.3941, 48.8614],
+  ["Parc des Buttes-Chaumont", 2.3828, 48.8809],
+  ["Jardin des Plantes", 2.3597, 48.8430],
+  ["Jardin du Luxembourg", 2.3372, 48.8462],
+  ["Place des Vosges", 2.3655, 48.8556],
+  ["Place de la République", 2.3631, 48.8675],
+  ["Place de la Nation", 2.3958, 48.8483],
+  ["Canal Saint-Martin", 2.3653, 48.8721],
+  ["Coulée verte René-Dumont", 2.3782, 48.8464],
+  ["Atelier des Lumières", 2.3807, 48.8619],
+  ["Fondation Cartier", 2.3320, 48.8370],
+  ["Basilique Sainte-Clotilde", 2.3194, 48.8584],
+  ["Chapelle Notre-Dame de la Médaille Miraculeuse", 2.3238, 48.8509],
 ];
 
 function ensureDirs() {
@@ -275,34 +288,32 @@ function distanceSq(point, other) {
   return dx * dx + dy * dy;
 }
 
-function normalizeArrondissementName(name, refInsee) {
-  const refMatch = String(refInsee || "").match(/^751(\d{2})$/);
-  const fromRef = refMatch ? Number(refMatch[1]) : null;
-  const text = String(name || "");
-  const fromName = Number((text.match(/(\d+)(?:er|e)?\s+arrondissement/i) || [])[1]);
-  const number = fromRef || fromName;
-  if (number >= 1 && number <= 20) {
-    return number === 1 ? "1er arrondissement" : `${number}e arrondissement`;
-  }
-  return text.trim();
-}
-
 function buildArrondissements(overpassJson) {
   const converted = osmtogeojson(overpassJson);
   const features = (converted.features || [])
     .filter((feature) => ["Polygon", "MultiPolygon"].includes(feature.geometry?.type))
     .map((feature) => {
       const osmTags = feature.properties?.tags || {};
-      const name = normalizeArrondissementName(osmTags.name || feature.properties?.name, osmTags["ref:INSEE"]);
-      const number = Number((name.match(/^(\d+)/) || [])[1]);
+      const name = String(osmTags.name || feature.properties?.name || "").trim();
+      const quartierNumber = Number(osmTags.ref);
+      const refInsee = String(osmTags["ref:INSEE"] || (quartierNumber ? `751${String(quartierNumber).padStart(2, "0")}` : ""));
+      const arrondissementNumber = (quartierNumber >= 1 && quartierNumber <= 80
+        ? Math.ceil(quartierNumber / 4)
+        : Number(refInsee.slice(3, 5))) ||
+        Number((String(osmTags["addr:postcode"] || "").match(/^750(\d{2})$/) || [])[1]);
       return {
         type: "Feature",
         properties: {
           id: feature.properties?.id || osmTags.wikidata || name,
           nom_qua: name,
           name,
-          arrondissement: number === 1 ? "1er" : `${number}e`,
-          ref_INSEE: osmTags["ref:INSEE"] || "",
+          quartier: name,
+          arrondissement: arrondissementNumber === 1
+            ? "1er arrondissement"
+            : arrondissementNumber
+              ? `${arrondissementNumber}e arrondissement`
+              : "",
+          ref_INSEE: refInsee,
         },
         geometry: {
           type: feature.geometry.type,
@@ -466,12 +477,12 @@ async function main() {
   console.log("================================\n");
 
   console.log("📍 Chargement des arrondissements de Paris...");
-  const arrRaw = await fetchOverpass(ARRONDISSEMENTS_QUERY, "arrondissements");
+  const arrRaw = await fetchOverpass(QUARTIERS_QUERY, "quartiers administratifs");
   const arrondissements = buildArrondissements(arrRaw);
-  if (arrondissements.features.length < 20) {
-    throw new Error(`Arrondissements incomplets: ${arrondissements.features.length}/20`);
+  if (arrondissements.features.length !== 80) {
+    throw new Error(`Quartiers administratifs incomplets: ${arrondissements.features.length}/80`);
   }
-  console.log(`   ${arrondissements.features.length} arrondissements chargés.\n`);
+  console.log(`   ${arrondissements.features.length} quartiers administratifs chargés.\n`);
 
   console.log("🛣️  Chargement des voies parisiennes...");
   const streetRaw = await fetchOverpass(STREETS_QUERY, "rues");
@@ -490,7 +501,7 @@ async function main() {
     generated_at: new Date().toISOString(),
     streets_total: features.length,
     streets_light: lightFeatures.length,
-    arrondissements: arrondissements.features.length,
+    quartiers: arrondissements.features.length,
     monuments: monuments.features.length,
   };
 
