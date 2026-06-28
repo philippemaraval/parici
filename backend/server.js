@@ -495,6 +495,26 @@ app.get('/api/health', asyncHandler(async (req, res) => {
     });
 }));
 
+app.get('/api/ready', async (req, res) => {
+    const startedAtMs = Date.now();
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+        await db.ping();
+        return res.json({
+            ok: true,
+            database: 'ready',
+            durationMs: Date.now() - startedAtMs,
+        });
+    } catch (error) {
+        console.error('Readiness check failed:', error.message);
+        return res.status(503).json({
+            ok: false,
+            database: 'unavailable',
+            durationMs: Date.now() - startedAtMs,
+        });
+    }
+});
+
 // Serve static files (frontend)
 app.use(express.static(path.join(__dirname, '..')));
 

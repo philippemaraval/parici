@@ -2183,17 +2183,60 @@ async function getVisitCount() {
 
 async function getDailyVisitStats() {
   const rows = await pool.query(
-    `SELECT day,
-            unique_visitors,
-            total_visits,
-            updated_at
-     FROM visitor_daily_stats
-     ORDER BY day DESC`
+    `WITH daily_uniques AS (
+       SELECT day, COUNT(*)::BIGINT AS unique_visitors
+       FROM visitor_daily_uniques
+       GROUP BY 1
+     )
+     SELECT stats.day,
+            COALESCE(daily_uniques.unique_visitors, stats.unique_visitors, 0)::BIGINT AS unique_visitors,
+            CASE WHEN stats.total_visits IS NULL THEN NULL
+                 ELSE GREATEST(stats.total_visits, COALESCE(daily_uniques.unique_visitors, stats.unique_visitors, 0))
+            END::BIGINT AS total_visits,
+            stats.updated_at
+     FROM visitor_daily_stats stats
+     LEFT JOIN daily_uniques ON daily_uniques.day = stats.day
+     ORDER BY stats.day DESC`
   );
   const total = await getVisitCount();
+  const chartRows = await pool.query(
+    `WITH days AS (
+       SELECT generate_series(
+         ((NOW() AT TIME ZONE 'Europe/Paris')::DATE - INTERVAL '29 days')::DATE,
+         (NOW() AT TIME ZONE 'Europe/Paris')::DATE,
+         INTERVAL '1 day'
+       )::DATE AS day
+     ),
+     daily_uniques AS (
+       SELECT day, COUNT(*)::BIGINT AS unique_visitors
+       FROM visitor_daily_uniques
+       WHERE day >= ((NOW() AT TIME ZONE 'Europe/Paris')::DATE - INTERVAL '29 days')
+       GROUP BY 1
+     )
+     SELECT days.day,
+            COALESCE(daily_uniques.unique_visitors, stats.unique_visitors, 0)::BIGINT AS unique_visitors,
+            GREATEST(COALESCE(stats.total_visits, 0), COALESCE(daily_uniques.unique_visitors, stats.unique_visitors, 0))::BIGINT AS total_visits,
+            stats.updated_at
+     FROM days
+     LEFT JOIN visitor_daily_stats stats ON stats.day = days.day
+     LEFT JOIN daily_uniques ON daily_uniques.day = days.day
+     ORDER BY days.day ASC`
+  );
+  const mappedChartRows = chartRows.rows.map((row) => ({
+    day: row.day instanceof Date ? row.day.toISOString().slice(0, 10) : String(row.day),
+    uniqueVisitors: Number(row.unique_visitors || 0),
+    totalVisits: Number(row.total_visits || 0),
+    updatedAt: row.updated_at,
+  }));
+  let visitsAfterDay = 0;
+  for (let index = mappedChartRows.length - 1; index >= 0; index -= 1) {
+    mappedChartRows[index].cumulativeTotal = Math.max(0, total - visitsAfterDay);
+    visitsAfterDay += mappedChartRows[index].totalVisits;
+  }
 
   return {
     totalVisits: total,
+    chartRows: mappedChartRows,
     rows: rows.rows.map((row) => ({
       day: row.day instanceof Date ? row.day.toISOString().slice(0, 10) : String(row.day),
       uniqueVisitors: Number(row.unique_visitors || 0),

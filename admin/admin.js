@@ -43,6 +43,7 @@ const refs = {
   closeVisitStatsBtn: document.getElementById("close-visit-stats-btn"),
   visitStatsSummary: document.getElementById("visit-stats-summary"),
   visitStatsNote: document.getElementById("visit-stats-note"),
+  visitStatsChart: document.getElementById("visit-stats-chart"),
   visitStatsTableBody: document.getElementById("visit-stats-table-body"),
   infoModeSelect: document.getElementById("info-mode-select"),
   streetSearchInput: document.getElementById("street-search-input"),
@@ -150,6 +151,20 @@ function formatDay(value) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+  });
+}
+
+function formatShortDay(value) {
+  if (!value) {
+    return "";
+  }
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
   });
 }
 
@@ -682,15 +697,95 @@ function setVisitStatsLoading(message) {
   if (refs.visitStatsTableBody) {
     refs.visitStatsTableBody.innerHTML = "";
   }
+  if (refs.visitStatsChart) {
+    refs.visitStatsChart.textContent = "";
+  }
+}
+
+function renderVisitStatsChart(payload) {
+  if (!refs.visitStatsChart) {
+    return;
+  }
+  const chartRows = Array.isArray(payload?.chartRows) ? payload.chartRows.slice(-30) : [];
+  if (!chartRows.length) {
+    refs.visitStatsChart.textContent = "";
+    return;
+  }
+
+  const width = 860;
+  const height = 320;
+  const margin = { top: 28, right: 78, bottom: 46, left: 54 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+  const maxDailyValue = Math.max(
+    1,
+    ...chartRows.map((row) => Math.max(Number(row.totalVisits || 0), Number(row.uniqueVisitors || 0))),
+  );
+  const cumulativeValues = chartRows.map((row) => Number(row.cumulativeTotal || 0));
+  const cumulativeMin = Math.min(...cumulativeValues);
+  const cumulativeMax = Math.max(...cumulativeValues);
+  const cumulativeRange = Math.max(1, cumulativeMax - cumulativeMin);
+  const bandWidth = plotWidth / chartRows.length;
+  const barWidth = Math.max(3, Math.min(10, bandWidth * 0.28));
+  const xForIndex = (index) => margin.left + bandWidth * index + bandWidth / 2;
+  const yForDaily = (value) => margin.top + plotHeight - (Number(value || 0) / maxDailyValue) * plotHeight;
+  const yForCumulative = (value) =>
+    margin.top + plotHeight - ((Number(value || 0) - cumulativeMin) / cumulativeRange) * plotHeight;
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+    const y = margin.top + plotHeight - ratio * plotHeight;
+    return `<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" class="visit-chart-grid" />
+      <text x="${margin.left - 8}" y="${y + 4}" class="visit-chart-axis-label" text-anchor="end">${formatNumber(Math.round(maxDailyValue * ratio))}</text>`;
+  }).join("");
+  const cumulativeLabels = [cumulativeMin, cumulativeMax].map((value) => {
+    const y = yForCumulative(value);
+    return `<text x="${width - margin.right + 8}" y="${y + 4}" class="visit-chart-axis-label visit-chart-axis-label--right">${formatNumber(value)}</text>`;
+  }).join("");
+  const bars = chartRows.map((row, index) => {
+    const centerX = xForIndex(index);
+    const totalHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.totalVisits));
+    const uniqueHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.uniqueVisitors));
+    return `<rect x="${centerX - barWidth - 1}" y="${yForDaily(row.totalVisits)}" width="${barWidth}" height="${totalHeight}" class="visit-chart-bar visit-chart-bar--total"><title>${formatDay(row.day)} - visites: ${formatNumber(row.totalVisits)}</title></rect>
+      <rect x="${centerX + 1}" y="${yForDaily(row.uniqueVisitors)}" width="${barWidth}" height="${uniqueHeight}" class="visit-chart-bar visit-chart-bar--unique"><title>${formatDay(row.day)} - visiteurs uniques: ${formatNumber(row.uniqueVisitors)}</title></rect>`;
+  }).join("");
+  const linePoints = chartRows.map((row, index) =>
+    `${xForIndex(index)},${yForCumulative(row.cumulativeTotal)}`,
+  ).join(" ");
+  const lineDots = chartRows.map((row, index) =>
+    `<circle cx="${xForIndex(index)}" cy="${yForCumulative(row.cumulativeTotal)}" r="2.5" class="visit-chart-dot"><title>${formatDay(row.day)} - cumul total: ${formatNumber(row.cumulativeTotal)}</title></circle>`,
+  ).join("");
+  const xLabels = chartRows
+    .map((row, index) => ({ row, index }))
+    .filter(({ index }) => index === 0 || index === chartRows.length - 1 || (index + 1) % 7 === 0)
+    .map(({ row, index }, selectedIndex, selectedRows) => {
+      const anchor = selectedIndex === 0 ? "start" : selectedIndex === selectedRows.length - 1 ? "end" : "middle";
+      return `<text x="${xForIndex(index)}" y="${height - 16}" class="visit-chart-axis-label" text-anchor="${anchor}">${formatShortDay(row.day)}</text>`;
+    }).join("");
+
+  refs.visitStatsChart.innerHTML = `
+    <div class="visit-chart-legend">
+      <span><i class="visit-chart-swatch visit-chart-swatch--total"></i>Visites quotidiennes</span>
+      <span><i class="visit-chart-swatch visit-chart-swatch--unique"></i>Visiteurs uniques quotidiens</span>
+      <span><i class="visit-chart-swatch visit-chart-swatch--line"></i>Cumul des visites</span>
+    </div>
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Visites quotidiennes, visiteurs uniques et cumul des visites sur les 30 derniers jours">
+      <text x="${margin.left}" y="18" class="visit-chart-title">30 derniers jours</text>
+      <text x="${margin.left}" y="${height - 2}" class="visit-chart-axis-caption">Visites quotidiennes</text>
+      <text x="${width - margin.right}" y="${height - 2}" class="visit-chart-axis-caption visit-chart-axis-caption--right" text-anchor="end">Cumul des visites</text>
+      ${gridLines}${cumulativeLabels}
+      <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${width - margin.right}" y2="${margin.top + plotHeight}" class="visit-chart-axis" />
+      ${bars}<polyline points="${linePoints}" class="visit-chart-line" />${lineDots}${xLabels}
+    </svg>`;
 }
 
 function renderVisitStats(payload) {
   const rows = Array.isArray(payload?.rows) ? payload.rows : [];
   if (refs.visitStatsSummary) {
     const totalVisits = formatNumber(payload?.totalVisits);
-    const dayCount = formatNumber(rows.length);
+    const dayCount = formatNumber(payload?.chartRows?.length || rows.length);
     refs.visitStatsSummary.textContent = `${totalVisits} visites au total, ${dayCount} jours affiches.`;
   }
+  renderVisitStatsChart(payload);
   if (refs.visitStatsNote) {
     refs.visitStatsNote.textContent =
       payload?.note ||

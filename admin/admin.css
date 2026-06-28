@@ -331,11 +331,11 @@ button:hover {
 .modal-panel {
   position: relative;
   z-index: 1;
-  width: min(860px, 100%);
-  max-height: min(760px, calc(100vh - 40px));
-  overflow: hidden;
+  width: min(980px, 100%);
+  max-height: min(840px, calc(100vh - 40px));
+  overflow: auto;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto;
   gap: 12px;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -365,8 +365,105 @@ button:hover {
   font-size: 0.9rem;
 }
 
+.visit-stats-chart {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  background: #fbfcff;
+}
+
+.visit-stats-chart svg {
+  display: block;
+  width: 100%;
+  min-width: 720px;
+  height: auto;
+}
+
+.visit-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.visit-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visit-chart-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.visit-chart-swatch--total,
+.visit-chart-bar--total {
+  fill: #1e4cc9;
+  background: #1e4cc9;
+}
+
+.visit-chart-swatch--unique,
+.visit-chart-bar--unique {
+  fill: #1f9d66;
+  background: #1f9d66;
+}
+
+.visit-chart-swatch--line {
+  height: 3px;
+  border-radius: 999px;
+  background: #b73838;
+}
+
+.visit-chart-grid {
+  stroke: #dfe6f4;
+  stroke-width: 1;
+}
+
+.visit-chart-axis {
+  stroke: #9aa8c0;
+  stroke-width: 1;
+}
+
+.visit-chart-axis-label,
+.visit-chart-axis-caption,
+.visit-chart-title {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.visit-chart-axis-label--right,
+.visit-chart-axis-caption--right {
+  fill: #7e3a3a;
+}
+
+.visit-chart-title {
+  fill: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.visit-chart-line {
+  fill: none;
+  stroke: #b73838;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.visit-chart-dot {
+  fill: #b73838;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
 .visit-stats-table-wrap {
-  overflow: auto;
+  overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 10px;
 }
