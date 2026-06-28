@@ -556,6 +556,9 @@ async function initializeBackgroundServices() {
 // for a schema lock), and must not prevent the process from becoming reachable.
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    setImmediate(() => {
+        reloadDailyRuntimeIndexes();
+    });
     db.initDb().then(() => {
         startupState.databaseReady = true;
         startupState.databaseError = null;
@@ -3006,6 +3009,19 @@ function reloadStreetChallengeIndex() {
         rawStreetFeatures = [];
         console.warn('Could not load street geometry index for friend challenges:', error.message);
     }
+    const streetFeaturesByNormalizedName = new Map();
+    rawStreetFeatures.forEach((feature) => {
+        const normalizedName = normalizeStreetLookupName(feature?.properties?.name);
+        if (!normalizedName) {
+            return;
+        }
+        const candidates = streetFeaturesByNormalizedName.get(normalizedName) || [];
+        candidates.push({
+            feature,
+            centroid: getStreetFeatureCentroid(feature),
+        });
+        streetFeaturesByNormalizedName.set(normalizedName, candidates);
+    });
     streetIndex = rawStreetIndex.filter((entry) =>
         shouldKeepStreetForGame({
             name: entry?.name,
@@ -3015,20 +3031,19 @@ function reloadStreetChallengeIndex() {
         .map((entry) => {
             const targetCentroid = normalizeCoordinatePair(entry?.centroid);
             const normalizedEntryName = normalizeStreetLookupName(entry?.name);
-            const matchingFeature = rawStreetFeatures.find((feature) => {
-                if (normalizeStreetLookupName(feature?.properties?.name) !== normalizedEntryName) {
-                    return false;
-                }
+            const candidateFeatures = streetFeaturesByNormalizedName.get(normalizedEntryName) || [];
+            const matchingCandidate = candidateFeatures.find((candidate) => {
                 if (!targetCentroid) {
                     return true;
                 }
-                const featureCentroid = getStreetFeatureCentroid(feature);
+                const featureCentroid = candidate.centroid;
                 return (
                     featureCentroid &&
                     Math.abs(featureCentroid[0] - targetCentroid[0]) <= 0.00001 &&
                     Math.abs(featureCentroid[1] - targetCentroid[1]) <= 0.00001
                 );
             });
+            const matchingFeature = matchingCandidate?.feature;
             const target = {
                 name: String(entry?.name || '').trim(),
                 featureId: matchingFeature ? getStreetFeatureId(matchingFeature) : '',
@@ -3152,8 +3167,6 @@ function reloadDailyRuntimeIndexes() {
 
     return summary;
 }
-
-reloadDailyRuntimeIndexes();
 
 async function buildFriendChallengeTargets({ mode, gameType, arrondissementName, lists }) {
     const normalizedMode = SCORE_MODE_ALIASES[mode] || mode;
