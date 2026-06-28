@@ -34,8 +34,11 @@ test("Daily manifest uses diverse streets and rotates every arrondissement", () 
   assert.equal(rows.length, 120);
   assert.equal(new Set(rows.map(({ street }) => street)).size, 120);
   assert.equal(new Set(rows.map(({ arrondissement }) => arrondissement)).size, 20);
-  rows.slice(1).forEach((row, index) => {
-    assert.notEqual(row.arrondissement, rows[index].arrondissement);
+  rows.forEach((row, index) => {
+    const previousTwelve = rows
+      .slice(Math.max(0, index - 12), index)
+      .map(({ arrondissement }) => arrondissement);
+    assert(!previousTwelve.includes(row.arrondissement));
   });
 
   const rules = require("../data_rules");

@@ -75,6 +75,7 @@ function buildStreetPool(entries) {
 }
 
 function buildBalancedSchedule(pool, days, seed) {
+  const exclusionWindowDays = 12;
   const streetsByArrondissement = new Map();
   for (const street of pool) {
     if (!street.arrondissement) continue;
@@ -100,26 +101,30 @@ function buildBalancedSchedule(pool, days, seed) {
 
   const schedule = [];
   const offsets = new Map(arrondissements.map((arrondissement) => [arrondissement, 0]));
-  let cycle = 0;
+  const usageCounts = new Map(arrondissements.map((arrondissement) => [arrondissement, 0]));
   while (schedule.length < days) {
-    const cycleOrder = [...arrondissements].sort(
+    const recentlyUsed = new Set(
+      schedule.slice(-exclusionWindowDays).map((street) => street.arrondissement),
+    );
+    const eligible = arrondissements
+      .filter((arrondissement) => !recentlyUsed.has(arrondissement))
+      .sort(
       (left, right) =>
-        seededRank(`${seed}:cycle:${cycle}:${left}`) -
-          seededRank(`${seed}:cycle:${cycle}:${right}`) ||
+        usageCounts.get(left) - usageCounts.get(right) ||
+        seededRank(`${seed}:day:${schedule.length}:${left}`) -
+          seededRank(`${seed}:day:${schedule.length}:${right}`) ||
         left.localeCompare(right, "fr"),
     );
-    if (schedule.length && cycleOrder[0] === schedule.at(-1).arrondissement) {
-      [cycleOrder[0], cycleOrder[1]] = [cycleOrder[1], cycleOrder[0]];
+    if (!eligible.length) {
+      throw new Error(`No arrondissement available after ${schedule.length} scheduled days.`);
     }
 
-    for (const arrondissement of cycleOrder) {
-      if (schedule.length >= days) break;
-      const streets = streetsByArrondissement.get(arrondissement);
-      const offset = offsets.get(arrondissement);
-      schedule.push(streets[offset % streets.length]);
-      offsets.set(arrondissement, offset + 1);
-    }
-    cycle += 1;
+    const arrondissement = eligible[0];
+    const streets = streetsByArrondissement.get(arrondissement);
+    const offset = offsets.get(arrondissement);
+    schedule.push(streets[offset % streets.length]);
+    offsets.set(arrondissement, offset + 1);
+    usageCounts.set(arrondissement, usageCounts.get(arrondissement) + 1);
   }
   return schedule;
 }

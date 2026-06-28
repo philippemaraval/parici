@@ -443,7 +443,7 @@ function getRecentArrondissements(rows, rowIndex, column, arrondissementLookup) 
         ? column.get('arrondissement')
         : column.get('quartier');
     const forbidden = new Set();
-    for (let index = rowIndex - 1; index >= 1 && forbidden.size < 5; index -= 1) {
+    for (let index = rowIndex - 1; index >= 1 && rowIndex - index <= 12; index -= 1) {
         const arrondissement = getArrondissementForQuartier(rows[index][quartierIndex], arrondissementLookup);
         if (arrondissement) {
             forbidden.add(arrondissement);
@@ -459,6 +459,7 @@ async function selectReplacementByDailyRule({
     column,
     streetIndex,
     arrondissementLookup,
+    requiredArrondissement,
     usedNames,
     geometryIndex,
     apiKey,
@@ -478,6 +479,10 @@ async function selectReplacementByDailyRule({
             continue;
         }
         const arrondissement = getArrondissementForQuartier(candidate.quartier, arrondissementLookup);
+        if (requiredArrondissement && arrondissement !== requiredArrondissement) {
+            hashSeed += '_retry';
+            continue;
+        }
         if (arrondissement && forbiddenArrondissements.has(arrondissement)) {
             hashSeed += '_retry';
             continue;
@@ -557,6 +562,10 @@ async function run() {
             column,
             streetIndex: streetIndexForDaily,
             arrondissementLookup,
+            requiredArrondissement: getArrondissementForQuartier(
+                missing.row[quartierIndex],
+                arrondissementLookup
+            ),
             usedNames,
             geometryIndex,
             apiKey,
