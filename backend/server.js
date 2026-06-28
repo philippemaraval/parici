@@ -66,6 +66,10 @@ function readEnvCsvSet(name) {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const startupState = {
+    databaseReady: false,
+    databaseError: null,
+};
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const JWT_SECRET_KEY = process.env.SECRET_KEY || '';
 const ENABLE_ADMIN_ROUTES = process.env.ENABLE_ADMIN_ROUTES === 'true';
@@ -480,24 +484,31 @@ app.use((err, req, res, next) => {
 
 app.use(express.json({ limit: '8mb' }));
 
-app.get('/api/health', asyncHandler(async (req, res) => {
-    const startedAtMs = Date.now();
-    await db.ping();
+app.get('/api/health', (req, res) => {
     if (req.query?.prewarm === '1' || req.query?.prewarm === 'true') {
-        warmCriticalCachesInBackground();
+        if (startupState.databaseReady) {
+            warmCriticalCachesInBackground();
+        }
     }
     res.setHeader('Cache-Control', 'no-store');
     return res.json({
         ok: true,
-        database: 'ok',
-        durationMs: Date.now() - startedAtMs,
+        database: startupState.databaseReady ? 'ready' : 'initializing',
         uptimeSec: Math.round(process.uptime()),
     });
-}));
+});
 
 app.get('/api/ready', async (req, res) => {
     const startedAtMs = Date.now();
     res.setHeader('Cache-Control', 'no-store');
+    if (!startupState.databaseReady) {
+        return res.status(503).json({
+            ok: false,
+            database: startupState.databaseError ? 'unavailable' : 'initializing',
+            error: startupState.databaseError,
+            durationMs: Date.now() - startedAtMs,
+        });
+    }
     try {
         await db.ping();
         return res.json({
@@ -540,18 +551,22 @@ async function initializeBackgroundServices() {
     warmCriticalCachesInBackground();
 }
 
-// Initialize database then start server
-db.initDb().then(() => {
-    console.log('Database ready.');
-    app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
+// Bind Render's port immediately. Database bootstrap can legitimately take longer
+// than Render's health-check window (for example while PostgreSQL wakes or waits
+// for a schema lock), and must not prevent the process from becoming reachable.
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    db.initDb().then(() => {
+        startupState.databaseReady = true;
+        startupState.databaseError = null;
+        console.log('Database ready.');
         initializeBackgroundServices().catch((error) => {
             console.error('Background services initialization failed:', error);
         });
+    }).catch((error) => {
+        startupState.databaseError = error.message;
+        console.error('Database init failed:', error);
     });
-}).catch(err => {
-    console.error('Database init failed:', err);
-    process.exit(1);
 });
 
 // ----------------------
