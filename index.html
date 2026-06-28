@@ -142,7 +142,7 @@
               <span class="mobile-mode-card__icon" aria-hidden="true">C</span>
               <span>
                 <strong>Camino</strong>
-                <small>Le jeu complet : rues, quartiers, transports, monuments et défis entre amis.</small>
+                <small>Le jeu complet : rues, arrondissements, transports, monuments et défis entre amis.</small>
               </span>
               <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
             </a>
@@ -160,7 +160,7 @@
         <section class="mobile-mode-intro mobile-mode-intro--camino site-mode-intro">
           <p>Mode de jeu</p>
           <h2>Camino</h2>
-          <span>Découvrez les rues, quartiers, transports et monuments de Paris</span>
+          <span>Découvrez les rues, arrondissements, transports et monuments de Paris</span>
           <div class="site-mode-intro__details">
             <strong>Choisissez votre terrain de jeu, puis retrouvez chaque lieu directement sur la carte.</strong>
             <span>Enchaînez les bonnes réponses, gagnez des points selon votre précision et votre rapidité, ou lancez un défi à vos amis.</span>
@@ -223,7 +223,7 @@
 
           <div class="info-block" id="mode-select-block">
             <label>Zone de jeu <span class="tooltip-icon"
-                data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Ville entière (expert), monuments ou quartiers (facile).">i</span></label>
+                data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Ville entière (expert), monuments ou arrondissements (facile).">i</span></label>
 
             <div id="mode-select-wrapper" class="custom-select">
               <button id="mode-select-button" class="custom-select-button">
@@ -241,7 +241,7 @@
                     class="difficulty-pill difficulty-pill--hard">Difficile</span></li>
                 <li data-value="monuments">Monuments <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
-                <li data-value="arrondissements-ville">Quartiers <span
+                <li data-value="arrondissements-ville">Arrondissements <span
                     class="difficulty-pill difficulty-pill--very-easy">Facile</span></li>
                 <li data-value="lignes-transports-idf">Métro, tramway, RER et Transilien <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
@@ -254,18 +254,18 @@
               <option value="arrondissement">Rues par arrondissement</option>
               <option value="ville">Ville entière</option>
               <option value="monuments">Monuments</option>
-              <option value="arrondissements-ville">Quartiers</option>
+              <option value="arrondissements-ville">Arrondissements</option>
               <option value="lignes-transports-idf">Métro, tramway, RER et Transilien</option>
             </select>
           </div>
 
           <div class="info-block hidden" id="arrondissement-block">
-            <label for="arrondissement-select">Quartier :</label>
+            <label for="arrondissement-select">Arrondissement :</label>
 
             <!-- Faux select stylé pour les quartiers (PAS de pastille) -->
             <div id="arrondissement-select-wrapper" class="custom-select">
               <button id="arrondissement-select-button" class="custom-select-button">
-                <span class="custom-select-label">Choisissez un quartier</span>
+                <span class="custom-select-label">Choisissez un arrondissement</span>
               </button>
               <ul id="arrondissement-select-list" class="custom-select-list"></ul>
             </div>
