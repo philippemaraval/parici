@@ -1990,7 +1990,7 @@
       }
     });
     const arrondissements = Array.from(arrondissementsByKey.values()).sort(
-      (left, right) => left.localeCompare(right, "fr", { sensitivity: "base" })
+      (left, right) => left.localeCompare(right, "fr", { sensitivity: "base", numeric: true })
     );
     nativeSelect.innerHTML = "";
     arrondissements.forEach((arrondissementName) => {

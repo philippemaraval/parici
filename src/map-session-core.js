@@ -380,7 +380,7 @@ export function populateArrondissementsUI({
   });
 
   const arrondissements = Array.from(arrondissementsByKey.values()).sort((left, right) =>
-    left.localeCompare(right, "fr", { sensitivity: "base" }),
+    left.localeCompare(right, "fr", { sensitivity: "base", numeric: true }),
   );
 
   nativeSelect.innerHTML = "";
