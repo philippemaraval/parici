@@ -49,6 +49,14 @@ test("the Daily share artwork uses the Parici green palette without a sun", () =
   assert.doesNotMatch(dailyRuntime, /ctx\.arc\(200, 190, 110/);
 });
 
+test("transport line tooltips stay horizontal and on one line", () => {
+  const mapRuntime = fs.readFileSync(path.join(root, "src", "map-runtime.js"), "utf8");
+  const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
+  assert.match(mapRuntime, /className: "bus-line-tooltip"/);
+  assert.match(styles, /\.leaflet-tooltip\.bus-line-tooltip\s*\{[^}]*white-space:\s*nowrap/s);
+  assert.match(styles, /\.leaflet-tooltip\.bus-line-tooltip\s*\{[^}]*word-break:\s*normal/s);
+});
+
 test("the installed application uses Parici as its exact name", () => {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "site.webmanifest"), "utf8"));

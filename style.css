@@ -2076,7 +2076,8 @@ button {
 }
 
 .leaflet-tooltip.monument-tooltip,
-.leaflet-tooltip.street-tooltip {
+.leaflet-tooltip.street-tooltip,
+.leaflet-tooltip.bus-line-tooltip {
   background: rgba(12, 29, 87, 0.92);
   color: #fff;
   border: none;
@@ -2090,6 +2091,14 @@ button {
   text-orientation: mixed;
   overflow-wrap: anywhere;
   text-align: center;
+}
+
+.leaflet-tooltip.bus-line-tooltip {
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .leaflet-tooltip-top:before {

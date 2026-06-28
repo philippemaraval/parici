@@ -820,7 +820,7 @@ export function setLectureTooltipsEnabledRuntime(enabled, {
             direction: isTouchDevice ? "center" : "top",
             sticky: !isTouchDevice,
             opacity: 0.9,
-            className: "street-tooltip",
+            className: "bus-line-tooltip",
           });
         }
       } else if (layer.getTooltip()) {
