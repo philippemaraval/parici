@@ -1462,7 +1462,7 @@ async function listPushSubscriptionsDueForDate(dateStr, options = {}) {
          SELECT 1
          FROM daily_user_attempts dua
          WHERE dua.user_id = ps.user_id
-           AND dua.date = $1
+           AND dua.date = $1::text
            AND COALESCE(dua.attempts_count, 0) > 0
        )
      ORDER BY ps.updated_at ASC`,
