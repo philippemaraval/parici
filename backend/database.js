@@ -1335,7 +1335,14 @@ async function getDailyPodiumLeaderboard(limit = 20) {
        podiums.third_places
      FROM podiums
      JOIN users u ON podiums.user_id = u.id
-     WHERE LOWER(TRIM(u.username)) NOT IN ('philo14', 'test')
+     WHERE LOWER(TRIM(u.username)) NOT IN (
+       'philo14',
+       'test',
+       'test8',
+       'testcheck',
+       'testphil1',
+       'allezlom!'
+     )
      ORDER BY
        podiums.first_places DESC,
        podiums.second_places DESC,
