@@ -1947,10 +1947,24 @@ button {
     overflow-anchor: none;
   }
 
+  body.session-running #daily-guesses-history {
+    max-height: min(24vh, 180px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
   body.session-running .target-panel.target-panel--daily-image-open {
     max-height: 68vh;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+  }
+
+  body.session-running
+    .target-panel.target-panel--daily-image-open
+    #daily-guesses-history {
+    max-height: none;
+    overflow-y: visible;
   }
 
   body.session-running .target-panel.pulse {
