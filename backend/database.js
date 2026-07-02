@@ -1327,36 +1327,56 @@ async function getDailyLeaderboard(date) {
   return res.rows;
 }
 
-async function getDailyPodiumLeaderboard(limit = 20) {
+async function getWeeklyDailyPodiumLeaderboard(limit = 20) {
   const parsedLimit = Number.isInteger(limit) && limit > 0 ? limit : 20;
   const res = await pool.query(
-    `WITH daily_rankings AS (
+    `WITH completed AS (
        SELECT
          d.user_id,
-         ROW_NUMBER() OVER (
-           PARTITION BY d.date
-           ORDER BY
-             d.success DESC,
-             CASE WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7) ELSE NULL END ASC,
-             CASE WHEN d.success = FALSE THEN d.best_distance_meters ELSE NULL END ASC,
-             CASE
-               WHEN d.started_at IS NOT NULL THEN EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at))
-               ELSE NULL
-             END ASC NULLS LAST,
-             d.last_attempt_at ASC,
-             d.user_id ASC
-         ) AS daily_rank
+         date_trunc('week', d.date::date)::date AS week_start,
+         LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
+         d.success,
+         d.best_distance_meters,
+         d.last_attempt_at
        FROM daily_user_attempts d
        WHERE d.success = TRUE OR d.attempts_count >= 7
+     ),
+     weekly_stats AS (
+       SELECT
+         completed.week_start,
+         completed.user_id,
+         COUNT(*)::int AS days_played,
+         SUM(CASE WHEN completed.success THEN 1 ELSE 0 END)::int AS successes,
+         SUM(CASE WHEN completed.success THEN completed.attempts_count ELSE 7 END)::int AS total_attempts,
+         MIN(completed.best_distance_meters)::int AS best_distance_meters,
+         MAX(completed.last_attempt_at) AS last_completed_at
+       FROM completed
+       GROUP BY completed.week_start, completed.user_id
+     ),
+     weekly_rankings AS (
+       SELECT
+         weekly_stats.user_id,
+         ROW_NUMBER() OVER (
+           PARTITION BY weekly_stats.week_start
+           ORDER BY
+             weekly_stats.successes DESC,
+             CASE WHEN weekly_stats.successes = 0 THEN weekly_stats.days_played ELSE NULL END DESC NULLS LAST,
+             weekly_stats.total_attempts ASC,
+             weekly_stats.best_distance_meters ASC NULLS LAST,
+             weekly_stats.last_completed_at ASC,
+             u.username ASC
+         ) AS weekly_rank
+       FROM weekly_stats
+       JOIN users u ON weekly_stats.user_id = u.id
      ),
      podiums AS (
        SELECT
          user_id,
-         COUNT(*) FILTER (WHERE daily_rank = 1)::int AS first_places,
-         COUNT(*) FILTER (WHERE daily_rank = 2)::int AS second_places,
-         COUNT(*) FILTER (WHERE daily_rank = 3)::int AS third_places
-       FROM daily_rankings
-       WHERE daily_rank <= 3
+         COUNT(*) FILTER (WHERE weekly_rank = 1)::int AS first_places,
+         COUNT(*) FILTER (WHERE weekly_rank = 2)::int AS second_places,
+         COUNT(*) FILTER (WHERE weekly_rank = 3)::int AS third_places
+       FROM weekly_rankings
+       WHERE weekly_rank <= 3
        GROUP BY user_id
      )
      SELECT
@@ -2405,7 +2425,7 @@ module.exports = {
   startDailyUserAttempt,
   updateDailyUserAttempt,
   getDailyLeaderboard,
-  getDailyPodiumLeaderboard,
+  getWeeklyDailyPodiumLeaderboard,
   getDailyWeeklyLeaderboard,
   upsertPushSubscription,
   getPushSubscriptionStatusForUser,

@@ -305,7 +305,7 @@ async function getCachedDailyWeeklyLeaderboard(dateStr) {
 async function getCachedDailyPodiumLeaderboard() {
     return readAsyncTtlCache(
         dailyPodiumLeaderboardCache,
-        () => db.getDailyPodiumLeaderboard(),
+        () => db.getWeeklyDailyPodiumLeaderboard(),
         { key: 'all' },
     );
 }
