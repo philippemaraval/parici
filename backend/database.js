@@ -1379,15 +1379,24 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
        FROM weekly_rankings
        WHERE weekly_rank <= 3
        GROUP BY user_id
+     ),
+     participations AS (
+       SELECT
+         user_id,
+         COUNT(*)::int AS weeks_played
+       FROM weekly_stats
+       GROUP BY user_id
      )
      SELECT
        u.username,
        u.avatar,
        podiums.first_places,
        podiums.second_places,
-       podiums.third_places
+       podiums.third_places,
+       participations.weeks_played
      FROM podiums
      JOIN users u ON podiums.user_id = u.id
+     JOIN participations ON podiums.user_id = participations.user_id
      WHERE LOWER(TRIM(u.username)) NOT IN (
        'philo14',
        'test',

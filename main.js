@@ -406,7 +406,7 @@
     content.className = "leaderboard-zone-content";
     const table = document.createElement("table");
     table.className = "leaderboard-table daily-podium-leaderboard";
-    table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Podiums</th></tr></thead>";
+    table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th title="Semaines jou\xE9es">Participations</th><th>Podiums</th></tr></thead>';
     const tbody = document.createElement("tbody");
     podiumRows.forEach((row, index) => {
       const tr = document.createElement("tr");
@@ -414,7 +414,7 @@
         tr.classList.add("leaderboard-first-place");
       }
       const playerAvatar = row.avatar || "\u{1F464}";
-      tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td class="daily-podium-counts">\u{1F947}${row.first_places || 0} \u{1F948}${row.second_places || 0} \u{1F949}${row.third_places || 0}</td>`;
+      tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td>${row.weeks_played || 0}</td><td class="daily-podium-counts">\u{1F947}${row.first_places || 0} \u{1F948}${row.second_places || 0} \u{1F949}${row.third_places || 0}</td>`;
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);

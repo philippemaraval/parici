@@ -2248,11 +2248,20 @@ button {
 }
 
 .daily-podium-leaderboard th:nth-child(2) {
-  width: 42%;
+  width: 32%;
 }
 
 .daily-podium-leaderboard th:nth-child(3) {
-  width: 50%;
+  width: 20%;
+  text-align: center;
+}
+
+.daily-podium-leaderboard td:nth-child(3) {
+  text-align: center;
+}
+
+.daily-podium-leaderboard th:nth-child(4) {
+  width: 40%;
 }
 
 .daily-podium-counts {
