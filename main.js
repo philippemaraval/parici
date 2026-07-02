@@ -7488,11 +7488,14 @@ Essaie de faire mieux sur parici.netlify.app`,
   }
   function scrollSidebarToTargetPanel() {
     if (window.innerWidth >= 900) return;
-    const e = document.getElementById("sidebar"), t = document.querySelector(".target-panel");
-    e && t && setTimeout(() => {
-      const r = t.offsetTop, a = t.offsetHeight, n = r - e.clientHeight / 2 + a / 2;
-      e.scrollTo({ top: n, behavior: "smooth" });
-    }, 350);
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return;
+    const resetSessionScroll = () => {
+      sidebar.scrollTop = 0;
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    };
+    resetSessionScroll();
+    requestAnimationFrame(resetSessionScroll);
   }
   function ensureLectureBackButton() {
     if (document.getElementById("lecture-back-btn")) return;

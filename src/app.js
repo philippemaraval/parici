@@ -3733,16 +3733,20 @@ function populateArrondissements() {
 }
 function scrollSidebarToTargetPanel() {
   if (window.innerWidth >= 900) return;
-  const e = document.getElementById("sidebar"),
-    t = document.querySelector(".target-panel");
-  e &&
-    t &&
-    setTimeout(() => {
-      const r = t.offsetTop,
-        a = t.offsetHeight,
-        n = r - e.clientHeight / 2 + a / 2;
-      e.scrollTo({ top: n, behavior: "smooth" });
-    }, 350);
+  const sidebar = document.getElementById("sidebar");
+  if (!sidebar) return;
+
+  // The setup screen makes the sidebar scrollable on mobile. When the session
+  // layout removes most setup panels, that old scrollTop is preserved and
+  // shifts the target panel above the viewport. Always anchor the compact
+  // session header to the top instead of trying to center it in the sidebar.
+  const resetSessionScroll = () => {
+    sidebar.scrollTop = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  };
+
+  resetSessionScroll();
+  requestAnimationFrame(resetSessionScroll);
 }
 function ensureLectureBackButton() {
   if (document.getElementById("lecture-back-btn")) return;
