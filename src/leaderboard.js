@@ -495,7 +495,7 @@ function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
 
   const details = document.createElement("details");
   details.className = "leaderboard-zone-details";
-  details.open = true;
+  details.open = false;
 
   const summary = document.createElement("summary");
   summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily hebdomadaires — historique</span>';
