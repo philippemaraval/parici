@@ -2243,6 +2243,23 @@ button {
   margin-top: 2px;
 }
 
+.daily-podium-leaderboard th:first-child {
+  width: 8%;
+}
+
+.daily-podium-leaderboard th:nth-child(2) {
+  width: 42%;
+}
+
+.daily-podium-leaderboard th:nth-child(3) {
+  width: 50%;
+}
+
+.daily-podium-counts {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 .leaderboard-hidden-rows {
   display: none;
 }

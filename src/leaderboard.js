@@ -488,6 +488,41 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   rootElement.appendChild(weeklyDetails);
 }
 
+function appendDailyPodiumLeaderboard(rootElement, podiumRows) {
+  if (!Array.isArray(podiumRows) || podiumRows.length === 0) {
+    return;
+  }
+
+  const details = document.createElement("details");
+  details.className = "leaderboard-zone-details";
+  details.open = true;
+
+  const summary = document.createElement("summary");
+  summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily — historique</span>';
+  details.appendChild(summary);
+
+  const content = document.createElement("div");
+  content.className = "leaderboard-zone-content";
+  const table = document.createElement("table");
+  table.className = "leaderboard-table daily-podium-leaderboard";
+  table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Podiums</th></tr></thead>";
+
+  const tbody = document.createElement("tbody");
+  podiumRows.forEach((row, index) => {
+    const tr = document.createElement("tr");
+    if (index === 0) {
+      tr.classList.add("leaderboard-first-place");
+    }
+    const playerAvatar = row.avatar || "👤";
+    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td class="daily-podium-counts">🥇${row.first_places || 0} 🥈${row.second_places || 0} 🥉${row.third_places || 0}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  content.appendChild(table);
+  details.appendChild(content);
+  rootElement.appendChild(details);
+}
+
 export function loadAllLeaderboards() {
   const leaderboardRoot = document.getElementById("leaderboard");
   if (!leaderboardRoot) {
@@ -519,14 +554,18 @@ export function loadAllLeaderboards() {
     fetch(`${API_URL}/api/daily/leaderboard/weekly`)
       .then((response) => (response.ok ? response.json() : { rows: [] }))
       .catch(() => ({ rows: [] })),
+    fetch(`${API_URL}/api/daily/leaderboard/podiums`)
+      .then((response) => (response.ok ? response.json() : []))
+      .catch(() => []),
   ])
-    .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily]) => {
+    .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily, dailyPodiums]) => {
       const hasAllTimeRows = hasLeaderboardRows(allBoards);
       const hasMonthlyRows = hasLeaderboardRows(monthlyBoards);
       const hasDailyRows = !!(dailyRows && dailyRows.length > 0);
       const hasWeeklyRows = Array.isArray(weeklyDaily?.rows) && weeklyDaily.rows.length > 0;
+      const hasPodiumRows = Array.isArray(dailyPodiums) && dailyPodiums.length > 0;
 
-      const hasVisibleDailyRows = showDailyLeaderboards && (hasDailyRows || hasWeeklyRows);
+      const hasVisibleDailyRows = showDailyLeaderboards && (hasDailyRows || hasWeeklyRows || hasPodiumRows);
       const hasVisibleCaminoRows = showCaminoLeaderboards && (hasAllTimeRows || hasMonthlyRows);
       if (!hasVisibleDailyRows && !hasVisibleCaminoRows) {
         leaderboardRoot.innerHTML = "<p>Aucun score enregistré.</p>";
@@ -587,6 +626,7 @@ export function loadAllLeaderboards() {
       }
 
       if (showDailyLeaderboards) {
+        appendDailyPodiumLeaderboard(leaderboardRoot, dailyPodiums);
         appendWeeklyDailyLeaderboard(leaderboardRoot, weeklyDaily);
       }
 

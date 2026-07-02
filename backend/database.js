@@ -1299,6 +1299,53 @@ async function getDailyLeaderboard(date) {
   return res.rows;
 }
 
+async function getDailyPodiumLeaderboard(limit = 20) {
+  const parsedLimit = Number.isInteger(limit) && limit > 0 ? limit : 20;
+  const res = await pool.query(
+    `WITH daily_rankings AS (
+       SELECT
+         d.user_id,
+         ROW_NUMBER() OVER (
+           PARTITION BY d.date
+           ORDER BY
+             d.success DESC,
+             CASE WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7) ELSE NULL END ASC,
+             CASE WHEN d.success = FALSE THEN d.best_distance_meters ELSE NULL END ASC,
+             d.last_attempt_at ASC,
+             d.user_id ASC
+         ) AS daily_rank
+       FROM daily_user_attempts d
+       WHERE d.success = TRUE OR d.attempts_count >= 7
+     ),
+     podiums AS (
+       SELECT
+         user_id,
+         COUNT(*) FILTER (WHERE daily_rank = 1)::int AS first_places,
+         COUNT(*) FILTER (WHERE daily_rank = 2)::int AS second_places,
+         COUNT(*) FILTER (WHERE daily_rank = 3)::int AS third_places
+       FROM daily_rankings
+       WHERE daily_rank <= 3
+       GROUP BY user_id
+     )
+     SELECT
+       u.username,
+       u.avatar,
+       podiums.first_places,
+       podiums.second_places,
+       podiums.third_places
+     FROM podiums
+     JOIN users u ON podiums.user_id = u.id
+     ORDER BY
+       podiums.first_places DESC,
+       podiums.second_places DESC,
+       podiums.third_places DESC,
+       u.username ASC
+     LIMIT $1`,
+    [parsedLimit]
+  );
+  return res.rows;
+}
+
 async function getDailyWeeklyLeaderboard(date, limit = 20) {
   const parsedLimit = Number.isInteger(limit) && limit > 0 ? limit : 20;
   const res = await pool.query(
@@ -2317,6 +2364,7 @@ module.exports = {
   getDailyUserStatus,
   updateDailyUserAttempt,
   getDailyLeaderboard,
+  getDailyPodiumLeaderboard,
   getDailyWeeklyLeaderboard,
   upsertPushSubscription,
   getPushSubscriptionStatusForUser,

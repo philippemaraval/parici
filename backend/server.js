@@ -171,6 +171,7 @@ const allLeaderboardsCache = createAsyncTtlCache(LEADERBOARDS_CACHE_TTL_MS);
 const monthlyLeaderboardsCache = createAsyncTtlCache(LEADERBOARDS_CACHE_TTL_MS);
 const dailyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const dailyWeeklyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
+const dailyPodiumLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const referralService = createReferralService(db);
 
 if (!JWT_SECRET_KEY) {
@@ -247,6 +248,7 @@ function invalidateLeaderboardCaches() {
     invalidateAsyncTtlCache(monthlyLeaderboardsCache);
     invalidateAsyncTtlCache(dailyLeaderboardCache);
     invalidateAsyncTtlCache(dailyWeeklyLeaderboardCache);
+    invalidateAsyncTtlCache(dailyPodiumLeaderboardCache);
 }
 
 async function getCachedPublicContentSnapshot() {
@@ -300,6 +302,14 @@ async function getCachedDailyWeeklyLeaderboard(dateStr) {
     );
 }
 
+async function getCachedDailyPodiumLeaderboard() {
+    return readAsyncTtlCache(
+        dailyPodiumLeaderboardCache,
+        () => db.getDailyPodiumLeaderboard(),
+        { key: 'all' },
+    );
+}
+
 function warmCriticalCachesInBackground() {
     Promise.allSettled([
         getCachedPublicContentSnapshot(),
@@ -307,6 +317,7 @@ function warmCriticalCachesInBackground() {
         getCachedLeaderboards('month'),
         getCachedDailyLeaderboard(getDailyDateKey()),
         getCachedDailyWeeklyLeaderboard(getDailyDateKey()),
+        getCachedDailyPodiumLeaderboard(),
     ]).catch(() => {
         // Promise.allSettled should not reject, but keep background warming silent.
     });
@@ -3804,6 +3815,7 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
         if (result.success || result.attempts_count >= 7) {
             invalidateAsyncTtlCache(dailyLeaderboardCache);
             invalidateAsyncTtlCache(dailyWeeklyLeaderboardCache);
+            invalidateAsyncTtlCache(dailyPodiumLeaderboardCache);
         }
 
         if (result.success) {
@@ -3836,6 +3848,16 @@ app.get('/api/daily/leaderboard/weekly', async (req, res) => {
     } catch (err) {
         console.error('Daily weekly leaderboard error:', err);
         res.status(500).json({ error: 'Failed to load weekly daily leaderboard' });
+    }
+});
+
+app.get('/api/daily/leaderboard/podiums', async (req, res) => {
+    try {
+        const rows = await getCachedDailyPodiumLeaderboard();
+        res.json(rows);
+    } catch (err) {
+        console.error('Daily podium leaderboard error:', err);
+        res.status(500).json({ error: 'Failed to load daily podium leaderboard' });
     }
 });
 
