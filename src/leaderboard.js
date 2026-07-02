@@ -451,7 +451,7 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
 
   const table = document.createElement("table");
   table.className = "leaderboard-table weekly-daily-leaderboard";
-  table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Réussites</th><th>Essais</th><th>Meilleur écart</th></tr></thead>";
+  table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Réussites</th><th>Essais</th><th>Total écart</th></tr></thead>";
 
   const tbody = document.createElement("tbody");
   weeklyRows.forEach((row, index) => {
@@ -462,11 +462,11 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
       row.username?.trim().toLocaleLowerCase("fr-FR") === "stban"
         ? ' <span title="à jamais le premier" aria-label="à jamais le premier">☝️</span>'
         : "";
-    const bestDistance =
-      row.best_distance_meters === null || row.best_distance_meters === undefined
+    const totalDistance =
+      row.total_distance_meters === null || row.total_distance_meters === undefined
         ? "—"
-        : `${Math.round(row.best_distance_meters)}m`;
-    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily joué${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${bestDistance}</td>`;
+        : `${Math.round(row.total_distance_meters)}m`;
+    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily joué${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${totalDistance}</td>`;
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);

@@ -1438,7 +1438,7 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
          COUNT(*)::int AS days_played,
          SUM(CASE WHEN completed.success THEN 1 ELSE 0 END)::int AS successes,
          SUM(CASE WHEN completed.success THEN completed.attempts_count ELSE 7 END)::int AS total_attempts,
-         MIN(completed.best_distance_meters)::int AS best_distance_meters,
+         SUM(completed.best_distance_meters)::int AS total_distance_meters,
          MAX(completed.last_attempt_at) AS last_completed_at
        FROM completed
        JOIN users u ON completed.user_id = u.id
@@ -1450,12 +1450,12 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
        days_played,
        successes,
        total_attempts,
-       best_distance_meters
+       total_distance_meters
      FROM ranked
      ORDER BY
        successes DESC,
        total_attempts ASC,
-       best_distance_meters ASC NULLS LAST,
+       total_distance_meters ASC NULLS LAST,
        last_completed_at ASC,
        username ASC
      LIMIT $2`,

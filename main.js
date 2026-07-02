@@ -365,7 +365,7 @@
     }
     const table = document.createElement("table");
     table.className = "leaderboard-table weekly-daily-leaderboard";
-    table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>R\xE9ussites</th><th>Essais</th><th>Meilleur \xE9cart</th></tr></thead>";
+    table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>R\xE9ussites</th><th>Essais</th><th>Total \xE9cart</th></tr></thead>";
     const tbody = document.createElement("tbody");
     weeklyRows.forEach((row, index) => {
       var _a;
@@ -373,8 +373,8 @@
       const rank = (index === 0 ? "\u{1F947} " : index === 1 ? "\u{1F948} " : index === 2 ? "\u{1F949} " : "") || `${index + 1}`;
       const playerAvatar = row.avatar || "\u{1F464}";
       const firstWeeklyWinnerBadge = ((_a = row.username) == null ? void 0 : _a.trim().toLocaleLowerCase("fr-FR")) === "stban" ? ' <span title="\xE0 jamais le premier" aria-label="\xE0 jamais le premier">\u261D\uFE0F</span>' : "";
-      const bestDistance = row.best_distance_meters === null || row.best_distance_meters === void 0 ? "\u2014" : `${Math.round(row.best_distance_meters)}m`;
-      tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily jou\xE9${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${bestDistance}</td>`;
+      const totalDistance = row.total_distance_meters === null || row.total_distance_meters === void 0 ? "\u2014" : `${Math.round(row.total_distance_meters)}m`;
+      tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily jou\xE9${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${totalDistance}</td>`;
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
