@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-06-28-reset-changed-daily';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-07-02-daily-started-at';
 const EXPLORER_REMOVALS_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-explorer-removals.sql');
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
