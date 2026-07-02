@@ -3765,8 +3765,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
         const date = await ensureDailyTarget();
         const target = await db.getDailyTarget(date);
         const manifestEntry = getDailyManifestEntryByDate(date);
-        const status = await db.getDailyUserStatus(req.user.id, date);
-        const userStatus = status || { attempts_count: 0, success: false, best_distance_meters: null };
+        const userStatus = await db.startDailyUserAttempt(req.user.id, date);
 
         const response = {
             date,

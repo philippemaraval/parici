@@ -1,0 +1,2 @@
+ALTER TABLE daily_user_attempts
+ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ;

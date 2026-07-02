@@ -251,9 +251,14 @@ async function initDb() {
         attempts_count INTEGER DEFAULT 0,
         best_distance_meters INTEGER,
         success BOOLEAN DEFAULT FALSE,
+        started_at TIMESTAMPTZ DEFAULT NOW(),
         last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
         UNIQUE(user_id, date)
       )
+    `);
+    await client.query(`
+      ALTER TABLE daily_user_attempts
+      ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ
     `);
 
     await client.query(`
@@ -1239,12 +1244,31 @@ async function getDailyUserStatus(userId, date) {
   return res.rows[0] || null;
 }
 
+async function startDailyUserAttempt(userId, date) {
+  const res = await pool.query(
+    `INSERT INTO daily_user_attempts (
+       user_id, date, attempts_count, success, started_at, last_attempt_at
+     )
+     VALUES ($1, $2, 0, FALSE, NOW(), NOW())
+     ON CONFLICT (user_id, date) DO UPDATE SET
+       started_at = CASE
+         WHEN daily_user_attempts.started_at IS NULL
+           AND COALESCE(daily_user_attempts.attempts_count, 0) = 0
+           THEN NOW()
+         ELSE daily_user_attempts.started_at
+       END
+     RETURNING *`,
+    [userId, date]
+  );
+  return res.rows[0];
+}
+
 async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess) {
   const result = await pool.query(
     `INSERT INTO daily_user_attempts (
-       user_id, date, attempts_count, best_distance_meters, success, last_attempt_at
+       user_id, date, attempts_count, best_distance_meters, success, started_at, last_attempt_at
      )
-     VALUES ($1, $2, 1, $3, $4, NOW())
+     VALUES ($1, $2, 1, $3, $4, NOW(), NOW())
      ON CONFLICT (user_id, date) DO UPDATE SET
        attempts_count = CASE
          WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE OR COALESCE(daily_user_attempts.attempts_count, 0) >= 7
@@ -1292,6 +1316,10 @@ async function getDailyLeaderboard(date) {
        d.success DESC,
        CASE WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7) ELSE NULL END ASC,
        CASE WHEN d.success = FALSE THEN d.best_distance_meters ELSE NULL END ASC,
+       CASE
+         WHEN d.started_at IS NOT NULL THEN EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at))
+         ELSE NULL
+       END ASC NULLS LAST,
        d.last_attempt_at ASC
      LIMIT 20`,
     [date]
@@ -1311,6 +1339,10 @@ async function getDailyPodiumLeaderboard(limit = 20) {
              d.success DESC,
              CASE WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7) ELSE NULL END ASC,
              CASE WHEN d.success = FALSE THEN d.best_distance_meters ELSE NULL END ASC,
+             CASE
+               WHEN d.started_at IS NOT NULL THEN EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at))
+               ELSE NULL
+             END ASC NULLS LAST,
              d.last_attempt_at ASC,
              d.user_id ASC
          ) AS daily_rank
@@ -2370,6 +2402,7 @@ module.exports = {
   listDailyTargets,
   setDailyTarget,
   getDailyUserStatus,
+  startDailyUserAttempt,
   updateDailyUserAttempt,
   getDailyLeaderboard,
   getDailyPodiumLeaderboard,
