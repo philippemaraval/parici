@@ -302,11 +302,11 @@ async function getCachedDailyWeeklyLeaderboard(dateStr) {
     );
 }
 
-async function getCachedDailyPodiumLeaderboard() {
+async function getCachedDailyPodiumLeaderboard(dateStr) {
     return readAsyncTtlCache(
         dailyPodiumLeaderboardCache,
-        () => db.getDailyPodiumLeaderboard(),
-        { key: 'all' },
+        () => db.getWeeklyDailyPodiumLeaderboard(dateStr),
+        { key: String(dateStr || '') },
     );
 }
 
@@ -317,7 +317,7 @@ function warmCriticalCachesInBackground() {
         getCachedLeaderboards('month'),
         getCachedDailyLeaderboard(getDailyDateKey()),
         getCachedDailyWeeklyLeaderboard(getDailyDateKey()),
-        getCachedDailyPodiumLeaderboard(),
+        getCachedDailyPodiumLeaderboard(getDailyDateKey()),
     ]).catch(() => {
         // Promise.allSettled should not reject, but keep background warming silent.
     });
@@ -3852,7 +3852,7 @@ app.get('/api/daily/leaderboard/weekly', async (req, res) => {
 
 app.get('/api/daily/leaderboard/podiums', async (req, res) => {
     try {
-        const rows = await getCachedDailyPodiumLeaderboard();
+        const rows = await getCachedDailyPodiumLeaderboard(getDailyDateKey());
         res.json(rows);
     } catch (err) {
         console.error('Daily podium leaderboard error:', err);

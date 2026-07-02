@@ -392,7 +392,7 @@
     weeklyDetails.appendChild(weeklyContent);
     rootElement.appendChild(weeklyDetails);
   }
-  function appendDailyPodiumLeaderboard(rootElement, podiumRows) {
+  function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
     if (!Array.isArray(podiumRows) || podiumRows.length === 0) {
       return;
     }
@@ -400,7 +400,7 @@
     details.className = "leaderboard-zone-details";
     details.open = true;
     const summary = document.createElement("summary");
-    summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily \u2014 historique</span>';
+    summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily hebdomadaires \u2014 historique</span>';
     details.appendChild(summary);
     const content = document.createElement("div");
     content.className = "leaderboard-zone-content";
@@ -502,8 +502,8 @@
         leaderboardRoot.appendChild(dailyDetails);
       }
       if (showDailyLeaderboards) {
-        appendDailyPodiumLeaderboard(leaderboardRoot, dailyPodiums);
         appendWeeklyDailyLeaderboard(leaderboardRoot, weeklyDaily);
+        appendWeeklyDailyPodiumLeaderboard(leaderboardRoot, dailyPodiums);
       }
       if (showCaminoLeaderboards && hasAllTimeRows) {
         appendZoneLeaderboards(leaderboardRoot, allBoards);
