@@ -498,7 +498,7 @@ function appendDailyPodiumLeaderboard(rootElement, podiumRows) {
   details.open = true;
 
   const summary = document.createElement("summary");
-  summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily hebdomadaires — historique</span>';
+  summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily — historique</span>';
   details.appendChild(summary);
 
   const content = document.createElement("div");

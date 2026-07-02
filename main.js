@@ -400,7 +400,7 @@
     details.className = "leaderboard-zone-details";
     details.open = true;
     const summary = document.createElement("summary");
-    summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily hebdomadaires \u2014 historique</span>';
+    summary.innerHTML = '<span class="leaderboard-zone-title">Podiums Daily \u2014 historique</span>';
     details.appendChild(summary);
     const content = document.createElement("div");
     content.className = "leaderboard-zone-content";
