@@ -505,7 +505,7 @@ function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
   content.className = "leaderboard-zone-content";
   const table = document.createElement("table");
   table.className = "leaderboard-table daily-podium-leaderboard";
-  table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th title="Semaines jouées">Participations</th><th>Podiums</th></tr></thead>';
+  table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th>Podiums</th><th title="Semaines jouées">Part.</th></tr></thead>';
 
   const tbody = document.createElement("tbody");
   podiumRows.forEach((row, index) => {
@@ -514,7 +514,7 @@ function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
       tr.classList.add("leaderboard-first-place");
     }
     const playerAvatar = row.avatar || "👤";
-    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td>${row.weeks_played || 0}</td><td class="daily-podium-counts">🥇${row.first_places || 0} 🥈${row.second_places || 0} 🥉${row.third_places || 0}</td>`;
+    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td class="daily-podium-counts">🥇${row.first_places || 0} 🥈${row.second_places || 0} 🥉${row.third_places || 0}</td><td>${row.weeks_played || 0}</td>`;
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);

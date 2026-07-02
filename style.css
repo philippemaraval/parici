@@ -2252,16 +2252,16 @@ button {
 }
 
 .daily-podium-leaderboard th:nth-child(3) {
+  width: 40%;
+}
+
+.daily-podium-leaderboard th:nth-child(4) {
   width: 20%;
   text-align: center;
 }
 
-.daily-podium-leaderboard td:nth-child(3) {
+.daily-podium-leaderboard td:nth-child(4) {
   text-align: center;
-}
-
-.daily-podium-leaderboard th:nth-child(4) {
-  width: 40%;
 }
 
 .daily-podium-counts {
