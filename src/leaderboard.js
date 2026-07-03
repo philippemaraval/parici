@@ -43,7 +43,7 @@ export const ZONE_LABELS = {
   ville: "Ville entière",
   "rues-principales": "Rues principales",
   "rues-celebres": "Rues célèbres",
-  "arrondissements-ville": "Arrondissements",
+  "arrondissements-ville": "Quartiers de la ville",
   arrondissement: "Rues par arrondissement",
   monuments: "Monuments",
   "lignes-transports-idf": "Métro, RER et Transilien",
@@ -316,7 +316,7 @@ function appendZoneLeaderboards(rootElement, boards) {
         const thead = document.createElement("thead");
         const foundColumnLabel =
           zoneMode === "arrondissements-ville"
-            ? "Arrondissements trouvés"
+            ? "Quartiers trouvés"
             : zoneMode === "monuments"
               ? "Monuments trouvés"
               : "Rues trouvées";

@@ -40,7 +40,7 @@ function getSessionResultLine({
     : zoneMode === "monuments"
       ? "monuments"
       : zoneMode === "arrondissements-ville"
-        ? "arrondissements"
+        ? "quartiers"
         : "rues";
   const foundWord = zoneMode === "monuments" || zoneMode === "arrondissements-ville" ? "trouvés" : "trouvées";
 

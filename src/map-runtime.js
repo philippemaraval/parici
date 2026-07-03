@@ -234,13 +234,19 @@ export async function loadArrondissementsRuntime({
   normalizeArrondissementKey,
   handleArrondissementClick,
 }) {
-  const response = await fetch("data/paris_arrondissements.geojson?v=2");
+  const response = await fetch("data/paris_quartiers.geojson?v=1");
   if (!response.ok) {
-    throw new Error(`Impossible de charger les arrondissements (HTTP ${response.status}).`);
+    throw new Error(`Impossible de charger les quartiers (HTTP ${response.status}).`);
   }
 
   const payload = await response.json();
-  const allArrondissementFeatures = (payload.features || []).filter((feature) => {
+  const allArrondissementFeatures = (payload.features || []).map((feature) => ({
+    ...feature,
+    properties: {
+      ...feature.properties,
+      nom_qua: feature?.properties?.l_qu || feature?.properties?.nom_qua,
+    },
+  })).filter((feature) => {
     const name = feature?.properties?.nom_qua;
     const geometryType = feature?.geometry?.type;
     return (

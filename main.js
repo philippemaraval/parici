@@ -64,7 +64,7 @@
     ville: "Ville enti\xE8re",
     "rues-principales": "Rues principales",
     "rues-celebres": "Rues c\xE9l\xE8bres",
-    "arrondissements-ville": "Arrondissements",
+    "arrondissements-ville": "Quartiers de la ville",
     arrondissement: "Rues par arrondissement",
     monuments: "Monuments",
     "lignes-transports-idf": "M\xE9tro, RER et Transilien"
@@ -257,7 +257,7 @@
           const table = document.createElement("table");
           table.className = "leaderboard-table";
           const thead = document.createElement("thead");
-          const foundColumnLabel = zoneMode === "arrondissements-ville" ? "Arrondissements trouv\xE9s" : zoneMode === "monuments" ? "Monuments trouv\xE9s" : "Rues trouv\xE9es";
+          const foundColumnLabel = zoneMode === "arrondissements-ville" ? "Quartiers trouv\xE9s" : zoneMode === "monuments" ? "Monuments trouv\xE9s" : "Rues trouv\xE9es";
           let header = "<tr><th>#</th><th>Joueur</th>";
           header += gameType === "classique" ? "<th>Score</th>" : `<th>${foundColumnLabel}</th>`;
           if (gameType === "marathon") {
@@ -2301,12 +2301,21 @@
     normalizeArrondissementKey: normalizeArrondissementKey2,
     handleArrondissementClick: handleArrondissementClick2
   }) {
-    const response = await fetch("data/paris_arrondissements.geojson?v=2");
+    const response = await fetch("data/paris_quartiers.geojson?v=1");
     if (!response.ok) {
-      throw new Error(`Impossible de charger les arrondissements (HTTP ${response.status}).`);
+      throw new Error(`Impossible de charger les quartiers (HTTP ${response.status}).`);
     }
     const payload = await response.json();
-    const allArrondissementFeatures2 = (payload.features || []).filter((feature) => {
+    const allArrondissementFeatures2 = (payload.features || []).map((feature) => {
+      var _a, _b;
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          nom_qua: ((_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.l_qu) || ((_b = feature == null ? void 0 : feature.properties) == null ? void 0 : _b.nom_qua)
+        }
+      };
+    }).filter((feature) => {
       var _a, _b;
       const name = (_a = feature == null ? void 0 : feature.properties) == null ? void 0 : _a.nom_qua;
       const geometryType = (_b = feature == null ? void 0 : feature.geometry) == null ? void 0 : _b.type;
@@ -3468,7 +3477,7 @@
     sessionScoreValue,
     poolSize
   }) {
-    const itemLabel = zoneMode === "lignes-transports-idf" ? "lignes" : zoneMode === "monuments" ? "monuments" : zoneMode === "arrondissements-ville" ? "arrondissements" : "rues";
+    const itemLabel = zoneMode === "lignes-transports-idf" ? "lignes" : zoneMode === "monuments" ? "monuments" : zoneMode === "arrondissements-ville" ? "quartiers" : "rues";
     const foundWord = zoneMode === "monuments" || zoneMode === "arrondissements-ville" ? "trouv\xE9s" : "trouv\xE9es";
     if (gameMode === "marathon") {
       return `\u{1F3AF} R\xE9sultat : ${Math.round(sessionScoreValue)} / ${poolSize || 0} ${itemLabel} ${foundWord}`;
@@ -5369,7 +5378,7 @@ Essaie de faire mieux sur parici.netlify.app`,
   }
   function getScoreMetricUIConfig(e = getGameMode()) {
     const zoneMode = getZoneMode();
-    const itemLabel = "monuments" === zoneMode ? "Monuments" : "arrondissements-ville" === zoneMode ? "Arrondissements" : "lignes-transports-idf" === zoneMode ? "Lignes" : "Rues";
+    const itemLabel = "monuments" === zoneMode ? "Monuments" : "arrondissements-ville" === zoneMode ? "Quartiers" : "lignes-transports-idf" === zoneMode ? "Lignes" : "Rues";
     const foundWord = "monuments" === zoneMode || "arrondissements-ville" === zoneMode ? "trouv\xE9s" : "trouv\xE9es";
     if ("marathon" === e)
       return {
@@ -6290,7 +6299,7 @@ Essaie de faire mieux sur parici.netlify.app`,
       "difficulty-pill--easy",
       "difficulty-pill--medium",
       "difficulty-pill--hard"
-    ), "rues-principales" === r ? (t.textContent = "Facile", t.classList.add("difficulty-pill--easy")) : "arrondissements-ville" === r ? (t.textContent = "Facile", t.classList.add("difficulty-pill--very-easy")) : "arrondissement" === r || "monuments" === r ? (t.textContent = "Faisable", t.classList.add("difficulty-pill--medium")) : "rues-celebres" === r ? (t.textContent = "Tr\xE8s Facile", t.classList.add("difficulty-pill--very-easy")) : "ville" === r ? (t.textContent = "Difficile", t.classList.add("difficulty-pill--hard")) : t.textContent = "";
+    ), "rues-principales" === r ? (t.textContent = "Facile", t.classList.add("difficulty-pill--easy")) : "arrondissements-ville" === r ? (t.textContent = "Difficile", t.classList.add("difficulty-pill--hard")) : "arrondissement" === r || "monuments" === r ? (t.textContent = "Faisable", t.classList.add("difficulty-pill--medium")) : "rues-celebres" === r ? (t.textContent = "Tr\xE8s Facile", t.classList.add("difficulty-pill--very-easy")) : "ville" === r ? (t.textContent = "Difficile", t.classList.add("difficulty-pill--hard")) : t.textContent = "";
   }
   function setTargetPanelTitleText(e) {
     const t = document.getElementById("target-panel-title-text");
@@ -6313,9 +6322,9 @@ Essaie de faire mieux sur parici.netlify.app`,
   function updateTargetPanelTitle() {
     const e = getZoneMode();
     isLectureMode ? setTargetPanelTitleText(
-      "monuments" === e ? "Monument \xE0 explorer" : "arrondissements-ville" === e ? "Arrondissement \xE0 explorer" : "lignes-transports-idf" === e ? "Ligne \xE0 explorer" : "Recherche de rue"
+      "monuments" === e ? "Monument \xE0 explorer" : "arrondissements-ville" === e ? "Quartier \xE0 explorer" : "lignes-transports-idf" === e ? "Ligne \xE0 explorer" : "Recherche de rue"
     ) : setTargetPanelTitleText(
-      "monuments" === e ? "Monument \xE0 trouver" : "arrondissements-ville" === e ? "Arrondissement \xE0 trouver" : "lignes-transports-idf" === e ? "Ligne \xE0 trouver" : "Rue \xE0 trouver"
+      "monuments" === e ? "Monument \xE0 trouver" : "arrondissements-ville" === e ? "Quartier \xE0 trouver" : "lignes-transports-idf" === e ? "Ligne \xE0 trouver" : "Rue \xE0 trouver"
     ), updateTargetItemCounter();
   }
   function getGameMode() {
@@ -6360,11 +6369,11 @@ Essaie de faire mieux sur parici.netlify.app`,
       };
     if ("arrondissements-ville" === e)
       return {
-        placeholder: "Rechercher un arrondissement (nom ou mot)",
-        unavailable: "Aucun arrondissement disponible pour cette zone.",
-        notFound: "Arrondissement introuvable dans la zone actuelle.",
-        noResults: "Aucun arrondissement trouv\xE9.",
-        srLabel: "Rechercher un arrondissement"
+        placeholder: "Rechercher un quartier (nom ou mot)",
+        unavailable: "Aucun quartier disponible pour cette zone.",
+        notFound: "Quartier introuvable dans la zone actuelle.",
+        noResults: "Aucun quartier trouv\xE9.",
+        srLabel: "Rechercher un quartier"
       };
     if ("lignes-transports-idf" === e)
       return {
@@ -7060,7 +7069,7 @@ Essaie de faire mieux sur parici.netlify.app`,
       await loadMonuments();
     }
     if ("arrondissements-ville" === zoneMode && !allArrondissementFeatures.length) {
-      showMessage("Chargement des arrondissements...", "info");
+      showMessage("Chargement des quartiers...", "info");
       await loadArrondissements();
     }
     if ("lignes-transports-idf" === zoneMode && !allBusLines.length) {
@@ -7385,13 +7394,13 @@ Essaie de faire mieux sur parici.netlify.app`,
       arrondissementsLayer = result.arrondissementsLayer;
       arrondissementPolygonsByName = result.arrondissementPolygonsByName;
       arrondissementLayersByKey = result.arrondissementLayersByKey;
-      console.log("Arrondissements charg\xE9s :", arrondissementPolygonsByName.size);
-      console.log("Noms de arrondissements (polygones):");
+      console.log("Quartiers charg\xE9s :", arrondissementPolygonsByName.size);
+      console.log("Noms des quartiers (polygones) :");
       console.log(Array.from(arrondissementPolygonsByName.keys()).sort());
       setZoneLayersVisibility(getZoneMode());
       refreshLectureTooltipsIfNeeded();
     }).catch((e) => {
-      console.error("Erreur lors du chargement des arrondissements :", e);
+      console.error("Erreur lors du chargement des quartiers :", e);
     }).finally(() => {
       arrondissementsLoadingPromise = null;
     });
@@ -7498,7 +7507,7 @@ Essaie de faire mieux sur parici.netlify.app`,
       r2 && (r2.disabled = true, r2.textContent = "Pause");
       const a2 = document.getElementById("skip-btn");
       return a2 && (a2.style.display = "none"), updateStartStopButton(), updatePauseButton(), updateTimeUI(0, 0), setLectureTooltipsEnabled(true), void showMessage(
-        "arrondissements-ville" === t ? "Mode lecture : survolez les arrondissements pour voir leur nom." : "Mode lecture : utilisez la recherche ou survolez la carte pour voir les noms.",
+        "arrondissements-ville" === t ? "Mode lecture : survolez les quartiers pour voir leur nom." : "Mode lecture : utilisez la recherche ou survolez la carte pour voir les noms.",
         "info"
       );
     }
@@ -7539,7 +7548,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     if (isLectureMode = false, isMonumentsMode = false, "arrondissements-ville" === t) {
       if (!allArrondissementFeatures.length)
         return void showMessage(
-          "Aucun arrondissement disponible (v\xE9rifiez data/paris_arrondissements.geojson).",
+          "Aucun quartier disponible (v\xE9rifiez data/paris_quartiers.geojson).",
           "error"
         );
       if (activeFriendChallenge) {
@@ -7552,12 +7561,12 @@ Essaie de faire mieux sur parici.netlify.app`,
       }
       if (!sessionArrondissements.length)
         return void showMessage(
-          activeFriendChallenge ? "Impossible de d\xE9marrer ce d\xE9fi amis (arrondissements introuvables)." : "Aucun arrondissement disponible pour cette session.",
+          activeFriendChallenge ? "Impossible de d\xE9marrer ce d\xE9fi amis (quartiers introuvables)." : "Aucun quartier disponible pour cette session.",
           "error"
         );
       currentArrondissementIndex = 0, currentArrondissementTarget = null, currentTarget = null, currentMonumentTarget = null, currentBusLineTarget = null, setZoneLayersVisibility(t), clearArrondissementOverlay(), sessionStartTime = performance.now(), streetStartTime = null, isSessionRunning = true, updateStartStopButton(), updatePauseButton(), updateLayoutSessionState(), scrollSidebarToTargetPanel();
       const e2 = document.getElementById("skip-btn");
-      return e2 && (e2.style.display = "inline-block"), setNewTarget(), showMessage("Session arrondissements d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
+      return e2 && (e2.style.display = "inline-block"), setNewTarget(), showMessage("Session quartiers d\xE9marr\xE9e.", "info"), void updateLayoutSessionState();
     }
     if (isLectureMode = false, isMonumentsMode = false, 0 === allStreetFeatures.length)
       return void showMessage(
@@ -8313,7 +8322,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     c.className = "summary-global";
     const m = document.createElement("h2");
     const zoneLabel = ZONE_LABELS[o] || o;
-    const foundItemsLabel = "lignes-transports-idf" === o ? "Lignes trouv\xE9es" : "monuments" === o ? "Monuments trouv\xE9s" : "arrondissements-ville" === o ? "Arrondissements trouv\xE9s" : "Rues trouv\xE9es";
+    const foundItemsLabel = "lignes-transports-idf" === o ? "Lignes trouv\xE9es" : "monuments" === o ? "Monuments trouv\xE9s" : "arrondissements-ville" === o ? "Quartiers trouv\xE9s" : "Rues trouv\xE9es";
     let p;
     m.textContent = "R\xE9capitulatif de la session", c.appendChild(m), p = "marathon" === l ? `Mode : Marathon (max. ${MAX_ERRORS_MARATHON} erreurs)` : "chrono" === l ? `Mode : Chrono (${CHRONO_DURATION} s)` : `Mode : Classique (${SESSION_SIZE} items max)`, p += ` \u2013 Zone : ${zoneLabel}`, u && (p += ` \u2013 Arrondissement : ${u}`);
     const g = document.createElement("p");

@@ -1065,7 +1065,7 @@ function getScoreMetricUIConfig(e = getGameMode()) {
     "monuments" === zoneMode
       ? "Monuments"
       : "arrondissements-ville" === zoneMode
-        ? "Arrondissements"
+        ? "Quartiers"
         : "lignes-transports-idf" === zoneMode
           ? "Lignes"
         : "Rues";
@@ -2138,8 +2138,8 @@ function updateModeDifficultyPill() {
     "rues-principales" === r
       ? ((t.textContent = "Facile"), t.classList.add("difficulty-pill--easy"))
       : "arrondissements-ville" === r
-        ? ((t.textContent = "Facile"),
-          t.classList.add("difficulty-pill--very-easy"))
+        ? ((t.textContent = "Difficile"),
+          t.classList.add("difficulty-pill--hard"))
       : "arrondissement" === r || "monuments" === r
         ? ((t.textContent = "Faisable"),
           t.classList.add("difficulty-pill--medium"))
@@ -2204,7 +2204,7 @@ function updateTargetPanelTitle() {
       "monuments" === e
         ? "Monument à explorer"
         : "arrondissements-ville" === e
-          ? "Arrondissement à explorer"
+          ? "Quartier à explorer"
           : "lignes-transports-idf" === e
             ? "Ligne à explorer"
           : "Recherche de rue",
@@ -2213,7 +2213,7 @@ function updateTargetPanelTitle() {
       "monuments" === e
         ? "Monument à trouver"
         : "arrondissements-ville" === e
-          ? "Arrondissement à trouver"
+          ? "Quartier à trouver"
           : "lignes-transports-idf" === e
             ? "Ligne à trouver"
           : "Rue à trouver",
@@ -2278,11 +2278,11 @@ function getLectureSearchCopy(e = getZoneMode()) {
     };
   if ("arrondissements-ville" === e)
     return {
-      placeholder: "Rechercher un arrondissement (nom ou mot)",
-      unavailable: "Aucun arrondissement disponible pour cette zone.",
-      notFound: "Arrondissement introuvable dans la zone actuelle.",
-      noResults: "Aucun arrondissement trouvé.",
-      srLabel: "Rechercher un arrondissement",
+      placeholder: "Rechercher un quartier (nom ou mot)",
+      unavailable: "Aucun quartier disponible pour cette zone.",
+      notFound: "Quartier introuvable dans la zone actuelle.",
+      noResults: "Aucun quartier trouvé.",
+      srLabel: "Rechercher un quartier",
     };
   if ("lignes-transports-idf" === e)
     return {
@@ -3276,7 +3276,7 @@ async function prepareAndStartNewSession() {
     await loadMonuments();
   }
   if ("arrondissements-ville" === zoneMode && !allArrondissementFeatures.length) {
-    showMessage("Chargement des arrondissements...", "info");
+    showMessage("Chargement des quartiers...", "info");
     await loadArrondissements();
   }
   if ("lignes-transports-idf" === zoneMode && !allBusLines.length) {
@@ -3688,15 +3688,15 @@ function loadArrondissements() {
       arrondissementPolygonsByName = result.arrondissementPolygonsByName;
       arrondissementLayersByKey = result.arrondissementLayersByKey;
 
-      console.log("Arrondissements chargés :", arrondissementPolygonsByName.size);
-      console.log("Noms de arrondissements (polygones):");
+      console.log("Quartiers chargés :", arrondissementPolygonsByName.size);
+      console.log("Noms des quartiers (polygones) :");
       console.log(Array.from(arrondissementPolygonsByName.keys()).sort());
 
       setZoneLayersVisibility(getZoneMode());
       refreshLectureTooltipsIfNeeded();
     })
     .catch((e) => {
-      console.error("Erreur lors du chargement des arrondissements :", e);
+      console.error("Erreur lors du chargement des quartiers :", e);
     })
     .finally(() => {
       arrondissementsLoadingPromise = null;
@@ -3901,7 +3901,7 @@ function startNewSession(options = {}) {
       setLectureTooltipsEnabled(!0),
       void showMessage(
         "arrondissements-ville" === t
-          ? "Mode lecture : survolez les arrondissements pour voir leur nom."
+          ? "Mode lecture : survolez les quartiers pour voir leur nom."
           : "Mode lecture : utilisez la recherche ou survolez la carte pour voir les noms.",
         "info",
       )
@@ -4001,7 +4001,7 @@ function startNewSession(options = {}) {
   ) {
     if (!allArrondissementFeatures.length)
       return void showMessage(
-        "Aucun arrondissement disponible (vérifiez data/paris_arrondissements.geojson).",
+        "Aucun quartier disponible (vérifiez data/paris_quartiers.geojson).",
         "error",
       );
 
@@ -4016,8 +4016,8 @@ function startNewSession(options = {}) {
     if (!sessionArrondissements.length)
       return void showMessage(
         activeFriendChallenge
-          ? "Impossible de démarrer ce défi amis (arrondissements introuvables)."
-          : "Aucun arrondissement disponible pour cette session.",
+          ? "Impossible de démarrer ce défi amis (quartiers introuvables)."
+          : "Aucun quartier disponible pour cette session.",
         "error",
       );
 
@@ -4039,7 +4039,7 @@ function startNewSession(options = {}) {
     return (
       e && (e.style.display = "inline-block"),
       setNewTarget(),
-      showMessage("Session arrondissements démarrée.", "info"),
+      showMessage("Session quartiers démarrée.", "info"),
       void updateLayoutSessionState()
     );
   }
@@ -5176,7 +5176,7 @@ function endSession() {
     : "monuments" === o
       ? "Monuments trouvés"
       : "arrondissements-ville" === o
-        ? "Arrondissements trouvés"
+        ? "Quartiers trouvés"
         : "Rues trouvées";
   let p;
   ((m.textContent = "Récapitulatif de la session"),
