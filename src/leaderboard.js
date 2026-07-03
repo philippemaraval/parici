@@ -541,7 +541,7 @@ function appendDailyAverageLeaderboard(rootElement, averageRows) {
   const table = document.createElement("table");
   table.className = "leaderboard-table daily-average-leaderboard";
   table.innerHTML =
-    '<thead><tr><th>#</th><th>Joueur</th><th title="Nombre moyen d’essais par Daily terminé (un échec vaut 10)">Moy. essais</th><th title="Daily terminés">Part.</th></tr></thead>';
+    '<thead><tr><th>#</th><th>Joueur</th><th title="Nombre moyen d’essais par Daily terminé (un échec vaut 8)">Moy. essais</th><th title="Daily terminés">Part.</th></tr></thead>';
 
   const tbody = document.createElement("tbody");
   averageRows.forEach((row, index) => {

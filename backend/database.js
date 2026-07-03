@@ -1337,13 +1337,13 @@ async function getDailyAverageLeaderboard(limit = 20) {
          AVG(
            CASE
              WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7)
-             ELSE 10
+             ELSE 8
            END
          )::float8 AS average_attempts
        FROM daily_user_attempts d
        WHERE d.success = TRUE OR d.attempts_count >= 7
        GROUP BY d.user_id
-       HAVING COUNT(*) > 10
+       HAVING COUNT(*) >= 10
      )
      SELECT
        u.username,

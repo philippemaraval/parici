@@ -436,7 +436,7 @@
     content.className = "leaderboard-zone-content";
     const table = document.createElement("table");
     table.className = "leaderboard-table daily-average-leaderboard";
-    table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th title="Nombre moyen d\u2019essais par Daily termin\xE9 (un \xE9chec vaut 10)">Moy. essais</th><th title="Daily termin\xE9s">Part.</th></tr></thead>';
+    table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th title="Nombre moyen d\u2019essais par Daily termin\xE9 (un \xE9chec vaut 8)">Moy. essais</th><th title="Daily termin\xE9s">Part.</th></tr></thead>';
     const tbody = document.createElement("tbody");
     averageRows.forEach((row, index) => {
       const tr = document.createElement("tr");
