@@ -379,8 +379,14 @@ export function populateArrondissementsUI({
     }
   });
 
-  const arrondissements = Array.from(arrondissementsByKey.values()).sort((left, right) =>
-    left.localeCompare(right, "fr", { sensitivity: "base", numeric: true }),
+  const arrondissementNumber = (name) => {
+    const match = String(name).match(/\d{1,2}/);
+    return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
+  };
+  const arrondissements = Array.from(arrondissementsByKey.values()).sort(
+    (left, right) =>
+      arrondissementNumber(left) - arrondissementNumber(right) ||
+      left.localeCompare(right, "fr", { sensitivity: "base" }),
   );
 
   nativeSelect.innerHTML = "";

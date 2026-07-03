@@ -1989,8 +1989,12 @@
         }
       }
     });
+    const arrondissementNumber = (name) => {
+      const match = String(name).match(/\d{1,2}/);
+      return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
+    };
     const arrondissements = Array.from(arrondissementsByKey.values()).sort(
-      (left, right) => left.localeCompare(right, "fr", { sensitivity: "base", numeric: true })
+      (left, right) => arrondissementNumber(left) - arrondissementNumber(right) || left.localeCompare(right, "fr", { sensitivity: "base" })
     );
     nativeSelect.innerHTML = "";
     arrondissements.forEach((arrondissementName) => {
@@ -2148,6 +2152,56 @@
     };
     scheduleIdleTask(runBatch);
   }
+  function normalizeQuarterLookupKey(value) {
+    return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[’']/g, " ").replace(/-/g, " ").replace(/^quartier\s+/, "").replace(/^(?:de\s+l|de\s+la|de|du|des|d|le|la|les)\s+/, "").replace(/\s+/g, " ").trim();
+  }
+  async function normalizeStreetArrondissements(features) {
+    let response;
+    try {
+      response = await fetch("data/paris_quartiers.geojson?v=2");
+    } catch {
+      return features;
+    }
+    if (!response.ok) {
+      return features;
+    }
+    const payload = await response.json();
+    const arrondissementByQuarter = /* @__PURE__ */ new Map();
+    (payload.features || []).forEach((feature) => {
+      const properties = (feature == null ? void 0 : feature.properties) || {};
+      const quarterName = normalizeQuarterLookupKey(properties.l_qu);
+      const arrondissementNumber = Number(properties.c_ar);
+      if (quarterName && arrondissementNumber >= 1 && arrondissementNumber <= 20) {
+        arrondissementByQuarter.set(quarterName, arrondissementNumber);
+      }
+    });
+    const quarterAliases = /* @__PURE__ */ new Map([
+      ["plaine de monceau", 17],
+      ["plaine de monceaux", 17],
+      ["amerique", 19],
+      ["iles", 4],
+      ["auteuil", 16],
+      ["europe", 8],
+      ["odeon", 6],
+      ["hopital saint louis", 10],
+      ["ecole militaire", 7],
+      ["arsenal", 4],
+      ["vendome", 1],
+      ["sainte avoye", 3]
+    ]);
+    features.forEach((feature) => {
+      const properties = feature == null ? void 0 : feature.properties;
+      if (!properties) return;
+      const currentValue = String(properties.arrondissement || "").trim();
+      if (/^\d{1,2}(?:er|e)?\s+arrondissement$/i.test(currentValue)) return;
+      const quarterKey = normalizeQuarterLookupKey(currentValue);
+      const arrondissementNumber = arrondissementByQuarter.get(quarterKey) || quarterAliases.get(quarterKey);
+      if (!arrondissementNumber) return;
+      properties.quartier = properties.quartier || currentValue;
+      properties.arrondissement = arrondissementNumber === 1 ? "1er arrondissement" : `${arrondissementNumber}e arrondissement`;
+    });
+    return features;
+  }
   async function loadStreetsRuntime({
     map: map2,
     L: L2,
@@ -2197,7 +2251,7 @@
       throw lastError || new Error("Impossible de charger les rues");
     }
     const payload = await response.json();
-    const allStreetFeatures2 = payload.features || [];
+    const allStreetFeatures2 = await normalizeStreetArrondissements(payload.features || []);
     const streetLayersById2 = /* @__PURE__ */ new Map();
     const streetLayersByName2 = /* @__PURE__ */ new Map();
     const touchBufferQueue = [];
@@ -2301,7 +2355,7 @@
     normalizeArrondissementKey: normalizeArrondissementKey2,
     handleArrondissementClick: handleArrondissementClick2
   }) {
-    const response = await fetch("data/paris_quartiers.geojson?v=1");
+    const response = await fetch("data/paris_quartiers.geojson?v=2");
     if (!response.ok) {
       throw new Error(`Impossible de charger les quartiers (HTTP ${response.status}).`);
     }
