@@ -172,6 +172,7 @@ const monthlyLeaderboardsCache = createAsyncTtlCache(LEADERBOARDS_CACHE_TTL_MS);
 const dailyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const dailyWeeklyLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const dailyPodiumLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
+const dailyAverageLeaderboardCache = createAsyncTtlCache(DAILY_LEADERBOARD_CACHE_TTL_MS);
 const referralService = createReferralService(db);
 
 if (!JWT_SECRET_KEY) {
@@ -249,6 +250,7 @@ function invalidateLeaderboardCaches() {
     invalidateAsyncTtlCache(dailyLeaderboardCache);
     invalidateAsyncTtlCache(dailyWeeklyLeaderboardCache);
     invalidateAsyncTtlCache(dailyPodiumLeaderboardCache);
+    invalidateAsyncTtlCache(dailyAverageLeaderboardCache);
 }
 
 async function getCachedPublicContentSnapshot() {
@@ -310,6 +312,14 @@ async function getCachedDailyPodiumLeaderboard(dateStr) {
     );
 }
 
+async function getCachedDailyAverageLeaderboard() {
+    return readAsyncTtlCache(
+        dailyAverageLeaderboardCache,
+        () => db.getDailyAverageLeaderboard(),
+        { key: 'all-time' },
+    );
+}
+
 function warmCriticalCachesInBackground() {
     Promise.allSettled([
         getCachedPublicContentSnapshot(),
@@ -318,6 +328,7 @@ function warmCriticalCachesInBackground() {
         getCachedDailyLeaderboard(getDailyDateKey()),
         getCachedDailyWeeklyLeaderboard(getDailyDateKey()),
         getCachedDailyPodiumLeaderboard(getDailyDateKey()),
+        getCachedDailyAverageLeaderboard(),
     ]).catch(() => {
         // Promise.allSettled should not reject, but keep background warming silent.
     });
@@ -3815,6 +3826,7 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
             invalidateAsyncTtlCache(dailyLeaderboardCache);
             invalidateAsyncTtlCache(dailyWeeklyLeaderboardCache);
             invalidateAsyncTtlCache(dailyPodiumLeaderboardCache);
+            invalidateAsyncTtlCache(dailyAverageLeaderboardCache);
         }
 
         if (result.success) {
@@ -3857,6 +3869,16 @@ app.get('/api/daily/leaderboard/podiums', async (req, res) => {
     } catch (err) {
         console.error('Daily podium leaderboard error:', err);
         res.status(500).json({ error: 'Failed to load daily podium leaderboard' });
+    }
+});
+
+app.get('/api/daily/leaderboard/averages', async (req, res) => {
+    try {
+        const rows = await getCachedDailyAverageLeaderboard();
+        res.json(rows);
+    } catch (err) {
+        console.error('Daily average leaderboard error:', err);
+        res.status(500).json({ error: 'Failed to load daily average leaderboard' });
     }
 });
 

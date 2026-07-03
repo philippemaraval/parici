@@ -1327,6 +1327,39 @@ async function getDailyLeaderboard(date) {
   return res.rows;
 }
 
+async function getDailyAverageLeaderboard(limit = 20) {
+  const parsedLimit = Number.isInteger(limit) && limit > 0 ? limit : 20;
+  const res = await pool.query(
+    `WITH player_averages AS (
+       SELECT
+         d.user_id,
+         COUNT(*)::int AS participations,
+         AVG(
+           CASE
+             WHEN d.success = TRUE THEN LEAST(COALESCE(d.attempts_count, 0), 7)
+             ELSE 10
+           END
+         )::float8 AS average_attempts
+       FROM daily_user_attempts d
+       WHERE d.success = TRUE OR d.attempts_count >= 7
+       GROUP BY d.user_id
+     )
+     SELECT
+       u.username,
+       u.avatar,
+       player_averages.average_attempts,
+       player_averages.participations
+     FROM player_averages
+     JOIN users u ON player_averages.user_id = u.id
+     ORDER BY
+       player_averages.average_attempts ASC,
+       u.username ASC
+     LIMIT $1`,
+    [parsedLimit]
+  );
+  return res.rows;
+}
+
 async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
   const parsedLimit = Number.isInteger(limit) && limit > 0 ? limit : 20;
   const res = await pool.query(
@@ -2435,6 +2468,7 @@ module.exports = {
   startDailyUserAttempt,
   updateDailyUserAttempt,
   getDailyLeaderboard,
+  getDailyAverageLeaderboard,
   getWeeklyDailyPodiumLeaderboard,
   getDailyWeeklyLeaderboard,
   upsertPushSubscription,

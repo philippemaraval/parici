@@ -523,6 +523,46 @@ function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
   rootElement.appendChild(details);
 }
 
+function appendDailyAverageLeaderboard(rootElement, averageRows) {
+  if (!Array.isArray(averageRows) || averageRows.length === 0) {
+    return;
+  }
+
+  const details = document.createElement("details");
+  details.className = "leaderboard-zone-details";
+  details.open = false;
+
+  const summary = document.createElement("summary");
+  summary.innerHTML = '<span class="leaderboard-zone-title">Moyenne d’essais Daily — historique</span>';
+  details.appendChild(summary);
+
+  const content = document.createElement("div");
+  content.className = "leaderboard-zone-content";
+  const table = document.createElement("table");
+  table.className = "leaderboard-table daily-average-leaderboard";
+  table.innerHTML =
+    '<thead><tr><th>#</th><th>Joueur</th><th title="Nombre moyen d’essais par Daily terminé (un échec vaut 10)">Moy. essais</th><th title="Daily terminés">Part.</th></tr></thead>';
+
+  const tbody = document.createElement("tbody");
+  averageRows.forEach((row, index) => {
+    const tr = document.createElement("tr");
+    if (index === 0) {
+      tr.classList.add("leaderboard-first-place");
+    }
+    const playerAvatar = row.avatar || "👤";
+    const averageAttempts = Number(row.average_attempts);
+    const averageLabel = Number.isFinite(averageAttempts)
+      ? averageAttempts.toLocaleString("fr-FR", { maximumFractionDigits: 2 })
+      : "—";
+    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td>${averageLabel}</td><td>${row.participations || 0}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  content.appendChild(table);
+  details.appendChild(content);
+  rootElement.appendChild(details);
+}
+
 export function loadAllLeaderboards() {
   const leaderboardRoot = document.getElementById("leaderboard");
   if (!leaderboardRoot) {
@@ -557,15 +597,20 @@ export function loadAllLeaderboards() {
     fetch(`${API_URL}/api/daily/leaderboard/podiums`)
       .then((response) => (response.ok ? response.json() : []))
       .catch(() => []),
+    fetch(`${API_URL}/api/daily/leaderboard/averages`)
+      .then((response) => (response.ok ? response.json() : []))
+      .catch(() => []),
   ])
-    .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily, dailyPodiums]) => {
+    .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily, dailyPodiums, dailyAverages]) => {
       const hasAllTimeRows = hasLeaderboardRows(allBoards);
       const hasMonthlyRows = hasLeaderboardRows(monthlyBoards);
       const hasDailyRows = !!(dailyRows && dailyRows.length > 0);
       const hasWeeklyRows = Array.isArray(weeklyDaily?.rows) && weeklyDaily.rows.length > 0;
       const hasPodiumRows = Array.isArray(dailyPodiums) && dailyPodiums.length > 0;
+      const hasAverageRows = Array.isArray(dailyAverages) && dailyAverages.length > 0;
 
-      const hasVisibleDailyRows = showDailyLeaderboards && (hasDailyRows || hasWeeklyRows || hasPodiumRows);
+      const hasVisibleDailyRows =
+        showDailyLeaderboards && (hasDailyRows || hasWeeklyRows || hasPodiumRows || hasAverageRows);
       const hasVisibleCaminoRows = showCaminoLeaderboards && (hasAllTimeRows || hasMonthlyRows);
       if (!hasVisibleDailyRows && !hasVisibleCaminoRows) {
         leaderboardRoot.innerHTML = "<p>Aucun score enregistré.</p>";
@@ -628,6 +673,7 @@ export function loadAllLeaderboards() {
       if (showDailyLeaderboards) {
         appendWeeklyDailyLeaderboard(leaderboardRoot, weeklyDaily);
         appendWeeklyDailyPodiumLeaderboard(leaderboardRoot, dailyPodiums);
+        appendDailyAverageLeaderboard(leaderboardRoot, dailyAverages);
       }
 
       if (showCaminoLeaderboards && hasAllTimeRows) {
