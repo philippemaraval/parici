@@ -1343,6 +1343,7 @@ async function getDailyAverageLeaderboard(limit = 20) {
        FROM daily_user_attempts d
        WHERE d.success = TRUE OR d.attempts_count >= 7
        GROUP BY d.user_id
+       HAVING COUNT(*) > 10
      )
      SELECT
        u.username,
@@ -1351,6 +1352,12 @@ async function getDailyAverageLeaderboard(limit = 20) {
        player_averages.participations
      FROM player_averages
      JOIN users u ON player_averages.user_id = u.id
+     WHERE LOWER(TRIM(u.username)) NOT IN (
+       'philo14',
+       'test8',
+       'test9',
+       'testphil1'
+     )
      ORDER BY
        player_averages.average_attempts ASC,
        u.username ASC

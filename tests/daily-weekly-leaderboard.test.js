@@ -22,6 +22,8 @@ test("historical Daily average leaderboard counts failures as 10", () => {
 
   assert.match(database, /WHEN d\.success = TRUE THEN LEAST[\s\S]*ELSE 10/);
   assert.match(database, /COUNT\(\*\)::int AS participations/);
+  assert.match(database, /HAVING COUNT\(\*\) > 10/);
+  assert.match(database, /'philo14',\s*'test8',\s*'test9',\s*'testphil1'/);
   assert.match(database, /player_averages\.average_attempts ASC,\s*u\.username ASC/);
   assert.match(server, /\/api\/daily\/leaderboard\/averages/);
   assert.match(frontend, /Moyenne d’essais Daily — historique/);
