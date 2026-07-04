@@ -7560,7 +7560,6 @@ Essaie de faire mieux sur parici.netlify.app`,
     if (!sidebar) return;
     const resetSessionScroll = () => {
       sidebar.scrollTop = 0;
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     };
     resetSessionScroll();
     requestAnimationFrame(resetSessionScroll);

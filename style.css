@@ -1903,17 +1903,25 @@ button {
   }
 
   body.session-running #sidebar {
-    flex: 0 0 auto;
+    position: fixed;
+    top: env(safe-area-inset-top, 0);
+    right: 0;
+    left: 0;
+    width: 100%;
+    flex: none;
     max-height: none;
-    overflow-y: visible;
+    overflow: visible;
     padding: 8px 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     overflow-anchor: none;
+    overscroll-behavior: none;
   }
 
   body.session-running #map {
     flex: 1;
+    width: 100%;
+    height: 100%;
     opacity: 1;
     visibility: visible;
   }
@@ -1926,13 +1934,15 @@ button {
   body.session-running .panel-params,
   body.session-running #daily-result-panel,
   body.session-running .stats-panel,
-  body.session-running .user-panel {
+  body.session-running .user-panel,
+  body.session-running .mobile-mode-nav {
     display: none !important;
   }
 
   body.session-running #sidebar-content {
     display: flex;
     flex-direction: column;
+    gap: 0;
   }
 
   body.session-running .target-panel {

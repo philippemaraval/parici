@@ -3736,13 +3736,11 @@ function scrollSidebarToTargetPanel() {
   const sidebar = document.getElementById("sidebar");
   if (!sidebar) return;
 
-  // The setup screen makes the sidebar scrollable on mobile. When the session
-  // layout removes most setup panels, that old scrollTop is preserved and
-  // shifts the target panel above the viewport. Always anchor the compact
-  // session header to the top instead of trying to center it in the sidebar.
+  // Clear the setup screen's internal scroll position. The session header is
+  // fixed to the mobile viewport in CSS, so never scroll the page here:
+  // Android Chrome can change its toolbar/visual viewport in response.
   const resetSessionScroll = () => {
     sidebar.scrollTop = 0;
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   };
 
   resetSessionScroll();
