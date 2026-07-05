@@ -67,11 +67,11 @@ function renderUsers() {
           <span class="user-identity"><span class="user-avatar">${escapeHtml(user.avatar)}</span>
           <span><strong>${escapeHtml(user.username)}</strong><small>${escapeHtml(user.role)}</small></span></span>
         </td>
+        <td><strong>${user.referralCount || 0}</strong> personne${user.referralCount === 1 ? "" : "s"}</td>
         <td>${escapeHtml(user.rank)}</td>
         <td>${user.dailyDaysPlayed} joué${user.dailyDaysPlayed > 1 ? "s" : ""}<br><small>${user.dailySuccesses} réussi${user.dailySuccesses > 1 ? "s" : ""}</small></td>
         <td><strong>${user.dailyFrequency}%</strong></td>
         <td><span class="boolean-badge boolean-badge--${user.reminderEnabled ? "yes" : "no"}">${user.reminderEnabled ? "Activé" : "Non"}</span></td>
-        <td><strong>${user.referralCount || 0}</strong></td>
         <td>${formatDate(user.lastDailyAt || user.lastGameAt)}</td>
         <td>${formatDate(user.createdAt)}</td>
         <td class="user-actions">
