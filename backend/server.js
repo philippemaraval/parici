@@ -676,6 +676,22 @@ const requireContentEditor = asyncHandler(async (req, res, next) => {
     return next();
 });
 
+const requireAdminUser = asyncHandler(async (req, res, next) => {
+    const user = await db.getUserById(req.user?.id);
+    if (!user) {
+        return res.status(401).json({ error: 'Unknown authenticated user' });
+    }
+    if (normalizeUserRole(user.role) !== USER_ROLE_ADMIN) {
+        return res.status(403).json({ error: 'Admin access required' });
+    }
+    req.user = {
+        id: user.id,
+        username: user.username,
+        role: USER_ROLE_ADMIN,
+    };
+    return next();
+});
+
 async function getCurrentAuthenticatedUser(authUser) {
     const userId = Number.parseInt(authUser?.id, 10);
     if (!Number.isInteger(userId) || userId <= 0) {
@@ -1684,6 +1700,55 @@ function isEditorIdentity(user) {
     return CONTENT_EDITOR_ROLES.has(userRole) || Boolean(isForcedEditorUsername);
 }
 
+const ADMIN_RANK_THRESHOLDS = {
+    classique: {
+        'rues-celebres': [60, 100, 140, 180],
+        'quartiers-ville': [60, 100, 140, 180],
+        'rues-principales': [50, 90, 130, 170],
+        quartier: [40, 80, 120, 160],
+        ville: [30, 70, 110, 150],
+        monuments: [40, 80, 120, 160],
+    },
+    marathon: {
+        'rues-celebres': [10, 20, 35, 55],
+        'quartiers-ville': [10, 20, 35, 55],
+        'rues-principales': [9, 18, 30, 48],
+        quartier: [6, 11, 20, 31],
+        ville: [8, 16, 28, 44],
+        monuments: [9, 18, 30, 46],
+    },
+    chrono: {
+        'rues-celebres': [7, 11, 16, 22],
+        'quartiers-ville': [7, 11, 16, 22],
+        'rues-principales': [6, 10, 14, 19],
+        quartier: [5, 8, 12, 16],
+        ville: [4, 7, 10, 14],
+        monuments: [5, 8, 12, 16],
+    },
+};
+const ADMIN_RANK_NAMES = ['Touriste', 'Minot', 'Habitué du Vieux-Port', 'Vrai Marseillais', 'Maire de la Ville'];
+
+function getBestRankForAdmin(modeStats) {
+    let bestLevel = 0;
+    for (const entry of Array.isArray(modeStats) ? modeStats : []) {
+        const gameType = String(entry?.game_type || '');
+        const mode = String(entry?.mode || '');
+        const thresholds = ADMIN_RANK_THRESHOLDS[gameType]?.[mode];
+        if (!thresholds) {
+            continue;
+        }
+        const score = gameType === 'classique'
+            ? Number(entry.high_score || 0)
+            : Number(entry.best_items_correct || entry.high_score || 0);
+        thresholds.forEach((threshold, index) => {
+            if (score >= threshold) {
+                bestLevel = Math.max(bestLevel, index + 1);
+            }
+        });
+    }
+    return ADMIN_RANK_NAMES[bestLevel];
+}
+
 const SCORE_MODE_ALIASES = {
     main: 'rues-principales',
     famous: 'rues-celebres',
@@ -2194,7 +2259,67 @@ app.get('/api/editor/me', authenticateToken, asyncHandler(async (req, res) => {
     return res.json({
         ...payload,
         canEdit: isEditorIdentity(payload),
+        canManageUsers: payload.role === USER_ROLE_ADMIN,
     });
+}));
+
+app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+    const users = await db.listUsersForAdmin();
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+        users: users.map((user) => ({
+            id: user.id,
+            username: user.username,
+            role: normalizeUserRole(user.role),
+            avatar: user.avatar || '👤',
+            createdAt: user.created_at,
+            gamesPlayed: Number(user.games_played || 0),
+            lastGameAt: user.last_game_at,
+            rank: getBestRankForAdmin(user.modes),
+            dailyDaysPlayed: Number(user.daily_days_played || 0),
+            dailySuccesses: Number(user.daily_successes || 0),
+            dailyFrequency: Math.min(
+                100,
+                Math.round((Number(user.daily_days_played || 0) / Number(user.membership_days || 1)) * 100)
+            ),
+            lastDailyAt: user.last_daily_at,
+            reminderEnabled: Boolean(user.reminder_enabled),
+        })),
+    });
+}));
+
+app.post('/api/editor/users/:userId/password-reset-link', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+    const target = await db.getUserById(req.params.userId);
+    if (!target) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const token = crypto.randomBytes(32).toString('base64url');
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_EXPIRATION_HOURS * 60 * 60 * 1000);
+    await db.createPasswordResetToken(target.username, hashPasswordResetToken(token), expiresAt);
+    const resetUrl = new URL('/reset-password.html', PASSWORD_RESET_FRONTEND_URL);
+    resetUrl.searchParams.set('token', token);
+    return res.json({
+        success: true,
+        username: target.username,
+        resetUrl: resetUrl.toString(),
+        expiresAt: expiresAt.toISOString(),
+    });
+}));
+
+app.delete('/api/editor/users/:userId', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+    const targetUserId = Number.parseInt(req.params.userId, 10);
+    if (!Number.isInteger(targetUserId) || targetUserId <= 0) {
+        return res.status(400).json({ error: 'Invalid user id' });
+    }
+    if (targetUserId === req.user.id) {
+        return res.status(400).json({ error: 'You cannot delete your own account from the admin page' });
+    }
+    const deletedUser = await db.deleteUserById(targetUserId);
+    if (!deletedUser) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    return res.json({ success: true, username: deletedUser.username });
 }));
 
 app.get('/api/editor/content', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {

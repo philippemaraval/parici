@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camino Admin - Utilisateurs</title>
+  <link rel="stylesheet" href="/admin/admin.css?v=20260705-users">
+</head>
+<body>
+  <main class="admin-shell admin-shell--wide">
+    <header class="admin-header">
+      <div class="page-heading">
+        <div>
+          <h1>Gestion des utilisateurs</h1>
+          <p class="admin-subtitle">Comptes, activité Daily et actions d’administration.</p>
+        </div>
+        <a class="btn" href="/admin/">Retour au back-office</a>
+      </div>
+      <p id="users-status" class="status status--info">Chargement...</p>
+    </header>
+
+    <section id="users-section" class="card hidden">
+      <div class="users-toolbar">
+        <label>
+          Rechercher
+          <input id="users-search" type="search" placeholder="Pseudo">
+        </label>
+        <button id="users-refresh" type="button" class="btn">Actualiser</button>
+      </div>
+      <p id="users-count" class="muted"></p>
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Rang</th>
+              <th>Daily</th>
+              <th>Fréquence Daily</th>
+              <th>Rappel</th>
+              <th>Dernière activité</th>
+              <th>Inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/admin/users.js?v=20260705-users"></script>
+</body>
+</html>

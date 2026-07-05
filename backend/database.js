@@ -680,6 +680,113 @@ async function setUserRole(username, role) {
   return result.rows[0] || null;
 }
 
+async function listUsersForAdmin() {
+  const result = await pool.query(
+    `WITH score_stats AS (
+       SELECT
+         user_id,
+         COUNT(*)::int AS games_played,
+         MAX(timestamp) AS last_game_at,
+         JSON_AGG(
+           JSON_BUILD_OBJECT(
+             'mode', mode,
+             'game_type', game_type,
+             'high_score', high_score,
+             'best_items_correct', best_items_correct,
+             'best_items_total', best_items_total
+           )
+         ) AS modes
+       FROM (
+         SELECT
+           user_id,
+           mode,
+           game_type,
+           MAX(score) AS high_score,
+           MAX(items_correct) AS best_items_correct,
+           MAX(items_total) AS best_items_total,
+           MAX(timestamp) AS timestamp
+         FROM scores
+         WHERE user_id IS NOT NULL
+         GROUP BY user_id, mode, game_type
+       ) grouped_scores
+       GROUP BY user_id
+     ),
+     daily_stats AS (
+       SELECT
+         user_id,
+         COUNT(DISTINCT date)::int AS days_played,
+         COUNT(DISTINCT date) FILTER (WHERE success = TRUE)::int AS successes,
+         MAX(last_attempt_at) AS last_daily_at
+       FROM daily_user_attempts
+       GROUP BY user_id
+     ),
+     reminder_stats AS (
+       SELECT user_id, BOOL_OR(enabled = TRUE) AS reminder_enabled
+       FROM push_subscriptions
+       GROUP BY user_id
+     )
+     SELECT
+       u.id,
+       u.username,
+       u.role,
+       u.avatar,
+       u.created_at,
+       COALESCE(score_stats.games_played, 0)::int AS games_played,
+       score_stats.last_game_at,
+       COALESCE(score_stats.modes, '[]'::json) AS modes,
+       COALESCE(daily_stats.days_played, 0)::int AS daily_days_played,
+       COALESCE(daily_stats.successes, 0)::int AS daily_successes,
+       daily_stats.last_daily_at,
+       COALESCE(reminder_stats.reminder_enabled, FALSE) AS reminder_enabled,
+       GREATEST(
+         1,
+         LEAST(
+           (timezone('Europe/Paris', NOW())::date - (u.created_at AT TIME ZONE 'Europe/Paris')::date) + 1,
+           36500
+         )
+       )::int AS membership_days
+     FROM users u
+     LEFT JOIN score_stats ON score_stats.user_id = u.id
+     LEFT JOIN daily_stats ON daily_stats.user_id = u.id
+     LEFT JOIN reminder_stats ON reminder_stats.user_id = u.id
+     ORDER BY u.created_at DESC, u.username ASC`
+  );
+  return result.rows;
+}
+
+async function deleteUserById(userId) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+    return null;
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const userResult = await client.query(
+      'SELECT id, username, role FROM users WHERE id = $1 FOR UPDATE',
+      [normalizedUserId]
+    );
+    const user = userResult.rows[0] || null;
+    if (!user) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+
+    // These two historical foreign keys were created without ON DELETE CASCADE.
+    await client.query('DELETE FROM scores WHERE user_id = $1', [normalizedUserId]);
+    await client.query('DELETE FROM daily_user_attempts WHERE user_id = $1', [normalizedUserId]);
+    await client.query('DELETE FROM users WHERE id = $1', [normalizedUserId]);
+    await client.query('COMMIT');
+    return user;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 function verifyPassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
 }
@@ -2455,6 +2562,8 @@ module.exports = {
   ensureReferralCodeForUser,
   getUser,
   getUserById,
+  listUsersForAdmin,
+  deleteUserById,
   verifyPassword,
   createPasswordResetToken,
   resetPasswordWithToken,

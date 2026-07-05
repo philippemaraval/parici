@@ -32,6 +32,7 @@ const refs = {
   loginBtn: document.getElementById("login-btn"),
   sessionUser: document.getElementById("session-user"),
   sessionRole: document.getElementById("session-role"),
+  manageUsersLink: document.getElementById("manage-users-link"),
   refreshContentBtn: document.getElementById("refresh-content-btn"),
   logoutBtn: document.getElementById("logout-btn"),
   runOsmSyncBtn: document.getElementById("run-osm-sync-btn"),
@@ -926,6 +927,7 @@ async function ensureEditorAccess() {
   }
   state.username = me.username;
   state.role = me.role;
+  refs.manageUsersLink?.classList.toggle("hidden", !me.canManageUsers);
   saveSession();
 }
 

@@ -28,6 +28,96 @@ body {
   gap: 16px;
 }
 
+.admin-shell--wide {
+  width: min(1520px, 100% - 24px);
+}
+
+.page-heading,
+.users-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.users-toolbar label {
+  width: min(360px, 100%);
+}
+
+.users-table-wrap {
+  margin-top: 12px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.users-table {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.users-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6f9ff;
+}
+
+.users-table small {
+  color: var(--muted);
+}
+
+.user-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-identity span:last-child {
+  display: grid;
+}
+
+.user-avatar {
+  font-size: 1.35rem;
+}
+
+.user-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.boolean-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.boolean-badge--yes {
+  color: #17633c;
+  background: #dff5e7;
+}
+
+.boolean-badge--no {
+  color: #6b7280;
+  background: #edf0f4;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .admin-header h1 {
   margin: 0;
   font-size: 1.5rem;
@@ -494,6 +584,11 @@ button:hover {
 }
 
 @media (max-width: 960px) {
+  .page-heading,
+  .users-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
   .field-row,
   .editor-grid,
   .lists-grid,
