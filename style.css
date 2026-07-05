@@ -197,9 +197,10 @@ body {
 
 .header-title.site-header__title {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 2px;
   white-space: nowrap;
   font-family: var(--font-heading);
   font-size: clamp(24px, 2vw, 29px);
