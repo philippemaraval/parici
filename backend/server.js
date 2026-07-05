@@ -2323,13 +2323,13 @@ app.delete('/api/editor/users/:userId', authenticateToken, requireAdminUser, asy
     return res.json({ success: true, username: deletedUser.username });
 }));
 
-app.get('/api/editor/content', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.get('/api/editor/content', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const snapshot = await getEffectiveContentSnapshot();
     res.setHeader('Cache-Control', 'no-store');
     return res.json(snapshot);
 }));
 
-app.get('/api/editor/visits/daily', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.get('/api/editor/visits/daily', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const stats = await db.getDailyVisitStats();
     res.setHeader('Cache-Control', 'no-store');
     return res.json({
@@ -2338,7 +2338,7 @@ app.get('/api/editor/visits/daily', authenticateToken, requireContentEditor, asy
     });
 }));
 
-app.get('/api/editor/osm-sync/status', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.get('/api/editor/osm-sync/status', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const active = getActiveLocalOsmSyncState();
     let githubRun = null;
     let githubError = null;
@@ -2360,7 +2360,7 @@ app.get('/api/editor/osm-sync/status', authenticateToken, requireContentEditor, 
     });
 }));
 
-app.post('/api/editor/osm-sync', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.post('/api/editor/osm-sync', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const requestedTarget = String(req.body?.target || 'github').trim().toLowerCase();
     const shouldUseGitHubWorkflow = requestedTarget !== 'local';
     const currentUser = await getCurrentAuthenticatedUser(req.user);
@@ -2478,7 +2478,7 @@ app.post('/api/editor/osm-sync', authenticateToken, requireContentEditor, asyncH
     }
 }));
 
-app.put('/api/editor/street-info', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.put('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
         return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
@@ -2534,7 +2534,7 @@ app.put('/api/editor/street-info', authenticateToken, requireContentEditor, asyn
     });
 }));
 
-app.delete('/api/editor/street-info', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.delete('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
         return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
@@ -2558,7 +2558,7 @@ app.delete('/api/editor/street-info', authenticateToken, requireContentEditor, a
     });
 }));
 
-app.put('/api/editor/street-infos', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.put('/api/editor/street-infos', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
         return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
@@ -2580,7 +2580,7 @@ app.put('/api/editor/street-infos', authenticateToken, requireContentEditor, asy
     });
 }));
 
-app.put('/api/editor/lists', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const hasFamous = Object.prototype.hasOwnProperty.call(req.body || {}, 'famousStreets');
     const hasMain = Object.prototype.hasOwnProperty.call(req.body || {}, 'mainStreets');
     const hasMonuments = Object.prototype.hasOwnProperty.call(req.body || {}, 'monuments');
@@ -2644,7 +2644,7 @@ app.put('/api/editor/lists', authenticateToken, requireContentEditor, asyncHandl
     });
 }));
 
-app.put('/api/editor/monuments', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+app.put('/api/editor/monuments', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
     const rawEntries = req.body?.entries;
     if (!Array.isArray(rawEntries)) {
         return res.status(400).json({ error: 'entries must be an array of {name, longitude, latitude}' });

@@ -11,7 +11,7 @@ test('database startup skips migrations when the schema version is current', asy
       if (queries.length === 1) {
         return { rows: [{ app_settings_table: 'app_settings' }] };
       }
-      return { rows: [{ value_text: '2026-07-02-daily-started-at' }] };
+      return { rows: [{ value_text: '2026-07-05-mphil-admin' }] };
     },
     release() {
       released = true;

@@ -921,15 +921,15 @@ function renderAllEditors(preferredStreetName = "") {
 
 async function ensureEditorAccess() {
   const me = await apiRequest("/api/editor/me");
-  if (!me?.canEdit) {
-    const error = new Error("Ce compte n'a pas les droits editeur.");
+  if (!me?.canManageUsers) {
+    const error = new Error("Cette page est réservée aux administrateurs.");
     error.status = 403;
     throw error;
   }
   state.username = me.username;
   state.role = me.role;
-  refs.manageUsersLink?.classList.toggle("hidden", !me.canManageUsers);
-  refs.usersAdminCard?.classList.toggle("hidden", !me.canManageUsers);
+  refs.manageUsersLink?.classList.remove("hidden");
+  refs.usersAdminCard?.classList.remove("hidden");
   saveSession();
 }
 

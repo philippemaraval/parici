@@ -30,3 +30,8 @@ test("historical Daily average leaderboard counts failures as 8", () => {
   assert.match(frontend, /un échec vaut 8/);
   assert.match(frontend, /Daily terminés">Part\.<\/th>/);
 });
+
+test("historical Daily podiums exclude Test2 and Test3", () => {
+  const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
+  assert.match(database, /'test',\s*'test2',\s*'test3',\s*'test8'/);
+});

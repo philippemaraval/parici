@@ -5,11 +5,12 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-07-02-daily-started-at';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-07-05-mphil-admin';
 const EXPLORER_REMOVALS_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-explorer-removals.sql');
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
+const MPHIL_ADMIN_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260705_restore_mphil_admin.sql');
 const EXPLORER_SEED_SQL_PATHS = [];
 
 // Connect via DATABASE_URL (provided by Render PostgreSQL)
@@ -130,6 +131,16 @@ async function applyReferralSchema(client) {
   }
 }
 
+async function restoreMPhilAdminRole(client) {
+  if (!fs.existsSync(MPHIL_ADMIN_SQL_PATH)) {
+    return;
+  }
+  const roleSql = fs.readFileSync(MPHIL_ADMIN_SQL_PATH, 'utf8');
+  if (roleSql.trim()) {
+    await client.query(roleSql);
+  }
+}
+
 async function applyPushNotificationSchema(client) {
   const tableCheck = await client.query(
     `SELECT to_regclass('public.users') AS users_table`
@@ -210,6 +221,7 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
+    await restoreMPhilAdminRole(client);
     await applyReferralSchema(client);
     await applyPushNotificationSchema(client);
 
@@ -1554,6 +1566,8 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
      WHERE LOWER(TRIM(u.username)) NOT IN (
        'philo14',
        'test',
+       'test2',
+       'test3',
        'test8',
        'testcheck',
        'testphil1',

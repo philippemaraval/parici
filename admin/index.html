@@ -13,7 +13,7 @@
     <header class="admin-header">
       <h1>Camino Paris - Back-office contenu</h1>
       <p class="admin-subtitle">Edition des fiches et des listes (rues celebres, rues principales, monuments).</p>
-      <p id="global-status" class="status status--info">Connectez-vous avec un compte editeur.</p>
+      <p id="global-status" class="status status--info">Connectez-vous avec un compte administrateur.</p>
     </header>
 
     <section id="login-section" class="card">
@@ -29,7 +29,7 @@
         </label>
         <button id="login-btn" type="submit" class="btn btn-primary">Se connecter</button>
       </form>
-      <p class="muted">L'acces requiert un role editeur ou admin.</p>
+      <p class="muted">L'accès est réservé aux comptes administrateurs.</p>
     </section>
 
     <section id="editor-section" class="hidden">
@@ -39,7 +39,7 @@
           <span id="session-role" class="role-badge">-</span>
         </div>
         <div class="toolbar-actions">
-          <a id="manage-users-link" class="btn hidden" href="/admin/users.html">Utilisateurs</a>
+          <a id="manage-users-link" class="btn" href="/admin/users.html">Gérer les utilisateurs</a>
           <button id="refresh-content-btn" type="button" class="btn">Actualiser</button>
           <button id="logout-btn" type="button" class="btn">Deconnexion</button>
         </div>
@@ -53,7 +53,7 @@
         </div>
       </section>
 
-      <section id="users-admin-card" class="card hidden">
+      <section id="users-admin-card" class="card">
         <h2>Utilisateurs</h2>
         <p class="muted">Consultez les comptes, leur activité, leurs parrainages et les actions d’administration.</p>
         <div class="button-row">
