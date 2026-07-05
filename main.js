@@ -5318,6 +5318,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     if (!enableBtn || !disableBtn) {
       return;
     }
+    enableBtn.dataset.reminderInitialized = "true";
     enableBtn.onclick = () => {
       enableDailyReminder().catch((error) => {
         console.warn("Enable reminder handler failed:", error);
@@ -8614,6 +8615,12 @@ Essaie de faire mieux sur parici.netlify.app`,
       renderUserSticker,
       loadProfile
     });
+    const dailyReminderButton = document.getElementById("daily-reminder-enable-btn");
+    if ((dailyReminderButton == null ? void 0 : dailyReminderButton.dataset.reminderInitialized) === "true") {
+      refreshDailyReminderControls().catch((error) => {
+        console.warn("Refresh reminder controls after auth change failed:", error);
+      });
+    }
     if (!activeFriendChallenge && getFriendChallengeCodeFromUrl()) {
       initFriendChallengeModeFromUrl();
       return;

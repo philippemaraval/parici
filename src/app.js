@@ -842,6 +842,7 @@ function initDailyReminderControls() {
     return;
   }
 
+  enableBtn.dataset.reminderInitialized = "true";
   enableBtn.onclick = () => {
     enableDailyReminder().catch((error) => {
       console.warn("Enable reminder handler failed:", error);
@@ -5451,6 +5452,12 @@ function updateUserUI() {
     renderUserSticker,
     loadProfile,
   });
+  const dailyReminderButton = document.getElementById("daily-reminder-enable-btn");
+  if (dailyReminderButton?.dataset.reminderInitialized === "true") {
+    refreshDailyReminderControls().catch((error) => {
+      console.warn("Refresh reminder controls after auth change failed:", error);
+    });
+  }
   if (!activeFriendChallenge && getFriendChallengeCodeFromUrl()) {
     initFriendChallengeModeFromUrl();
     return;
