@@ -5648,6 +5648,7 @@ function startDailySession(e) {
   ((dailyTargetData = e), (dailyTargetGeoJson = JSON.parse(e.targetGeoJson)));
   saveDailyMetaToStorage();
   const t = e.userStatus || {};
+  const dailyDisplayStreetName = e.displayStreetName || e.streetName;
   let r = !1,
     a = null;
   (t.success
@@ -5684,7 +5685,7 @@ function startDailySession(e) {
         '<span class="custom-select-label">Ville entière</span><span class="difficulty-pill difficulty-pill--hard">Difficile</span>'));
   const l = document.getElementById("target-street");
   l &&
-    ((l.textContent = e.streetName),
+    ((l.textContent = r ? e.streetName : dailyDisplayStreetName),
       requestAnimationFrame(fitTargetStreetText));
   const o = Math.max(0, 7 - (t.attempts_count || 0)),
     u = r
@@ -5717,7 +5718,7 @@ function startDailySession(e) {
             "error",
           ))
       : (renderDailyGuessHistory(),
-        showMessage(`Trouvez : ${e.streetName} (${o} essais restants)`, "info")),
+        showMessage(`Trouvez : ${dailyDisplayStreetName} (${o} essais restants)`, "info")),
     updateDailyUI());
 }
 function endDailySession() {

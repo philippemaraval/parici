@@ -295,8 +295,8 @@ export function renderDailyGuessHistoryRuntime({
       html += '<div class="daily-hints-title">💡 Indices</div>';
 
       if (shouldShowVisualHint) {
-        const imageAlt = dailyTargetData.streetName
-          ? `Photo indice de ${dailyTargetData.streetName}`
+        const imageAlt = dailyTargetData.displayStreetName || dailyTargetData.streetName
+          ? `Photo indice de ${dailyTargetData.displayStreetName || dailyTargetData.streetName}`
           : "Photo indice du Daily";
         html += `<details class="daily-image-hint"${dailyImageHintOpenByDefault ? " open" : ""}>`;
         html += '<summary class="daily-image-hint-summary">🖼️ Photo indice</summary>';

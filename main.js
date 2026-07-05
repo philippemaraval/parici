@@ -3943,7 +3943,7 @@ Essaie de faire mieux sur ${host}`;
         html += '<div class="daily-hints">';
         html += '<div class="daily-hints-title">\u{1F4A1} Indices</div>';
         if (shouldShowVisualHint) {
-          const imageAlt = dailyTargetData2.streetName ? `Photo indice de ${dailyTargetData2.streetName}` : "Photo indice du Daily";
+          const imageAlt = dailyTargetData2.displayStreetName || dailyTargetData2.streetName ? `Photo indice de ${dailyTargetData2.displayStreetName || dailyTargetData2.streetName}` : "Photo indice du Daily";
           html += `<details class="daily-image-hint"${dailyImageHintOpenByDefault ? " open" : ""}>`;
           html += '<summary class="daily-image-hint-summary">\u{1F5BC}\uFE0F Photo indice</summary>';
           html += '<div class="daily-image-hint-body">';
@@ -8778,6 +8778,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     dailyTargetData = e, dailyTargetGeoJson = JSON.parse(e.targetGeoJson);
     saveDailyMetaToStorage();
     const t = e.userStatus || {};
+    const dailyDisplayStreetName = e.displayStreetName || e.streetName;
     let r = false, a = null;
     t.success ? (r = true, a = { success: true, attempts: t.attempts_count }) : t.attempts_count >= 7 && (r = true, a = { success: false, attempts: t.attempts_count }), isDailyMode = true, isLectureMode = false, setLectureTooltipsEnabled(false), dailyGuessHistory = [], window._dailyGameOver = r, window._dailyGuessInFlight = false;
     const n = document.getElementById("daily-guesses-history");
@@ -8785,7 +8786,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     const s = document.getElementById("mode-select"), i = document.getElementById("mode-select-button");
     s && (s.value = "ville", i && (i.innerHTML = '<span class="custom-select-label">Ville enti\xE8re</span><span class="difficulty-pill difficulty-pill--hard">Difficile</span>'));
     const l = document.getElementById("target-street");
-    l && (l.textContent = e.streetName, requestAnimationFrame(fitTargetStreetText));
+    l && (l.textContent = r ? e.streetName : dailyDisplayStreetName, requestAnimationFrame(fitTargetStreetText));
     const o = Math.max(0, 7 - (t.attempts_count || 0)), u = r ? t.success ? "\u{1F389} D\xE9fi r\xE9ussi !" : "\u274C D\xE9fi \xE9chou\xE9" : `\u{1F3AF} D\xE9fi quotidien \u2014 ${o} essai${o > 1 ? "s" : ""} restant${o > 1 ? "s" : ""}`;
     setTargetPanelTitleText(u), updateTargetItemCounter(), isSessionRunning = true, refreshLectureStreetSearchForCurrentMode(), updateLayoutSessionState();
     const d = document.getElementById("skip-btn"), c = document.getElementById("pause-btn");
@@ -8796,7 +8797,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     ) : showMessage(
       `\u274C Plus d'essais pour aujourd'hui. La rue \xE9tait \xAB ${e.streetName} \xBB.`,
       "error"
-    )) : (renderDailyGuessHistory(), showMessage(`Trouvez : ${e.streetName} (${o} essais restants)`, "info")), updateDailyUI();
+    )) : (renderDailyGuessHistory(), showMessage(`Trouvez : ${dailyDisplayStreetName} (${o} essais restants)`, "info")), updateDailyUI();
   }
   function endDailySession() {
     document.body.classList.remove("daily-game-over");

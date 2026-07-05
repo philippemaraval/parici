@@ -3143,6 +3143,7 @@ let streetChallengeIndex = [];
 let arrondissementChallengeIndex = [];
 let monumentChallengeIndex = [];
 const streetIndexByNormalizedName = new Map();
+const streetIndexByNormalizedOsmName = new Map();
 const dailyManifestCache = {
     mtimeMs: null,
     byDate: new Map(),
@@ -3210,6 +3211,7 @@ function reloadStreetChallengeIndex() {
         .filter((entry) => entry && entry.name && entry.normalizedName);
 
     streetIndexByNormalizedName.clear();
+    streetIndexByNormalizedOsmName.clear();
     streetChallengeIndex.forEach((entry) => {
         if (streetIndexByNormalizedName.has(entry.normalizedName)) {
             return;
@@ -3220,6 +3222,16 @@ function reloadStreetChallengeIndex() {
         if (source) {
             streetIndexByNormalizedName.set(entry.normalizedName, source);
         }
+    });
+    streetIndex.forEach((entry) => {
+        const normalizedOsmName = normalizeContentName(entry?.osmName || entry?.name);
+        if (!normalizedOsmName) {
+            return;
+        }
+        if (!streetIndexByNormalizedOsmName.has(normalizedOsmName)) {
+            streetIndexByNormalizedOsmName.set(normalizedOsmName, []);
+        }
+        streetIndexByNormalizedOsmName.get(normalizedOsmName).push(entry);
     });
 
     return {
@@ -3691,45 +3703,87 @@ function getCoordinatesFromStreetIndex(streetName) {
     return [lng, lat];
 }
 
+function resolveStreetIndexEntry(streetName, quartier = null, coordinates = null) {
+    const normalizedName = normalizeContentName(streetName);
+    if (!normalizedName) {
+        return null;
+    }
+
+    const exact = streetIndexByNormalizedName.get(normalizedName);
+    if (exact) {
+        return exact;
+    }
+
+    const aliases = streetIndexByNormalizedOsmName.get(normalizedName) || [];
+    if (aliases.length === 0) {
+        return null;
+    }
+
+    const normalizedQuartier = normalizeContentName(quartier);
+    const quartierMatches = normalizedQuartier
+        ? aliases.filter((entry) => normalizeContentName(entry?.quartier) === normalizedQuartier)
+        : [];
+    const candidates = quartierMatches.length > 0 ? quartierMatches : aliases;
+
+    if (Array.isArray(coordinates) && coordinates.length >= 2 && candidates.length > 1) {
+        return candidates
+            .filter((entry) => Array.isArray(entry?.centroid) && entry.centroid.length >= 2)
+            .sort(
+                (left, right) =>
+                    getCoordinateDistanceMeters(left.centroid, coordinates)
+                    - getCoordinateDistanceMeters(right.centroid, coordinates)
+            )[0] || null;
+    }
+
+    return candidates.length === 1 ? candidates[0] : null;
+}
+
 function resolveDailyTargetFromManifest(manifestEntry, currentTarget = null) {
     if (!manifestEntry?.streetName) {
         return null;
     }
 
-    const normalizedManifestStreet = normalizeContentName(manifestEntry.streetName);
+    const currentCoordinates = parseCoordinatesJson(currentTarget?.coordinates_json);
+    const streetSource = resolveStreetIndexEntry(
+        manifestEntry.streetName,
+        manifestEntry.quartier,
+        currentCoordinates
+    );
+    const canonicalStreetName = streetSource?.name || manifestEntry.streetName;
+    const normalizedManifestStreet = normalizeContentName(canonicalStreetName);
     const normalizedCurrentStreet = normalizeContentName(currentTarget?.street_name);
     const canReuseCurrentCoordinates =
-        normalizedManifestStreet &&
+        normalizeContentName(manifestEntry.streetName) &&
         normalizedCurrentStreet &&
-        normalizedManifestStreet === normalizedCurrentStreet &&
+        normalizeContentName(manifestEntry.streetName) === normalizedCurrentStreet &&
         currentTarget?.coordinates_json;
 
-    let coordinates = getCoordinatesFromStreetIndex(manifestEntry.streetName);
+    let coordinates = getCoordinatesFromStreetIndex(canonicalStreetName);
     let geometry = null;
 
     if (!coordinates && canReuseCurrentCoordinates) {
-        const parsed = parseCoordinatesJson(currentTarget.coordinates_json);
-        if (parsed) {
-            coordinates = parsed;
+        if (currentCoordinates) {
+            coordinates = currentCoordinates;
         }
     }
 
     if (!coordinates) {
-        geometry = extractStreetGeometry(manifestEntry.streetName);
+        geometry = extractStreetGeometry(canonicalStreetName);
         coordinates = computeRepresentativeCoordinatesFromGeometry(geometry);
     }
 
     if (!coordinates) {
-        coordinates = [5.38, 43.295];
+        coordinates = [2.3522, 48.8566];
     }
 
-    const streetSource = normalizedManifestStreet
-        ? streetIndexByNormalizedName.get(normalizedManifestStreet)
-        : null;
-    const arrondissement = manifestEntry.arrondissement || streetSource?.arrondissement || currentTarget?.arrondissement || null;
-
+    const arrondissement =
+        manifestEntry.arrondissement
+        || streetSource?.arrondissement
+        || streetSource?.quartier
+        || currentTarget?.arrondissement
+        || null;
     return {
-        streetName: manifestEntry.streetName,
+        streetName: canonicalStreetName,
         arrondissement,
         coordinates,
         geometry: geometry || null,
@@ -3907,6 +3961,9 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
         const response = {
             date,
             streetName: target.street_name,
+            displayStreetName:
+                resolveStreetIndexEntry(target.street_name, target.arrondissement)?.osmName
+                || target.street_name,
             arrondissement: target.arrondissement,
             dailyImageUrl: resolveDailyImageUrl(date, target.street_name, manifestEntry),
             targetGeoJson: target.coordinates_json,

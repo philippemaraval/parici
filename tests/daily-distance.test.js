@@ -65,6 +65,17 @@ test("daily target reveal preserves the current map view", () => {
   assert.match(runtimeSource, /if \(!fitBounds\) \{\s*return nextLayer;\s*\}/);
 });
 
+test("daily target hides the homonym quartier suffix while the game is active", () => {
+  const source = fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8");
+
+  assert.match(
+    source,
+    /const dailyDisplayStreetName = e\.displayStreetName \|\| e\.streetName/,
+  );
+  assert.match(source, /l\.textContent = r \? e\.streetName : dailyDisplayStreetName/);
+  assert.match(source, /Trouvez : \$\{dailyDisplayStreetName\}/);
+});
+
 test("feature collection midpoint is the point halfway along the whole street length", () => {
   const { computeFeatureCollectionMidpoint } = loadMapDistanceHelpers();
   const midpoint = computeFeatureCollectionMidpoint({
