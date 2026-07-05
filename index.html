@@ -168,8 +168,24 @@
         </section>
 
         <section class="mobile-mode-intro mobile-mode-intro--daily site-mode-intro">
-          <p>Mode de jeu</p>
-          <h2>Daily</h2>
+          <div class="daily-intro-header">
+            <div class="daily-intro-heading">
+              <p>Mode de jeu</p>
+              <h2>Daily</h2>
+            </div>
+            <section class="daily-reminder-card" aria-labelledby="daily-reminder-title">
+              <div class="daily-reminder-copy">
+                <div id="daily-reminder-title" class="profile-notification-title">
+                  <span aria-hidden="true">🔔</span> Rappel Daily
+                </div>
+                <p id="daily-reminder-status" class="profile-notification-status" aria-live="polite">Chargement…</p>
+              </div>
+              <div class="profile-notification-actions">
+                <button type="button" id="daily-reminder-enable-btn" class="btn-secondary">Activer</button>
+                <button type="button" id="daily-reminder-disable-btn" class="btn-tertiary hidden">Désactiver</button>
+              </div>
+            </section>
+          </div>
           <span>Une rue mystère différente chaque jour dans Paris</span>
           <div class="site-mode-intro__details">
             <strong>Retrouvez la même rue mystère que tous les joueurs en 7 essais maximum.</strong>

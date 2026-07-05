@@ -3290,6 +3290,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   (setMapStatus("Chargement", "loading"),
     initMap(),
     initUI(),
+    initDailyReminderControls(),
     startTimersLoop(),
     document.body.classList.add("app-ready"));
 
@@ -5506,7 +5507,6 @@ function loadProfile() {
     hasReachedGlobalRank,
     hasReachedVilleRank,
     initAvatarSelector,
-    onProfileRendered: initDailyReminderControls,
     onAuthFailure: () => {
       if (!currentUser) {
         return;

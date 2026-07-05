@@ -2938,6 +2938,65 @@ button {
   background: rgba(255, 255, 255, 0.84);
 }
 
+.daily-intro-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.daily-intro-heading {
+  flex: 0 0 auto;
+}
+
+.daily-reminder-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 230px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid rgba(18, 41, 122, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 3px 10px rgba(18, 41, 122, 0.06);
+  text-align: left;
+}
+
+.daily-reminder-copy {
+  min-width: 0;
+}
+
+.daily-reminder-card .profile-notification-title {
+  margin-bottom: 2px;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.daily-reminder-card .profile-notification-status {
+  margin: 0;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.daily-reminder-card .profile-notification-actions {
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.daily-reminder-card .profile-notification-actions .btn-secondary,
+.daily-reminder-card .profile-notification-actions .btn-tertiary {
+  flex: none;
+  min-width: 0;
+  min-height: 26px;
+  padding: 5px 7px;
+  border-radius: 7px;
+  font-size: 8px;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
 .profile-notification-title {
   font-size: 10px;
   font-weight: 700;
