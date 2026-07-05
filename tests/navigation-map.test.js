@@ -87,8 +87,13 @@ test("all lecture tooltips stay horizontal and on one line", () => {
 
 test("the footer keeps its full credit readable", () => {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const rules = fs.readFileSync(path.join(root, "regles.html"), "utf8");
   const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
   const creditRule = styles.match(/\.sidebar-credit\s*\{([^}]*)\}/s)?.[1] || "";
+  assert.match(html, />Crafted by Philippe Maraval<\/p>/);
+  assert.match(rules, />Crafted by Philippe Maraval<\/p>/);
+  assert.doesNotMatch(html, /Crafted in Marseille/);
+  assert.doesNotMatch(rules, /Crafted in Marseille/);
   assert.match(styles, /"credit social"/);
   assert.match(creditRule, /white-space:\s*nowrap/);
   assert.match(creditRule, /text-overflow:\s*ellipsis/);
