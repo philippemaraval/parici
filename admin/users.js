@@ -1,8 +1,8 @@
 const API_BASE =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:3000"
-    : "https://camino2.onrender.com";
-const STORAGE_KEY = "camino_editor_user";
+    : "https://camino-paris.onrender.com";
+const STORAGE_KEY = "camino_paris_editor_user";
 
 const state = { token: "", currentUserId: null, users: [] };
 const refs = {

@@ -1336,15 +1336,6 @@
               ${((_h = profile.daily) == null ? void 0 : _h.max_streak) > 0 ? `<br><span class="profile-daily-best-streak">\u{1F3C6} Meilleure s\xE9rie : ${profile.daily.max_streak}</span>` : ""}
             </div>`;
         }
-        html += `
-          <section class="profile-notification-card">
-            <div class="profile-notification-title">Rappel Daily</div>
-            <p id="daily-reminder-status" class="profile-notification-status">Chargement\u2026</p>
-            <div class="profile-notification-actions">
-              <button type="button" id="daily-reminder-enable-btn" class="btn-secondary">Activer le rappel quotidien</button>
-              <button type="button" id="daily-reminder-disable-btn" class="btn-tertiary hidden">D\xE9sactiver</button>
-            </div>
-          </section>`;
         const badges = computeBadgesRuntime(profile, hasReachedGlobalRank2, hasReachedVilleRank2);
         const unlocked = badges.filter((badge) => badge.unlocked);
         const locked = badges.filter((badge) => !badge.unlocked);
@@ -2608,6 +2599,36 @@
     const busLineLayersByName2 = /* @__PURE__ */ new Map();
     const busLinesLayer2 = L2.featureGroup();
     const busLineRenderer = L2.canvas({ padding: 0.5 });
+    let hoveredBusLineName = null;
+    let busLineHoverEndTimer = null;
+    const setBusLineHoverStyle = (lineName, active) => {
+      (busLineLayersByName2.get(lineName) || []).forEach((candidateLayer) => {
+        var _a, _b;
+        if (candidateLayer.__caminoLockedStyle || candidateLayer.__caminoBusHighlightActive || candidateLayer.__caminoBusDimmed) {
+          return;
+        }
+        const candidateColor = `#${((_b = (_a = candidateLayer.feature) == null ? void 0 : _a.properties) == null ? void 0 : _b.color) || uiTheme.mapBusLine.replace("#", "")}`;
+        candidateLayer.setStyle(
+          active ? { weight: 6, opacity: 1 } : { color: candidateColor, weight: 3, opacity: 0.82 }
+        );
+      });
+    };
+    const beginBusLineHover = (lineName) => {
+      clearTimeout(busLineHoverEndTimer);
+      if (hoveredBusLineName && hoveredBusLineName !== lineName) {
+        setBusLineHoverStyle(hoveredBusLineName, false);
+      }
+      hoveredBusLineName = lineName;
+      setBusLineHoverStyle(lineName, true);
+    };
+    const endBusLineHover = (lineName) => {
+      clearTimeout(busLineHoverEndTimer);
+      busLineHoverEndTimer = setTimeout(() => {
+        if (hoveredBusLineName !== lineName) return;
+        setBusLineHoverStyle(lineName, false);
+        hoveredBusLineName = null;
+      }, 0);
+    };
     const getBusCorridorMaxWidth = () => {
       var _a, _b;
       const zoom = (_b = (_a = map2 == null ? void 0 : map2.getZoom) == null ? void 0 : _a.call(map2)) != null ? _b : 16;
@@ -2651,17 +2672,12 @@
         layer._busSegmentDirection = direction;
         applyBusSegmentZoomStyle(layer);
         busLineLayersByName2.get(lineName).push(layer);
-        layer.on("mouseover", () => {
-          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-            layer.setStyle({ weight: 6, opacity: 1 });
-          }
-        });
-        layer.on("mouseout", () => {
-          if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-            layer.setStyle({ color, weight: 3, opacity: 0.82 });
-          }
-        });
-        layer.on("click", () => handleBusLineClick2(feature, layer, validNames));
+        layer.on("mouseover", () => beginBusLineHover(lineName));
+        layer.on("mouseout", () => endBusLineHover(lineName));
+        layer.on(
+          "click",
+          () => handleBusLineClick2(feature, layer, isTouchDevice ? validNames : [lineName])
+        );
         busLinesLayer2.addLayer(layer);
       };
       lines.forEach((line) => {
@@ -7202,7 +7218,7 @@ Essaie de faire mieux sur parici.netlify.app`,
     startNewSession();
   }
   document.addEventListener("DOMContentLoaded", async () => {
-    setMapStatus("Chargement", "loading"), initMap(), initUI(), startTimersLoop(), document.body.classList.add("app-ready");
+    setMapStatus("Chargement", "loading"), initMap(), initUI(), initDailyReminderControls(), startTimersLoop(), document.body.classList.add("app-ready");
     scheduleAfterStartup(() => {
       warmBackendConnection();
       loadStreetInfos();
@@ -8661,7 +8677,6 @@ Essaie de faire mieux sur parici.netlify.app`,
       hasReachedGlobalRank,
       hasReachedVilleRank,
       initAvatarSelector,
-      onProfileRendered: initDailyReminderControls,
       onAuthFailure: () => {
         if (!currentUser) {
           return;

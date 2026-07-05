@@ -39,12 +39,14 @@ test("every future Daily manifest street resolves through its canonical or OSM n
     .filter((row) => {
       if (exact.has(normalize(row.street_name))) return false;
       const candidates = aliases.get(normalize(row.street_name)) || [];
-      const quartierMatch = candidates.find(
-        (entry) => normalize(entry.quartier) === normalize(row.quartier),
+      const arrondissementMatch = candidates.find(
+        (entry) =>
+          normalize(entry.arrondissement || entry.quartier) ===
+          normalize(row.arrondissement || row.quartier),
       );
-      return !quartierMatch && candidates.length !== 1;
+      return !arrondissementMatch && candidates.length === 0;
     })
-    .map((row) => `${row.date}: ${row.street_name} (${row.quartier})`);
+    .map((row) => `${row.date}: ${row.street_name} (${row.arrondissement || row.quartier})`);
 
   assert.deepEqual(unresolved, []);
 });

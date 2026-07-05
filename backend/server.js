@@ -3608,7 +3608,7 @@ async function refreshDailyTargetsFromCurrentStreetData() {
             coordinates = computeRepresentativeCoordinatesFromGeometry(geometry);
         }
         if (!coordinates) {
-            coordinates = [5.38, 43.295];
+            coordinates = [2.3522, 48.8566];
         }
 
         await db.setDailyTarget(
@@ -3735,7 +3735,7 @@ function resolveStreetIndexEntry(streetName, quartier = null, coordinates = null
             )[0] || null;
     }
 
-    return candidates.length === 1 ? candidates[0] : null;
+    return candidates[0] || null;
 }
 
 function resolveDailyTargetFromManifest(manifestEntry, currentTarget = null) {
@@ -3936,7 +3936,7 @@ async function getTargetGeometry(target) {
             const coordinates =
                 parseCoordinatesJson(target?.coordinates_json) ||
                 computeRepresentativeCoordinatesFromGeometry(normalizedGeometry) ||
-                [5.38, 43.295];
+                [2.3522, 48.8566];
             await db.setDailyTarget(
                 target.date,
                 target.street_name,

@@ -537,6 +537,7 @@ function buildStreetIndex(lightFeatures) {
     if (!key || byName.has(key)) continue;
     byName.set(key, {
       name: feature.properties.name,
+      osmName: feature.properties.osm_name || feature.properties.name,
       arrondissement: feature.properties.arrondissement,
       quartier: feature.properties.arrondissement,
       centroid: feature.properties.centroid,
