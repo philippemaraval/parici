@@ -532,6 +532,43 @@ export async function loadBusLinesRuntime({
   const busLineLayersByName = new Map();
   const busLinesLayer = L.featureGroup();
   const busLineRenderer = L.canvas({ padding: 0.5 });
+  let hoveredBusLineName = null;
+  let busLineHoverEndTimer = null;
+  const setBusLineHoverStyle = (lineName, active) => {
+    (busLineLayersByName.get(lineName) || []).forEach((candidateLayer) => {
+      if (
+        candidateLayer.__caminoLockedStyle ||
+        candidateLayer.__caminoBusHighlightActive ||
+        candidateLayer.__caminoBusDimmed
+      ) {
+        return;
+      }
+      const candidateColor = `#${
+        candidateLayer.feature?.properties?.color || uiTheme.mapBusLine.replace("#", "")
+      }`;
+      candidateLayer.setStyle(
+        active
+          ? { weight: 6, opacity: 1 }
+          : { color: candidateColor, weight: 3, opacity: 0.82 },
+      );
+    });
+  };
+  const beginBusLineHover = (lineName) => {
+    clearTimeout(busLineHoverEndTimer);
+    if (hoveredBusLineName && hoveredBusLineName !== lineName) {
+      setBusLineHoverStyle(hoveredBusLineName, false);
+    }
+    hoveredBusLineName = lineName;
+    setBusLineHoverStyle(lineName, true);
+  };
+  const endBusLineHover = (lineName) => {
+    clearTimeout(busLineHoverEndTimer);
+    busLineHoverEndTimer = setTimeout(() => {
+      if (hoveredBusLineName !== lineName) return;
+      setBusLineHoverStyle(lineName, false);
+      hoveredBusLineName = null;
+    }, 0);
+  };
   const getBusCorridorMaxWidth = () => {
     const zoom = map?.getZoom?.() ?? 16;
     if (zoom <= 11) return 3;
@@ -583,17 +620,11 @@ export async function loadBusLinesRuntime({
       layer._busSegmentDirection = direction;
       applyBusSegmentZoomStyle(layer);
       busLineLayersByName.get(lineName).push(layer);
-      layer.on("mouseover", () => {
-        if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-          layer.setStyle({ weight: 6, opacity: 1 });
-        }
-      });
-      layer.on("mouseout", () => {
-        if (!layer.__caminoLockedStyle && !layer.__caminoBusHighlightActive && !layer.__caminoBusDimmed) {
-          layer.setStyle({ color, weight: 3, opacity: 0.82 });
-        }
-      });
-      layer.on("click", () => handleBusLineClick(feature, layer, validNames));
+      layer.on("mouseover", () => beginBusLineHover(lineName));
+      layer.on("mouseout", () => endBusLineHover(lineName));
+      layer.on("click", () =>
+        handleBusLineClick(feature, layer, isTouchDevice ? validNames : [lineName]),
+      );
       busLinesLayer.addLayer(layer);
     };
 
