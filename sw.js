@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v16";
+const CACHE_NAME = "camino-paris-v17";
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -6,10 +6,10 @@ const CORE_PRECACHE_URLS = [
   "/regles.html",
   "/arbre-rangs.html",
   "/reset-password.html",
-  "/style.css?v=20260705-v031",
+  "/style.css?v=20260705-header-lines",
   "/main.js?v=20260705-v031",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
-  "/src/public/css/site-shell.css?v=20260628-paris-polish",
+  "/src/public/css/site-shell.css?v=20260705-header-lines",
   "/src/public/js/site-shell.js?v=20260609-visit-sessions",
   "/data_rules.js",
   "/site.webmanifest?v=20260628-centered",

@@ -15,6 +15,21 @@ test("home, Camino, Daily and profile views are selected before first paint", ()
   assert.match(html, /href="\/regles\.html"/);
 });
 
+test("every main view and the rules page display the complete three-line header", () => {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const rules = fs.readFileSync(path.join(root, "regles.html"), "utf8");
+  const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
+  const shellStyles = fs.readFileSync(path.join(root, "src", "public", "css", "site-shell.css"), "utf8");
+
+  for (const page of [html, rules]) {
+    assert.match(page, />Parici<\/a>/);
+    assert.match(page, /site-header__byline">un jeu Camino<\/span>/);
+    assert.match(page, /site-header__subtitle">Connaissez-vous vraiment votre ville \?<\/p>/);
+  }
+  assert.match(styles, /\.header-title\.site-header__title\s*\{[^}]*flex-direction:\s*column/s);
+  assert.match(shellStyles, /\.site-header__title\s*\{[^}]*flex-direction:\s*column/s);
+});
+
 test("all linked standalone pages are included in the deploy build", () => {
   const buildScript = fs.readFileSync(path.join(root, "scripts", "build.js"), "utf8");
   assert.match(buildScript, /"arbre-rangs\.html"/);
