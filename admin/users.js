@@ -71,6 +71,7 @@ function renderUsers() {
         <td>${user.dailyDaysPlayed} joué${user.dailyDaysPlayed > 1 ? "s" : ""}<br><small>${user.dailySuccesses} réussi${user.dailySuccesses > 1 ? "s" : ""}</small></td>
         <td><strong>${user.dailyFrequency}%</strong></td>
         <td><span class="boolean-badge boolean-badge--${user.reminderEnabled ? "yes" : "no"}">${user.reminderEnabled ? "Activé" : "Non"}</span></td>
+        <td><strong>${user.referralCount || 0}</strong></td>
         <td>${formatDate(user.lastDailyAt || user.lastGameAt)}</td>
         <td>${formatDate(user.createdAt)}</td>
         <td class="user-actions">
@@ -79,7 +80,7 @@ function renderUsers() {
         </td>
       </tr>
     `).join("")
-    : '<tr><td colspan="8">Aucun utilisateur trouvé.</td></tr>';
+    : '<tr><td colspan="9">Aucun utilisateur trouvé.</td></tr>';
 }
 
 async function loadUsers() {

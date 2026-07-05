@@ -2284,6 +2284,7 @@ app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(a
             ),
             lastDailyAt: user.last_daily_at,
             reminderEnabled: Boolean(user.reminder_enabled),
+            referralCount: Number(user.referral_count || 0),
         })),
     });
 }));

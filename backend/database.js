@@ -724,6 +724,11 @@ async function listUsersForAdmin() {
        SELECT user_id, BOOL_OR(enabled = TRUE) AS reminder_enabled
        FROM push_subscriptions
        GROUP BY user_id
+     ),
+     referral_stats AS (
+       SELECT referrer_user_id AS user_id, COUNT(*)::int AS referral_count
+       FROM referrals
+       GROUP BY referrer_user_id
      )
      SELECT
        u.id,
@@ -738,6 +743,7 @@ async function listUsersForAdmin() {
        COALESCE(daily_stats.successes, 0)::int AS daily_successes,
        daily_stats.last_daily_at,
        COALESCE(reminder_stats.reminder_enabled, FALSE) AS reminder_enabled,
+       COALESCE(referral_stats.referral_count, 0)::int AS referral_count,
        GREATEST(
          1,
          LEAST(
@@ -749,7 +755,8 @@ async function listUsersForAdmin() {
      LEFT JOIN score_stats ON score_stats.user_id = u.id
      LEFT JOIN daily_stats ON daily_stats.user_id = u.id
      LEFT JOIN reminder_stats ON reminder_stats.user_id = u.id
-     ORDER BY u.created_at DESC, u.username ASC`
+     LEFT JOIN referral_stats ON referral_stats.user_id = u.id
+     ORDER BY u.created_at ASC, u.username ASC`
   );
   return result.rows;
 }

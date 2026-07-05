@@ -33,6 +33,7 @@ const refs = {
   sessionUser: document.getElementById("session-user"),
   sessionRole: document.getElementById("session-role"),
   manageUsersLink: document.getElementById("manage-users-link"),
+  usersAdminCard: document.getElementById("users-admin-card"),
   refreshContentBtn: document.getElementById("refresh-content-btn"),
   logoutBtn: document.getElementById("logout-btn"),
   runOsmSyncBtn: document.getElementById("run-osm-sync-btn"),
@@ -928,6 +929,7 @@ async function ensureEditorAccess() {
   state.username = me.username;
   state.role = me.role;
   refs.manageUsersLink?.classList.toggle("hidden", !me.canManageUsers);
+  refs.usersAdminCard?.classList.toggle("hidden", !me.canManageUsers);
   saveSession();
 }
 
