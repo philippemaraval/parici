@@ -345,6 +345,96 @@ function findNearestArrondissement(point, arrondissements) {
   return best;
 }
 
+function geometryLines(geometry) {
+  if (!geometry?.coordinates) return [];
+  if (geometry.type === "LineString") return [geometry.coordinates];
+  if (geometry.type === "MultiLineString" || geometry.type === "Polygon") return geometry.coordinates;
+  if (geometry.type === "MultiPolygon") return geometry.coordinates.flat();
+  return [];
+}
+
+function haversineDistanceMeters(left, right) {
+  const toRadians = (degrees) => degrees * Math.PI / 180;
+  const lat1 = toRadians(left[1]);
+  const lat2 = toRadians(right[1]);
+  const deltaLat = lat2 - lat1;
+  const deltaLon = toRadians(right[0] - left[0]);
+  const sinLat = Math.sin(deltaLat / 2);
+  const sinLon = Math.sin(deltaLon / 2);
+  const h = sinLat ** 2 + Math.cos(lat1) * Math.cos(lat2) * sinLon ** 2;
+  return 6_371_000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function geometriesAreAdjacent(leftGeometry, rightGeometry, toleranceMeters = 40) {
+  const leftPoints = geometryLines(leftGeometry).flat();
+  const rightPoints = geometryLines(rightGeometry).flat();
+  return leftPoints.some((left) =>
+    rightPoints.some((right) => haversineDistanceMeters(left, right) <= toleranceMeters)
+  );
+}
+
+function disambiguateHomonymousStreets(features) {
+  const byName = new Map();
+  features.forEach((feature) => {
+    const name = String(feature.properties?.name || "").trim();
+    if (!byName.has(name)) byName.set(name, []);
+    byName.get(name).push(feature);
+  });
+
+  let homonymousNames = 0;
+  let renamedComponents = 0;
+  for (const [originalName, sameNameFeatures] of byName) {
+    if (sameNameFeatures.length < 2) continue;
+    const parents = sameNameFeatures.map((_, index) => index);
+    const find = (index) => {
+      while (parents[index] !== index) {
+        parents[index] = parents[parents[index]];
+        index = parents[index];
+      }
+      return index;
+    };
+    const union = (left, right) => {
+      const leftRoot = find(left);
+      const rightRoot = find(right);
+      if (leftRoot !== rightRoot) parents[rightRoot] = leftRoot;
+    };
+    for (let left = 0; left < sameNameFeatures.length; left++) {
+      for (let right = left + 1; right < sameNameFeatures.length; right++) {
+        if (geometriesAreAdjacent(sameNameFeatures[left].geometry, sameNameFeatures[right].geometry)) {
+          union(left, right);
+        }
+      }
+    }
+
+    const components = new Map();
+    sameNameFeatures.forEach((feature, index) => {
+      const root = find(index);
+      if (!components.has(root)) components.set(root, []);
+      components.get(root).push(feature);
+    });
+    if (components.size < 2) continue;
+
+    homonymousNames++;
+    for (const component of components.values()) {
+      const areaCounts = new Map();
+      component.forEach((feature) => {
+        const area = feature.properties?.arrondissement || feature.properties?.quartier || "";
+        areaCounts.set(area, (areaCounts.get(area) || 0) + 1);
+      });
+      const area = [...areaCounts.entries()]
+        .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], "fr"))[0]?.[0];
+      const gameName = area ? `${originalName} - ${area}` : originalName;
+      component.forEach((feature) => {
+        feature.properties.osm_name = originalName;
+        feature.properties.name = gameName;
+        feature.name = gameName;
+      });
+      renamedComponents++;
+    }
+  }
+  return { homonymousNames, renamedComponents };
+}
+
 function buildStreets(overpassJson, arrondissements) {
   const converted = osmtogeojson(overpassJson);
   const seen = new Set();
@@ -488,7 +578,9 @@ async function main() {
   const streetRaw = await fetchOverpass(STREETS_QUERY, "rues");
   const { features, skipped } = buildStreets(streetRaw, arrondissements.features);
   const lightFeatures = buildLightFeatures(features);
+  const homonyms = disambiguateHomonymousStreets(lightFeatures);
   console.log(`   ${features.length} géométries de voies, ${lightFeatures.length} retenues pour le jeu.`);
+  console.log(`   Homonymes: ${homonyms.homonymousNames} noms, ${homonyms.renamedComponents} voies renommées.`);
   console.log(`   Ignorées: ${skipped.noName} sans nom, ${skipped.noGeometry} sans géométrie, ${skipped.noArrondissement} sans arrondissement, ${skipped.excludedTags} tags exclus.`);
   console.log(`   Arrondissement par proximité: ${skipped.fallback}\n`);
 
@@ -518,7 +610,11 @@ async function main() {
   console.log("\n✅ Synchronisation Camino Paris terminée.");
 }
 
-main().catch((error) => {
-  console.error("\n❌ Synchronisation échouée:", error.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("\n❌ Synchronisation échouée:", error.message);
+    process.exit(1);
+  });
+}
+
+module.exports = { disambiguateHomonymousStreets, geometriesAreAdjacent };
