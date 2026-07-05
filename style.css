@@ -2939,43 +2939,48 @@ button {
 }
 
 .daily-intro-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 38px;
 }
 
 .daily-intro-heading {
-  flex: 0 0 auto;
+  text-align: center;
 }
 
 .daily-reminder-card {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
-  max-width: 180px;
-  min-height: 34px;
-  padding: 4px 6px;
+  gap: 4px;
+  max-width: 130px;
+  min-height: 28px;
+  padding: 3px 4px;
   border: 1px solid rgba(18, 41, 122, 0.12);
-  border-radius: 8px;
+  border-radius: 7px;
   background: rgba(255, 255, 255, 0.55);
   box-shadow: 0 2px 6px rgba(18, 41, 122, 0.04);
   text-align: left;
 }
 
-.daily-reminder-copy {
-  min-width: 0;
+.daily-reminder-card .daily-reminder-icon {
+  flex: 0 0 auto;
+  font-size: 9px;
+  line-height: 1;
 }
 
-.daily-reminder-card .profile-notification-title {
-  margin-bottom: 1px;
-  font-size: 7px;
-  white-space: nowrap;
+.daily-reminder-copy {
+  min-width: 0;
+  max-width: 72px;
 }
 
 .daily-reminder-card .profile-notification-status {
   margin: 0;
-  font-size: 7px;
+  font-size: 6px;
   line-height: 1.1;
 }
 
@@ -2987,11 +2992,12 @@ button {
 .daily-reminder-card .profile-notification-actions .btn-secondary,
 .daily-reminder-card .profile-notification-actions .btn-tertiary {
   flex: none;
+  width: auto;
   min-width: 0;
-  min-height: 22px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  font-size: 7px;
+  min-height: 20px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  font-size: 6px;
   letter-spacing: 0;
   line-height: 1;
   text-transform: none;
