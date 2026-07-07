@@ -150,7 +150,7 @@ function minifyCss(relativePath) {
 }
 
 async function build() {
-  console.log("🔨 Building Camino Paris...\n");
+  console.log("Building Parici...\n");
 
   await buildFrontendBundle();
   await minifyJsFile("data_rules.js");

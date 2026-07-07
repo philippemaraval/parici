@@ -402,6 +402,9 @@ export function populateArrondissementsUI({
     arrondissements.forEach((arrondissementName) => {
       const item = document.createElement("li");
       item.dataset.value = arrondissementName;
+      item.setAttribute("role", "option");
+      item.setAttribute("aria-selected", "false");
+      item.tabIndex = -1;
 
       const text = document.createElement("span");
       text.textContent = arrondissementName;
@@ -436,8 +439,12 @@ export function populateArrondissementsUI({
         }
 
         nativeSelect.value = arrondissementName;
+        customList.querySelectorAll('[role="option"]').forEach((option) => {
+          option.setAttribute("aria-selected", option === item ? "true" : "false");
+        });
         onArrondissementChange();
         customList.classList.remove("visible");
+        customButton?.setAttribute("aria-expanded", "false");
       });
 
       customList.appendChild(item);
@@ -464,6 +471,7 @@ export function populateArrondissementsUI({
     }
 
     nativeSelect.value = firstArrondissement;
+    customList?.querySelector("li")?.setAttribute("aria-selected", "true");
   }
 }
 

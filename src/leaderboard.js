@@ -1,10 +1,12 @@
 import { API_URL, LEADERBOARD_VISIBLE_ROWS } from "./config.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
+import { fetchWithTimeout } from "./api-client.js";
 
 const TITLE_THRESHOLDS_BY_MODE = {
   classique: {
     "rues-celebres": { M: 60, H: 100, V: 140, MV: 180 },
     "arrondissements-ville": { M: 60, H: 100, V: 140, MV: 180 },
+    "lignes-transports-idf": { M: 60, H: 100, V: 140, MV: 180 },
     "rues-principales": { M: 50, H: 90, V: 130, MV: 170 },
     arrondissement: { M: 40, H: 80, V: 120, MV: 160 },
     ville: { M: 30, H: 70, V: 110, MV: 150 },
@@ -13,6 +15,7 @@ const TITLE_THRESHOLDS_BY_MODE = {
   marathon: {
     "rues-celebres": { M: 10, H: 20, V: 35, MV: 55 },
     "arrondissements-ville": { M: 10, H: 20, V: 35, MV: 55 },
+    "lignes-transports-idf": { M: 10, H: 20, V: 35, MV: 55 },
     "rues-principales": { M: 9, H: 18, V: 30, MV: 48 },
     ville: { M: 8, H: 16, V: 28, MV: 44 },
     monuments: { M: 9, H: 18, V: 30, MV: 46 },
@@ -20,6 +23,7 @@ const TITLE_THRESHOLDS_BY_MODE = {
   chrono: {
     "rues-celebres": { M: 7, H: 11, V: 16, MV: 22 },
     "arrondissements-ville": { M: 7, H: 11, V: 16, MV: 22 },
+    "lignes-transports-idf": { M: 7, H: 11, V: 16, MV: 22 },
     "rues-principales": { M: 6, H: 10, V: 14, MV: 19 },
     arrondissement: { M: 5, H: 8, V: 12, MV: 16 },
     ville: { M: 4, H: 7, V: 10, MV: 14 },
@@ -61,11 +65,11 @@ const GAME_ORDER = ["classique", "marathon", "chrono", "lecture"];
 
 export function buildArrondissementMarathonThresholds(maxItems) {
   const total = Math.max(1, parseInt(maxItems, 10) || 55);
-  const minot = Math.min(total, Math.max(1, Math.ceil(0.1 * total)));
-  const habitue = Math.min(total, Math.max(minot + 1, Math.ceil(0.2 * total)));
+  const titi = Math.min(total, Math.max(1, Math.ceil(0.1 * total)));
+  const habitue = Math.min(total, Math.max(titi + 1, Math.ceil(0.2 * total)));
   const vrai = Math.min(total, Math.max(habitue + 1, Math.ceil(0.35 * total)));
   const maire = Math.min(total, Math.max(vrai + 1, Math.ceil(0.55 * total)));
-  return { M: minot, H: habitue, V: vrai, MV: maire };
+  return { M: titi, H: habitue, V: vrai, MV: maire };
 }
 
 export function getTitleThresholds(mode, gameType = "classique", maxItems = 0) {
@@ -201,30 +205,12 @@ export const AVATAR_UNLOCKS = [
   { emoji: "⚽", reqScore: 150, reqTitleIdx: 0 },
   { emoji: "👑", reqScore: 150, reqTitleIdx: 0 },
 
-  {
-    emoji: "🚀",
-    name: "Astronaute",
-    desc: "Atteindre Titi Parisien sur la Ville entière (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "M"),
-  },
-  {
-    emoji: "⭐️",
-    name: "Étoile",
-    desc: "Atteindre Habitué sur la Ville entière (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "H"),
-  },
-  {
-    emoji: "🛸",
-    name: "Extraterrestre",
-    desc: "Atteindre Vrai Parigot sur la Ville entière (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "V"),
-  },
-  {
-    emoji: "👽",
-    name: "L'Ovni",
-    desc: "Atteindre Préfet de Paris sur la Ville entière (Classique, Marathon, Chrono)",
-    check: (userStats) => hasReachedVilleRank(userStats, "MV"),
-  },
+  ...VILLE_RANK_AVATAR_DEFINITIONS.map(({ emoji, name, desc, rankLetter }) => ({
+    emoji,
+    name,
+    desc,
+    check: (userStats) => hasReachedVilleRankInAnyMode(userStats, rankLetter),
+  })),
 ];
 
 export function getPlayerTitle(score, zoneMode, gameType = "classique", itemsTotal = 0, itemsCorrect = null) {
@@ -339,6 +325,9 @@ function appendZoneLeaderboards(rootElement, boards) {
 
         sectionData.rows.forEach((row, index) => {
           const tr = document.createElement("tr");
+          if (index === 0) {
+            tr.classList.add("leaderboard-first-place");
+          }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const title = getPlayerTitle(
             row.high_score || 0,
@@ -429,7 +418,7 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   const weeklyRows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows : [];
   const weeklyDetails = document.createElement("details");
   weeklyDetails.className = "leaderboard-zone-details";
-  weeklyDetails.open = true;
+  weeklyDetails.open = false;
 
   const weeklySummary = document.createElement("summary");
   const rangeLabel =
@@ -451,11 +440,14 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
 
   const table = document.createElement("table");
   table.className = "leaderboard-table weekly-daily-leaderboard";
-  table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Réussites</th><th>Essais</th><th>Total écart</th></tr></thead>";
+  table.innerHTML = '<thead><tr><th>#</th><th>Joueur</th><th>Réussites</th><th>Essais</th><th title="Somme des meilleurs écarts quotidiens">Écart cumulé</th></tr></thead>';
 
   const tbody = document.createElement("tbody");
   weeklyRows.forEach((row, index) => {
     const tr = document.createElement("tr");
+    if (index === 0) {
+      tr.classList.add("leaderboard-first-place");
+    }
     const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
     const playerAvatar = row.avatar || "👤";
     const firstWeeklyWinnerBadge =
@@ -466,7 +458,7 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
       row.total_distance_meters === null || row.total_distance_meters === undefined
         ? "—"
         : `${Math.round(row.total_distance_meters)}m`;
-    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} Daily joué${row.days_played > 1 ? "s" : ""}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${totalDistance}</td>`;
+    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} jour${row.days_played === 1 ? "" : "s"} joué${row.days_played === 1 ? "" : "s"}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${totalDistance}</td>`;
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -576,28 +568,32 @@ export function loadAllLeaderboards() {
     '<div class="skeleton skeleton-line skeleton-line--50"></div><div class="skeleton skeleton-block"></div><div class="skeleton skeleton-block"></div>';
 
   Promise.all([
-    fetch(`${API_URL}/api/leaderboards`).then((response) => {
+    fetchWithTimeout(`${API_URL}/api/leaderboards`, {}, { timeoutMs: 10000 }).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
       return response.json();
     }),
-    fetch(`${API_URL}/api/leaderboards?period=month`).then((response) => {
+    fetchWithTimeout(
+      `${API_URL}/api/leaderboards?period=month`,
+      {},
+      { timeoutMs: 10000 },
+    ).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
       return response.json();
     }),
-    fetch(`${API_URL}/api/daily/leaderboard`)
+    fetchWithTimeout(`${API_URL}/api/daily/leaderboard`, {}, { timeoutMs: 10000 })
       .then((response) => (response.ok ? response.json() : []))
       .catch(() => []),
-    fetch(`${API_URL}/api/daily/leaderboard/weekly`)
+    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/weekly`, {}, { timeoutMs: 10000 })
       .then((response) => (response.ok ? response.json() : { rows: [] }))
       .catch(() => ({ rows: [] })),
-    fetch(`${API_URL}/api/daily/leaderboard/podiums`)
+    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/podiums`, {}, { timeoutMs: 10000 })
       .then((response) => (response.ok ? response.json() : []))
       .catch(() => []),
-    fetch(`${API_URL}/api/daily/leaderboard/averages`)
+    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/averages`, {}, { timeoutMs: 10000 })
       .then((response) => (response.ok ? response.json() : []))
       .catch(() => []),
   ])
@@ -643,6 +639,9 @@ export function loadAllLeaderboards() {
         const tbody = document.createElement("tbody");
         dailyRows.forEach((row, index) => {
           const tr = document.createElement("tr");
+          if (index === 0) {
+            tr.classList.add("leaderboard-first-place");
+          }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const playerAvatar = row.avatar || "👤";
           const resultText = row.success 
@@ -657,7 +656,7 @@ export function loadAllLeaderboards() {
         modeContainer.className = "leaderboard-mode-container";
         const modeTitle = document.createElement("h4");
         modeTitle.className = "leaderboard-mode-title";
-        modeTitle.textContent = "Défi du Jour";
+        modeTitle.textContent = "Défi du jour";
         modeContainer.appendChild(modeTitle);
 
         const section = document.createElement("div");
@@ -708,7 +707,7 @@ export function loadAllLeaderboards() {
     })
     .catch((error) => {
       console.warn("Leaderboard indisponible :", error.message);
-      leaderboardRoot.innerHTML = "<p>Aucun score enregistré.</p>";
+      leaderboardRoot.innerHTML = "<p>Classements momentanément indisponibles. Réessayez lorsque la connexion sera rétablie.</p>";
     });
 }
 

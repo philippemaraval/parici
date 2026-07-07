@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Synchronise les données Camino Paris depuis OpenStreetMap.
+ * Synchronise les données Parici depuis OpenStreetMap.
  *
  * Génère :
  * - data/paris_rues_enrichi.geojson
@@ -18,6 +18,7 @@ const path = require("path");
 const https = require("https");
 const http = require("http");
 const osmtogeojson = require("osmtogeojson");
+const { validateOsmOutputs } = require("./validate_osm_outputs");
 const {
   shouldExcludeOsmTags,
   shouldKeepStreetForGame,
@@ -36,6 +37,8 @@ const BACKEND_ARRONDISSEMENTS = path.join(BACKEND_DATA_DIR, "paris_arrondissemen
 const BACKEND_MONUMENTS = path.join(BACKEND_DATA_DIR, "paris_monuments.geojson");
 const STREETS_INDEX = path.join(BACKEND_DATA_DIR, "streets_index.json");
 const COORD_PRECISION = 5;
+const ADJACENT_GEOMETRY_TOLERANCE_METERS = 40;
+const SHORT_GAP_ENDPOINT_TOLERANCE_METERS = 500;
 
 const OVERPASS_URLS = Array.from(new Set([
   process.env.OVERPASS_URL,
@@ -365,12 +368,66 @@ function haversineDistanceMeters(left, right) {
   return 6_371_000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
-function geometriesAreAdjacent(leftGeometry, rightGeometry, toleranceMeters = 40) {
-  const leftPoints = geometryLines(leftGeometry).flat();
-  const rightPoints = geometryLines(rightGeometry).flat();
-  return leftPoints.some((left) =>
-    rightPoints.some((right) => haversineDistanceMeters(left, right) <= toleranceMeters)
-  );
+function geometryLengthMeters(geometry) {
+  let total = 0;
+  for (const line of geometryLines(geometry)) {
+    for (let index = 1; index < line.length; index++) {
+      total += haversineDistanceMeters(line[index - 1], line[index]);
+    }
+  }
+  return total;
+}
+
+function endpointKeys(geometry) {
+  const keys = new Set();
+  for (const line of geometryLines(geometry)) {
+    if (line.length === 0) continue;
+    for (const coordinate of [line[0], line[line.length - 1]]) {
+      keys.add(`${Number(coordinate[0]).toFixed(6)},${Number(coordinate[1]).toFixed(6)}`);
+    }
+  }
+  return keys;
+}
+
+function endpointCoordinates(geometry) {
+  const coordinates = [];
+  for (const line of geometryLines(geometry)) {
+    if (line.length === 0) continue;
+    coordinates.push(line[0], line[line.length - 1]);
+  }
+  return coordinates;
+}
+
+function geometryPoints(geometry) {
+  return geometryLines(geometry).flat();
+}
+
+function geometriesAreAdjacent(
+  leftGeometry,
+  rightGeometry,
+  geometryToleranceMeters = ADJACENT_GEOMETRY_TOLERANCE_METERS,
+  endpointGapToleranceMeters = SHORT_GAP_ENDPOINT_TOLERANCE_METERS
+) {
+  const leftPoints = geometryPoints(leftGeometry);
+  const rightPoints = geometryPoints(rightGeometry);
+  for (const left of leftPoints) {
+    for (const right of rightPoints) {
+      if (haversineDistanceMeters(left, right) <= geometryToleranceMeters) return true;
+    }
+  }
+
+  const leftEndpoints = endpointCoordinates(leftGeometry);
+  const rightEndpoints = endpointCoordinates(rightGeometry);
+  for (const left of leftEndpoints) {
+    for (const right of rightEndpoints) {
+      if (haversineDistanceMeters(left, right) <= endpointGapToleranceMeters) return true;
+    }
+  }
+  return false;
+}
+
+function formatLengthForName(lengthMeters, decimals = 0) {
+  return `${lengthMeters.toFixed(decimals).replace(".", ",")} m`;
 }
 
 function disambiguateHomonymousStreets(features) {
@@ -398,9 +455,19 @@ function disambiguateHomonymousStreets(features) {
       const rightRoot = find(right);
       if (leftRoot !== rightRoot) parents[rightRoot] = leftRoot;
     };
+    const endpointOwners = new Map();
+    sameNameFeatures.forEach((feature, index) => {
+      for (const key of endpointKeys(feature.geometry)) {
+        if (endpointOwners.has(key)) union(index, endpointOwners.get(key));
+        else endpointOwners.set(key, index);
+      }
+    });
     for (let left = 0; left < sameNameFeatures.length; left++) {
       for (let right = left + 1; right < sameNameFeatures.length; right++) {
-        if (geometriesAreAdjacent(sameNameFeatures[left].geometry, sameNameFeatures[right].geometry)) {
+        if (
+          find(left) !== find(right) &&
+          geometriesAreAdjacent(sameNameFeatures[left].geometry, sameNameFeatures[right].geometry)
+        ) {
           union(left, right);
         }
       }
@@ -415,16 +482,47 @@ function disambiguateHomonymousStreets(features) {
     if (components.size < 2) continue;
 
     homonymousNames++;
-    for (const component of components.values()) {
+    const componentData = [...components.values()].map((component) => {
       const areaCounts = new Map();
+      let lengthMeters = 0;
       component.forEach((feature) => {
+        lengthMeters += geometryLengthMeters(feature.geometry);
         const area = feature.properties?.arrondissement || feature.properties?.quartier || "";
         areaCounts.set(area, (areaCounts.get(area) || 0) + 1);
       });
       const area = [...areaCounts.entries()]
         .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], "fr"))[0]?.[0];
-      const gameName = area ? `${originalName} - ${area}` : originalName;
-      component.forEach((feature) => {
+      return {
+        features: component,
+        lengthMeters,
+        baseName: area ? `${originalName} - ${area}` : originalName,
+      };
+    });
+
+    const baseNameCounts = new Map();
+    componentData.forEach((component) => {
+      baseNameCounts.set(component.baseName, (baseNameCounts.get(component.baseName) || 0) + 1);
+    });
+
+    const proposedNameCounts = new Map();
+    componentData.forEach((component) => {
+      let gameName = component.baseName;
+      if (baseNameCounts.get(component.baseName) > 1) {
+        gameName += ` - ${formatLengthForName(component.lengthMeters)}`;
+      }
+      component.gameName = gameName;
+      proposedNameCounts.set(gameName, (proposedNameCounts.get(gameName) || 0) + 1);
+    });
+
+    const usedGameNames = new Map();
+    for (const component of componentData) {
+      let gameName = component.gameName;
+      if (proposedNameCounts.get(gameName) > 1) {
+        const occurrence = (usedGameNames.get(gameName) || 0) + 1;
+        usedGameNames.set(gameName, occurrence);
+        gameName += ` - ${occurrence}`;
+      }
+      component.features.forEach((feature) => {
         feature.properties.osm_name = originalName;
         feature.properties.name = gameName;
         feature.name = gameName;
@@ -530,18 +628,36 @@ function buildLightFeatures(features) {
     }));
 }
 
+function normalizeStreetIndexKey(name) {
+  return String(name || "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function streetIndexNameQuality(name) {
+  const value = String(name || "");
+  const withoutDiacritics = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return (value === withoutDiacritics ? 0 : 1) + value.length / 10000;
+}
+
 function buildStreetIndex(lightFeatures) {
   const byName = new Map();
   for (const feature of lightFeatures) {
-    const key = String(feature.properties.name || "").trim().toLowerCase();
-    if (!key || byName.has(key)) continue;
-    byName.set(key, {
+    const key = normalizeStreetIndexKey(feature.properties.name);
+    if (!key) continue;
+    const entry = {
       name: feature.properties.name,
       osmName: feature.properties.osm_name || feature.properties.name,
       arrondissement: feature.properties.arrondissement,
       quartier: feature.properties.arrondissement,
       centroid: feature.properties.centroid,
-    });
+    };
+    const current = byName.get(key);
+    if (!current || streetIndexNameQuality(entry.name) > streetIndexNameQuality(current.name)) {
+      byName.set(key, entry);
+    }
   }
   return Array.from(byName.values()).sort((a, b) => a.name.localeCompare(b.name, "fr"));
 }
@@ -564,7 +680,7 @@ function writeJson(filePath, data) {
 
 async function main() {
   ensureDirs();
-  console.log("🗺️  Synchronisation OSM → Camino Paris");
+  console.log("Synchronisation OSM -> Parici");
   console.log("================================\n");
 
   console.log("📍 Chargement des arrondissements de Paris...");
@@ -588,12 +704,18 @@ async function main() {
   const enriched = { type: "FeatureCollection", features };
   const light = { type: "FeatureCollection", features: lightFeatures };
   const monuments = buildMonuments();
+  const streetIndex = buildStreetIndex(lightFeatures);
+  const syncedAt = new Date().toISOString();
   const meta = {
     city: "Paris",
     insee: "75056",
-    generated_at: new Date().toISOString(),
+    generated_at: syncedAt,
+    generatedBy: "scripts/sync_osm.js",
+    lastSyncedAt: syncedAt,
     streets_total: features.length,
     streets_light: lightFeatures.length,
+    keptMapSegments: lightFeatures.length,
+    uniqueStreets: streetIndex.length,
     quartiers: arrondissements.features.length,
     monuments: monuments.features.length,
   };
@@ -606,9 +728,14 @@ async function main() {
   writeJson(BACKEND_LIGHT, light);
   writeJson(BACKEND_ARRONDISSEMENTS, arrondissements);
   writeJson(BACKEND_MONUMENTS, monuments);
-  writeJson(STREETS_INDEX, buildStreetIndex(lightFeatures));
+  writeJson(STREETS_INDEX, streetIndex);
 
-  console.log("\n✅ Synchronisation Camino Paris terminée.");
+  const validation = validateOsmOutputs(PROJECT_DIR);
+  console.log(
+    `   ✅ Validation croisée : ${validation.lightSegments} segments, ${validation.uniqueStreets} rues uniques`
+  );
+
+  console.log("\nSynchronisation Parici terminée.");
 }
 
 if (require.main === module) {

@@ -46,8 +46,8 @@
   --fs-xl: 20px;
   --fs-xxl: 24px;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
   --radius-pill: 999px;
   --sidebar-section-gap: 8px;
   --leaderboard-panel-max-h: min(92vh, 940px);
@@ -118,13 +118,13 @@ body {
 }
 
 #sidebar {
-  width: 360px;
+  width: clamp(360px, 28vw, 400px);
   background: rgba(248, 245, 238, 0.55);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-right: 1px solid rgba(196, 212, 218, 0.6);
   box-sizing: border-box;
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -152,7 +152,7 @@ body {
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-radius: var(--radius-md);
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 4px;
   transition:
     transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -168,13 +168,6 @@ body {
 .target-panel {
   position: relative;
   z-index: 10;
-}
-
-.leaderboard-panel:hover,
-.panel-params:hover,
-.user-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(2, 39, 59, 0.16);
 }
 
 .header-panel {
@@ -206,7 +199,7 @@ body {
   font-size: clamp(24px, 2vw, 29px);
   font-weight: 800;
   margin: 0;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   text-shadow: none;
   line-height: 1;
 }
@@ -227,7 +220,7 @@ body {
   font-size: var(--fs-sm);
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -235,7 +228,7 @@ body {
   font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin-top: 4px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .panel-title {
@@ -243,7 +236,7 @@ body {
   font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 12px;
   display: flex;
@@ -270,7 +263,7 @@ body {
   padding: 2px 8px;
   border-radius: 12px;
   text-transform: none;
-  letter-spacing: normal;
+  letter-spacing: 0;
   font-weight: 600;
   display: none;
   margin-left: auto;
@@ -457,9 +450,10 @@ select:focus {
 }
 
 .actions-row button {
-  padding: 8px 0;
-  font-size: 9.5px;
-  letter-spacing: -0.01em;
+  min-height: 42px;
+  padding: 9px 8px;
+  font-size: 12px;
+  letter-spacing: 0;
   white-space: nowrap;
   min-width: 0;
   overflow: hidden;
@@ -517,7 +511,7 @@ select:focus {
   padding: 4px 10px;
   font-size: var(--fs-xs);
   text-transform: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .friends-challenge-toggle.is-on {
@@ -532,26 +526,6 @@ select:focus {
   cursor: not-allowed;
 }
 
-.explorer-mode-link {
-  display: none !important;
-  width: auto;
-  min-width: 0;
-  justify-self: start;
-  background: linear-gradient(135deg, var(--brand-sea-950) 0, var(--brand-sea-900) 100%);
-  border: 1px solid rgba(18, 41, 122, 0.35);
-  border-radius: var(--radius-sm);
-  color: #fff;
-  box-shadow: 0 4px 10px rgba(18, 41, 122, 0.22);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.explorer-mode-link:hover,
-.explorer-mode-link:focus-visible {
-  background: linear-gradient(135deg, var(--brand-sea-900) 0, var(--brand-sea-600) 100%);
-  color: #fff;
-}
-
 .friends-challenge-serial {
   display: flex;
   grid-column: 1 / -1;
@@ -563,18 +537,18 @@ select:focus {
   font-size: 10px;
   font-weight: 700;
   color: var(--text-secondary);
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .friends-challenge-serial-id {
   font-family: var(--font-mono);
   color: var(--primary-dark);
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .friends-challenge-serial-creator {
   color: var(--text-secondary);
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .tries-counter {
@@ -605,7 +579,7 @@ select:focus {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -621,7 +595,7 @@ select:focus {
 .daily-history-table th {
   font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-secondary);
   font-weight: 700;
   padding: 4px 6px;
@@ -788,7 +762,7 @@ select:focus {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: #8a5312;
   margin-bottom: 4px;
 }
@@ -871,7 +845,7 @@ button {
   border-radius: var(--radius-sm);
   font-family: var(--font-heading);
   font-size: var(--fs-m);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition:
     transform var(--motion-fast) var(--easing-standard),
@@ -881,8 +855,17 @@ button {
     box-shadow var(--motion-base) var(--easing-standard);
   position: relative;
   overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 0;
+  box-shadow: var(--focus-ring);
 }
 
 @media (max-width: 600px) {
@@ -1016,7 +999,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   text-transform: none;
   justify-self: end;
 }
@@ -1149,7 +1132,7 @@ button {
   text-transform: uppercase;
   font-weight: 700;
   margin-bottom: 6px;
-  letter-spacing: 0.07em;
+  letter-spacing: 0;
 }
 
 .timers-row {
@@ -1169,7 +1152,7 @@ button {
   display: block;
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 2px;
 }
@@ -1180,7 +1163,7 @@ button {
   font-size: var(--fs-l);
   font-weight: 700;
   color: var(--primary-dark);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 #score,
@@ -1199,7 +1182,7 @@ button {
   text-transform: uppercase;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .weighted-score-container {
@@ -1220,7 +1203,7 @@ button {
 #weighted-score-label {
   font-size: var(--fs-xs);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-muted);
 }
 
@@ -1518,12 +1501,6 @@ button {
   color: #075985;
 }
 
-@media (max-width: 1024px) and (pointer: coarse) {
-  .explorer-mode-link {
-    display: inline-flex !important;
-  }
-}
-
 @media (max-width: 900px) {
   .mobile-mode-nav {
     display: grid;
@@ -1571,7 +1548,7 @@ button {
   html[data-mobile-view="home"] .mobile-home {
     display: grid;
     gap: 18px;
-    padding: 12px 0 8px;
+    padding: 0 0 8px;
   }
 
   .mobile-mode-intro {
@@ -1593,7 +1570,7 @@ button {
     color: var(--state-warning);
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: .09em;
+    letter-spacing: 0;
     text-transform: uppercase;
   }
 
@@ -1697,10 +1674,6 @@ button {
     background: linear-gradient(135deg, var(--brand-sun-500), var(--brand-terra-500));
   }
 
-  .mobile-mode-card--explorer .mobile-mode-card__icon {
-    background: linear-gradient(135deg, var(--state-success), #116342);
-  }
-
   .mobile-mode-card strong,
   .mobile-mode-card small {
     display: block;
@@ -1753,7 +1726,7 @@ button {
     color: var(--state-warning);
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: .09em;
+    letter-spacing: 0;
     text-transform: uppercase;
   }
 
@@ -1781,7 +1754,6 @@ button {
   }
 
   html[data-mobile-view="camino"] #daily-mode-btn,
-  html[data-mobile-view="camino"] .explorer-mode-link,
   html[data-mobile-view="camino"] #daily-result-panel {
     display: none !important;
   }
@@ -2053,7 +2025,7 @@ button {
   }
 
   #sidebar-content > .user-panel {
-    margin-top: 12px;
+    margin-top: 0;
   }
 
   .user-panel details:not([open]) summary {
@@ -2085,7 +2057,7 @@ button {
   left: 8px;
   color: var(--footer-muted);
   font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
 }
 
 .map-status--loading {
@@ -2111,14 +2083,13 @@ button {
   border-radius: 4px;
   padding: 4px 8px;
   width: max-content;
-  max-width: calc(100vw - 32px);
+  max-width: min(260px, calc(100vw - 32px));
   white-space: nowrap;
   writing-mode: horizontal-tb;
   text-orientation: mixed;
   overflow: hidden;
-  overflow-wrap: normal;
-  word-break: normal;
   text-overflow: ellipsis;
+  word-break: normal;
   text-align: center;
 }
 
@@ -2190,7 +2161,7 @@ button {
   padding-bottom: 2px;
   border-bottom: 1px solid var(--border-color);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 .leaderboard-table {
@@ -2301,7 +2272,7 @@ button {
   color: var(--primary-dark);
   font-size: var(--fs-xs);
   text-transform: none;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
@@ -2309,9 +2280,14 @@ button {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.leaderboard-table tbody tr:first-child td {
+.leaderboard-table tr.leaderboard-first-place td {
   font-weight: 600;
   color: var(--accent);
+}
+
+.leaderboard-table .leaderboard-hidden-rows tr td {
+  font-weight: 400;
+  color: inherit;
 }
 
 .leaderboard-zone-details>summary {
@@ -2367,7 +2343,7 @@ button {
   font-size: var(--fs-s);
   font-weight: 800;
   color: var(--primary-dark);
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -2393,7 +2369,7 @@ button {
   padding: 4px 10px;
   font-size: var(--fs-xs);
   text-transform: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .friend-challenge-board-empty {
@@ -2425,7 +2401,7 @@ button {
   font-size: var(--fs-l);
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   margin-left: 4px;
 }
 
@@ -2534,7 +2510,7 @@ button {
 .profile-referral-header-label {
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -2551,7 +2527,7 @@ button {
   color: #0f766e;
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   line-height: 1.1;
   cursor: pointer;
 }
@@ -2606,7 +2582,7 @@ button {
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   color: var(--primary-dark);
   margin-bottom: 8px;
 }
@@ -2639,7 +2615,7 @@ button {
   font-size: 9px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .profile-compact-insight {
@@ -2758,7 +2734,7 @@ button {
 .profile-mini-table th {
   font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   color: var(--text-muted);
 }
 
@@ -2820,7 +2796,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
 }
 
 .profile-stat {
@@ -2844,7 +2820,7 @@ button {
   display: block;
   font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -2853,7 +2829,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -2954,35 +2930,41 @@ button {
   position: absolute;
   top: 50%;
   right: 0;
-  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 3px;
-  max-width: 112px;
-  min-height: 24px;
-  padding: 2px 3px;
+  gap: 4px;
+  width: auto;
+  min-height: 30px;
+  margin: 0;
+  padding: 3px 5px;
   border: 1px solid rgba(18, 41, 122, 0.12);
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 2px 6px rgba(18, 41, 122, 0.04);
   text-align: left;
+  transform: translateY(-50%);
 }
 
 .daily-reminder-card .daily-reminder-icon {
   flex: 0 0 auto;
-  font-size: 8px;
+  font-size: 14px;
   line-height: 1;
 }
 
 .daily-reminder-copy {
-  min-width: 0;
-  max-width: 56px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .daily-reminder-card .profile-notification-status {
   margin: 0;
-  font-size: 5.5px;
-  line-height: 1.1;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .daily-reminder-card .profile-notification-actions {
@@ -2995,10 +2977,10 @@ button {
   flex: none;
   width: auto;
   min-width: 0;
-  min-height: 18px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-size: 5.5px;
+  min-height: 26px;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 9px;
   letter-spacing: 0;
   line-height: 1;
   text-transform: none;
@@ -3007,7 +2989,7 @@ button {
 .profile-notification-title {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--primary-dark);
   margin-bottom: 6px;
@@ -3058,7 +3040,7 @@ button {
 .profile-referral-title {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: #0f766e;
 }
@@ -3067,7 +3049,7 @@ button {
   margin-top: 3px;
   font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
@@ -3131,7 +3113,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 8px;
   margin-top: 4px;
@@ -3372,7 +3354,7 @@ button {
   border-radius: var(--radius-pill);
   z-index: 1200;
   text-transform: none;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   font-size: var(--fs-s);
   background: linear-gradient(135deg, var(--primary-dark) 0, var(--primary) 100%);
   color: #fff;
@@ -3655,7 +3637,7 @@ select:focus:not(:focus-visible) {
   color: var(--footer-muted);
   margin: 0;
   font-style: italic;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3667,7 +3649,7 @@ select:focus:not(:focus-visible) {
   font-size: 10px;
   color: var(--footer-muted);
   opacity: 0.86;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3689,7 +3671,7 @@ select:focus:not(:focus-visible) {
   line-height: 1.15;
   color: var(--primary);
   opacity: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   display: inline-flex;
   align-items: center;
   line-height: 1;
@@ -3710,7 +3692,7 @@ select:focus:not(:focus-visible) {
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   transition:
     background var(--motion-fast) var(--easing-standard),
     border-color var(--motion-fast) var(--easing-standard),

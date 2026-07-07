@@ -261,7 +261,7 @@ export function renderDailyGuessHistoryRuntime({
     if (dailyGuessHistory.length > 0) {
       html += '<div class="daily-history-title">Essais précédents</div>';
       html += '<table class="daily-history-table">';
-      html += "<thead><tr><th>#</th><th>Rue tentée</th><th>Distance</th><th></th></tr></thead>";
+      html += '<thead><tr><th>#</th><th>Rue tentée</th><th title="Distance entre les milieux des deux voies">Écart</th><th><span class="sr-only">Direction</span></th></tr></thead>';
       html += "<tbody>";
 
       dailyGuessHistory.forEach((guess, index) => {

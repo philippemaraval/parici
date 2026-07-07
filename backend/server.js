@@ -86,7 +86,7 @@ const PASSWORD_RESET_EXPIRATION_HOURS = readEnvIntegerInRange('PASSWORD_RESET_EX
 const PASSWORD_RESET_FRONTEND_URL = readFirstDefinedEnv([
     'PASSWORD_RESET_FRONTEND_URL',
     'FRONTEND_URL',
-], 'https://camino-ajm.pages.dev');
+], 'https://parici.netlify.app');
 const DEFAULT_EDITOR_USERNAMES = new Set(['mphil', 'mphil12', 'mgm']);
 const DEFAULT_EDITOR_USERNAME_PATTERNS = [
     /^mphil\d*$/i,
@@ -1703,50 +1703,77 @@ function isEditorIdentity(user) {
 const ADMIN_RANK_THRESHOLDS = {
     classique: {
         'rues-celebres': [60, 100, 140, 180],
-        'quartiers-ville': [60, 100, 140, 180],
+        'arrondissements-ville': [60, 100, 140, 180],
+        'lignes-transports-idf': [60, 100, 140, 180],
         'rues-principales': [50, 90, 130, 170],
-        quartier: [40, 80, 120, 160],
+        arrondissement: [40, 80, 120, 160],
         ville: [30, 70, 110, 150],
         monuments: [40, 80, 120, 160],
     },
     marathon: {
         'rues-celebres': [10, 20, 35, 55],
-        'quartiers-ville': [10, 20, 35, 55],
+        'arrondissements-ville': [10, 20, 35, 55],
+        'lignes-transports-idf': [10, 20, 35, 55],
         'rues-principales': [9, 18, 30, 48],
-        quartier: [6, 11, 20, 31],
         ville: [8, 16, 28, 44],
         monuments: [9, 18, 30, 46],
     },
     chrono: {
         'rues-celebres': [7, 11, 16, 22],
-        'quartiers-ville': [7, 11, 16, 22],
+        'arrondissements-ville': [7, 11, 16, 22],
+        'lignes-transports-idf': [7, 11, 16, 22],
         'rues-principales': [6, 10, 14, 19],
-        quartier: [5, 8, 12, 16],
+        arrondissement: [5, 8, 12, 16],
         ville: [4, 7, 10, 14],
         monuments: [5, 8, 12, 16],
     },
 };
-const ADMIN_RANK_NAMES = ['Touriste', 'Minot', 'Habitué du Vieux-Port', 'Vrai Marseillais', 'Maire de la Ville'];
+const ADMIN_RANK_NAMES = ['Touriste', 'Titi Parisien', 'Habitué des Quais', 'Vrai Parigot', 'Préfet de Paris'];
+const ADMIN_RANK_GAME_TYPES = ['classique', 'marathon', 'chrono'];
+const ADMIN_RANK_ZONES = ['rues-celebres', 'rues-principales', 'arrondissement', 'monuments', 'arrondissements-ville', 'lignes-transports-idf'];
 
-function getBestRankForAdmin(modeStats) {
-    let bestLevel = 0;
-    for (const entry of Array.isArray(modeStats) ? modeStats : []) {
-        const gameType = String(entry?.game_type || '');
-        const mode = String(entry?.mode || '');
-        const thresholds = ADMIN_RANK_THRESHOLDS[gameType]?.[mode];
-        if (!thresholds) {
-            continue;
-        }
-        const score = gameType === 'classique'
-            ? Number(entry.high_score || 0)
-            : Number(entry.best_items_correct || entry.high_score || 0);
-        thresholds.forEach((threshold, index) => {
-            if (score >= threshold) {
-                bestLevel = Math.max(bestLevel, index + 1);
-            }
-        });
+function buildAdminArrondissementMarathonThresholds(maxItems) {
+    const total = Math.max(1, Number.parseInt(maxItems, 10) || 55);
+    const titi = Math.min(total, Math.max(1, Math.ceil(0.1 * total)));
+    const habitue = Math.min(total, Math.max(titi + 1, Math.ceil(0.2 * total)));
+    const vrai = Math.min(total, Math.max(habitue + 1, Math.ceil(0.35 * total)));
+    const prefet = Math.min(total, Math.max(vrai + 1, Math.ceil(0.55 * total)));
+    return [titi, habitue, vrai, prefet];
+}
+
+function getAdminRankThresholds(entry) {
+    if (entry.game_type === 'marathon' && entry.mode === 'arrondissement') {
+        return buildAdminArrondissementMarathonThresholds(entry.best_items_total || entry.items_total || 55);
     }
-    return ADMIN_RANK_NAMES[bestLevel];
+    return ADMIN_RANK_THRESHOLDS[entry.game_type]?.[entry.mode] || null;
+}
+
+function getProfileRankForAdmin(modeStats) {
+    const combos = new Map(
+        (Array.isArray(modeStats) ? modeStats : []).map((entry) => [
+            `${entry.mode}|${entry.game_type}`,
+            entry,
+        ])
+    );
+    for (let level = ADMIN_RANK_NAMES.length - 1; level >= 1; level -= 1) {
+        const hasReachedLevel = ADMIN_RANK_GAME_TYPES.every((gameType) =>
+            ADMIN_RANK_ZONES.every((mode) => {
+                const entry = combos.get(`${mode}|${gameType}`);
+                const thresholds = entry ? getAdminRankThresholds(entry) : null;
+                if (!thresholds) {
+                    return false;
+                }
+                const score = gameType === 'classique'
+                    ? Number(entry.high_score || 0)
+                    : Number(entry.best_items_correct || entry.high_score || 0);
+                return score >= thresholds[level - 1];
+            })
+        );
+        if (hasReachedLevel) {
+            return ADMIN_RANK_NAMES[level];
+        }
+    }
+    return ADMIN_RANK_NAMES[0];
 }
 
 const SCORE_MODE_ALIASES = {
@@ -2275,7 +2302,7 @@ app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(a
             createdAt: user.created_at,
             gamesPlayed: Number(user.games_played || 0),
             lastGameAt: user.last_game_at,
-            rank: getBestRankForAdmin(user.modes),
+            rank: getProfileRankForAdmin(user.modes),
             dailyDaysPlayed: Number(user.daily_days_played || 0),
             dailySuccesses: Number(user.daily_successes || 0),
             dailyFrequency: Math.min(

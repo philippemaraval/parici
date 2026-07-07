@@ -1,7 +1,7 @@
 const REFERRAL_EVENTS = new Set([
   'daily_completed',
-  'rank_changed_minot',
-  'rank_changed_vrai_marseillais',
+  'rank_changed_titi_parisien',
+  'rank_changed_vrai_parigot',
 ]);
 
 const REFERRAL_BADGES = {
@@ -103,7 +103,7 @@ function createReferralService(db) {
       };
     }
 
-    if (eventType === 'rank_changed_minot') {
+    if (eventType === 'rank_changed_titi_parisien') {
       if (!referral.tier1_completed_at) {
         return {
           linked: true,

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiches éditoriales | Administration Parici</title>
+  <meta name="description" content="Administration des fiches éditoriales des rues de Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
+  <link rel="stylesheet" href="/admin/admin.css?v=20260706-admin-polish">
+</head>
+
+<body>
+  <main class="admin-shell">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/" aria-current="page">Parici</a>
+        <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
+    <header class="admin-header">
+      <div class="page-heading">
+        <div>
+          <p class="admin-kicker">Parici / Fiches</p>
+          <h1>Fiches éditoriales</h1>
+          <p class="admin-subtitle">Sélectionnez une rue, rédigez sa présentation puis choisissez explicitement si elle doit apparaître dans la liste active.</p>
+        </div>
+        <a class="btn btn-back" href="/admin/parici/">Retour à Parici</a>
+      </div>
+      <p id="global-status" class="status status--info" role="status" aria-live="polite">Connectez-vous avec un compte éditeur.</p>
+    </header>
+
+    <section id="login-section" class="card">
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Accès sécurisé</p>
+          <h2>Se connecter</h2>
+          <p class="muted">Cet espace est réservé aux comptes disposant du rôle éditeur ou administrateur.</p>
+        </div>
+      </div>
+      <form id="login-form" class="form-grid">
+        <label>
+          Pseudo
+          <input id="login-username" type="text" autocomplete="username" spellcheck="false" required>
+        </label>
+        <label>
+          Mot de passe
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-btn" type="submit" class="btn btn-primary">Se connecter</button>
+      </form>
+    </section>
+
+    <section id="editor-section" class="hidden">
+      <div class="card toolbar">
+        <div class="session-card">
+          <span class="session-avatar">P</span>
+          <div>
+            <strong id="session-user">-</strong>
+            <span id="session-role" class="role-badge">-</span>
+            <p class="muted">Session active</p>
+          </div>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refresh-content-btn" type="button" class="btn">Actualiser</button>
+          <button id="logout-btn" type="button" class="btn btn-quiet">Se déconnecter</button>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="card-eyebrow">Édition</p>
+            <h2>Modifier une fiche</h2>
+            <p class="muted">Le texte et l’appartenance à une liste sont deux données distinctes. Enregistrer la fiche ne l’ajoute pas automatiquement au jeu.</p>
+          </div>
+        </div>
+        <div class="notice notice--info">
+          Commencez par choisir le type de rue. La liste de gauche rassemble les rues déjà présentes dans la liste active ou possédant une fiche.
+        </div>
+        <div class="field-row">
+          <label for="info-mode-select">
+            Type de fiche
+            <select id="info-mode-select">
+              <option value="famous">Rues célèbres</option>
+              <option value="main">Rues principales</option>
+            </select>
+          </label>
+          <label for="street-search-input">
+            Rechercher une rue
+            <input id="street-search-input" type="search" placeholder="Ex. : rue de Rome" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="editor-grid">
+          <div class="street-picker">
+            <div class="field-heading">
+              <label for="street-select">Rue à modifier</label>
+              <span id="street-select-count" class="count-pill">0 rue</span>
+            </div>
+            <select id="street-select" size="18"></select>
+          </div>
+          <div class="street-editor">
+            <label for="street-name-input">
+              Nom de la rue
+              <input id="street-name-input" type="text" placeholder="Ex. : rue de Rome" autocomplete="off">
+            </label>
+            <label for="street-info-text">
+              Texte de la fiche
+              <textarea id="street-info-text" rows="14" placeholder="Présentez l’histoire, l’origine du nom ou les particularités de cette rue…"></textarea>
+              <span class="field-help">Le texte peut rester vide si vous souhaitez uniquement réserver le nom de la rue.</span>
+            </label>
+            <div class="button-row">
+              <button id="save-street-info-btn" type="button" class="btn btn-primary">Enregistrer la fiche</button>
+              <button id="add-street-to-list-btn" type="button" class="btn">Ajouter aux rues célèbres</button>
+              <button id="remove-street-from-list-btn" type="button" class="btn btn-quiet">Retirer des rues célèbres</button>
+              <button id="delete-street-info-btn" type="button" class="btn btn-danger">Supprimer la fiche</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="/admin/admin.js?v=20260706-admin-polish"></script>
+</body>
+
+</html>

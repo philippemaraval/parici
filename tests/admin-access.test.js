@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const server = fs.readFileSync(path.join(root, "backend/server.js"), "utf8");
-const adminJs = fs.readFileSync(path.join(root, "admin/admin.js"), "utf8");
+const adminHomeJs = fs.readFileSync(path.join(root, "admin/home.js"), "utf8");
 const adminHtml = fs.readFileSync(path.join(root, "admin/index.html"), "utf8");
 const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
 
@@ -22,10 +22,13 @@ test("all editor routes require an authenticated administrator", () => {
   });
 });
 
-test("admin UI rejects non-admin accounts and exposes user management", () => {
-  assert.match(adminJs, /if \(!me\?\.canManageUsers\)/);
-  assert.match(adminHtml, /href="\/admin\/users\.html">Gérer les utilisateurs</);
-  assert.doesNotMatch(adminHtml, /id="manage-users-link"[^>]*\bhidden\b/);
+test("admin home rejects non-editor accounts and exposes user management for admins", () => {
+  assert.match(adminHomeJs, /if \(!me\?\.canEdit\)/);
+  assert.match(adminHomeJs, /state\.canManageUsers = Boolean\(me\.canManageUsers\)/);
+  assert.match(adminHomeJs, /usersAdminCard\?\.classList\.toggle\("hidden", !state\.canManageUsers\)/);
+  assert.match(adminHtml, /href="\/admin\/users\.html">Utilisateurs</);
+  assert.match(adminHtml, /id="manage-users-link"[^>]*\bhidden\b/);
+  assert.match(adminHtml, /id="users-admin-card"[^>]*\bhidden\b/);
 });
 
 test("database bootstrap restores MPhil as administrator", () => {

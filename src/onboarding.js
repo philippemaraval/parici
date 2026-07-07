@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { fetchWithTimeout } from "./api-client.js";
 
 const ONBOARDING_SEEN_KEY = "camino-paris-onboarding-seen";
 const ONBOARDING_LEGACY_KEY = "camino-paris-onboarded";
@@ -182,7 +183,7 @@ function parseVisitsPayload(payload) {
 
 async function fetchVisits(url, options) {
   try {
-    const response = await fetch(url, options);
+    const response = await fetchWithTimeout(url, options, { timeoutMs: 8000 });
     if (!response.ok) {
       return null;
     }

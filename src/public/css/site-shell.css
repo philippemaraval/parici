@@ -35,7 +35,7 @@
   font-size: 11px;
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: .01em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -85,7 +85,7 @@
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: .03em;
+  letter-spacing: 0;
   text-transform: uppercase;
   pointer-events: none;
   box-shadow: 0 1px 6px rgba(0, 0, 0, .08);
@@ -103,7 +103,7 @@
     "sync social"
     "credit social";
   align-items: start;
-  gap: 3px 8px;
+  gap: 4px 10px;
   width: 100%;
   max-width: 980px;
   margin: 12px auto 6px;
@@ -118,19 +118,19 @@
 .site-footer__visitors {
   grid-area: visitors;
   color: #12297a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .site-footer__sync {
   grid-area: sync;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .site-footer__credit {
   grid-area: credit;
   overflow: hidden;
-  font-size: 10px;
+  font-size: 11px;
   font-style: italic;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -149,9 +149,9 @@
   min-height: 24px;
   padding: 0 7px;
   border: 1px solid rgba(176, 184, 196, .45);
-  border-radius: 999px;
+  border-radius: 8px;
   color: #7a8da3;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-decoration: none;
 }
@@ -166,7 +166,7 @@
     linear-gradient(135deg, #fbf8f1 0, #edf1fb 100%);
   color: #1e293b;
   font-family: "Nunito", system-ui, -apple-system, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -186,7 +186,7 @@
   color: #a85a00;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: .09em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -210,7 +210,7 @@
   margin: 10px auto 0;
   padding: 10px 14px;
   border: 1px solid rgba(18, 41, 122, .12);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(255, 252, 247, .72);
   box-shadow: 0 4px 14px rgba(18, 41, 122, .07);
 }
@@ -243,13 +243,20 @@
 
 .site-shell-page .site-header__title {
   font-size: 22px;
-  letter-spacing: -.03em;
+  letter-spacing: 0;
 }
 
 .site-shell-page .site-header__subtitle {
   color: #64748b;
   font-size: 11px;
-  letter-spacing: .01em;
+  letter-spacing: 0;
+}
+
+.site-header__control:focus-visible,
+.site-nav a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 4px rgba(18, 41, 122, 0.2);
 }
 
 @media (max-width: 900px) {
@@ -271,7 +278,7 @@
     margin: 8px 0 0;
     padding: 5px;
     border: 1px solid rgba(18, 41, 122, .16);
-    border-radius: 12px;
+    border-radius: 8px;
     background: rgba(255, 252, 247, .95);
     box-shadow: 0 5px 18px rgba(18, 41, 122, .12);
   }
@@ -282,7 +289,7 @@
     border-radius: 7px;
     color: #12297a;
     font-family: "Nunito", system-ui, sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     line-height: 1.5;
     text-align: center;
@@ -297,11 +304,6 @@
   .site-nav a.is-active--daily {
     background: #f2a900;
     color: #422b00;
-  }
-
-  .site-nav a.is-active--explorer {
-    background: #1f9d66;
-    color: #fff;
   }
 
   .site-nav a.is-active--utility {

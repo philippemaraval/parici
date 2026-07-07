@@ -5,6 +5,7 @@
   "scripts": {
     "sync-osm": "node scripts/sync_osm.js",
     "sync-transit": "node scripts/sync_paris_transit_lines.js",
+    "validate:osm": "node scripts/validate_osm_outputs.js",
     "daily:manifest": "node scripts/generate_daily_manifest.js",
     "daily:streetview": "node scripts/generate_daily_streetview_images.js",
     "daily:audit": "node scripts/audit_daily_images.js",

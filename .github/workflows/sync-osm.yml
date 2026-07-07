@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: sync-osm
@@ -25,6 +24,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: main
           token: ${{ secrets.OSM_SYNC_PR_TOKEN || github.token }}
 
       - name: Setup Node.js
@@ -40,8 +40,7 @@ jobs:
         run: node scripts/sync_osm.js
 
       - name: Validate generated files
-        run: |
-          node -e "const fs=require('fs'); for (const file of ['data/paris_rues_light.geojson','data/paris_rues_enrichi.geojson','data/paris_arrondissements.geojson','data/paris_monuments.geojson','backend/data/paris_rues_light.geojson','backend/data/paris_arrondissements.geojson','backend/data/paris_monuments.geojson','backend/data/streets_index.json','data/map_sync_meta.json']) { const parsed=JSON.parse(fs.readFileSync(file,'utf8')); if (!parsed) throw new Error(file + ' is empty'); }"
+        run: npm run validate:osm
 
       - name: Check for changes
         id: check
@@ -55,8 +54,8 @@ jobs:
             echo "diff_summary=$ADDED" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit admin sync to main
-        if: steps.check.outputs.changed == 'true' && github.event_name == 'workflow_dispatch'
+      - name: Commit synchronized data to main
+        if: steps.check.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -71,31 +70,16 @@ jobs:
             backend/data/paris_monuments.geojson \
             backend/data/streets_index.json
           git commit -m "sync: update Paris street data from OSM"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git pull --rebase origin main
+          git push origin "HEAD:main"
 
-      - name: Create Pull Request
-        if: steps.check.outputs.changed == 'true' && github.event_name != 'workflow_dispatch'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.OSM_SYNC_PR_TOKEN || github.token }}
-          commit-message: "sync: update Paris street data from OSM"
-          title: "🗺️ Weekly Paris OSM Street Sync"
-          body: |
-            Automated weekly sync of Paris street data from OpenStreetMap.
-
-            **Changes:** ${{ steps.check.outputs.diff_summary }}
-
-            This PR was created automatically by the `sync-osm` GitHub Action.
-          branch: osm-sync-auto
-          delete-branch: true
-          labels: osm-sync
-          add-paths: |
-            data/paris_rues_light.geojson
-            data/paris_rues_enrichi.geojson
-            data/paris_arrondissements.geojson
-            data/paris_monuments.geojson
-            data/map_sync_meta.json
-            backend/data/paris_rues_light.geojson
-            backend/data/paris_arrondissements.geojson
-            backend/data/paris_monuments.geojson
-            backend/data/streets_index.json
+      - name: Trigger Render deploy
+        if: steps.check.outputs.changed == 'true'
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "No render deploy hook configured; skipping deploy trigger."
+            exit 0
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"

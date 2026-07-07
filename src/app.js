@@ -98,6 +98,11 @@ import {
 } from "./daily-runtime.js";
 import { clearCurrentUserFromStorage, loadCurrentUserFromStorage, saveCurrentUserToStorage } from "./auth.js";
 import { computeItemPoints, sampleWithoutReplacement, shuffle } from "./session.js";
+import {
+  fetchWithStartupRetry,
+  fetchWithTimeout,
+  warmApiConnection,
+} from "./api-client.js";
 
 let FAMOUS_STREET_INFOS = {};
 let MAIN_STREET_INFOS = {};
@@ -114,6 +119,7 @@ const DEFAULT_REMINDER_CONFIG = {
   minute: 0,
   timezone: "Europe/Paris",
 };
+const DAILY_REMINDER_INTENT_PREFIX = "camino_paris_daily_reminder_enabled_v1";
 const MAP_REGION_MAX_BOUNDS = [
   [48.25, 1.3], // SW: terminus franciliens occidentaux et méridionaux
   [49.32, 3.45], // NE: terminus franciliens septentrionaux et orientaux
@@ -275,9 +281,11 @@ async function loadStreetInfosFromStaticFile() {
 }
 
 async function loadPublicContentFromApi() {
-  const response = await fetch(`${API_URL}/api/content/public`, {
-    cache: "no-store",
-  });
+  const response = await fetchWithStartupRetry(
+    `${API_URL}/api/content/public`,
+    { cache: "no-store" },
+    { timeoutMs: 9000, retryDelaysMs: [1000] },
+  );
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);
   }
@@ -301,11 +309,7 @@ function warmBackendConnection() {
     return backendWarmupPromise;
   }
 
-  backendWarmupPromise = fetch(`${API_URL}/api/health?prewarm=1`, {
-    cache: "no-store",
-  })
-    .then((response) => response.ok)
-    .catch(() => !1)
+  backendWarmupPromise = warmApiConnection(API_URL)
     .finally(() => {
       backendWarmupPromise = null;
     });
@@ -314,10 +318,14 @@ function warmBackendConnection() {
 }
 
 function checkBackendAvailability() {
-  return fetch(`${API_URL}/api/health`, {
-    method: "HEAD",
-    cache: "no-store",
-  }).then((response) => {
+  return fetchWithTimeout(
+    `${API_URL}/api/health`,
+    {
+      method: "HEAD",
+      cache: "no-store",
+    },
+    { timeoutMs: 6000 },
+  ).then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -501,6 +509,77 @@ function getPushSubscriptionEndpoint(subscription) {
   return typeof subscription?.endpoint === "string" ? subscription.endpoint.trim() : "";
 }
 
+function getDailyReminderIntentKey() {
+  const userId = Number.parseInt(currentUser?.id, 10);
+  return userId > 0 ? `${DAILY_REMINDER_INTENT_PREFIX}:${userId}` : "";
+}
+
+function hasDailyReminderIntent() {
+  const key = getDailyReminderIntentKey();
+  if (!key) return false;
+  try {
+    return localStorage.getItem(key) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+function setDailyReminderIntent(enabled) {
+  const key = getDailyReminderIntentKey();
+  if (!key) return;
+  try {
+    if (enabled) {
+      localStorage.setItem(key, "1");
+    } else {
+      localStorage.removeItem(key);
+    }
+  } catch (error) {
+    console.warn("Daily reminder preference could not be persisted.", error);
+  }
+}
+
+function hasPushKeyMismatch(subscription, expectedPublicKey) {
+  const existingKeyBuffer = subscription?.options?.applicationServerKey;
+  if (!existingKeyBuffer) return true;
+  const existingKey = new Uint8Array(existingKeyBuffer);
+  const expectedKey = toPushServerKeyUint8Array(expectedPublicKey);
+  if (existingKey.length !== expectedKey.length) return true;
+  return existingKey.some((value, index) => value !== expectedKey[index]);
+}
+
+async function savePushSubscription(subscription) {
+  const response = await fetchWithTimeout(
+    `${API_URL}/api/notifications/subscribe`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+      body: JSON.stringify({ subscription }),
+    },
+    { timeoutMs: 12000 },
+  );
+  if (!response.ok) {
+    throw await buildApiError(response, `HTTP ${response.status}`);
+  }
+}
+
+async function ensureCurrentPushSubscription(registration, config) {
+  let subscription = await registration.pushManager.getSubscription();
+  if (subscription && hasPushKeyMismatch(subscription, config.publicKey)) {
+    await subscription.unsubscribe().catch(() => { });
+    subscription = null;
+  }
+  if (!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: toPushServerKeyUint8Array(config.publicKey),
+    });
+  }
+  return subscription;
+}
+
 function handleReminderAuthError() {
   setDailyReminderStatus("Session expirée. Reconnectez-vous pour gérer les rappels.", "error");
   setDailyReminderButtons({
@@ -538,7 +617,11 @@ async function getNotificationConfig(forceReload = false) {
     return notificationConfigCache;
   }
 
-  const response = await fetch(`${API_URL}/api/notifications/public-key`);
+  const response = await fetchWithStartupRetry(
+    `${API_URL}/api/notifications/public-key`,
+    {},
+    { timeoutMs: 10000 },
+  );
   if (!response.ok) {
     throw await buildApiError(response, `HTTP ${response.status}`);
   }
@@ -558,11 +641,15 @@ async function fetchNotificationStatus(endpoint = "") {
     query.set("endpoint", endpoint);
   }
   const suffix = query.toString() ? `?${query.toString()}` : "";
-  const response = await fetch(`${API_URL}/api/notifications/status${suffix}`, {
-    headers: {
-      Authorization: `Bearer ${currentUser.token}`,
+  const response = await fetchWithStartupRetry(
+    `${API_URL}/api/notifications/status${suffix}`,
+    {
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
     },
-  });
+    { timeoutMs: 10000 },
+  );
 
   if (!response.ok) {
     throw await buildApiError(response, `HTTP ${response.status}`);
@@ -576,12 +663,14 @@ async function refreshDailyReminderControls() {
   if (!statusEl || !enableBtn || !disableBtn) {
     return;
   }
+  const reminderCard = statusEl.closest(".daily-reminder-card");
+  const hasAuthenticatedUser = Boolean(currentUser && currentUser.token);
+  reminderCard?.classList.toggle("hidden", !hasAuthenticatedUser);
 
   setDailyReminderStatus("Chargement…");
   setDailyReminderButtons({ loading: true });
 
-  if (!(currentUser && currentUser.token)) {
-    setDailyReminderStatus("Connectez-vous pour gérer le rappel Daily.", "error");
+  if (!hasAuthenticatedUser) {
     setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
     return;
   }
@@ -633,16 +722,31 @@ async function refreshDailyReminderControls() {
   }
 
   try {
-    const browserSubscription = await registration.pushManager.getSubscription();
-    const browserEndpoint = getPushSubscriptionEndpoint(browserSubscription);
+    let browserSubscription = await registration.pushManager.getSubscription();
+    let browserEndpoint = getPushSubscriptionEndpoint(browserSubscription);
     const serverStatus = await fetchNotificationStatus(browserEndpoint);
     const serverSubscribed = Boolean(serverStatus?.subscribed);
-    const isSubscribed = Boolean(serverStatus?.currentSubscribed && browserEndpoint);
+    let isSubscribed = Boolean(serverStatus?.currentSubscribed && browserEndpoint);
+    if (isSubscribed) {
+      setDailyReminderIntent(true);
+    }
 
     if (browserSubscription && serverStatus?.staleVapidKey) {
       await browserSubscription.unsubscribe().catch(() => { });
-      setDailyReminderStatus("Rappel à réactiver après mise à jour de l'application.");
-      setDailyReminderButtons({ canEnable: true, canDisable: false, loading: false });
+      browserSubscription = null;
+      browserEndpoint = "";
+      isSubscribed = false;
+    }
+
+    if (
+      hasDailyReminderIntent() &&
+      Notification.permission === "granted" &&
+      !isSubscribed
+    ) {
+      browserSubscription = await ensureCurrentPushSubscription(registration, config);
+      await savePushSubscription(browserSubscription);
+      setDailyReminderStatus("Rappel quotidien actif et vérifié.", "success");
+      setDailyReminderButtons({ canEnable: false, canDisable: true, loading: false });
       return;
     }
 
@@ -719,63 +823,9 @@ async function enableDailyReminder() {
       throw new Error("Missing service worker registration");
     }
 
-    let subscription = await registration.pushManager.getSubscription();
-
-    // Recycle stale subscription when VAPID keys have changed (e.g. after server redeploy).
-    if (subscription) {
-      try {
-        const existingKeyBuffer = subscription.options?.applicationServerKey;
-        const expectedKey = toPushServerKeyUint8Array(config.publicKey);
-        let keyMismatch = false;
-
-        if (existingKeyBuffer) {
-          const existingKey = new Uint8Array(existingKeyBuffer);
-          if (existingKey.length !== expectedKey.length) {
-            keyMismatch = true;
-          } else {
-            for (let i = 0; i < existingKey.length; i += 1) {
-              if (existingKey[i] !== expectedKey[i]) {
-                keyMismatch = true;
-                break;
-              }
-            }
-          }
-        } else {
-          // Cannot verify key — treat as stale to be safe.
-          keyMismatch = true;
-        }
-
-        if (keyMismatch) {
-          console.warn("Push subscription VAPID key mismatch — recycling subscription.");
-          await subscription.unsubscribe().catch(() => { });
-          subscription = null;
-        }
-      } catch (keyCheckError) {
-        console.warn("Push subscription key check failed — recycling subscription.", keyCheckError);
-        await subscription.unsubscribe().catch(() => { });
-        subscription = null;
-      }
-    }
-
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: toPushServerKeyUint8Array(config.publicKey),
-      });
-    }
-
-    const response = await fetch(`${API_URL}/api/notifications/subscribe`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${currentUser.token}`,
-      },
-      body: JSON.stringify({ subscription }),
-    });
-
-    if (!response.ok) {
-      throw await buildApiError(response, `HTTP ${response.status}`);
-    }
+    const subscription = await ensureCurrentPushSubscription(registration, config);
+    await savePushSubscription(subscription);
+    setDailyReminderIntent(true);
 
     const scheduleLabel = formatReminderTimeLabel(config.reminder || DEFAULT_REMINDER_CONFIG);
     showMessage(`Rappel Daily activé pour ${scheduleLabel}.`, "success");
@@ -803,16 +853,20 @@ async function disableDailyReminder() {
     const registration = await ensureServiceWorkerRegistration();
     const subscription = registration ? await registration.pushManager.getSubscription() : null;
 
-    await fetch(`${API_URL}/api/notifications/unsubscribe`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${currentUser.token}`,
+    await fetchWithTimeout(
+      `${API_URL}/api/notifications/unsubscribe`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+        body: JSON.stringify({
+          endpoint: subscription?.endpoint || "",
+        }),
       },
-      body: JSON.stringify({
-        endpoint: subscription?.endpoint || "",
-      }),
-    }).then(async (response) => {
+      { timeoutMs: 12000 },
+    ).then(async (response) => {
       if (!response.ok) {
         throw await buildApiError(response, `HTTP ${response.status}`);
       }
@@ -822,6 +876,7 @@ async function disableDailyReminder() {
       await subscription.unsubscribe().catch(() => { });
     }
 
+    setDailyReminderIntent(false);
     showMessage("Rappel Daily désactivé.", "info");
   } catch (error) {
     console.warn("Disable daily reminder failed:", error);
@@ -1015,6 +1070,7 @@ let sessionStreets = [],
   dailyPendingGuessLayers = [],
   dailyStreetMidpointMarker = null,
   dailyStreetMidpointRenderer = null,
+  dailyStreetMidpointByName = new Map(),
   messageTimeoutId = null,
   currentUser = null,
   isLectureMode = !1,
@@ -2203,11 +2259,11 @@ function updateTargetPanelTitle() {
   (isLectureMode
     ? setTargetPanelTitleText(
       "monuments" === e
-        ? "Monument à explorer"
+        ? "Monument à lire"
         : "arrondissements-ville" === e
-          ? "Quartier à explorer"
+          ? "Quartier à lire"
           : "lignes-transports-idf" === e
-            ? "Ligne à explorer"
+            ? "Ligne à lire"
           : "Recherche de rue",
     )
     : setTargetPanelTitleText(
@@ -2828,6 +2884,9 @@ function initUI() {
   const setCustomSelectOpen = (list, open) => {
     if (!list) return;
     list.classList.toggle("visible", open);
+    const buttonId = list.id.replace("-list", "-button");
+    const button = document.getElementById(buttonId);
+    button?.setAttribute("aria-expanded", open ? "true" : "false");
     const infoBlock = list.closest(".info-block");
     infoBlock && infoBlock.classList.toggle("custom-select-open", open);
   };
@@ -2871,6 +2930,55 @@ function initUI() {
     v = document.getElementById("game-mode-select-list"),
     f = y ? y.querySelector(".custom-select-label") : null,
     b = document.getElementById("game-mode-select");
+  const initializeCustomSelectAccessibility = (button, list) => {
+    if (!button || !list) return;
+    const getItems = () => Array.from(list.querySelectorAll("li"));
+    const nativeSelect = document.getElementById(list.id.replace("-list", ""));
+    getItems().forEach((item) => {
+      item.setAttribute("role", "option");
+      item.setAttribute(
+        "aria-selected",
+        item.dataset.value === nativeSelect?.value ? "true" : "false",
+      );
+      item.tabIndex = -1;
+      item.addEventListener("click", () => {
+        getItems().forEach((candidate) => {
+          candidate.setAttribute("aria-selected", candidate === item ? "true" : "false");
+        });
+      });
+    });
+    button.addEventListener("keydown", (event) => {
+      if (!["ArrowDown", "Enter", " "].includes(event.key)) return;
+      event.preventDefault();
+      setCustomSelectOpen(list, true);
+      const items = getItems();
+      (items.find((item) => item.getAttribute("aria-selected") === "true") || items[0])?.focus();
+    });
+    list.addEventListener("keydown", (event) => {
+      const items = getItems();
+      const currentIndex = items.indexOf(document.activeElement);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setCustomSelectOpen(list, false);
+        button.focus();
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        document.activeElement?.click();
+        button.focus();
+        return;
+      }
+      if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
+      event.preventDefault();
+      const offset = event.key === "ArrowDown" ? 1 : -1;
+      const nextIndex = Math.max(0, Math.min(items.length - 1, currentIndex + offset));
+      items[nextIndex]?.focus();
+    });
+  };
+  initializeCustomSelectAccessibility(p, g);
+  initializeCustomSelectAccessibility(y, v);
+  initializeCustomSelectAccessibility(i, l);
   (y &&
     v &&
     b &&
@@ -3169,16 +3277,25 @@ function initUI() {
     }),
     o &&
     o.addEventListener("click", async () => {
-      E("", "");
+      E("Connexion au serveur…", "");
+      o.disabled = true;
       const e = (c?.value || "").trim(),
         t = m?.value || "";
       if (e && t)
         try {
-          const r = await fetch(API_URL + "/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: e, password: t }),
-          }),
+          const r = await fetchWithStartupRetry(
+            API_URL + "/api/login",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username: e, password: t }),
+            },
+            {
+              timeoutMs: 15000,
+              retryDelaysMs: [1000, 2500],
+              retryUnsafeMethod: true,
+            },
+          ),
             a = await r.json();
           if (!r.ok)
             return void (401 === r.status
@@ -3190,9 +3307,14 @@ function initUI() {
             E("Connexion réussie !", "success"));
         } catch (e) {
           (console.error("Erreur login :", e),
-            E("Serveur injoignable.", "error"));
+            E("Le serveur met trop de temps à répondre. Réessayez dans un instant.", "error"));
+        } finally {
+          o.disabled = false;
         }
-      else E("Pseudo et mot de passe requis.", "error");
+      else {
+        o.disabled = false;
+        E("Pseudo et mot de passe requis.", "error");
+      }
     }),
     u &&
     u.addEventListener("click", async () => {
@@ -3204,11 +3326,15 @@ function initUI() {
           E("Mot de passe trop court (min. 4 caractères).", "error");
         else
           try {
-            const r = await fetch(API_URL + "/api/register", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username: e, password: t }),
-            }),
+            const r = await fetchWithTimeout(
+              API_URL + "/api/register",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: e, password: t }),
+              },
+              { timeoutMs: 15000 },
+            ),
               a = await r.json();
             if (!r.ok)
               return void (a.error && a.error.includes("already taken")
@@ -3224,7 +3350,7 @@ function initUI() {
               E("Compte créé !", "success"));
           } catch (e) {
             (console.error("Erreur register :", e),
-              E("Serveur injoignable.", "error"));
+              E("Le serveur met trop de temps à répondre. Réessayez dans un instant.", "error"));
           }
       else E("Pseudo et mot de passe requis.", "error");
     }),
@@ -4368,10 +4494,10 @@ function handleStreetClick(e, t, r) {
       p = l[1];
     r && r.latlng && ((m = r.latlng.lng), (p = r.latlng.lat));
     if (!n) {
-      const targetFeatureCollection = buildDailyTargetFeatureCollection(dailyTargetData.streetName);
-      const guessFeatureCollection = buildDailyTargetFeatureCollection(e.properties.name);
-      const targetMidpoint = computeFeatureCollectionMidpoint(targetFeatureCollection);
-      const guessMidpoint = computeFeatureCollectionMidpoint(guessFeatureCollection) || [m, p];
+      const targetMidpoint =
+        getDailyStreetMidpointForName(dailyTargetData.streetName) || o;
+      const guessMidpoint =
+        getDailyStreetMidpointForName(e.properties.name) || [m, p];
       ((s =
         targetMidpoint && guessMidpoint
           ? getDistanceMeters(guessMidpoint[1], guessMidpoint[0], targetMidpoint[1], targetMidpoint[0])
@@ -4422,7 +4548,7 @@ function handleStreetClick(e, t, r) {
       (renderDailyGuessHistory(),
         triggerHaptic('error'),
         showMessage(
-          `❌ Raté ! Distance : ${s >= 1e3 ? `${(s / 1e3).toFixed(1)} km` : `${Math.round(s)} m`}. Plus que ${d} essai${d > 1 ? "s" : ""}.`,
+          `Essai incorrect. Écart entre les milieux : ${s >= 1e3 ? `${(s / 1e3).toFixed(1)} km` : `${Math.round(s)} m`}. Plus que ${d} essai${d > 1 ? "s" : ""}.`,
           "warning",
         ));
     return (
@@ -5015,7 +5141,11 @@ function getDailyStreetMidpointRenderer() {
 }
 function showDailyStreetMidpointMarker(feature, layer) {
   if (!map || !L) return null;
-  const midpoint = computeFeatureCollectionMidpoint(layer?.feature || feature) || getLayerMidpoint(layer);
+  const streetName = feature?.properties?.name || layer?.feature?.properties?.name || "";
+  const midpoint =
+    getDailyStreetMidpointForName(streetName) ||
+    computeFeatureCollectionMidpoint(layer?.feature || feature) ||
+    getLayerMidpoint(layer);
   if (!midpoint) return null;
   const renderer = getDailyStreetMidpointRenderer();
   const strokeWidth = getStreetLayerStrokeWidth(layer);
@@ -5626,9 +5756,11 @@ async function handleDailyModeClick() {
           return;
         }
       }
-      const e = await fetch(API_URL + "/api/daily", {
-        headers: { Authorization: `Bearer ${currentUser.token}` },
-      });
+      const e = await fetchWithStartupRetry(
+        API_URL + "/api/daily",
+        { headers: { Authorization: `Bearer ${currentUser.token}` } },
+        { timeoutMs: 15000, retryDelaysMs: [1000, 2500] },
+      );
       if (!e.ok) throw new Error("Erreur chargement défi");
       startDailySession(await e.json());
     } catch (e) {
@@ -5792,9 +5924,11 @@ async function ensureDailyShareContext(e, t) {
   if (restoreDailyMetaFromStorage(e)) return !0;
   if (!(currentUser && currentUser.token)) return !1;
   try {
-    const t = await fetch(API_URL + "/api/daily", {
-      headers: { Authorization: `Bearer ${currentUser.token}` },
-    });
+    const t = await fetchWithStartupRetry(
+      API_URL + "/api/daily",
+      { headers: { Authorization: `Bearer ${currentUser.token}` } },
+      { timeoutMs: 15000, retryDelaysMs: [1000] },
+    );
     if (!t.ok) return !1;
     const r = await t.json();
     if (!r || !r.streetName) return !1;
@@ -5883,6 +6017,17 @@ function buildDailyTargetFeatureCollection(e) {
     (e) => e && e.properties && normalizeName(e.properties.name) === t && e.geometry,
   );
   return r.length > 0 ? { type: "FeatureCollection", features: r } : null;
+}
+function getDailyStreetMidpointForName(streetName) {
+  const normalizedName = normalizeName(streetName);
+  if (!normalizedName) return null;
+  if (dailyStreetMidpointByName.has(normalizedName)) {
+    return dailyStreetMidpointByName.get(normalizedName);
+  }
+  const featureCollection = buildDailyTargetFeatureCollection(streetName);
+  const midpoint = computeFeatureCollectionMidpoint(featureCollection);
+  dailyStreetMidpointByName.set(normalizedName, midpoint || null);
+  return midpoint;
 }
 function revealDailyTargetStreet(e = !1) {
   if (!dailyTargetData) return;

@@ -5,14 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Parici</title>
+  <meta name="description" content="Découvrez Paris en retrouvant ses rues, arrondissements, monuments et transports sur la carte.">
 
   <!-- Google Fonts : Montserrat (titres), Nunito (texte), JetBrains Mono (chiffres) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://camino-paris.onrender.com" crossorigin>
+  <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Montserrat:wght@600;800&family=Nunito:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap"
     rel="stylesheet">
 
   <!-- Favicons pour toutes les plateformes -->
@@ -35,8 +38,8 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="style.css?v=20260705-header-lines">
-  <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260705-header-lines">
+  <link rel="stylesheet" href="style.css?v=20260707-v040">
+  <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260707-v040">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css">
@@ -62,7 +65,7 @@
           </div>
 
           <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">
-            V0.3.1
+            V0.4.0
           </div>
 
           <!-- Petit statut carte, particulièrement utile sur mobile -->
@@ -70,13 +73,13 @@
             <!-- rempli par le JS -->
           </div>
           <button id="sound-toggle" class="sound-toggle site-header__control site-header__control--sound"
-            title="Activer/désactiver le son">🔊</button>
+            type="button" title="Activer ou désactiver le son" aria-label="Désactiver le son">🔊</button>
           <button id="haptics-toggle" class="haptics-toggle site-header__control site-header__control--haptics"
-            title="Activer/désactiver les vibrations">📳</button>
+            type="button" title="Activer ou désactiver les vibrations" aria-label="Désactiver les vibrations">📳</button>
         </header>
 
         <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
-          <a class="mobile-mode-nav__home" href="/" aria-label="Accueil Camino">Accueil</a>
+          <a class="mobile-mode-nav__home" href="/" aria-label="Accueil Parici">Accueil</a>
           <a href="/?view=camino">Camino</a>
           <a href="/?view=daily">Daily</a>
           <a href="/?view=profile#profile">Profil</a>
@@ -100,17 +103,19 @@
               </div>
 
               <div class="info-block auth-block">
-                <input id="auth-username" type="text" placeholder="Pseudo">
+                <label class="sr-only" for="auth-username">Pseudo</label>
+                <input id="auth-username" type="text" placeholder="Pseudo" autocomplete="username" spellcheck="false">
                 <div class="password-wrapper">
-                  <input id="auth-password" type="password" placeholder="Mot de passe">
+                  <label class="sr-only" for="auth-password">Mot de passe</label>
+                  <input id="auth-password" type="password" placeholder="Mot de passe" autocomplete="current-password">
                   <button type="button" id="toggle-password" class="password-toggle"
                     aria-label="Afficher le mot de passe">👁</button>
                 </div>
-                <div id="auth-feedback" class="auth-feedback"></div>
+                <div id="auth-feedback" class="auth-feedback" role="status" aria-live="polite"></div>
                 <div class="auth-buttons">
-                  <button id="login-btn" class="btn-secondary">Connexion</button>
-                  <button id="register-btn" class="btn-secondary">Inscription</button>
-                  <button id="logout-btn" class="btn-tertiary hidden">Déconnexion</button>
+                  <button id="login-btn" class="btn-secondary" type="button">Se connecter</button>
+                  <button id="register-btn" class="btn-secondary" type="button">Créer un compte</button>
+                  <button id="logout-btn" class="btn-tertiary hidden" type="button">Se déconnecter</button>
                 </div>
               </div>
 
@@ -119,9 +124,9 @@
                 <div id="avatar-selector-modal" class="avatar-selector-modal hidden">
                   <div class="avatar-modal-content">
                     <div class="avatar-modal-header">
-                      <h4>Choisir un Avatar</h4>
+                      <h4>Choisir un avatar</h4>
                       <button class="avatar-modal-close" id="avatar-modal-close" type="button"
-                        aria-label="Fermer la sélection d'avatar">✕</button>
+                        aria-label="Fermer la sélection d’avatar">✕</button>
                     </div>
                     <div id="avatar-grid" class="avatar-grid"></div>
                   </div>
@@ -188,7 +193,7 @@
           <span>Une rue mystère différente chaque jour dans Paris</span>
           <div class="site-mode-intro__details">
             <strong>Retrouvez la même rue mystère que tous les joueurs en 7 essais maximum.</strong>
-            <span>Chaque réponse révèle une distance et une direction pour guider la suivante. Trouvez la rue, partagez votre résultat et comparez votre performance au classement du jour.</span>
+            <span>Chaque réponse compare le milieu de la rue choisie à celui de la rue cible, puis révèle une distance et une direction pour guider votre prochain essai.</span>
           </div>
         </section>
 
@@ -202,7 +207,7 @@
               Objectif : trouver un maximum de rues, vite et juste.
             </div>
           </div>
-          <button id="onboarding-close" class="onboarding-close" title="Fermer">✕</button>
+          <button id="onboarding-close" class="onboarding-close" type="button" title="Fermer" aria-label="Fermer le message de bienvenue">✕</button>
         </div>
 
         <!-- Incitation installation PWA (mobile web uniquement) -->
@@ -237,28 +242,30 @@
           <p class="daily-mode-intro">Trouvez la rue mystère du jour en 7 essais maximum.</p>
 
           <div class="info-block" id="mode-select-block">
-            <label>Zone de jeu <span class="tooltip-icon"
+            <label id="mode-select-label">Zone de jeu <span class="tooltip-icon"
                 data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Ville entière (expert), monuments, quartiers de la ville (difficile) ou transports franciliens.">i</span></label>
 
             <div id="mode-select-wrapper" class="custom-select">
-              <button id="mode-select-button" class="custom-select-button">
+              <button id="mode-select-button" class="custom-select-button" type="button"
+                aria-labelledby="mode-select-label" aria-haspopup="listbox" aria-expanded="false"
+                aria-controls="mode-select-list">
                 <span class="custom-select-label">Rues célèbres</span>
                 <span class="difficulty-pill difficulty-pill--very-easy">Facile</span>
               </button>
-              <ul id="mode-select-list" class="custom-select-list">
-                <li data-value="rues-celebres">Rues célèbres <span
+              <ul id="mode-select-list" class="custom-select-list" role="listbox" aria-labelledby="mode-select-label">
+                <li data-value="rues-celebres" role="option" aria-selected="true" tabindex="-1">Rues célèbres <span
                     class="difficulty-pill difficulty-pill--very-easy">Facile</span></li>
-                <li data-value="rues-principales">Rues principales <span
+                <li data-value="rues-principales" role="option" aria-selected="false" tabindex="-1">Rues principales <span
                     class="difficulty-pill difficulty-pill--easy">Moins Facile</span></li>
-                <li data-value="arrondissement">Rues par arrondissement <span
+                <li data-value="arrondissement" role="option" aria-selected="false" tabindex="-1">Rues par arrondissement <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
-                <li data-value="ville">Ville entière <span
+                <li data-value="ville" role="option" aria-selected="false" tabindex="-1">Ville entière <span
                     class="difficulty-pill difficulty-pill--hard">Difficile</span></li>
-                <li data-value="monuments">Monuments <span
+                <li data-value="monuments" role="option" aria-selected="false" tabindex="-1">Monuments <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
-                <li data-value="arrondissements-ville">Quartiers de la ville <span
+                <li data-value="arrondissements-ville" role="option" aria-selected="false" tabindex="-1">Quartiers de la ville <span
                     class="difficulty-pill difficulty-pill--hard">Difficile</span></li>
-                <li data-value="lignes-transports-idf">Métro, tramway, RER et Transilien <span
+                <li data-value="lignes-transports-idf" role="option" aria-selected="false" tabindex="-1">Métro, tramway, RER et Transilien <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
               </ul>
             </div>
@@ -275,36 +282,40 @@
           </div>
 
           <div class="info-block hidden" id="arrondissement-block">
-            <label for="arrondissement-select">Arrondissement :</label>
+            <label id="arrondissement-select-label" for="arrondissement-select">Arrondissement</label>
 
             <!-- Faux select stylé pour les quartiers (PAS de pastille) -->
             <div id="arrondissement-select-wrapper" class="custom-select">
-              <button id="arrondissement-select-button" class="custom-select-button">
+              <button id="arrondissement-select-button" class="custom-select-button" type="button"
+                aria-labelledby="arrondissement-select-label" aria-haspopup="listbox" aria-expanded="false"
+                aria-controls="arrondissement-select-list">
                 <span class="custom-select-label">Choisissez un arrondissement</span>
               </button>
-              <ul id="arrondissement-select-list" class="custom-select-list"></ul>
+              <ul id="arrondissement-select-list" class="custom-select-list" role="listbox" aria-labelledby="arrondissement-select-label"></ul>
             </div>
             <select id="arrondissement-select" class="native-select"></select>
           </div>
 
           <div class="info-block" id="game-mode-select-block">
-            <label>Type de partie <span class="tooltip-icon"
+            <label id="game-mode-select-label">Type de partie <span class="tooltip-icon"
                 data-tooltip="Classique = 20 rues, sans limite. Marathon = 3 erreurs max. Chrono = 60 secondes. Lecture = mode libre pour apprendre.">i</span></label>
 
             <!-- Faux select stylé -->
             <div id="game-mode-select-wrapper" class="custom-select">
-              <button id="game-mode-select-button" class="custom-select-button">
+              <button id="game-mode-select-button" class="custom-select-button" type="button"
+                aria-labelledby="game-mode-select-label" aria-haspopup="listbox" aria-expanded="false"
+                aria-controls="game-mode-select-list">
                 <span class="custom-select-label">Classique</span>
                 <span class="difficulty-pill gamepill--classique">20 rues</span>
               </button>
-              <ul id="game-mode-select-list" class="custom-select-list">
-                <li data-value="classique">Classique <span class="difficulty-pill gamepill--classique">20 rues</span>
+              <ul id="game-mode-select-list" class="custom-select-list" role="listbox" aria-labelledby="game-mode-select-label">
+                <li data-value="classique" role="option" aria-selected="true" tabindex="-1">Classique <span class="difficulty-pill gamepill--classique">20 rues</span>
                 </li>
-                <li data-value="marathon">Marathon <span class="difficulty-pill gamepill--marathon">3 erreurs
+                <li data-value="marathon" role="option" aria-selected="false" tabindex="-1">Marathon <span class="difficulty-pill gamepill--marathon">3 erreurs
                     max</span></li>
-                <li data-value="chrono">Mode chrono <span class="difficulty-pill gamepill--chrono">1 minute</span>
+                <li data-value="chrono" role="option" aria-selected="false" tabindex="-1">Mode chrono <span class="difficulty-pill gamepill--chrono">1 minute</span>
                 </li>
-                <li data-value="lecture">Lecture <span class="difficulty-pill gamepill--lecture">Apprentissage</span>
+                <li data-value="lecture" role="option" aria-selected="false" tabindex="-1">Lecture <span class="difficulty-pill gamepill--lecture">Apprentissage</span>
                 </li>
               </ul>
             </div>
@@ -320,7 +331,7 @@
 
           <div class="params-actions">
             <button id="friends-challenge-toggle" type="button" class="btn-secondary btn-emphasis--compact friends-challenge-toggle hidden">
-              Défi amis OFF
+              Défi entre amis désactivé
             </button>
             <div id="friends-challenge-serial" class="friends-challenge-serial hidden" aria-live="polite"></div>
           </div>
@@ -328,9 +339,9 @@
 
         <!-- Boutons de session (séparés pour rester visibles en mode mobile session) -->
         <div class="actions-row">
-          <button id="restart-btn" class="btn-primary">Commencer la session</button>
-          <button id="skip-btn" class="btn-skip hidden">Passer</button>
-          <button id="pause-btn" class="btn-secondary hidden">Pause</button>
+          <button id="restart-btn" class="btn-primary" type="button">Commencer la session</button>
+          <button id="skip-btn" class="btn-skip hidden" type="button">Passer</button>
+          <button id="pause-btn" class="btn-secondary hidden" type="button">Pause</button>
         </div>
 
         <!-- Panneau Rue à trouver -->
@@ -352,17 +363,17 @@
 
         <!-- Panneau infos rue -->
         <section id="street-info-panel" class="panel info-panel">
-          <div id="street-info-title" class="panel-title">Infos rues principales</div>
+          <div id="street-info-title" class="panel-title">À propos de cette rue</div>
           <div id="street-info" class="street-info"></div>
         </section>
 
         <!-- Panneau performance : chronos + score -->
         <section class="panel stats-panel">
-          <div class="panel-title">Performance</div>
+          <div class="panel-title">Votre performance</div>
 
           <div class="stats-grid">
             <div class="stats-column stats-column--timers">
-              <div class="stats-subtitle">⏱ Chronos</div>
+              <div class="stats-subtitle">Chronomètres</div>
               <div class="mobile-timer-label">Chrono</div>
               <div class="timers-row">
                 <div class="timer-block">
@@ -377,7 +388,7 @@
             </div>
 
             <div class="stats-column stats-column--score">
-              <div class="stats-subtitle">★ Score</div>
+              <div class="stats-subtitle">Score</div>
 
               <div class="info-block score-block">
                 <div class="info-label"></div>
@@ -436,7 +447,7 @@
         <!-- Panneau leaderboard -->
         <section class="panel leaderboard-panel">
           <details open>
-            <summary class="panel-title">Leaderboard</summary>
+            <summary class="panel-title">Classements</summary>
             <div id="friend-challenge-board-slot" class="friend-challenge-board-slot hidden"></div>
             <div id="leaderboard" class="leaderboard"></div>
           </details>
@@ -450,7 +461,7 @@
 
         <footer class="sidebar-footer site-footer" aria-label="Réseaux sociaux et crédits">
           <p id="visitor-counter" class="sidebar-visitors site-footer__visitors">Visites : —</p>
-          <p id="map-sync-meta" class="sidebar-map-sync site-footer__sync" aria-live="polite">Sync carte : —</p>
+          <p id="map-sync-meta" class="sidebar-map-sync site-footer__sync" aria-live="polite">Carte mise à jour : —</p>
           <p class="sidebar-credit site-footer__credit">Crafted by Philippe Maraval</p>
           <div class="sidebar-social-group sidebar-social-group--right site-footer__social">
             <a class="sidebar-social-link" href="mailto:" aria-label="Contacter le jeu par mail">Mail</a>
@@ -489,7 +500,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script defer src="data_rules.js?v=20260504b"></script>
-  <script defer src="main.js?v=20260705-v031"></script>
+  <script defer src="main.js?v=20260707-v040"></script>
   <script>
     (function () {
       const syncMetaEl = document.getElementById("map-sync-meta");
@@ -530,10 +541,10 @@
         .catch(() => fetchJson("data/map_sync_meta.json"))
         .then((meta) => {
           const formatted = formatSyncDate(meta && meta.lastSyncedAt);
-          syncMetaEl.textContent = formatted ? "Sync carte : " + formatted : "Sync carte : inconnue";
+          syncMetaEl.textContent = formatted ? "Carte mise à jour : " + formatted : "Mise à jour de la carte : inconnue";
         })
         .catch(() => {
-          syncMetaEl.textContent = "Sync carte : inconnue";
+          syncMetaEl.textContent = "Mise à jour de la carte : inconnue";
         });
     })();
   </script>

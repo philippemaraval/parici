@@ -12,6 +12,13 @@ export function updateHapticsUI() {
   }
 
   button.textContent = isHapticsEnabled() ? "📳" : "📴";
+  button.setAttribute(
+    "aria-label",
+    isHapticsEnabled() ? "Désactiver les vibrations" : "Activer les vibrations",
+  );
+  button.title = isHapticsEnabled()
+    ? "Désactiver les vibrations"
+    : "Activer les vibrations";
 }
 
 export function triggerHaptic(type = "click") {

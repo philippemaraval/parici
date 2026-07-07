@@ -18,8 +18,23 @@
       : "https://camino-paris.onrender.com";
 
   function render() {
-    if (soundButton) soundButton.textContent = localStorage.getItem(soundKey) === "off" ? "🔇" : "🔊";
-    if (hapticsButton) hapticsButton.textContent = localStorage.getItem(hapticsKey) === "false" ? "📴" : "📳";
+    if (soundButton) {
+      const enabled = localStorage.getItem(soundKey) !== "off";
+      soundButton.textContent = enabled ? "🔊" : "🔇";
+      soundButton.setAttribute("aria-label", enabled ? "Désactiver le son" : "Activer le son");
+      soundButton.title = enabled ? "Désactiver le son" : "Activer le son";
+    }
+    if (hapticsButton) {
+      const enabled = localStorage.getItem(hapticsKey) !== "false";
+      hapticsButton.textContent = enabled ? "📳" : "📴";
+      hapticsButton.setAttribute(
+        "aria-label",
+        enabled ? "Désactiver les vibrations" : "Activer les vibrations",
+      );
+      hapticsButton.title = enabled
+        ? "Désactiver les vibrations"
+        : "Activer les vibrations";
+    }
   }
 
   soundButton?.addEventListener("click", () => {
@@ -134,9 +149,9 @@
         hour12: false,
         timeZone: "Europe/Paris",
       }).format(parsed);
-      syncMeta.textContent = `Sync carte : ${formatted}`;
+      syncMeta.textContent = `Carte mise à jour : ${formatted}`;
     } catch (error) {
-      syncMeta.textContent = "Sync carte : inconnue";
+      syncMeta.textContent = "Mise à jour de la carte : inconnue";
     }
   }
 

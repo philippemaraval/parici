@@ -1,6 +1,6 @@
 export const VILLE_RANK_AVATAR_DEFINITIONS = [
   {
-    badgeId: "ville_minot",
+    badgeId: "ville_titi",
     emoji: "🚀",
     name: "Astronaute",
     desc: "Atteindre Titi Parisien sur Ville entière",

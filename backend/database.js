@@ -6,12 +6,10 @@ const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
 const SCHEMA_BOOTSTRAP_VERSION = '2026-07-05-mphil-admin';
-const EXPLORER_REMOVALS_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-explorer-removals.sql');
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
 const MPHIL_ADMIN_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260705_restore_mphil_admin.sql');
-const EXPLORER_SEED_SQL_PATHS = [];
 
 // Connect via DATABASE_URL (provided by Render PostgreSQL)
 const pool = new Pool({
@@ -49,36 +47,6 @@ async function markSchemaBootstrapComplete(client) {
 
 async function ping() {
   await pool.query('SELECT 1');
-}
-
-async function seedExplorerRiddles(client) {
-  for (const seedPath of EXPLORER_SEED_SQL_PATHS) {
-    if (!fs.existsSync(seedPath)) {
-      console.warn('Explorer seed SQL not found:', seedPath);
-      continue;
-    }
-
-    const seedSql = fs.readFileSync(seedPath, 'utf8');
-    if (!seedSql.trim()) {
-      continue;
-    }
-
-    await client.query(seedSql);
-  }
-}
-
-async function removeExcludedExplorerRiddles(client) {
-  const tableCheck = await client.query(
-    `SELECT to_regclass('public.explorer_riddles') AS explorer_riddles_table`
-  );
-  if (!tableCheck.rows[0]?.explorer_riddles_table || !fs.existsSync(EXPLORER_REMOVALS_SQL_PATH)) {
-    return;
-  }
-
-  const removalSql = fs.readFileSync(EXPLORER_REMOVALS_SQL_PATH, 'utf8');
-  if (removalSql.trim()) {
-    await client.query(removalSql);
-  }
 }
 
 async function renameUserIfNeeded(client) {
@@ -206,7 +174,6 @@ async function initDb() {
       )
     `);
 
-    await removeExcludedExplorerRiddles(client);
     await renameUserIfNeeded(client);
     await applyReferralSchema(client);
     await applyPushNotificationSchema(client);
@@ -452,84 +419,6 @@ async function initDb() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS explorer_riddles (
-        id SERIAL PRIMARY KEY,
-        way_id INT NOT NULL,
-        street_name_clean VARCHAR(255) NOT NULL,
-        riddle_text TEXT NOT NULL,
-        hint_text TEXT NOT NULL,
-        explanation_text TEXT NOT NULL DEFAULT '',
-        image_url TEXT NOT NULL,
-        latitude DOUBLE PRECISION,
-        longitude DOUBLE PRECISION,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS explorer_user_progress (
-        id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        riddle_id INT REFERENCES explorer_riddles(id) ON DELETE CASCADE,
-        started_at TIMESTAMP NOT NULL,
-        solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        hints_used INT DEFAULT 0,
-        points_earned INT NOT NULL,
-        walking_time_seconds INT DEFAULT 0,
-        client_payload JSONB DEFAULT '{}'::jsonb,
-        CONSTRAINT unique_user_riddle UNIQUE (user_id, riddle_id)
-      )
-    `);
-
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS explorer_leaderboard (
-        id SERIAL PRIMARY KEY,
-        user_id INT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        total_score INT NOT NULL,
-        total_walking_time_seconds INT NOT NULL,
-        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await client.query(`
-      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION
-    `);
-    await client.query(`
-      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION
-    `);
-    await client.query(`
-      ALTER TABLE explorer_riddles ADD COLUMN IF NOT EXISTS explanation_text TEXT NOT NULL DEFAULT ''
-    `);
-    await client.query(`
-      ALTER TABLE explorer_user_progress ADD COLUMN IF NOT EXISTS walking_time_seconds INT DEFAULT 0
-    `);
-    await client.query(`
-      ALTER TABLE explorer_user_progress ADD COLUMN IF NOT EXISTS client_payload JSONB DEFAULT '{}'::jsonb
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_explorer_riddles_way_id
-      ON explorer_riddles (way_id)
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_explorer_riddles_coordinates
-      ON explorer_riddles (latitude, longitude)
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_explorer_progress_user_solved
-      ON explorer_user_progress (user_id, solved_at DESC)
-    `);
-
-    await client.query(`
-      CREATE INDEX IF NOT EXISTS idx_explorer_leaderboard_score
-      ON explorer_leaderboard (total_score DESC, total_walking_time_seconds ASC, completed_at ASC)
-    `);
-
-    await seedExplorerRiddles(client);
 
     // Seed total visits from current unique visitors once.
     // ON CONFLICT avoids duplicate-key crashes on concurrent starts.

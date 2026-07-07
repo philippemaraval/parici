@@ -1,4 +1,5 @@
-const CACHE_NAME = "camino-paris-v17";
+const CACHE_NAME = "camino-paris-v18";
+const NAVIGATION_NETWORK_TIMEOUT_MS = 3500;
 
 const CORE_PRECACHE_URLS = [
   "/",
@@ -6,11 +7,11 @@ const CORE_PRECACHE_URLS = [
   "/regles.html",
   "/arbre-rangs.html",
   "/reset-password.html",
-  "/style.css?v=20260705-header-lines",
-  "/main.js?v=20260705-v031",
+  "/style.css?v=20260707-v040",
+  "/main.js?v=20260707-v040",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
-  "/src/public/css/site-shell.css?v=20260705-header-lines",
-  "/src/public/js/site-shell.js?v=20260609-visit-sessions",
+  "/src/public/css/site-shell.css?v=20260707-v040",
+  "/src/public/js/site-shell.js?v=20260707-v040",
   "/data_rules.js",
   "/site.webmanifest?v=20260628-centered",
   "/apple-touch-icon.png?v=20260628-centered",
@@ -77,9 +78,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-async function networkFirst(request, fallbackKey) {
+async function networkFirst(request, fallbackKey, timeoutMs = 0) {
+  const controller = new AbortController();
+  const timeoutId = timeoutMs > 0
+    ? setTimeout(() => controller.abort(), timeoutMs)
+    : null;
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, { signal: controller.signal });
     if (response && response.ok) {
       const cache = await caches.open(CACHE_NAME);
       cache.put(request, response.clone());
@@ -93,6 +98,8 @@ async function networkFirst(request, fallbackKey) {
       if (fallback) return fallback;
     }
     throw error;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
   }
 }
 
@@ -152,7 +159,9 @@ self.addEventListener("fetch", (event) => {
   const isCdnAsset = CDN_HOSTS.has(url.hostname);
 
   if (isNavigation) {
-    event.respondWith(networkFirst(request, "/index.html"));
+    event.respondWith(
+      networkFirst(request, "/index.html", NAVIGATION_NETWORK_TIMEOUT_MS),
+    );
     return;
   }
 
@@ -169,17 +178,6 @@ self.addEventListener("fetch", (event) => {
   if (isCdnAsset) {
     event.respondWith(cacheFirst(request));
   }
-});
-
-self.addEventListener("sync", (event) => {
-  if (event.tag !== "camino-explorer-sync") return;
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
-      windowClients.forEach((client) => {
-        client.postMessage({ type: "CAMINO_EXPLORER_SYNC" });
-      });
-    }),
-  );
 });
 
 self.addEventListener("push", (event) => {

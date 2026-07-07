@@ -4,17 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camino Paris - Arbre de progression des rangs</title>
-  <meta name="description" content="Visualisez votre progression vers chaque rang global dans Camino Paris.">
+  <title>Progression des rangs | Parici</title>
+  <meta name="description" content="Visualisez votre progression vers chaque rang global dans Parici.">
+  <meta name="theme-color" content="#0c1d57">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
   <link rel="manifest" href="/site.webmanifest?v=20260703-transparent">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Camino Paris">
+  <meta name="apple-mobile-web-app-title" content="Parici">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Montserrat:wght@600;800&family=Nunito:wght@400;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap"
     rel="stylesheet">
   <style>
     :root {
@@ -26,8 +27,8 @@
       --text-muted: #76879f;
       --border: rgba(18, 41, 122, 0.14);
       --shadow: 0 18px 32px rgba(12, 29, 87, 0.12);
-      --radius: 16px;
-      --radius-sm: 10px;
+      --radius: 8px;
+      --radius-sm: 8px;
     }
 
     * {
@@ -78,7 +79,7 @@
       text-decoration: none;
       color: var(--brand-sea-900);
       border: 1px solid rgba(18, 41, 122, 0.28);
-      border-radius: 999px;
+      border-radius: 8px;
       padding: 5px 10px;
       background: rgba(255, 255, 255, 0.72);
     }
@@ -88,7 +89,7 @@
       font-family: "Montserrat", system-ui, sans-serif;
       font-size: clamp(26px, 4.2vw, 36px);
       line-height: 1.05;
-      letter-spacing: -0.02em;
+      letter-spacing: 0;
       color: var(--brand-sea-950);
     }
 
@@ -120,9 +121,7 @@
 
     .independent-panel {
       border-color: rgba(95, 71, 171, 0.22);
-      background:
-        radial-gradient(520px 180px at 100% 0%, rgba(109, 82, 190, 0.12), transparent 65%),
-        #fff;
+      background: #fbfaff;
     }
 
     .independent-head {
@@ -150,14 +149,14 @@
     .independent-label {
       flex: 0 0 auto;
       border: 1px solid rgba(95, 71, 171, 0.28);
-      border-radius: 999px;
+      border-radius: 8px;
       padding: 4px 9px;
       color: #4f388f;
       background: rgba(246, 242, 255, 0.94);
       font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0;
     }
 
     .rank-nav {
@@ -180,7 +179,7 @@
       border: 1px solid rgba(18, 41, 122, 0.18);
       background: rgba(255, 255, 255, 0.95);
       color: var(--brand-sea-950);
-      border-radius: 999px;
+      border-radius: 8px;
       padding: 5px 10px;
       font-size: 11px;
       font-weight: 700;
@@ -213,7 +212,7 @@
     .overview-label {
       font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0;
       color: var(--text-muted);
     }
 
@@ -436,7 +435,7 @@
       font-weight: 800;
       color: var(--brand-sea-950);
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0;
     }
 
     .mode-state {
@@ -578,7 +577,7 @@
       <div class="hero-top">
         <a class="back-link" href="/">← Retour au jeu</a>
       </div>
-      <h1>Arbre de progression des rangs</h1>
+      <h1>Progression des rangs</h1>
       <p id="subtitle" class="subtitle">Chargement du joueur…</p>
       <p id="global-progress-line" class="global-progress-line hidden"></p>
     </header>
@@ -709,19 +708,19 @@
           .replace(/'/g, "&#39;");
       }
 
-      function buildQuartierMarathonThresholds(maxItems) {
+      function buildArrondissementMarathonThresholds(maxItems) {
         const total = Math.max(1, parseInt(maxItems, 10) || 55);
-        const minot = Math.min(total, Math.max(1, Math.ceil(0.1 * total)));
-        const habitue = Math.min(total, Math.max(minot + 1, Math.ceil(0.2 * total)));
+        const titi = Math.min(total, Math.max(1, Math.ceil(0.1 * total)));
+        const habitue = Math.min(total, Math.max(titi + 1, Math.ceil(0.2 * total)));
         const vrai = Math.min(total, Math.max(habitue + 1, Math.ceil(0.35 * total)));
         const maire = Math.min(total, Math.max(vrai + 1, Math.ceil(0.55 * total)));
-        return { M: minot, H: habitue, V: vrai, MV: maire };
+        return { M: titi, H: habitue, V: vrai, MV: maire };
       }
 
       function getTitleThresholds(mode, gameType, maxItems) {
         const modeThresholds = TITLE_THRESHOLDS_BY_MODE[gameType] || TITLE_THRESHOLDS_BY_MODE.classique;
         if (gameType === "marathon" && mode === "arrondissement") {
-          return buildQuartierMarathonThresholds(maxItems);
+          return buildArrondissementMarathonThresholds(maxItems);
         }
         return modeThresholds[mode] || modeThresholds.arrondissement || TITLE_THRESHOLDS_BY_MODE.classique[mode];
       }
@@ -934,7 +933,7 @@
         const status = document.getElementById("status-box");
         status.classList.remove("hidden");
         status.innerHTML = `
-          Connecte-toi d'abord dans Camino Paris pour voir ton arbre de progression.<br>
+          Connecte-toi d'abord dans Parici pour voir ton arbre de progression.<br>
           Ensuite, reviens ici depuis ton profil.<br><br>
           <a href="/">Aller à la page du jeu</a>`;
         document.getElementById("progress-root").classList.add("hidden");

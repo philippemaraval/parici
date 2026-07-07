@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contenus Parici | Administration Parici</title>
+  <meta name="description" content="Administration des contenus du jeu Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
+  <link rel="stylesheet" href="/admin/admin.css?v=20260706-admin-polish">
+</head>
+
+<body>
+  <main class="admin-shell">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/" aria-current="page">Parici</a>
+        <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
+    <header class="admin-header">
+      <div>
+        <p class="admin-kicker">Parici</p>
+        <h1>Contenus du jeu Parici</h1>
+        <p class="admin-subtitle">Accédez à la page correspondant au contenu à modifier. Les fiches, les listes de rues et les monuments sont administrés séparément pour éviter toute confusion.</p>
+      </div>
+      <p id="global-status" class="status status--info" role="status" aria-live="polite">Connectez-vous avec un compte éditeur.</p>
+    </header>
+
+    <section id="login-section" class="card">
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Accès sécurisé</p>
+          <h2>Se connecter</h2>
+          <p class="muted">Cet espace est réservé aux comptes disposant du rôle éditeur ou administrateur.</p>
+        </div>
+      </div>
+      <form id="login-form" class="form-grid">
+        <label>
+          Pseudo
+          <input id="login-username" type="text" autocomplete="username" spellcheck="false" required>
+        </label>
+        <label>
+          Mot de passe
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-btn" type="submit" class="btn btn-primary">Se connecter</button>
+      </form>
+    </section>
+
+    <section id="editor-section" class="hidden">
+      <div class="card toolbar">
+        <div class="session-card">
+          <span class="session-avatar">P</span>
+          <div>
+            <strong id="session-user">-</strong>
+            <span id="session-role" class="role-badge">-</span>
+            <p class="muted">Session active</p>
+          </div>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refresh-content-btn" type="button" class="btn">Actualiser</button>
+          <button id="logout-btn" type="button" class="btn btn-quiet">Se déconnecter</button>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Édition</p>
+              <h2>Choisir un type de contenu</h2>
+              <p class="muted">Ouvrez l’espace dédié à votre tâche. Aucun contenu n’est modifiable directement depuis cette page.</p>
+            </div>
+          </div>
+          <div class="quick-actions quick-actions--admin-home">
+            <a class="quick-action quick-action--primary" href="/admin/parici/fiches/">
+              <span class="quick-action-icon">F</span>
+              <strong>Fiches</strong>
+              <span>Rédiger et mettre à jour les textes des rues célèbres et des rues principales.</span>
+            </a>
+            <a class="quick-action" href="/admin/parici/listes/">
+              <span class="quick-action-icon">L</span>
+              <strong>Listes</strong>
+              <span>Définir précisément les rues célèbres et les rues principales proposées dans le jeu.</span>
+            </a>
+            <a class="quick-action" href="/admin/parici/monuments/">
+              <span class="quick-action-icon">M</span>
+              <strong>Monuments</strong>
+              <span>Gérer le référentiel des monuments et leurs coordonnées géographiques.</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Indicateurs</p>
+              <h2>État des contenus</h2>
+              <p class="muted">Vue synthétique des données actuellement disponibles dans le jeu.</p>
+            </div>
+            <button id="open-visit-stats-btn" type="button" class="btn">Voir les visites par jour</button>
+          </div>
+          <div id="stats-grid" class="stats-grid"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="visit-stats-modal" class="modal hidden" role="dialog" aria-modal="true"
+    aria-labelledby="visit-stats-title">
+    <div class="modal-backdrop" data-close-visit-stats></div>
+    <section class="modal-panel" tabindex="-1">
+      <div class="modal-header">
+        <div>
+          <h2 id="visit-stats-title">Visites par jour</h2>
+          <p id="visit-stats-summary" class="muted">Chargement…</p>
+        </div>
+        <button id="close-visit-stats-btn" type="button" class="btn" aria-label="Fermer">Fermer</button>
+      </div>
+      <p id="visit-stats-note" class="visit-stats-note"></p>
+      <div id="visit-stats-chart" class="visit-stats-chart" aria-label="Graphique des visites sur les 30 derniers jours"></div>
+      <div class="visit-stats-table-wrap">
+        <table class="visit-stats-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Visites suivies</th>
+              <th>Visiteurs uniques</th>
+            </tr>
+          </thead>
+          <tbody id="visit-stats-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/admin/admin.js?v=20260706-admin-polish"></script>
+</body>
+
+</html>

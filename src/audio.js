@@ -76,6 +76,11 @@ export function syncSoundToggleUI() {
   }
 
   button.textContent = soundEnabled ? "🔊" : "🔇";
+  button.setAttribute(
+    "aria-label",
+    soundEnabled ? "Désactiver le son" : "Activer le son",
+  );
+  button.title = soundEnabled ? "Désactiver le son" : "Activer le son";
 }
 
 export function toggleSound() {

@@ -3,43 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parici Admin - Utilisateurs</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=20260705-users">
+  <title>Utilisateurs | Administration Parici</title>
+  <meta name="description" content="Administration des comptes utilisateurs de Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
+  <link rel="stylesheet" href="/admin/admin.css?v=20260706-admin-polish">
 </head>
 <body>
   <main class="admin-shell admin-shell--wide">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/">Parici</a>
+        <a href="/admin/users.html" aria-current="page">Utilisateurs</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
     <header class="admin-header">
       <div class="page-heading">
         <div>
+          <p class="admin-kicker">Administration</p>
           <h1>Gestion des utilisateurs</h1>
-          <p class="admin-subtitle">Comptes, activité Daily et actions d’administration.</p>
+          <p class="admin-subtitle">Consultez les comptes, l’activité Daily, les parrainages et les rappels, puis effectuez les actions d’administration nécessaires.</p>
         </div>
-        <a class="btn" href="/admin/">Retour au back-office</a>
+        <a class="btn btn-back" href="/admin/">Retour au tableau de bord</a>
       </div>
-      <p id="users-status" class="status status--info">Chargement...</p>
+      <p id="users-status" class="status status--info" role="status" aria-live="polite">Chargement…</p>
     </header>
 
     <section id="users-section" class="card hidden">
-      <div class="users-toolbar">
-        <label>
-          Rechercher
-          <input id="users-search" type="search" placeholder="Pseudo">
-        </label>
-        <button id="users-refresh" type="button" class="btn">Actualiser</button>
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Annuaire</p>
+          <h2>Comptes Parici</h2>
+          <p class="muted">Recherchez un compte ou triez une colonne pour repérer rapidement les profils à examiner.</p>
+        </div>
       </div>
-      <p id="users-count" class="muted"></p>
+      <div class="stats-grid users-stats" aria-label="Synthèse des comptes">
+        <div class="stat-card"><span class="stat-label">Comptes</span><strong id="users-total" class="stat-value">0</strong></div>
+        <div class="stat-card"><span class="stat-label">Joueurs Daily</span><strong id="users-daily" class="stat-value">0</strong></div>
+        <div class="stat-card"><span class="stat-label">Rappels actifs</span><strong id="users-reminders" class="stat-value">0</strong></div>
+      </div>
+      <div class="users-toolbar">
+        <label for="users-search">
+          Rechercher un pseudo
+          <input id="users-search" type="search" placeholder="Ex. : philippe" autocomplete="off">
+        </label>
+        <button id="users-refresh" type="button" class="btn">Actualiser la liste</button>
+      </div>
+      <div class="users-summary-row">
+        <p id="users-count" class="muted"></p>
+      </div>
       <div class="users-table-wrap">
         <table class="users-table">
           <thead>
             <tr>
-              <th>Utilisateur</th>
-              <th>Parrainages</th>
-              <th>Rang</th>
-              <th>Daily</th>
-              <th>Fréquence Daily</th>
-              <th>Rappel</th>
-              <th>Dernière activité</th>
-              <th>Inscription</th>
+              <th data-sort-key="username"><button type="button" class="table-sort">Utilisateur<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="referralCount"><button type="button" class="table-sort">Parrainages<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="rank"><button type="button" class="table-sort">Rang<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="dailyDaysPlayed"><button type="button" class="table-sort">Jours Daily<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="dailyFrequency"><button type="button" class="table-sort">Assiduité<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="reminderEnabled"><button type="button" class="table-sort">Rappel<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="lastActivityAt"><button type="button" class="table-sort">Dernière activité<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="createdAt"><button type="button" class="table-sort">Inscription<span aria-hidden="true"></span></button></th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -48,6 +84,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="/admin/users.js?v=20260705-referrals"></script>
+  <script type="module" src="/admin/users.js?v=20260706-admin-polish"></script>
 </body>
 </html>

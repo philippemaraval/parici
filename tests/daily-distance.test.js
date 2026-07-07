@@ -19,19 +19,25 @@ function loadMapDistanceHelpers() {
   return context;
 }
 
-test("daily guesses use street midpoints for target and clicked streets", () => {
+test("daily guesses use the same canonical street midpoints as the map markers", () => {
   const source = fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8");
 
   assert.match(
     source,
-    /buildDailyTargetFeatureCollection\(dailyTargetData\.streetName\)/,
+    /getDailyStreetMidpointForName\(dailyTargetData\.streetName\)/,
   );
   assert.match(
     source,
-    /buildDailyTargetFeatureCollection\(e\.properties\.name\)/,
+    /getDailyStreetMidpointForName\(e\.properties\.name\)/,
   );
-  assert.match(source, /computeFeatureCollectionMidpoint\(targetFeatureCollection\)/);
-  assert.match(source, /computeFeatureCollectionMidpoint\(guessFeatureCollection\)/);
+  assert.match(
+    source,
+    /const midpoint =\s+getDailyStreetMidpointForName\(streetName\)/,
+  );
+  assert.match(
+    source,
+    /getDistanceMeters\(guessMidpoint\[1\], guessMidpoint\[0\], targetMidpoint\[1\], targetMidpoint\[0\]\)/,
+  );
   assert.doesNotMatch(
     source,
     /buildDailyTargetFeatureCollection\(dailyTargetData\)/,
@@ -45,7 +51,7 @@ test("daily street clicks display a durable red midpoint marker above streets", 
   assert.match(source, /DAILY_STREET_MIDPOINT_MARKER_PANE = "dailyStreetMidpointMarkerPane"/);
   assert.match(source, /pane\.style\.zIndex = "625"/);
   assert.match(source, /dailyStreetMidpointRenderer = L\.svg\(\{/);
-  assert.match(source, /computeFeatureCollectionMidpoint\(layer\?\.feature \|\| feature\) \|\| getLayerMidpoint\(layer\)/);
+  assert.match(source, /getDailyStreetMidpointForName\(streetName\)/);
   assert.match(source, /L\.circleMarker\(\[midpoint\[1\], midpoint\[0\]\]/);
   assert.match(source, /radius: Math\.max\(5, strokeWidth \/ 2\)/);
   assert.match(source, /fillColor: "#FF0000"/);
@@ -106,6 +112,81 @@ test("feature collection midpoint is the point halfway along the whole street le
 
   assert.ok(Math.abs(midpoint[0] - 5.0015) < 0.00001, `unexpected lon ${midpoint[0]}`);
   assert.equal(midpoint[1], 43);
+});
+
+test("street midpoint is stable when OSM segments are reordered or reversed", () => {
+  const { computeFeatureCollectionMidpoint } = loadMapDistanceHelpers();
+  const first = {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [5, 43],
+        [5.002, 43],
+      ],
+    },
+  };
+  const second = {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [5.002, 43],
+        [5.002, 43.002],
+      ],
+    },
+  };
+  const normal = computeFeatureCollectionMidpoint({
+    type: "FeatureCollection",
+    features: [first, second],
+  });
+  const reordered = computeFeatureCollectionMidpoint({
+    type: "FeatureCollection",
+    features: [
+      {
+        ...second,
+        geometry: {
+          ...second.geometry,
+          coordinates: [...second.geometry.coordinates].reverse(),
+        },
+      },
+      {
+        ...first,
+        geometry: {
+          ...first.geometry,
+          coordinates: [...first.geometry.coordinates].reverse(),
+        },
+      },
+    ],
+  });
+
+  assert.ok(Math.abs(normal[0] - reordered[0]) < 0.0000001);
+  assert.ok(Math.abs(normal[1] - reordered[1]) < 0.0000001);
+});
+
+test("polygonal streets and places use their surface center", () => {
+  const { computeFeatureCollectionMidpoint } = loadMapDistanceHelpers();
+  const midpoint = computeFeatureCollectionMidpoint({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [5, 43],
+            [5.002, 43],
+            [5.002, 43.002],
+            [5, 43.002],
+            [5, 43],
+          ]],
+        },
+      },
+    ],
+  });
+
+  assert.ok(Math.abs(midpoint[0] - 5.001) < 0.000001, `unexpected lon ${midpoint[0]}`);
+  assert.ok(Math.abs(midpoint[1] - 43.001) < 0.000001, `unexpected lat ${midpoint[1]}`);
 });
 
 test("distance helper measures the shortest metric distance to a street segment", () => {

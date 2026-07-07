@@ -108,9 +108,9 @@ test("the installed application uses Parici as its exact name", () => {
   assert.equal(manifest.short_name, "Parici");
 });
 
-test("the displayed application version is V0.3.1", () => {
+test("the displayed application version is V0.4.0", () => {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const rules = fs.readFileSync(path.join(root, "regles.html"), "utf8");
-  assert.match(html, />\s*V0\.3\.1\s*</);
-  assert.match(rules, />V0\.3\.1</);
+  assert.match(html, />\s*V0\.4\.0\s*</);
+  assert.match(rules, />V0\.4\.0</);
 });

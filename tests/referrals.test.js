@@ -71,16 +71,16 @@ test("referral rank events enforce the tier cascade", async () => {
   const db = createDbStub();
   const service = createReferralService(db);
 
-  const blockedMinot = await service.checkReferralProgress(2, "rank_changed_minot");
-  assert.equal(blockedMinot.updated, false);
-  assert.equal(blockedMinot.reason, "tier1_required");
+  const blockedTiti = await service.checkReferralProgress(2, "rank_changed_titi_parisien");
+  assert.equal(blockedTiti.updated, false);
+  assert.equal(blockedTiti.reason, "tier1_required");
 
   db.state.referral.tier1_completed_at = new Date("2026-06-17T10:00:00Z");
-  const minot = await service.checkReferralProgress(2, "rank_changed_minot");
-  assert.equal(minot.updated, true);
-  assert.equal(minot.badgeAwarded.id, "referral_grand_frere");
+  const titi = await service.checkReferralProgress(2, "rank_changed_titi_parisien");
+  assert.equal(titi.updated, true);
+  assert.equal(titi.badgeAwarded.id, "referral_grand_frere");
 
-  const vrai = await service.checkReferralProgress(2, "rank_changed_vrai_marseillais");
+  const vrai = await service.checkReferralProgress(2, "rank_changed_vrai_parigot");
   assert.equal(vrai.updated, true);
   assert.equal(vrai.badgeAwarded.id, "referral_ancien_des_anciens");
 });

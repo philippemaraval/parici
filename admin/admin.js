@@ -7,9 +7,6 @@ const API_BASE_CANDIDATES =
 
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
-const OSM_SYNC_POLL_INTERVAL_MS = 8000;
-const OSM_SYNC_POLL_TIMEOUT_MS = 12 * 60 * 1000;
-
 const STORAGE_KEY = "camino_paris_editor_user";
 
 const state = {
@@ -18,8 +15,6 @@ const state = {
   role: "",
   content: null,
   selectedStreetName: "",
-  osmSyncPollTimer: 0,
-  osmSyncPollStartedAtMs: 0,
 };
 
 const refs = {
@@ -36,8 +31,6 @@ const refs = {
   usersAdminCard: document.getElementById("users-admin-card"),
   refreshContentBtn: document.getElementById("refresh-content-btn"),
   logoutBtn: document.getElementById("logout-btn"),
-  runOsmSyncBtn: document.getElementById("run-osm-sync-btn"),
-  osmSyncOutput: document.getElementById("osm-sync-output"),
   statsGrid: document.getElementById("stats-grid"),
   openVisitStatsBtn: document.getElementById("open-visit-stats-btn"),
   visitStatsModal: document.getElementById("visit-stats-modal"),
@@ -62,6 +55,9 @@ const refs = {
   monumentsTableBody: document.getElementById("monuments-table-body"),
   addMonumentRowBtn: document.getElementById("add-monument-row-btn"),
   saveMonumentsBtn: document.getElementById("save-monuments-btn"),
+  streetSelectCount: document.getElementById("street-select-count"),
+  famousListCount: document.getElementById("famous-list-count"),
+  mainListCount: document.getElementById("main-list-count"),
 };
 
 function normalizeName(value) {
@@ -93,43 +89,6 @@ function setGlobalStatus(message, type = "info") {
   } else {
     refs.globalStatus.classList.add("status--info");
   }
-}
-
-function setOsmSyncOutput(message) {
-  if (!refs.osmSyncOutput) {
-    return;
-  }
-  refs.osmSyncOutput.textContent = String(message || "").trim() || "Aucun log disponible.";
-}
-
-function formatOsmSyncActiveState(active) {
-  if (!active || typeof active !== "object") {
-    return "";
-  }
-  const startedAt = active.startedAt ? new Date(active.startedAt) : null;
-  const startedLabel =
-    startedAt && !Number.isNaN(startedAt.getTime())
-      ? startedAt.toLocaleString("fr-FR")
-      : active.startedAt || "?";
-  const ageSeconds = Number.isFinite(active.ageMs)
-    ? Math.max(0, Math.round(active.ageMs / 1000))
-    : null;
-  const ageLabel = ageSeconds !== null ? `, depuis ${ageSeconds}s` : "";
-  return `Sync locale active: ${active.requestedBy || "admin"}, demarree ${startedLabel}${ageLabel}.`;
-}
-
-function formatDateTime(value) {
-  if (!value) {
-    return "";
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-  return date.toLocaleString("fr-FR", {
-    dateStyle: "short",
-    timeStyle: "medium",
-  });
 }
 
 function formatNumber(value) {
@@ -170,101 +129,21 @@ function formatShortDay(value) {
   });
 }
 
-function formatGithubRunStatus(run) {
-  if (!run) {
-    return "Workflow GitHub en attente d'apparition...";
-  }
-
-  const statusLabels = {
-    queued: "en file d'attente",
-    in_progress: "en cours",
-    completed: "termine",
-  };
-  const conclusionLabels = {
-    success: "succes",
-    failure: "echec",
-    cancelled: "annule",
-    skipped: "ignore",
-    timed_out: "timeout",
-    action_required: "action requise",
-  };
-  const status = statusLabels[run.status] || run.status || "statut inconnu";
-  const conclusion = run.conclusion
-    ? ` (${conclusionLabels[run.conclusion] || run.conclusion})`
-    : "";
-  const started = formatDateTime(run.startedAt || run.createdAt);
-  const updated = formatDateTime(run.updatedAt);
-  const lines = [
-    `Workflow GitHub #${run.number || run.id || "?"}: ${status}${conclusion}`,
-  ];
-  if (started) {
-    lines.push(`Demarre: ${started}`);
-  }
-  if (updated) {
-    lines.push(`Derniere mise a jour: ${updated}`);
-  }
-  if (run.url) {
-    lines.push(`Voir le run: ${run.url}`);
-  }
-  return lines.join("\n");
+function getDateKeyInZone(date = new Date(), timeZone = "Europe/Paris") {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
-function stopOsmSyncPolling() {
-  if (state.osmSyncPollTimer) {
-    window.clearTimeout(state.osmSyncPollTimer);
-    state.osmSyncPollTimer = 0;
-  }
-}
-
-async function pollOsmSyncStatus({ since, label }) {
-  stopOsmSyncPolling();
-  state.osmSyncPollStartedAtMs = Date.now();
-
-  const pollOnce = async () => {
-    try {
-      const query = since ? `?since=${encodeURIComponent(since)}` : "";
-      const payload = await apiRequest(`/api/editor/osm-sync/status${query}`);
-      const run = payload?.github?.run || null;
-      const githubError = payload?.github?.error || "";
-      const activeState = formatOsmSyncActiveState(payload?.active);
-      const runStatus = formatGithubRunStatus(run);
-      const parts = [
-        label || "Workflow GitHub lance.",
-        runStatus,
-      ];
-      if (activeState) {
-        parts.push(activeState);
-      }
-      if (githubError) {
-        parts.push(`Statut GitHub indisponible: ${githubError}`);
-      }
-      setOsmSyncOutput(parts.filter(Boolean).join("\n\n"));
-
-      if (run?.status === "completed") {
-        stopOsmSyncPolling();
-        refs.runOsmSyncBtn.disabled = false;
-        if (run.conclusion === "success") {
-          setGlobalStatus("Synchronisation OSM terminee avec succes. Deploiement Render declenche si des donnees ont change.", "success");
-        } else {
-          setGlobalStatus(`Echec synchronisation OSM: ${run.conclusion || "statut inconnu"}.`, "error");
-        }
-        return;
-      }
-    } catch (error) {
-      setOsmSyncOutput(`Suivi de synchronisation indisponible: ${error.message}`);
-    }
-
-    if (Date.now() - state.osmSyncPollStartedAtMs > OSM_SYNC_POLL_TIMEOUT_MS) {
-      stopOsmSyncPolling();
-      refs.runOsmSyncBtn.disabled = false;
-      setGlobalStatus("Suivi OSM arrete: timeout cote admin. Verifiez GitHub Actions.", "error");
-      return;
-    }
-
-    state.osmSyncPollTimer = window.setTimeout(pollOnce, OSM_SYNC_POLL_INTERVAL_MS);
-  };
-
-  await pollOnce();
+function addDaysToDateKey(dateKey, deltaDays) {
+  const date = new Date(`${dateKey}T12:00:00`);
+  date.setDate(date.getDate() + deltaDays);
+  return date.toISOString().slice(0, 10);
 }
 
 function setUiAuthenticated(isAuthenticated) {
@@ -370,7 +249,7 @@ async function apiRequest(path, { method = "GET", body, auth = true, timeoutMs =
         continue;
       }
       if (error?.name === "AbortError") {
-        throw new Error(`API timeout apres ${Math.round(timeoutMs / 1000)}s (${path})`);
+        throw new Error(`Délai API dépassé après ${Math.round(timeoutMs / 1000)} s (${path})`);
       }
       throw error;
     }
@@ -538,46 +417,55 @@ function appendMonumentRow(entry = {}) {
   const row = document.createElement("tr");
 
   const nameCell = document.createElement("td");
-  const nameWrap = document.createElement("div");
-  nameWrap.className = "monument-name-cell";
+  nameCell.className = "monument-name-cell";
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.className = "monument-name-input";
   nameInput.placeholder = "Nom du monument";
   nameInput.value = String(entry.name || "");
+  nameCell.appendChild(nameInput);
+
+  const longitudeCell = document.createElement("td");
+  longitudeCell.className = "monument-coordinate-cell";
+  const longitudeInput = document.createElement("input");
+  longitudeInput.type = "text";
+  longitudeInput.inputMode = "decimal";
+  longitudeInput.className = "monument-longitude-input";
+  longitudeInput.placeholder = "Ex. : 2,352222";
+  longitudeInput.setAttribute("aria-label", `Longitude de ${entry.name || "ce monument"}`);
+  longitudeInput.value = formatCoordinateValue(entry.longitude);
+  longitudeCell.appendChild(longitudeInput);
+
+  const latitudeCell = document.createElement("td");
+  latitudeCell.className = "monument-coordinate-cell";
+  const latitudeInput = document.createElement("input");
+  latitudeInput.type = "text";
+  latitudeInput.inputMode = "decimal";
+  latitudeInput.className = "monument-latitude-input";
+  latitudeInput.placeholder = "Ex. : 48,856613";
+  latitudeInput.setAttribute("aria-label", `Latitude de ${entry.name || "ce monument"}`);
+  latitudeInput.value = formatCoordinateValue(entry.latitude);
+  latitudeCell.appendChild(latitudeInput);
+
+  const actionCell = document.createElement("td");
+  actionCell.className = "monument-action-cell";
   const removeBtn = document.createElement("button");
   removeBtn.type = "button";
   removeBtn.className = "btn btn-danger-outline monument-remove-btn";
-  removeBtn.textContent = "Retirer";
+  removeBtn.textContent = "Supprimer";
+  removeBtn.setAttribute("aria-label", `Supprimer ${entry.name || "cette ligne"}`);
   removeBtn.addEventListener("click", () => {
     row.remove();
     if (!refs.monumentsTableBody.querySelector("tr")) {
       appendMonumentRow();
     }
   });
-  nameWrap.appendChild(nameInput);
-  nameWrap.appendChild(removeBtn);
-  nameCell.appendChild(nameWrap);
-
-  const locationCell = document.createElement("td");
-  const coordsWrap = document.createElement("div");
-  coordsWrap.className = "monument-coords";
-  const longitudeInput = document.createElement("input");
-  longitudeInput.type = "text";
-  longitudeInput.className = "monument-longitude-input";
-  longitudeInput.placeholder = "Longitude (ex: 5.371242)";
-  longitudeInput.value = formatCoordinateValue(entry.longitude);
-  const latitudeInput = document.createElement("input");
-  latitudeInput.type = "text";
-  latitudeInput.className = "monument-latitude-input";
-  latitudeInput.placeholder = "Latitude (ex: 43.2839455)";
-  latitudeInput.value = formatCoordinateValue(entry.latitude);
-  coordsWrap.appendChild(longitudeInput);
-  coordsWrap.appendChild(latitudeInput);
-  locationCell.appendChild(coordsWrap);
+  actionCell.appendChild(removeBtn);
 
   row.appendChild(nameCell);
-  row.appendChild(locationCell);
+  row.appendChild(longitudeCell);
+  row.appendChild(latitudeCell);
+  row.appendChild(actionCell);
   refs.monumentsTableBody.appendChild(row);
 }
 
@@ -618,21 +506,21 @@ function collectMonumentsFromTable() {
     }
 
     if (!name) {
-      throw new Error(`Ligne ${rowNumber}: le nom du monument est obligatoire.`);
+      throw new Error(`Ligne ${rowNumber} : le nom du monument est obligatoire.`);
     }
 
     const longitude = parseCoordinateValue(rawLongitude);
     const latitude = parseCoordinateValue(rawLatitude);
     if (longitude === null || latitude === null) {
       throw new Error(
-        `Ligne ${rowNumber}: longitude et latitude doivent etre des nombres valides.`,
+        `Ligne ${rowNumber} : la longitude et la latitude doivent être des nombres valides.`,
       );
     }
     if (longitude < -180 || longitude > 180) {
-      throw new Error(`Ligne ${rowNumber}: longitude hors plage (-180 a 180).`);
+      throw new Error(`Ligne ${rowNumber} : la longitude doit être comprise entre -180 et 180.`);
     }
     if (latitude < -90 || latitude > 90) {
-      throw new Error(`Ligne ${rowNumber}: latitude hors plage (-90 a 90).`);
+      throw new Error(`Ligne ${rowNumber} : la latitude doit être comprise entre -90 et 90.`);
     }
     if (dedup.has(normalizedName)) {
       continue;
@@ -651,6 +539,49 @@ function collectMonumentsFromTable() {
 
 function getCurrentMode() {
   return refs.infoModeSelect.value === "main" ? "main" : "famous";
+}
+
+function formatRole(role) {
+  const labels = {
+    admin: "Administrateur",
+    editor: "Éditeur",
+    player: "Joueur",
+  };
+  return labels[role] || role || "Joueur";
+}
+
+function getModeLabel(mode) {
+  return mode === "main" ? "rues principales" : "rues célèbres";
+}
+
+function formatStreetCount(count) {
+  return `${count} rue${count > 1 ? "s" : ""}`;
+}
+
+function updateListCounts() {
+  if (refs.famousListCount && refs.famousListText) {
+    refs.famousListCount.textContent = formatStreetCount(
+      parseListTextarea(refs.famousListText.value).length,
+    );
+  }
+  if (refs.mainListCount && refs.mainListText) {
+    refs.mainListCount.textContent = formatStreetCount(
+      parseListTextarea(refs.mainListText.value).length,
+    );
+  }
+}
+
+function updateStreetActionLabels() {
+  if (!refs.infoModeSelect) {
+    return;
+  }
+  const modeLabel = getModeLabel(getCurrentMode());
+  if (refs.addStreetToListBtn) {
+    refs.addStreetToListBtn.textContent = `Ajouter aux ${modeLabel}`;
+  }
+  if (refs.removeStreetFromListBtn) {
+    refs.removeStreetFromListBtn.textContent = `Retirer des ${modeLabel}`;
+  }
 }
 
 function getModeListKey(mode) {
@@ -674,9 +605,9 @@ function renderStats() {
 
   const stats = state.content.stats || {};
   const cards = [
-    ["Fiches rues celebres", stats.famousStreetInfoCount ?? 0],
+    ["Fiches rues célèbres", stats.famousStreetInfoCount ?? 0],
     ["Fiches rues principales", stats.mainStreetInfoCount ?? 0],
-    ["Rues celebres", stats.famousStreetCount ?? 0],
+    ["Rues célèbres", stats.famousStreetCount ?? 0],
     ["Rues principales", stats.mainStreetCount ?? 0],
     ["Monuments", stats.monumentCount ?? 0],
   ];
@@ -704,11 +635,49 @@ function setVisitStatsLoading(message) {
   }
 }
 
+function buildVisitChartRows(payload, dayCount = 30) {
+  if (Array.isArray(payload?.chartRows) && payload.chartRows.length) {
+    return payload.chartRows.slice(-dayCount).map((row) => ({
+      day: row.day,
+      uniqueVisitors: Number(row.uniqueVisitors || 0),
+      totalVisits: Math.max(
+        row.totalVisits === null || row.totalVisits === undefined ? 0 : Number(row.totalVisits) || 0,
+        Number(row.uniqueVisitors || 0),
+      ),
+      cumulativeTotal: Number(row.cumulativeTotal || 0),
+    }));
+  }
+  const rows = Array.isArray(payload?.rows) ? payload.rows : [];
+  const rowsByDay = new Map(rows.map((row) => [String(row.day || ""), row]));
+  const endDay = getDateKeyInZone();
+  const days = Array.from({ length: dayCount }, (_, index) =>
+    addDaysToDateKey(endDay, index - dayCount + 1),
+  );
+  const dailyRows = days.map((day) => {
+    const row = rowsByDay.get(day) || {};
+    const totalVisits =
+      row.totalVisits === null || row.totalVisits === undefined ? 0 : Number(row.totalVisits) || 0;
+    const uniqueVisitors = Number(row.uniqueVisitors || 0);
+    return {
+      day,
+      totalVisits: Math.max(totalVisits, uniqueVisitors),
+      uniqueVisitors,
+    };
+  });
+  const allTimeTotal = Number(payload?.totalVisits || 0);
+  let visitsAfterCurrentDay = 0;
+  for (let index = dailyRows.length - 1; index >= 0; index -= 1) {
+    dailyRows[index].cumulativeTotal = Math.max(0, allTimeTotal - visitsAfterCurrentDay);
+    visitsAfterCurrentDay += dailyRows[index].totalVisits;
+  }
+  return dailyRows;
+}
+
 function renderVisitStatsChart(payload) {
   if (!refs.visitStatsChart) {
     return;
   }
-  const chartRows = Array.isArray(payload?.chartRows) ? payload.chartRows.slice(-30) : [];
+  const chartRows = buildVisitChartRows(payload);
   if (!chartRows.length) {
     refs.visitStatsChart.textContent = "";
     return;
@@ -721,63 +690,94 @@ function renderVisitStatsChart(payload) {
   const plotHeight = height - margin.top - margin.bottom;
   const maxDailyValue = Math.max(
     1,
-    ...chartRows.map((row) => Math.max(Number(row.totalVisits || 0), Number(row.uniqueVisitors || 0))),
+    ...chartRows.map((row) => Math.max(row.totalVisits, row.uniqueVisitors)),
   );
-  const cumulativeValues = chartRows.map((row) => Number(row.cumulativeTotal || 0));
+  const cumulativeValues = chartRows.map((row) => row.cumulativeTotal);
   const cumulativeMin = Math.min(...cumulativeValues);
   const cumulativeMax = Math.max(...cumulativeValues);
   const cumulativeRange = Math.max(1, cumulativeMax - cumulativeMin);
   const bandWidth = plotWidth / chartRows.length;
   const barWidth = Math.max(3, Math.min(10, bandWidth * 0.28));
-  const xForIndex = (index) => margin.left + bandWidth * index + bandWidth / 2;
-  const yForDaily = (value) => margin.top + plotHeight - (Number(value || 0) / maxDailyValue) * plotHeight;
-  const yForCumulative = (value) =>
-    margin.top + plotHeight - ((Number(value || 0) - cumulativeMin) / cumulativeRange) * plotHeight;
 
-  const gridLines = [0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-    const y = margin.top + plotHeight - ratio * plotHeight;
-    return `<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" class="visit-chart-grid" />
-      <text x="${margin.left - 8}" y="${y + 4}" class="visit-chart-axis-label" text-anchor="end">${formatNumber(Math.round(maxDailyValue * ratio))}</text>`;
-  }).join("");
-  const cumulativeLabels = [cumulativeMin, cumulativeMax].map((value) => {
-    const y = yForCumulative(value);
-    return `<text x="${width - margin.right + 8}" y="${y + 4}" class="visit-chart-axis-label visit-chart-axis-label--right">${formatNumber(value)}</text>`;
-  }).join("");
-  const bars = chartRows.map((row, index) => {
-    const centerX = xForIndex(index);
-    const totalHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.totalVisits));
-    const uniqueHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.uniqueVisitors));
-    return `<rect x="${centerX - barWidth - 1}" y="${yForDaily(row.totalVisits)}" width="${barWidth}" height="${totalHeight}" class="visit-chart-bar visit-chart-bar--total"><title>${formatDay(row.day)} - visites: ${formatNumber(row.totalVisits)}</title></rect>
-      <rect x="${centerX + 1}" y="${yForDaily(row.uniqueVisitors)}" width="${barWidth}" height="${uniqueHeight}" class="visit-chart-bar visit-chart-bar--unique"><title>${formatDay(row.day)} - visiteurs uniques: ${formatNumber(row.uniqueVisitors)}</title></rect>`;
-  }).join("");
-  const linePoints = chartRows.map((row, index) =>
-    `${xForIndex(index)},${yForCumulative(row.cumulativeTotal)}`,
-  ).join(" ");
-  const lineDots = chartRows.map((row, index) =>
-    `<circle cx="${xForIndex(index)}" cy="${yForCumulative(row.cumulativeTotal)}" r="2.5" class="visit-chart-dot"><title>${formatDay(row.day)} - cumul total: ${formatNumber(row.cumulativeTotal)}</title></circle>`,
-  ).join("");
+  const xForIndex = (index) => margin.left + bandWidth * index + bandWidth / 2;
+  const yForDaily = (value) => margin.top + plotHeight - (value / maxDailyValue) * plotHeight;
+  const yForCumulative = (value) =>
+    margin.top + plotHeight - ((value - cumulativeMin) / cumulativeRange) * plotHeight;
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1]
+    .map((ratio) => {
+      const y = margin.top + plotHeight - ratio * plotHeight;
+      const label = formatNumber(Math.round(maxDailyValue * ratio));
+      return `
+        <line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" class="visit-chart-grid" />
+        <text x="${margin.left - 8}" y="${y + 4}" class="visit-chart-axis-label" text-anchor="end">${label}</text>
+      `;
+    })
+    .join("");
+
+  const cumulativeLabels = [cumulativeMin, cumulativeMax]
+    .map((value) => {
+      const y = yForCumulative(value);
+      return `<text x="${width - margin.right + 8}" y="${y + 4}" class="visit-chart-axis-label visit-chart-axis-label--right">${formatNumber(value)}</text>`;
+    })
+    .join("");
+
+  const bars = chartRows
+    .map((row, index) => {
+      const centerX = xForIndex(index);
+      const totalHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.totalVisits));
+      const uniqueHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.uniqueVisitors));
+      return `
+        <rect x="${centerX - barWidth - 1}" y="${yForDaily(row.totalVisits)}" width="${barWidth}" height="${totalHeight}" class="visit-chart-bar visit-chart-bar--total">
+          <title>${formatDay(row.day)} - visites : ${formatNumber(row.totalVisits)}</title>
+        </rect>
+        <rect x="${centerX + 1}" y="${yForDaily(row.uniqueVisitors)}" width="${barWidth}" height="${uniqueHeight}" class="visit-chart-bar visit-chart-bar--unique">
+          <title>${formatDay(row.day)} - visiteurs uniques : ${formatNumber(row.uniqueVisitors)}</title>
+        </rect>
+      `;
+    })
+    .join("");
+
+  const linePoints = chartRows
+    .map((row, index) => `${xForIndex(index)},${yForCumulative(row.cumulativeTotal)}`)
+    .join(" ");
+  const lineDots = chartRows
+    .map((row, index) => {
+      const x = xForIndex(index);
+      const y = yForCumulative(row.cumulativeTotal);
+      return `<circle cx="${x}" cy="${y}" r="2.5" class="visit-chart-dot"><title>${formatDay(row.day)} - cumul total : ${formatNumber(row.cumulativeTotal)}</title></circle>`;
+    })
+    .join("");
+
   const xLabels = chartRows
-    .map((row, index) => ({ row, index }))
-    .filter(({ index }) => index === 0 || index === chartRows.length - 1 || (index + 1) % 7 === 0)
-    .map(({ row, index }, selectedIndex, selectedRows) => {
-      const anchor = selectedIndex === 0 ? "start" : selectedIndex === selectedRows.length - 1 ? "end" : "middle";
-      return `<text x="${xForIndex(index)}" y="${height - 16}" class="visit-chart-axis-label" text-anchor="${anchor}">${formatShortDay(row.day)}</text>`;
-    }).join("");
+    .filter((_, index) => index === 0 || index === chartRows.length - 1 || (index + 1) % 7 === 0)
+    .map((row, index, selectedRows) => {
+      const originalIndex = chartRows.findIndex((candidate) => candidate.day === row.day);
+      const anchor =
+        index === 0 ? "start" : index === selectedRows.length - 1 ? "end" : "middle";
+      return `<text x="${xForIndex(originalIndex)}" y="${height - 16}" class="visit-chart-axis-label" text-anchor="${anchor}">${formatShortDay(row.day)}</text>`;
+    })
+    .join("");
 
   refs.visitStatsChart.innerHTML = `
     <div class="visit-chart-legend">
-      <span><i class="visit-chart-swatch visit-chart-swatch--total"></i>Visites quotidiennes</span>
+      <span><i class="visit-chart-swatch visit-chart-swatch--total"></i>Visiteurs quotidiens</span>
       <span><i class="visit-chart-swatch visit-chart-swatch--unique"></i>Visiteurs uniques quotidiens</span>
-      <span><i class="visit-chart-swatch visit-chart-swatch--line"></i>Cumul des visites</span>
+      <span><i class="visit-chart-swatch visit-chart-swatch--line"></i>Total cumulé</span>
     </div>
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Visites quotidiennes, visiteurs uniques et cumul des visites sur les 30 derniers jours">
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Visites quotidiennes, visiteurs uniques et total cumulé sur les 30 derniers jours">
       <text x="${margin.left}" y="18" class="visit-chart-title">30 derniers jours</text>
       <text x="${margin.left}" y="${height - 2}" class="visit-chart-axis-caption">Visites quotidiennes</text>
-      <text x="${width - margin.right}" y="${height - 2}" class="visit-chart-axis-caption visit-chart-axis-caption--right" text-anchor="end">Cumul des visites</text>
-      ${gridLines}${cumulativeLabels}
+      <text x="${width - margin.right}" y="${height - 2}" class="visit-chart-axis-caption visit-chart-axis-caption--right" text-anchor="end">Total cumulé</text>
+      ${gridLines}
+      ${cumulativeLabels}
       <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${width - margin.right}" y2="${margin.top + plotHeight}" class="visit-chart-axis" />
-      ${bars}<polyline points="${linePoints}" class="visit-chart-line" />${lineDots}${xLabels}
-    </svg>`;
+      ${bars}
+      <polyline points="${linePoints}" class="visit-chart-line" />
+      ${lineDots}
+      ${xLabels}
+    </svg>
+  `;
 }
 
 function renderVisitStats(payload) {
@@ -785,20 +785,20 @@ function renderVisitStats(payload) {
   if (refs.visitStatsSummary) {
     const totalVisits = formatNumber(payload?.totalVisits);
     const dayCount = formatNumber(payload?.chartRows?.length || rows.length);
-    refs.visitStatsSummary.textContent = `${totalVisits} visites au total, ${dayCount} jours affiches.`;
+    refs.visitStatsSummary.textContent = `${totalVisits} visites au total sur ${dayCount} jours affichés.`;
   }
-  renderVisitStatsChart(payload);
   if (refs.visitStatsNote) {
     refs.visitStatsNote.textContent =
       payload?.note ||
-      "Les visites suivies par jour ne sont disponibles qu'a partir de l'activation du suivi quotidien.";
+      "Les visites quotidiennes ne sont disponibles qu’à partir de l’activation du suivi.";
   }
+  renderVisitStatsChart(payload);
   if (!refs.visitStatsTableBody) {
     return;
   }
   if (!rows.length) {
     refs.visitStatsTableBody.innerHTML =
-      '<tr><td colspan="3">Aucune donnee de visite disponible.</td></tr>';
+      '<tr><td colspan="3">Aucune donnée de visite disponible.</td></tr>';
     return;
   }
   refs.visitStatsTableBody.innerHTML = rows
@@ -834,14 +834,37 @@ async function openVisitStatsModal() {
   setVisitStatsLoading("Chargement des statistiques de visites...");
 
   try {
-    const payload = await apiRequest("/api/editor/visits/daily");
+    const [payload, publicCounter] = await Promise.all([
+      apiRequest("/api/editor/visits/daily"),
+      apiRequest("/api/visitors/count", { auth: false }).catch(() => null),
+    ]);
+    const publicVisitCount = Number(publicCounter?.visits);
+    if (Number.isFinite(publicVisitCount) && publicVisitCount >= 0) {
+      const previousTotal = Number(payload?.totalVisits);
+      const cumulativeOffset = Number.isFinite(previousTotal)
+        ? publicVisitCount - previousTotal
+        : 0;
+      payload.totalVisits = publicVisitCount;
+      if (cumulativeOffset && Array.isArray(payload.chartRows)) {
+        payload.chartRows = payload.chartRows.map((row) => ({
+          ...row,
+          cumulativeTotal: Math.max(
+            0,
+            Number(row.cumulativeTotal || 0) + cumulativeOffset,
+          ),
+        }));
+      }
+    }
     renderVisitStats(payload);
   } catch (error) {
-    setVisitStatsLoading(`Chargement impossible: ${error.message}`);
+    setVisitStatsLoading(`Chargement impossible : ${error.message}`);
   }
 }
 
 function updateEditorFieldsForStreet(streetName) {
+  if (!refs.streetNameInput || !refs.streetInfoText) {
+    return;
+  }
   const mode = getCurrentMode();
   const infoMap = state.content?.streetInfos?.[mode] || {};
   const normalizedName = normalizeName(streetName);
@@ -851,11 +874,18 @@ function updateEditorFieldsForStreet(streetName) {
 }
 
 function renderStreetSelect(preferredStreetName = "") {
+  if (!refs.infoModeSelect || !refs.streetSearchInput || !refs.streetSelect) {
+    return;
+  }
   const mode = getCurrentMode();
   const filterQuery = normalizeName(refs.streetSearchInput.value);
   const names = getStreetNamesForMode(mode).filter((name) =>
     filterQuery ? name.includes(filterQuery) : true,
   );
+  if (refs.streetSelectCount) {
+    refs.streetSelectCount.textContent = formatStreetCount(names.length);
+  }
+  updateStreetActionLabels();
 
   refs.streetSelect.innerHTML = "";
   names.forEach((name) => {
@@ -903,16 +933,21 @@ function buildListsPayloadWithUpdates(updates = {}) {
 }
 
 function renderListsEditors() {
-  if (!state.content) {
+  if (!state.content || !refs.famousListText || !refs.mainListText) {
     return;
   }
   refs.famousListText.value = listToTextarea(state.content.lists?.famousStreets);
   refs.mainListText.value = listToTextarea(state.content.lists?.mainStreets);
+  updateListCounts();
 }
 
 function renderAllEditors(preferredStreetName = "") {
-  refs.sessionUser.textContent = state.username || "-";
-  refs.sessionRole.textContent = state.role || "player";
+  if (refs.sessionUser) {
+    refs.sessionUser.textContent = state.username || "-";
+  }
+  if (refs.sessionRole) {
+    refs.sessionRole.textContent = formatRole(state.role);
+  }
   renderStats();
   renderListsEditors();
   renderMonumentsEditor();
@@ -921,24 +956,24 @@ function renderAllEditors(preferredStreetName = "") {
 
 async function ensureEditorAccess() {
   const me = await apiRequest("/api/editor/me");
-  if (!me?.canManageUsers) {
-    const error = new Error("Cette page est réservée aux administrateurs.");
+  if (!me?.canEdit) {
+    const error = new Error("Ce compte ne dispose pas des droits d’édition.");
     error.status = 403;
     throw error;
   }
   state.username = me.username;
   state.role = me.role;
-  refs.manageUsersLink?.classList.remove("hidden");
-  refs.usersAdminCard?.classList.remove("hidden");
+  refs.manageUsersLink?.classList.toggle("hidden", !me.canManageUsers);
+  refs.usersAdminCard?.classList.toggle("hidden", !me.canManageUsers);
   saveSession();
 }
 
 async function loadContent(preferredStreetName = "") {
-  setGlobalStatus("Chargement du contenu...", "info");
+  setGlobalStatus("Chargement du contenu…", "info");
   const content = await apiRequest("/api/editor/content");
   state.content = content;
   renderAllEditors(preferredStreetName);
-  setGlobalStatus("Contenu charge.", "success");
+  setGlobalStatus("Le contenu est à jour.", "success");
 }
 
 async function onLoginSubmit(event) {
@@ -952,9 +987,10 @@ async function onLoginSubmit(event) {
 
   try {
     refs.loginBtn.disabled = true;
-    setGlobalStatus("Reveil de l'API...", "info");
+    refs.loginBtn.textContent = "Connexion…";
+    setGlobalStatus("Démarrage du service…", "info");
     await warmApiForLogin();
-    setGlobalStatus("Connexion en cours...", "info");
+    setGlobalStatus("Connexion en cours…", "info");
     const payload = await apiRequest("/api/login", {
       method: "POST",
       auth: false,
@@ -973,9 +1009,10 @@ async function onLoginSubmit(event) {
   } catch (error) {
     clearSession();
     setUiAuthenticated(false);
-    setGlobalStatus(`Connexion impossible: ${error.message}`, "error");
+    setGlobalStatus(`Connexion impossible : ${error.message}`, "error");
   } finally {
     refs.loginBtn.disabled = false;
+    refs.loginBtn.textContent = "Se connecter";
   }
 }
 
@@ -992,7 +1029,7 @@ async function bootstrapSession() {
   } catch (error) {
     clearSession();
     setUiAuthenticated(false);
-    setGlobalStatus(`Session invalide: ${error.message}`, "error");
+    setGlobalStatus(`Session invalide : ${error.message}`, "error");
   }
 }
 
@@ -1011,8 +1048,8 @@ async function onSaveStreetInfo() {
   if (selectedStreetName && selectedStreetName !== streetName) {
     const shouldRename = window.confirm(
       `Renommer "${selectedStreetName}" en "${streetName}" ?\n\n` +
-        "OK: met a jour l'entree existante.\n" +
-        "Annuler: cree ou met a jour la nouvelle entree sans toucher l'ancienne.",
+        "Confirmer : renommer la fiche existante.\n" +
+        "Annuler : créer ou mettre à jour la nouvelle fiche sans modifier l’ancienne.",
     );
     if (shouldRename) {
       previousStreetName = selectedStreetName;
@@ -1020,7 +1057,7 @@ async function onSaveStreetInfo() {
   }
 
   try {
-    setGlobalStatus("Enregistrement de la fiche...", "info");
+    setGlobalStatus("Enregistrement de la fiche…", "info");
     const payload = {
       mode,
       streetName,
@@ -1035,17 +1072,17 @@ async function onSaveStreetInfo() {
     });
     await loadContent(streetName);
     if (previousStreetName) {
-      setGlobalStatus(`Rue renommee: ${previousStreetName} -> ${streetName}`, "success");
+      setGlobalStatus(`Rue renommée : « ${previousStreetName} » devient « ${streetName} ».`, "success");
     } else if (infoText) {
-      setGlobalStatus(`Fiche enregistree: ${streetName}`, "success");
+      setGlobalStatus(`Fiche enregistrée : ${streetName}.`, "success");
     } else {
       setGlobalStatus(
-        `Nom enregistre sans texte pour "${streetName}" (texte de fiche vide autorise).`,
+        `Le nom « ${streetName} » est enregistré sans texte de fiche.`,
         "success",
       );
     }
   } catch (error) {
-    setGlobalStatus(`Echec enregistrement fiche: ${error.message}`, "error");
+    setGlobalStatus(`Échec de l’enregistrement de la fiche : ${error.message}`, "error");
   }
 }
 
@@ -1055,16 +1092,16 @@ async function onDeleteStreetInfo() {
     refs.streetNameInput.value || state.selectedStreetName || refs.streetSelect.value,
   );
   if (!streetName) {
-    setGlobalStatus("Selectionnez une rue a supprimer.", "error");
+    setGlobalStatus("Sélectionnez la rue dont vous souhaitez supprimer la fiche.", "error");
     return;
   }
 
-  if (!window.confirm(`Supprimer la fiche de "${streetName}" ?`)) {
+  if (!window.confirm(`Supprimer définitivement la fiche de « ${streetName} » ?`)) {
     return;
   }
 
   try {
-    setGlobalStatus("Suppression de la fiche...", "info");
+    setGlobalStatus("Suppression de la fiche…", "info");
     await apiRequest("/api/editor/street-info", {
       method: "DELETE",
       body: {
@@ -1075,15 +1112,15 @@ async function onDeleteStreetInfo() {
     refs.streetNameInput.value = "";
     refs.streetInfoText.value = "";
     await loadContent();
-    setGlobalStatus(`Fiche supprimee: ${streetName}`, "success");
+    setGlobalStatus(`Fiche supprimée : ${streetName}.`, "success");
   } catch (error) {
-    setGlobalStatus(`Echec suppression fiche: ${error.message}`, "error");
+    setGlobalStatus(`Échec de la suppression de la fiche : ${error.message}`, "error");
   }
 }
 
 async function onAddStreetToModeList() {
   if (!state.content) {
-    setGlobalStatus("Contenu non charge.", "error");
+    setGlobalStatus("Le contenu n’est pas encore chargé.", "error");
     return;
   }
 
@@ -1099,7 +1136,7 @@ async function onAddStreetToModeList() {
 
   const currentList = normalizeNameArray(state.content?.lists?.[listKey]);
   if (currentList.includes(streetName)) {
-    setGlobalStatus(`"${streetName}" est deja dans la liste active.`, "info");
+    setGlobalStatus(`« ${streetName} » figure déjà parmi les ${getModeLabel(mode)}.`, "info");
     return;
   }
 
@@ -1110,21 +1147,21 @@ async function onAddStreetToModeList() {
       : buildListsPayloadWithUpdates({ famousStreets: updatedList });
 
   try {
-    setGlobalStatus("Ajout dans la liste active...", "info");
+    setGlobalStatus(`Ajout aux ${getModeLabel(mode)}…`, "info");
     await apiRequest("/api/editor/lists", {
       method: "PUT",
       body: payload,
     });
     await loadContent(streetName);
-    setGlobalStatus(`Rue ajoutee a la liste active: ${streetName}`, "success");
+    setGlobalStatus(`« ${streetName} » a été ajoutée aux ${getModeLabel(mode)}.`, "success");
   } catch (error) {
-    setGlobalStatus(`Echec ajout liste: ${error.message}`, "error");
+    setGlobalStatus(`Échec de l’ajout à la liste : ${error.message}`, "error");
   }
 }
 
 async function onRemoveStreetFromModeList() {
   if (!state.content) {
-    setGlobalStatus("Contenu non charge.", "error");
+    setGlobalStatus("Le contenu n’est pas encore chargé.", "error");
     return;
   }
 
@@ -1140,11 +1177,11 @@ async function onRemoveStreetFromModeList() {
 
   const currentList = normalizeNameArray(state.content?.lists?.[listKey]);
   if (!currentList.includes(streetName)) {
-    setGlobalStatus(`"${streetName}" n'est pas present dans la liste active.`, "info");
+    setGlobalStatus(`« ${streetName} » ne figure pas parmi les ${getModeLabel(mode)}.`, "info");
     return;
   }
 
-  if (!window.confirm(`Retirer "${streetName}" de la liste active ?`)) {
+  if (!window.confirm(`Retirer « ${streetName} » des ${getModeLabel(mode)} ?`)) {
     return;
   }
 
@@ -1155,21 +1192,21 @@ async function onRemoveStreetFromModeList() {
       : buildListsPayloadWithUpdates({ famousStreets: updatedList });
 
   try {
-    setGlobalStatus("Suppression de la liste active...", "info");
+    setGlobalStatus(`Retrait des ${getModeLabel(mode)}…`, "info");
     await apiRequest("/api/editor/lists", {
       method: "PUT",
       body: payload,
     });
     await loadContent(streetName);
-    setGlobalStatus(`Rue retiree de la liste active: ${streetName}`, "success");
+    setGlobalStatus(`« ${streetName} » a été retirée des ${getModeLabel(mode)}.`, "success");
   } catch (error) {
-    setGlobalStatus(`Echec suppression liste: ${error.message}`, "error");
+    setGlobalStatus(`Échec du retrait de la liste : ${error.message}`, "error");
   }
 }
 
 async function onSaveLists() {
   if (!state.content) {
-    setGlobalStatus("Contenu non charge.", "error");
+    setGlobalStatus("Le contenu n’est pas encore chargé.", "error");
     return;
   }
 
@@ -1180,21 +1217,21 @@ async function onSaveLists() {
   };
 
   try {
-    setGlobalStatus("Enregistrement des listes...", "info");
+    setGlobalStatus("Enregistrement des listes…", "info");
     await apiRequest("/api/editor/lists", {
       method: "PUT",
       body: payload,
     });
     await loadContent();
-    setGlobalStatus("Listes enregistrees.", "success");
+    setGlobalStatus("Les deux listes ont été enregistrées.", "success");
   } catch (error) {
-    setGlobalStatus(`Echec enregistrement listes: ${error.message}`, "error");
+    setGlobalStatus(`Échec de l’enregistrement des listes : ${error.message}`, "error");
   }
 }
 
 async function onSaveMonuments() {
   if (!state.content) {
-    setGlobalStatus("Contenu non charge.", "error");
+    setGlobalStatus("Le contenu n’est pas encore chargé.", "error");
     return;
   }
 
@@ -1207,75 +1244,19 @@ async function onSaveMonuments() {
   }
 
   try {
-    setGlobalStatus("Enregistrement des monuments...", "info");
+    setGlobalStatus("Enregistrement des monuments…", "info");
     await apiRequest("/api/editor/monuments", {
       method: "PUT",
       body: { entries },
     });
     await loadContent();
-    setGlobalStatus(`Monuments enregistres (${entries.length}).`, "success");
+    const isSingular = entries.length === 1;
+    setGlobalStatus(
+      `${entries.length} monument${isSingular ? " a" : "s ont"} été enregistré${isSingular ? "" : "s"}.`,
+      "success",
+    );
   } catch (error) {
-    setGlobalStatus(`Echec enregistrement monuments: ${error.message}`, "error");
-  }
-}
-
-async function onRunOsmSync() {
-  if (!refs.runOsmSyncBtn) {
-    return;
-  }
-
-  const confirmed = window.confirm(
-    "Lancer la synchronisation OSM maintenant ?\n\nLe workflow GitHub mettra a jour les donnees de carte et declenchera le deploiement.",
-  );
-  if (!confirmed) {
-    return;
-  }
-
-  refs.runOsmSyncBtn.disabled = true;
-  setGlobalStatus("Declenchement de la synchronisation OSM...", "info");
-  setOsmSyncOutput("Declenchement du workflow GitHub...");
-  stopOsmSyncPolling();
-  const pollSince = new Date(Date.now() - 15_000).toISOString();
-
-  try {
-    const payload = await apiRequest("/api/editor/osm-sync", {
-      method: "POST",
-      body: { target: "github" },
-    });
-
-    if (payload?.dispatched) {
-      const dispatch = payload.dispatch || {};
-      const label = `${dispatch.repository || "depot GitHub"} / ${dispatch.workflow || "sync-osm.yml"}`;
-      setGlobalStatus(`Workflow OSM lance (${label}). Suivi en cours...`, "info");
-      setOsmSyncOutput(`${payload?.output || "Workflow GitHub lance."}\n\nRecherche du run GitHub...`);
-      await pollOsmSyncStatus({
-        since: pollSince,
-        label: payload?.output || `Workflow GitHub lance (${label}).`,
-      });
-      return;
-    }
-
-    const durationSeconds = Number.isFinite(payload?.durationMs)
-      ? (payload.durationMs / 1000).toFixed(1)
-      : "?";
-    const changedFiles = Array.isArray(payload?.changedFiles) ? payload.changedFiles : [];
-    const changedLabel = changedFiles.length
-      ? `Fichiers modifies: ${changedFiles.join(", ")}`
-      : "Aucun fichier cible n'a change.";
-
-    setGlobalStatus(`Sync OSM terminee en ${durationSeconds}s. ${changedLabel}`, "success");
-    setOsmSyncOutput(payload?.output || "Synchronisation terminee.");
-  } catch (error) {
-    stopOsmSyncPolling();
-    const output = error?.payload?.output || "";
-    setGlobalStatus(`Echec synchronisation OSM: ${error.message}`, "error");
-    const activeState = formatOsmSyncActiveState(error?.payload?.active);
-    setOsmSyncOutput(output || activeState || `Erreur: ${error.message}`);
-    refs.runOsmSyncBtn.disabled = false;
-  } finally {
-    if (!state.osmSyncPollTimer) {
-      refs.runOsmSyncBtn.disabled = false;
-    }
+    setGlobalStatus(`Échec de l’enregistrement des monuments : ${error.message}`, "error");
   }
 }
 
@@ -1284,41 +1265,45 @@ function bindEvents() {
   refs.logoutBtn.addEventListener("click", () => {
     clearSession();
     setUiAuthenticated(false);
-    setGlobalStatus("Deconnecte.", "info");
+    setGlobalStatus("Vous êtes déconnecté.", "info");
   });
   refs.refreshContentBtn.addEventListener("click", async () => {
     try {
-      await loadContent(refs.streetNameInput.value);
+      refs.refreshContentBtn.disabled = true;
+      refs.refreshContentBtn.textContent = "Actualisation…";
+      await loadContent(refs.streetNameInput?.value || "");
     } catch (error) {
-      setGlobalStatus(`Echec actualisation: ${error.message}`, "error");
+      setGlobalStatus(`Échec de l’actualisation : ${error.message}`, "error");
+    } finally {
+      refs.refreshContentBtn.disabled = false;
+      refs.refreshContentBtn.textContent = "Actualiser";
     }
   });
 
-  refs.infoModeSelect.addEventListener("change", () => {
+  refs.infoModeSelect?.addEventListener("change", () => {
     refs.streetSearchInput.value = "";
     renderStreetSelect();
   });
 
-  refs.streetSearchInput.addEventListener("input", () => {
+  refs.streetSearchInput?.addEventListener("input", () => {
     renderStreetSelect();
   });
+  refs.famousListText?.addEventListener("input", updateListCounts);
+  refs.mainListText?.addEventListener("input", updateListCounts);
 
-  refs.streetSelect.addEventListener("change", () => {
+  refs.streetSelect?.addEventListener("change", () => {
     updateEditorFieldsForStreet(refs.streetSelect.value);
   });
 
-  refs.saveStreetInfoBtn.addEventListener("click", onSaveStreetInfo);
-  refs.addStreetToListBtn.addEventListener("click", onAddStreetToModeList);
-  refs.removeStreetFromListBtn.addEventListener("click", onRemoveStreetFromModeList);
-  refs.deleteStreetInfoBtn.addEventListener("click", onDeleteStreetInfo);
-  refs.saveListsBtn.addEventListener("click", onSaveLists);
-  refs.addMonumentRowBtn.addEventListener("click", () => {
+  refs.saveStreetInfoBtn?.addEventListener("click", onSaveStreetInfo);
+  refs.addStreetToListBtn?.addEventListener("click", onAddStreetToModeList);
+  refs.removeStreetFromListBtn?.addEventListener("click", onRemoveStreetFromModeList);
+  refs.deleteStreetInfoBtn?.addEventListener("click", onDeleteStreetInfo);
+  refs.saveListsBtn?.addEventListener("click", onSaveLists);
+  refs.addMonumentRowBtn?.addEventListener("click", () => {
     appendMonumentRow();
   });
-  refs.saveMonumentsBtn.addEventListener("click", onSaveMonuments);
-  if (refs.runOsmSyncBtn) {
-    refs.runOsmSyncBtn.addEventListener("click", onRunOsmSync);
-  }
+  refs.saveMonumentsBtn?.addEventListener("click", onSaveMonuments);
   if (refs.openVisitStatsBtn) {
     refs.openVisitStatsBtn.addEventListener("click", openVisitStatsModal);
   }

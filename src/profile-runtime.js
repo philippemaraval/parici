@@ -1,4 +1,5 @@
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
+import { fetchWithStartupRetry } from "./api-client.js";
 
 function getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank) {
   return [
@@ -31,7 +32,7 @@ function getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank) {
       check: (profile) => (parseInt(profile.overall?.total_games) || 0) >= 250,
     },
     {
-      id: "minot",
+      id: "titi",
       emoji: "🧒",
       name: "Titi Parisien",
       desc: "Atteindre Titi Parisien dans tous les modes et toutes les zones globales (hors Ville entière)",
@@ -58,34 +59,13 @@ function getBadgeDefinitions(hasReachedGlobalRank, hasReachedVilleRank) {
       desc: "Atteindre Préfet de Paris dans tous les modes et toutes les zones globales (hors Ville entière)",
       check: (profile) => hasReachedGlobalRank(profile, "MV"),
     },
-    {
-      id: "ville_minot",
-      emoji: "🚀",
-      name: "Astronaute",
-      desc: "Atteindre Titi Parisien sur Ville entière (Classique, Marathon, Chrono)",
-      check: (profile) => hasReachedVilleRank(profile, "M"),
-    },
-    {
-      id: "ville_habitue",
-      emoji: "⭐️",
-      name: "Étoile",
-      desc: "Atteindre Habitué sur Ville entière (Classique, Marathon, Chrono)",
-      check: (profile) => hasReachedVilleRank(profile, "H"),
-    },
-    {
-      id: "ville_vrai",
-      emoji: "🛸",
-      name: "Extraterrestre",
-      desc: "Atteindre Vrai Parigot sur Ville entière (Classique, Marathon, Chrono)",
-      check: (profile) => hasReachedVilleRank(profile, "V"),
-    },
-    {
-      id: "ville_maire",
-      emoji: "👽",
-      name: "L'Ovni",
-      desc: "Atteindre Préfet de Paris sur Ville entière (Classique, Marathon, Chrono)",
-      check: (profile) => hasReachedVilleRank(profile, "MV"),
-    },
+    ...VILLE_RANK_AVATAR_DEFINITIONS.map(({ badgeId, emoji, name, desc, rankLetter }) => ({
+      id: badgeId,
+      emoji,
+      name,
+      desc,
+      check: (profile) => hasReachedVilleRank(profile, rankLetter),
+    })),
     {
       id: "celebres",
       emoji: "⭐",
@@ -206,7 +186,7 @@ function getProfileErrorMessage(error) {
   if (!raw) {
     return "Erreur inconnue";
   }
-  return raw.length > 140 ? `${raw.slice(0, 137)}...` : raw;
+  return raw.length > 140 ? `${raw.slice(0, 137)}…` : raw;
 }
 
 function isAuthFailureStatus(status) {
@@ -310,7 +290,7 @@ function bindReferralClaimForm({ profileContent, apiUrl, currentUser }) {
       return;
     }
 
-    status.textContent = "Validation...";
+    status.textContent = "Validation…";
     status.classList.remove("is-error", "is-success");
 
     fetch(`${apiUrl}/api/referrals/claim`, {
@@ -683,9 +663,11 @@ export function loadProfileRuntime({
   profileContent.innerHTML =
     '<div class="skeleton skeleton-avatar"></div><div class="skeleton skeleton-line skeleton-line--60"></div><div class="skeleton skeleton-block"></div><div class="skeleton skeleton-line skeleton-line--80"></div>';
 
-  fetch(`${apiUrl}/api/profile`, {
-    headers: { Authorization: `Bearer ${currentUser.token}` },
-  })
+  fetchWithStartupRetry(
+    `${apiUrl}/api/profile`,
+    { headers: { Authorization: `Bearer ${currentUser.token}` } },
+    { timeoutMs: 12000, retryDelaysMs: [1000] },
+  )
     .then(async (response) => {
       if (!response.ok) {
         let message = `HTTP ${response.status}`;
@@ -1018,7 +1000,7 @@ export const REFERRAL_AVATAR_UNLOCKS = [
   {
     emoji: "🧗‍♂️",
     name: "Grand Frère",
-    desc: "Amener un filleul validé au rang Minot",
+    desc: "Amener un filleul validé au rang Titi Parisien",
     check: (stats) => hasReferralBadge(stats, "referral_grand_frere"),
   },
   {

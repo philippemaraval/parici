@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de bord | Administration Parici</title>
-  <meta name="description" content="Tableau de bord d'administration de Parici.">
+  <title>Monuments | Administration Parici</title>
+  <meta name="description" content="Administration des monuments utilisés dans Parici.">
   <meta name="theme-color" content="#0c1d57">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,23 +19,26 @@
 <body>
   <main class="admin-shell">
     <nav class="admin-topbar" aria-label="Navigation admin">
-      <a class="admin-brand" href="/admin/" aria-current="page">
+      <a class="admin-brand" href="/admin/">
         <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
         <span><strong>Parici</strong><small>Administration</small></span>
       </a>
       <div class="admin-nav">
-        <a href="/admin/" aria-current="page">Accueil</a>
-        <a href="/admin/parici/">Parici</a>
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/" aria-current="page">Parici</a>
         <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
         <a class="admin-nav-site" href="/">Voir le site</a>
       </div>
     </nav>
 
     <header class="admin-header">
-      <div>
-        <p class="admin-kicker">Tableau de bord</p>
-        <h1>Administration de Parici</h1>
-        <p class="admin-subtitle">Gérez les contenus du jeu, les utilisateurs et les données cartographiques depuis un point d’entrée unique.</p>
+      <div class="page-heading">
+        <div>
+          <p class="admin-kicker">Parici / Monuments</p>
+          <h1>Référentiel des monuments</h1>
+          <p class="admin-subtitle">Ajoutez, corrigez et géolocalisez les monuments utilisés dans Parici.</p>
+        </div>
+        <a class="btn btn-back" href="/admin/parici/">Retour à Parici</a>
       </div>
       <p id="global-status" class="status status--info" role="status" aria-live="polite">Connectez-vous avec un compte éditeur.</p>
     </header>
@@ -61,7 +64,7 @@
       </form>
     </section>
 
-    <section id="dashboard-section" class="hidden">
+    <section id="editor-section" class="hidden">
       <div class="card toolbar">
         <div class="session-card">
           <span class="session-avatar">P</span>
@@ -72,7 +75,7 @@
           </div>
         </div>
         <div class="toolbar-actions">
-          <button id="refresh-session-btn" type="button" class="btn">Vérifier l’accès</button>
+          <button id="refresh-content-btn" type="button" class="btn">Actualiser</button>
           <button id="logout-btn" type="button" class="btn btn-quiet">Se déconnecter</button>
         </div>
       </div>
@@ -80,46 +83,36 @@
       <section class="card">
         <div class="card-header">
           <div>
-            <p class="card-eyebrow">Espaces de gestion</p>
-            <h2>Que souhaitez-vous administrer&nbsp;?</h2>
-            <p class="muted">Chaque domaine dispose de sa propre page afin de préserver un parcours clair et sans action ambiguë.</p>
+            <p class="card-eyebrow">Édition</p>
+            <h2>Monuments</h2>
+            <p class="muted">Chaque monument doit posséder un nom unique, une longitude et une latitude valides.</p>
           </div>
         </div>
-        <div class="quick-actions quick-actions--admin-home">
-          <a class="quick-action quick-action--primary" href="/admin/parici/">
-            <span class="quick-action-icon">P</span>
-            <strong>Parici</strong>
-            <span>Fiches éditoriales, rues célèbres, rues principales, monuments et statistiques de fréquentation.</span>
-          </a>
-          <a id="users-admin-card" class="quick-action hidden" href="/admin/users.html">
-            <span class="quick-action-icon">U</span>
-            <strong>Utilisateurs</strong>
-            <span>Comptes, activité Daily, parrainages, rappels et actions d’administration.</span>
-          </a>
+        <div class="notice notice--info">
+          Coordonnées attendues pour Paris&nbsp;: longitude proche de <strong>2,35</strong> et latitude proche de <strong>48,86</strong>. Le point est aussi accepté comme séparateur décimal.
         </div>
-      </section>
-
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <p class="card-eyebrow">Données cartographiques</p>
-            <h2>Synchronisation OpenStreetMap</h2>
-            <p class="muted">Récupère les dernières données de voirie, reconstruit les fichiers cartographiques puis lance leur déploiement. Comptez généralement une à deux minutes.</p>
-          </div>
-          <button id="run-osm-sync-btn" type="button" class="btn btn-primary">Synchroniser les données OSM</button>
+        <div class="monuments-table-wrap">
+          <table class="monuments-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="monuments-table-body"></tbody>
+          </table>
         </div>
-        <div class="notice notice--warning">
-          N’interrompez pas une synchronisation en cours. Les mises à jour deviennent visibles après la fin du déploiement.
-        </div>
-        <div class="output-block">
-          <p class="output-label">Journal de synchronisation</p>
-          <pre id="osm-sync-output" class="command-output" aria-live="polite">Aucune synchronisation lancée pour le moment.</pre>
+        <div class="button-row">
+          <button id="add-monument-row-btn" type="button" class="btn">Ajouter une ligne</button>
+          <button id="save-monuments-btn" type="button" class="btn btn-primary">Enregistrer les monuments</button>
         </div>
       </section>
     </section>
   </main>
 
-  <script type="module" src="/admin/home.js?v=20260706-admin-polish"></script>
+  <script type="module" src="/admin/admin.js?v=20260706-admin-polish"></script>
 </body>
 
 </html>

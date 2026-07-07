@@ -1,0 +1,48 @@
+name: Daily reminder wakeup
+
+on:
+  schedule:
+    # 10:00 in Paris: 08:00 UTC in summer, 09:00 UTC in winter.
+    # Both runs are intentional; the database makes delivery idempotent.
+    - cron: "0 8,9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-reminder-wakeup
+  cancel-in-progress: false
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      PARICI_API_URL: ${{ vars.PARICI_API_URL || 'https://camino-paris.onrender.com' }}
+    steps:
+      - name: Wake API and warm public caches
+        run: >
+          curl
+          --fail
+          --silent
+          --show-error
+          --retry 8
+          --retry-all-errors
+          --retry-delay 15
+          --connect-timeout 10
+          --max-time 60
+          "$PARICI_API_URL/api/health?prewarm=1"
+
+      - name: Wait for database readiness
+        run: >
+          curl
+          --fail
+          --silent
+          --show-error
+          --retry 8
+          --retry-all-errors
+          --retry-delay 15
+          --connect-timeout 10
+          --max-time 60
+          "$PARICI_API_URL/api/ready"

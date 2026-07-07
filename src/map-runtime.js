@@ -513,6 +513,8 @@ export async function loadBusLinesRuntime({
   );
   const segmentKey = (left, right) =>
     [left.join(","), right.join(",")].sort().join("|");
+  const segmentDirection = (left, right) =>
+    left.join(",") <= right.join(",") ? 1 : -1;
   const segmentLineNames = new Map();
   allBusLines.forEach((feature) => {
     const lineName = feature.properties.name;
@@ -599,83 +601,47 @@ export async function loadBusLinesRuntime({
         ? [feature.geometry.coordinates]
         : feature.geometry.coordinates;
     if (!busLineLayersByName.has(lineName)) busLineLayersByName.set(lineName, []);
-    const unsharedRuns = [];
-    const sharedRunsByStyle = new Map();
-
-    const addLineLayer = (coordinates, validNames, lineIndex = 0, direction = 1) => {
-      const layer = L.polyline(
-        coordinates.map((line) => line.map(([lon, lat]) => [lat, lon])),
-        {
-          color,
-          weight: 3,
-          opacity: 0.82,
-          offset: 0,
-          renderer: busLineRenderer,
-        },
-      );
-      layer.feature = feature;
-      layer._validBusLineNames = validNames;
-      layer._sharedBusLineCount = validNames.length;
-      layer._sharedBusLineIndex = lineIndex;
-      layer._busSegmentDirection = direction;
-      applyBusSegmentZoomStyle(layer);
-      busLineLayersByName.get(lineName).push(layer);
-      layer.on("mouseover", () => beginBusLineHover(lineName));
-      layer.on("mouseout", () => endBusLineHover(lineName));
-      layer.on("click", () =>
-        handleBusLineClick(feature, layer, isTouchDevice ? validNames : [lineName]),
-      );
-      busLinesLayer.addLayer(layer);
-    };
 
     lines.forEach((line) => {
       let activeRun = null;
-      const flushRun = () => {
-        if (!activeRun || activeRun.coordinates.length < 2) return;
-        const validNames = activeRun.validNames;
-        if (validNames.length === 1) {
-          unsharedRuns.push(activeRun.coordinates);
-        } else {
-          const styleKey = `${activeRun.signature}::${activeRun.lineIndex}`;
-          if (!sharedRunsByStyle.has(styleKey)) {
-            sharedRunsByStyle.set(styleKey, {
-              coordinates: [],
-              validNames,
-              lineIndex: activeRun.lineIndex,
-              direction: activeRun.direction,
-            });
-          }
-          sharedRunsByStyle.get(styleKey).coordinates.push(activeRun.coordinates);
-        }
-      };
-
       for (let index = 1; index < line.length; index += 1) {
-        const startCoordinate = line[index - 1].join(",");
-        const endCoordinate = line[index].join(",");
-        const direction = startCoordinate <= endCoordinate ? 1 : -1;
+        const fromCoordinate = line[index - 1];
+        const toCoordinate = line[index];
         const validNames = Array.from(
-          segmentLineNames.get(segmentKey(line[index - 1], line[index])) || [lineName],
+          segmentLineNames.get(segmentKey(fromCoordinate, toCoordinate)) || [lineName],
         ).sort((left, right) => left.localeCompare(right, "fr", { numeric: true }));
-        const signature = `${validNames.join("|")}::${direction}`;
-        const lineIndex = validNames.indexOf(lineName);
+        const signature = validNames.join("|");
         if (!activeRun || activeRun.signature !== signature) {
-          flushRun();
           activeRun = {
             signature,
-            validNames,
-            lineIndex,
-            direction,
-            coordinates: [line[index - 1], line[index]],
+            direction: segmentDirection(fromCoordinate, toCoordinate),
           };
-        } else {
-          activeRun.coordinates.push(line[index]);
         }
+        const lineIndex = validNames.indexOf(lineName);
+        const layer = L.polyline(
+          [fromCoordinate, toCoordinate].map(([lon, lat]) => [lat, lon]),
+          {
+            color,
+            weight: 3,
+            opacity: 0.82,
+            offset: 0,
+            renderer: busLineRenderer,
+          },
+        );
+        layer.feature = feature;
+        layer._validBusLineNames = validNames;
+        layer._sharedBusLineCount = validNames.length;
+        layer._sharedBusLineIndex = lineIndex;
+        layer._busSegmentDirection = activeRun.direction;
+        applyBusSegmentZoomStyle(layer);
+        busLineLayersByName.get(lineName).push(layer);
+        layer.on("mouseover", () => beginBusLineHover(lineName));
+        layer.on("mouseout", () => endBusLineHover(lineName));
+        layer.on("click", () =>
+          handleBusLineClick(feature, layer, isTouchDevice ? validNames : [lineName]),
+        );
+        busLinesLayer.addLayer(layer);
       }
-      flushRun();
-    });
-    if (unsharedRuns.length) addLineLayer(unsharedRuns, [lineName]);
-    sharedRunsByStyle.forEach(({ coordinates, validNames, lineIndex, direction }) => {
-      addLineLayer(coordinates, validNames, lineIndex, direction);
     });
   });
 

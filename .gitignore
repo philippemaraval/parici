@@ -7,5 +7,6 @@ dist/
 .env.local
 backend/.env
 backend/game_data.db
+*.db
 game_data.db
 leaderboard.db
