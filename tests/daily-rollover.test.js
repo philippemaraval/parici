@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, "..");
 
 test("daily challenge rolls over at 03:00 local time", () => {
   const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+  const frontendDailySource = fs.readFileSync(path.join(ROOT, "src/daily.js"), "utf8");
 
   assert.match(
     source,
@@ -17,4 +18,20 @@ test("daily challenge rolls over at 03:00 local time", () => {
     /new Date\(date\.getTime\(\) - DAILY_ROLLOVER_HOUR \* 60 \* 60 \* 1000\)/,
   );
   assert.doesNotMatch(source, /getDateKeyInZone\(DAILY_TIMEZONE\)/);
+
+  assert.match(frontendDailySource, /export const DAILY_STORAGE_TIMEZONE = "Europe\/Paris";/);
+  assert.match(frontendDailySource, /export const DAILY_STORAGE_ROLLOVER_HOUR = 3;/);
+  assert.match(
+    frontendDailySource,
+    /validDate\.getTime\(\) - DAILY_STORAGE_ROLLOVER_HOUR \* 60 \* 60 \* 1000/,
+  );
+});
+
+test("daily target cannot be changed after players started the date", () => {
+  const serverSource = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+  const databaseSource = fs.readFileSync(path.join(ROOT, "backend/database.js"), "utf8");
+
+  assert.match(databaseSource, /async function countDailyUserAttemptsForDate\(date\)/);
+  assert.match(serverSource, /countDailyUserAttemptsForDate\(date\)/);
+  assert.match(serverSource, /Keeping existing target for \$\{date\}/);
 });

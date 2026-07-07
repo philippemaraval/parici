@@ -1259,6 +1259,14 @@ async function getDailyUserStatus(userId, date) {
   return res.rows[0] || null;
 }
 
+async function countDailyUserAttemptsForDate(date) {
+  const res = await pool.query(
+    'SELECT COUNT(*)::int AS attempt_count FROM daily_user_attempts WHERE date = $1',
+    [date]
+  );
+  return Number(res.rows[0]?.attempt_count || 0);
+}
+
 async function startDailyUserAttempt(userId, date) {
   const res = await pool.query(
     `INSERT INTO daily_user_attempts (
@@ -2497,6 +2505,7 @@ module.exports = {
   listDailyTargets,
   setDailyTarget,
   getDailyUserStatus,
+  countDailyUserAttemptsForDate,
   startDailyUserAttempt,
   updateDailyUserAttempt,
   getDailyLeaderboard,

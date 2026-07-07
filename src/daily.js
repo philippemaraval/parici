@@ -1,7 +1,34 @@
 import { DAILY_GUESSES_STORAGE_PREFIX, DAILY_META_STORAGE_PREFIX } from "./config.js";
 
-export function getTodayDailyStorageDate() {
-  return new Date().toISOString().split("T")[0];
+export const DAILY_STORAGE_TIMEZONE = "Europe/Paris";
+export const DAILY_STORAGE_ROLLOVER_HOUR = 3;
+
+function getDatePartsInTimeZone(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+  const byType = {};
+  parts.forEach((part) => {
+    byType[part.type] = part.value;
+  });
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
+export function getDailyStorageDate(date = new Date()) {
+  const sourceDate = date instanceof Date ? date : new Date(date);
+  const validDate = Number.isNaN(sourceDate.getTime()) ? new Date() : sourceDate;
+  return getDatePartsInTimeZone(
+    new Date(validDate.getTime() - DAILY_STORAGE_ROLLOVER_HOUR * 60 * 60 * 1000),
+    DAILY_STORAGE_TIMEZONE,
+  );
+}
+
+export function getTodayDailyStorageDate(date = new Date()) {
+  return getDailyStorageDate(date);
 }
 
 export function getDailyGuessesStorageKey(date) {

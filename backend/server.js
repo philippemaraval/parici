@@ -3873,25 +3873,52 @@ async function ensureDailyTarget() {
     if (manifestEntry) {
         const desired = resolveDailyTargetFromManifest(manifestEntry, target);
         if (desired) {
+            const sameStreet =
+                target &&
+                normalizeContentName(target.street_name) === normalizeContentName(desired.streetName);
             const needsSync = shouldSyncDailyTargetFromManifest(target, desired);
 
             if (needsSync) {
-                await db.setDailyTarget(
-                    date,
-                    desired.streetName,
-                    desired.arrondissement,
-                    desired.coordinates,
-                    desired.geometry
-                );
-                target = await db.getDailyTarget(date);
-                console.log(`[Daily] Synced target from manifest for ${date}: ${desired.streetName}`);
+                const canSyncWithoutChangingStartedChallenge = !target || sameStreet;
+                let canSync = canSyncWithoutChangingStartedChallenge;
+
+                if (!canSync) {
+                    const attemptCount = await db.countDailyUserAttemptsForDate(date);
+                    canSync = attemptCount === 0;
+                    if (!canSync) {
+                        console.warn(
+                            `[Daily] Keeping existing target for ${date}: "${target.street_name}" ` +
+                            `instead of manifest "${desired.streetName}" because ${attemptCount} player(s) already started.`
+                        );
+                    }
+                }
+
+                if (canSync) {
+                    await db.setDailyTarget(
+                        date,
+                        desired.streetName,
+                        desired.arrondissement,
+                        desired.coordinates,
+                        desired.geometry
+                    );
+                    target = await db.getDailyTarget(date);
+                    console.log(`[Daily] Synced target from manifest for ${date}: ${desired.streetName}`);
+                }
             }
         }
     }
 
     if (target && !manifestEntry && !shouldKeepStreetForGame({ name: target.street_name })) {
-        console.warn(`[Daily] Existing target excluded by filter for ${date}: "${target.street_name}". Regenerating.`);
-        target = null;
+        const attemptCount = await db.countDailyUserAttemptsForDate(date);
+        if (attemptCount > 0) {
+            console.warn(
+                `[Daily] Keeping excluded existing target for ${date}: "${target.street_name}" ` +
+                `because ${attemptCount} player(s) already started.`
+            );
+        } else {
+            console.warn(`[Daily] Existing target excluded by filter for ${date}: "${target.street_name}". Regenerating.`);
+            target = null;
+        }
     }
     
     if (!target && streetIndex.length > 0) {

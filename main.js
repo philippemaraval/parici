@@ -3746,8 +3746,32 @@
   }
 
   // src/daily.js
-  function getTodayDailyStorageDate() {
-    return (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  var DAILY_STORAGE_TIMEZONE = "Europe/Paris";
+  var DAILY_STORAGE_ROLLOVER_HOUR = 3;
+  function getDatePartsInTimeZone(date, timeZone) {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+    const parts = formatter.formatToParts(date);
+    const byType = {};
+    parts.forEach((part) => {
+      byType[part.type] = part.value;
+    });
+    return `${byType.year}-${byType.month}-${byType.day}`;
+  }
+  function getDailyStorageDate(date = /* @__PURE__ */ new Date()) {
+    const sourceDate = date instanceof Date ? date : new Date(date);
+    const validDate = Number.isNaN(sourceDate.getTime()) ? /* @__PURE__ */ new Date() : sourceDate;
+    return getDatePartsInTimeZone(
+      new Date(validDate.getTime() - DAILY_STORAGE_ROLLOVER_HOUR * 60 * 60 * 1e3),
+      DAILY_STORAGE_TIMEZONE
+    );
+  }
+  function getTodayDailyStorageDate(date = /* @__PURE__ */ new Date()) {
+    return getDailyStorageDate(date);
   }
   function getDailyGuessesStorageKey(date) {
     return `${DAILY_GUESSES_STORAGE_PREFIX}${date}`;
