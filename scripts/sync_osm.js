@@ -20,6 +20,7 @@ const http = require("http");
 const osmtogeojson = require("osmtogeojson");
 const { validateOsmOutputs } = require("./validate_osm_outputs");
 const {
+  normalizeStreetNameForFilter,
   shouldExcludeOsmTags,
   shouldKeepStreetForGame,
 } = require("../street_filter");
@@ -64,6 +65,42 @@ const QUARTIERS_QUERY = `
 [out:json][timeout:300];
 area["ref:INSEE"="75056"]->.paris;
 rel(area.paris)["boundary"="administrative"]["admin_level"="10"];
+out geom;
+`;
+
+const EXCLUDED_STREET_AREA_NAMES = ["Bois de Boulogne", "Bois de Vincennes"];
+const EXCLUDED_WOOD_CORRIDOR_STREET_NAMES = [
+  "Route d'Auteuil aux Lacs",
+  "Route de Boulogne à Passy",
+  "Route de la Croix Rouge",
+  "Route de La Muette à Neuilly",
+  "Route de la Porte Dauphine à la Porte des Sablons",
+  "Route de la Porte des Sablons à la Porte Maillot",
+  "Route de la Pyramide",
+  "Route de la Tourelle",
+  "Route de Suresnes",
+  "Route des Fortifications",
+  "Route du Point du Jour à Bagatelle",
+];
+const EXCLUDED_WOOD_CORRIDOR_STREET_NAME_KEYS = new Set(
+  EXCLUDED_WOOD_CORRIDOR_STREET_NAMES.map((name) => normalizeStreetNameForFilter(name)),
+);
+const EXCLUDED_MANUAL_STREET_NAMES = [
+  "Autoroute de l’Est",
+  "Autoroute de Normandie",
+  "Bretelle de contournement de la place Valhubert",
+  "rampe PMR",
+];
+const EXCLUDED_MANUAL_STREET_NAME_KEYS = new Set(
+  EXCLUDED_MANUAL_STREET_NAMES.map((name) => normalizeStreetNameForFilter(name)),
+);
+const EXCLUDED_MANUAL_STREET_PREFIXES = new Set(["escalier", "escaliers"]);
+const EXCLUDED_STREET_AREAS_QUERY = `
+[out:json][timeout:300];
+area["ref:INSEE"="75056"]->.paris;
+(
+  rel(area.paris)["leisure"="park"]["name"~"^Bois de (Boulogne|Vincennes)$"];
+);
 out geom;
 `;
 
@@ -296,7 +333,7 @@ function buildArrondissements(overpassJson) {
   const features = (converted.features || [])
     .filter((feature) => ["Polygon", "MultiPolygon"].includes(feature.geometry?.type))
     .map((feature) => {
-      const osmTags = feature.properties?.tags || {};
+      const osmTags = extractOsmTags(feature.properties);
       const name = String(osmTags.name || feature.properties?.name || "").trim();
       const quartierNumber = Number(osmTags.ref);
       const refInsee = String(osmTags["ref:INSEE"] || (quartierNumber ? `751${String(quartierNumber).padStart(2, "0")}` : ""));
@@ -329,8 +366,67 @@ function buildArrondissements(overpassJson) {
   return { type: "FeatureCollection", features };
 }
 
+function buildExcludedStreetAreas(overpassJson) {
+  const converted = osmtogeojson(overpassJson);
+  return (converted.features || [])
+    .filter((feature) => ["Polygon", "MultiPolygon"].includes(feature.geometry?.type))
+    .map((feature) => {
+      const osmTags = extractOsmTags(feature.properties);
+      const name = String(osmTags.name || feature.properties?.name || "").trim();
+      return {
+        type: "Feature",
+        properties: {
+          id: feature.properties?.id || osmTags.wikidata || name,
+          name,
+        },
+        geometry: {
+          type: feature.geometry.type,
+          coordinates: roundGeometryCoordinates(feature.geometry.coordinates),
+        },
+      };
+    })
+    .filter((feature) => EXCLUDED_STREET_AREA_NAMES.includes(feature.properties.name));
+}
+
+function extractOsmTags(properties = {}) {
+  const nestedTags = properties && typeof properties.tags === "object" && properties.tags !== null
+    ? properties.tags
+    : {};
+  const directTags = {};
+  for (const [key, value] of Object.entries(properties || {})) {
+    if (["id", "tags", "meta", "relations", "tainted"].includes(key)) continue;
+    directTags[key] = value;
+  }
+  return { ...directTags, ...nestedTags };
+}
+
 function findArrondissement(point, arrondissements) {
   return arrondissements.find((feature) => pointInFeature(point, feature)) || null;
+}
+
+function pointInExcludedStreetArea(point, excludedStreetAreas = []) {
+  return excludedStreetAreas.some((feature) => pointInFeatureOuterShell(point, feature));
+}
+
+function isExcludedWoodCorridorStreetName(name) {
+  return EXCLUDED_WOOD_CORRIDOR_STREET_NAME_KEYS.has(normalizeStreetNameForFilter(name));
+}
+
+function isManuallyExcludedStreetName(name) {
+  const normalizedName = normalizeStreetNameForFilter(name);
+  const firstToken = normalizedName.split(/[\s']/).filter(Boolean)[0] || "";
+  return EXCLUDED_MANUAL_STREET_NAME_KEYS.has(normalizedName)
+    || EXCLUDED_MANUAL_STREET_PREFIXES.has(firstToken);
+}
+
+function pointInFeatureOuterShell(point, feature) {
+  if (feature.geometry.type === "Polygon") {
+    return pointInRing(point, feature.geometry.coordinates[0] || []);
+  }
+  if (feature.geometry.type === "MultiPolygon") {
+    return feature.geometry.coordinates.some((polygon) => pointInRing(point, polygon[0] || []));
+  }
+  return false;
 }
 
 function findNearestArrondissement(point, arrondissements) {
@@ -533,18 +629,35 @@ function disambiguateHomonymousStreets(features) {
   return { homonymousNames, renamedComponents };
 }
 
-function buildStreets(overpassJson, arrondissements) {
+function buildStreets(overpassJson, arrondissements, excludedStreetAreas = []) {
   const converted = osmtogeojson(overpassJson);
   const seen = new Set();
-  const skipped = { noName: 0, noGeometry: 0, noArrondissement: 0, fallback: 0, excludedTags: 0 };
+  const skipped = {
+    noName: 0,
+    noGeometry: 0,
+    noArrondissement: 0,
+    fallback: 0,
+    excludedTags: 0,
+    excludedAreas: 0,
+    excludedWoodNames: 0,
+    excludedManualNames: 0,
+  };
   const features = [];
 
   for (const feature of converted.features || []) {
     const properties = feature.properties || {};
-    const tags = properties.tags || {};
+    const tags = extractOsmTags(properties);
     const name = tags.name || properties.name;
     if (!name) {
       skipped.noName++;
+      continue;
+    }
+    if (isExcludedWoodCorridorStreetName(name)) {
+      skipped.excludedWoodNames++;
+      continue;
+    }
+    if (isManuallyExcludedStreetName(name)) {
+      skipped.excludedManualNames++;
       continue;
     }
     if (!feature.geometry || !["LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(feature.geometry.type)) {
@@ -558,6 +671,10 @@ function buildStreets(overpassJson, arrondissements) {
     const centroid = centroidOfGeometry(feature.geometry);
     if (!centroid) {
       skipped.noGeometry++;
+      continue;
+    }
+    if (pointInExcludedStreetArea(centroid, excludedStreetAreas)) {
+      skipped.excludedAreas++;
       continue;
     }
     let arrondissementFeature = findArrondissement(centroid, arrondissements);
@@ -691,14 +808,24 @@ async function main() {
   }
   console.log(`   ${arrondissements.features.length} quartiers administratifs chargés.\n`);
 
+  console.log("🌳 Chargement des bois exclus...");
+  const excludedAreasRaw = await fetchOverpass(EXCLUDED_STREET_AREAS_QUERY, "bois exclus");
+  const excludedStreetAreas = buildExcludedStreetAreas(excludedAreasRaw);
+  const loadedExcludedAreaNames = new Set(excludedStreetAreas.map((feature) => feature.properties.name));
+  const missingExcludedAreas = EXCLUDED_STREET_AREA_NAMES.filter((name) => !loadedExcludedAreaNames.has(name));
+  if (missingExcludedAreas.length) {
+    throw new Error(`Bois exclus introuvables: ${missingExcludedAreas.join(", ")}`);
+  }
+  console.log(`   ${excludedStreetAreas.length} polygones exclus chargés: ${EXCLUDED_STREET_AREA_NAMES.join(", ")}.\n`);
+
   console.log("🛣️  Chargement des voies parisiennes...");
   const streetRaw = await fetchOverpass(STREETS_QUERY, "rues");
-  const { features, skipped } = buildStreets(streetRaw, arrondissements.features);
+  const { features, skipped } = buildStreets(streetRaw, arrondissements.features, excludedStreetAreas);
   const lightFeatures = buildLightFeatures(features);
   const homonyms = disambiguateHomonymousStreets(lightFeatures);
   console.log(`   ${features.length} géométries de voies, ${lightFeatures.length} retenues pour le jeu.`);
   console.log(`   Homonymes: ${homonyms.homonymousNames} noms, ${homonyms.renamedComponents} voies renommées.`);
-  console.log(`   Ignorées: ${skipped.noName} sans nom, ${skipped.noGeometry} sans géométrie, ${skipped.noArrondissement} sans arrondissement, ${skipped.excludedTags} tags exclus.`);
+  console.log(`   Ignorées: ${skipped.noName} sans nom, ${skipped.noGeometry} sans géométrie, ${skipped.noArrondissement} sans arrondissement, ${skipped.excludedTags} tags exclus, ${skipped.excludedAreas} dans les bois exclus, ${skipped.excludedWoodNames} corridors de bois nommés, ${skipped.excludedManualNames} exclusions manuelles.`);
   console.log(`   Arrondissement par proximité: ${skipped.fallback}\n`);
 
   const enriched = { type: "FeatureCollection", features };
@@ -715,6 +842,9 @@ async function main() {
     streets_total: features.length,
     streets_light: lightFeatures.length,
     keptMapSegments: lightFeatures.length,
+    excludedWoodSegments: skipped.excludedAreas,
+    excludedWoodNameSegments: skipped.excludedWoodNames,
+    excludedManualNameSegments: skipped.excludedManualNames,
     uniqueStreets: streetIndex.length,
     quartiers: arrondissements.features.length,
     monuments: monuments.features.length,
@@ -745,4 +875,14 @@ if (require.main === module) {
   });
 }
 
-module.exports = { disambiguateHomonymousStreets, geometriesAreAdjacent };
+module.exports = {
+  buildExcludedStreetAreas,
+  buildStreets,
+  disambiguateHomonymousStreets,
+  extractOsmTags,
+  geometriesAreAdjacent,
+  isExcludedWoodCorridorStreetName,
+  isManuallyExcludedStreetName,
+  pointInFeatureOuterShell,
+  pointInExcludedStreetArea,
+};

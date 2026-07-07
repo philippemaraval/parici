@@ -126,6 +126,7 @@ const EXCLUDED_TAG_VALUES = new Map([
   ["footway", new Set(["sidewalk"])],
   ["conveying", new Set(["forward", "backward"])],
   ["public_transport", new Set(["station"])],
+  ["access", new Set(["private", "no", "customers", "permit", "delivery"])],
 ]);
 
 function normalizeTagValue(value) {
