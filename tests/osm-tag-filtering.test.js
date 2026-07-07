@@ -4,6 +4,7 @@ const test = require("node:test");
 const {
   buildStreets,
   extractOsmTags,
+  isExcludedStreetAreaTags,
   isExcludedWoodCorridorStreetName,
   isManuallyExcludedStreetName,
 } = require("../scripts/sync_osm");
@@ -118,6 +119,12 @@ test("Paris OSM import excludes streets located inside excluded woods", () => {
 
   assert.equal(skipped.excludedAreas, 1);
   assert.deepEqual(features.map((feature) => feature.properties.name), ["Rue Hors Bois"]);
+});
+
+test("Paris OSM import treats all parks and gardens as excluded street areas", () => {
+  assert.equal(isExcludedStreetAreaTags({ leisure: "park", name: "Parc de Test" }), true);
+  assert.equal(isExcludedStreetAreaTags({ leisure: "garden", name: "Jardin de Test" }), true);
+  assert.equal(isExcludedStreetAreaTags({ leisure: "pitch", name: "Terrain de Test" }), false);
 });
 
 test("Paris OSM wood exclusion ignores inner polygon holes", () => {

@@ -68,7 +68,10 @@ rel(area.paris)["boundary"="administrative"]["admin_level"="10"];
 out geom;
 `;
 
-const EXCLUDED_STREET_AREA_NAMES = ["Bois de Boulogne", "Bois de Vincennes"];
+const REQUIRED_EXCLUDED_STREET_AREA_NAMES = ["Bois de Boulogne", "Bois de Vincennes"];
+const EXCLUDED_STREET_AREA_TAG_VALUES = new Map([
+  ["leisure", new Set(["garden", "park"])],
+]);
 const EXCLUDED_WOOD_CORRIDOR_STREET_NAMES = [
   "Route d'Auteuil aux Lacs",
   "Route de Boulogne à Passy",
@@ -99,7 +102,7 @@ const EXCLUDED_STREET_AREAS_QUERY = `
 [out:json][timeout:300];
 area["ref:INSEE"="75056"]->.paris;
 (
-  rel(area.paris)["leisure"="park"]["name"~"^Bois de (Boulogne|Vincennes)$"];
+  nwr(area.paris)["leisure"~"^(garden|park)$"];
 );
 out geom;
 `;
@@ -378,6 +381,7 @@ function buildExcludedStreetAreas(overpassJson) {
         properties: {
           id: feature.properties?.id || osmTags.wikidata || name,
           name,
+          leisure: osmTags.leisure || "",
         },
         geometry: {
           type: feature.geometry.type,
@@ -385,7 +389,7 @@ function buildExcludedStreetAreas(overpassJson) {
         },
       };
     })
-    .filter((feature) => EXCLUDED_STREET_AREA_NAMES.includes(feature.properties.name));
+    .filter((feature) => isExcludedStreetAreaTags(feature.properties));
 }
 
 function extractOsmTags(properties = {}) {
@@ -398,6 +402,15 @@ function extractOsmTags(properties = {}) {
     directTags[key] = value;
   }
   return { ...directTags, ...nestedTags };
+}
+
+function isExcludedStreetAreaTags(tags = {}) {
+  for (const [key, excludedValues] of EXCLUDED_STREET_AREA_TAG_VALUES.entries()) {
+    if (excludedValues.has(String(tags[key] || "").trim().toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function findArrondissement(point, arrondissements) {
@@ -808,15 +821,15 @@ async function main() {
   }
   console.log(`   ${arrondissements.features.length} quartiers administratifs chargés.\n`);
 
-  console.log("🌳 Chargement des bois exclus...");
-  const excludedAreasRaw = await fetchOverpass(EXCLUDED_STREET_AREAS_QUERY, "bois exclus");
+  console.log("🌳 Chargement des parcs et jardins exclus...");
+  const excludedAreasRaw = await fetchOverpass(EXCLUDED_STREET_AREAS_QUERY, "parcs et jardins exclus");
   const excludedStreetAreas = buildExcludedStreetAreas(excludedAreasRaw);
   const loadedExcludedAreaNames = new Set(excludedStreetAreas.map((feature) => feature.properties.name));
-  const missingExcludedAreas = EXCLUDED_STREET_AREA_NAMES.filter((name) => !loadedExcludedAreaNames.has(name));
+  const missingExcludedAreas = REQUIRED_EXCLUDED_STREET_AREA_NAMES.filter((name) => !loadedExcludedAreaNames.has(name));
   if (missingExcludedAreas.length) {
     throw new Error(`Bois exclus introuvables: ${missingExcludedAreas.join(", ")}`);
   }
-  console.log(`   ${excludedStreetAreas.length} polygones exclus chargés: ${EXCLUDED_STREET_AREA_NAMES.join(", ")}.\n`);
+  console.log(`   ${excludedStreetAreas.length} polygones de parcs/jardins exclus chargés.\n`);
 
   console.log("🛣️  Chargement des voies parisiennes...");
   const streetRaw = await fetchOverpass(STREETS_QUERY, "rues");
@@ -825,7 +838,7 @@ async function main() {
   const homonyms = disambiguateHomonymousStreets(lightFeatures);
   console.log(`   ${features.length} géométries de voies, ${lightFeatures.length} retenues pour le jeu.`);
   console.log(`   Homonymes: ${homonyms.homonymousNames} noms, ${homonyms.renamedComponents} voies renommées.`);
-  console.log(`   Ignorées: ${skipped.noName} sans nom, ${skipped.noGeometry} sans géométrie, ${skipped.noArrondissement} sans arrondissement, ${skipped.excludedTags} tags exclus, ${skipped.excludedAreas} dans les bois exclus, ${skipped.excludedWoodNames} corridors de bois nommés, ${skipped.excludedManualNames} exclusions manuelles.`);
+  console.log(`   Ignorées: ${skipped.noName} sans nom, ${skipped.noGeometry} sans géométrie, ${skipped.noArrondissement} sans arrondissement, ${skipped.excludedTags} tags exclus, ${skipped.excludedAreas} dans les parcs/jardins exclus, ${skipped.excludedWoodNames} corridors de bois nommés, ${skipped.excludedManualNames} exclusions manuelles.`);
   console.log(`   Arrondissement par proximité: ${skipped.fallback}\n`);
 
   const enriched = { type: "FeatureCollection", features };
@@ -842,6 +855,7 @@ async function main() {
     streets_total: features.length,
     streets_light: lightFeatures.length,
     keptMapSegments: lightFeatures.length,
+    excludedParkGardenSegments: skipped.excludedAreas,
     excludedWoodSegments: skipped.excludedAreas,
     excludedWoodNameSegments: skipped.excludedWoodNames,
     excludedManualNameSegments: skipped.excludedManualNames,
@@ -882,6 +896,7 @@ module.exports = {
   extractOsmTags,
   geometriesAreAdjacent,
   isExcludedWoodCorridorStreetName,
+  isExcludedStreetAreaTags,
   isManuallyExcludedStreetName,
   pointInFeatureOuterShell,
   pointInExcludedStreetArea,
