@@ -1397,6 +1397,10 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
        WHERE d.date::date < date_trunc('week', $1::date)::date
          AND (d.success = TRUE OR d.attempts_count >= 7)
      ),
+     first_historical_week AS (
+       SELECT MIN(week_start) AS week_start
+       FROM completed
+     ),
      weekly_stats AS (
        SELECT
          completed.week_start,
@@ -1407,6 +1411,8 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
          MIN(completed.best_distance_meters)::int AS best_distance_meters,
          MAX(completed.last_attempt_at) AS last_completed_at
        FROM completed
+       CROSS JOIN first_historical_week
+       WHERE completed.week_start > first_historical_week.week_start
        GROUP BY completed.week_start, completed.user_id
      ),
      weekly_rankings AS (

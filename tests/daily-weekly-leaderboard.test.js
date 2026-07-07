@@ -15,6 +15,14 @@ test("weekly Daily leaderboard sums and displays player gaps", () => {
   assert.match(frontend, /row\.total_distance_meters/);
 });
 
+test("historical weekly Daily podiums ignore the launch week medals", () => {
+  const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
+
+  assert.match(database, /first_historical_week AS \(\s*SELECT MIN\(week_start\) AS week_start\s*FROM completed\s*\)/);
+  assert.match(database, /CROSS JOIN first_historical_week/);
+  assert.match(database, /WHERE completed\.week_start > first_historical_week\.week_start/);
+});
+
 test("historical Daily average leaderboard counts failures as 8", () => {
   const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
   const frontend = fs.readFileSync(path.join(root, "src/leaderboard.js"), "utf8");
