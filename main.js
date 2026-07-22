@@ -4331,7 +4331,7 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
 \u{1F3AF} Meilleure distance: ${formatDailyDistanceForShare2(minDistance)}
 `;
     }
-    text += "Essaie de faire mieux sur parici.netlify.app";
+    text += "Essaie de faire mieux sur parici-ajm.pages.dev";
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(() => {
         showMessage2("Texte copi\xE9 !", "success");
@@ -4672,7 +4672,7 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
     ctx.fillText("Essaie de faire mieux sur", bestCenterX, photoTryAgainY);
     ctx.fillStyle = "#6ee7b7";
     ctx.font = '700 24px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
-    ctx.fillText("parici.netlify.app", bestCenterX, photoHostY);
+    ctx.fillText("parici-ajm.pages.dev", bestCenterX, photoHostY);
     const finalizeShareImage = () => {
       canvas.toBlob(async (blob) => {
         if (!blob) {
@@ -4685,7 +4685,7 @@ ${result.success ? "\u2705" : "\u274C"} R\xE9sultat: ${scoreLabel}/7
             await navigator.share({
               title: "Parici - D\xE9fi Quotidien",
               text: `${dailyTargetData2.streetName} \u2022 ${resultLabel}/7
-Essaie de faire mieux sur parici.netlify.app`,
+Essaie de faire mieux sur parici-ajm.pages.dev`,
               files: [file]
             });
             showMessage2("Partag\xE9 !", "success");

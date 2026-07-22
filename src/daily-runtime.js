@@ -464,7 +464,7 @@ export function handleDailyShareTextRuntime({
     text += `\n🎯 Meilleure distance: ${formatDailyDistanceForShare(minDistance)}\n`;
   }
 
-  text += "Essaie de faire mieux sur parici.netlify.app";
+  text += "Essaie de faire mieux sur parici-ajm.pages.dev";
 
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard
@@ -876,7 +876,7 @@ export function handleDailyShareImageRuntime({
 
   ctx.fillStyle = "#6ee7b7";
   ctx.font = '700 24px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
-  ctx.fillText("parici.netlify.app", bestCenterX, photoHostY);
+  ctx.fillText("parici-ajm.pages.dev", bestCenterX, photoHostY);
 
   const finalizeShareImage = () => {
     canvas.toBlob(async (blob) => {
@@ -891,7 +891,7 @@ export function handleDailyShareImageRuntime({
         try {
           await navigator.share({
             title: "Parici - Défi Quotidien",
-            text: `${dailyTargetData.streetName} • ${resultLabel}/7\nEssaie de faire mieux sur parici.netlify.app`,
+            text: `${dailyTargetData.streetName} • ${resultLabel}/7\nEssaie de faire mieux sur parici-ajm.pages.dev`,
             files: [file],
           });
           showMessage("Partagé !", "success");

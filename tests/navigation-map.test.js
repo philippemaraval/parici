@@ -68,6 +68,12 @@ test("the Daily share artwork uses the Parici green palette without a sun", () =
   assert.doesNotMatch(dailyRuntime, /ctx\.bezierCurveTo/);
 });
 
+test("Daily text and image shares use the current Parici address", () => {
+  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
+  assert.match(dailyRuntime, /parici-ajm\.pages\.dev/);
+  assert.doesNotMatch(dailyRuntime, /parici\.netlify\.app/);
+});
+
 test("all lecture tooltips stay horizontal and on one line", () => {
   const mapRuntime = fs.readFileSync(path.join(root, "src", "map-runtime.js"), "utf8");
   const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
