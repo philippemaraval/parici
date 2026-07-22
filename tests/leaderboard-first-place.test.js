@@ -27,7 +27,7 @@ test("only explicitly ranked first-place rows receive the leaderboard winner sty
 });
 
 test("deployed leaderboard assets use the current cache-busting version", () => {
-  const assetVersion = "20260707-v040";
+  const assetVersion = "20260722-daily-share";
 
   assert.match(read("index.html"), new RegExp(`style\\.css\\?v=${assetVersion}`));
   assert.match(read("dist/index.html"), new RegExp(`style\\.css\\?v=${assetVersion}`));

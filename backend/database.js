@@ -5,11 +5,17 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-07-05-mphil-admin';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-07-22-remove-test-daily-attempt';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
 const MPHIL_ADMIN_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260705_restore_mphil_admin.sql');
+const TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH = path.join(
+  __dirname,
+  '..',
+  'migrations',
+  '20260722_remove_test_daily_attempt.sql'
+);
 
 // Connect via DATABASE_URL (provided by Render PostgreSQL)
 const pool = new Pool({
@@ -106,6 +112,16 @@ async function restoreMPhilAdminRole(client) {
   const roleSql = fs.readFileSync(MPHIL_ADMIN_SQL_PATH, 'utf8');
   if (roleSql.trim()) {
     await client.query(roleSql);
+  }
+}
+
+async function removeTestDailyAttempt(client) {
+  if (!fs.existsSync(TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH)) {
+    return;
+  }
+  const cleanupSql = fs.readFileSync(TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH, 'utf8');
+  if (cleanupSql.trim()) {
+    await client.query(cleanupSql);
   }
 }
 
@@ -442,6 +458,7 @@ async function initDb() {
     `);
 
     await applyChangedDailyReset(client);
+    await removeTestDailyAttempt(client);
     await markSchemaBootstrapComplete(client);
 
     console.log('Database initialized successfully.');

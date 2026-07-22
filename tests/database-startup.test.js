@@ -1,6 +1,18 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Module = require('node:module');
+const fs = require('node:fs');
+const path = require('node:path');
+
+test('the production cleanup removes only Test from the 2026-07-22 Daily', () => {
+  const migration = fs.readFileSync(
+    path.join(__dirname, '..', 'migrations', '20260722_remove_test_daily_attempt.sql'),
+    'utf8'
+  );
+  assert.match(migration, /LOWER\(TRIM\(account\.username\)\) = 'test'/);
+  assert.match(migration, /attempt\.date = '2026-07-22'/);
+  assert.doesNotMatch(migration, /DELETE FROM users/);
+});
 
 test('database startup skips migrations when the schema version is current', async () => {
   const queries = [];
@@ -11,7 +23,7 @@ test('database startup skips migrations when the schema version is current', asy
       if (queries.length === 1) {
         return { rows: [{ app_settings_table: 'app_settings' }] };
       }
-      return { rows: [{ value_text: '2026-07-05-mphil-admin' }] };
+      return { rows: [{ value_text: '2026-07-22-remove-test-daily-attempt' }] };
     },
     release() {
       released = true;

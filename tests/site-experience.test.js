@@ -49,7 +49,7 @@ test("startup loads the local game immediately and bounds remote waits", () => {
   assert.match(apiClient, /export async function fetchWithTimeout/);
   assert.match(apiClient, /export async function fetchWithStartupRetry/);
   assert.match(serviceWorker, /NAVIGATION_NETWORK_TIMEOUT_MS = 3500/);
-  assert.match(serviceWorker, /main\.js\?v=20260707-v040/);
+  assert.match(serviceWorker, /main\.js\?v=20260722-daily-share/);
 });
 
 test("Daily reminders persist locally and have an external server wakeup", () => {
@@ -82,7 +82,7 @@ test("page headings share one rhythm and expose version 0.4.0", () => {
 
   [index, rules].forEach((source) => {
     assert.match(source, /V0\.4\.0/);
-    assert.match(source, /20260707-v040/);
+    assert.match(source, /20260722-daily-share/);
   });
   assert.match(styles, /html\[data-mobile-view="home"\] \.mobile-home[\s\S]*padding: 0 0 8px/);
   assert.match(styles, /#sidebar-content > \.user-panel \{\s*margin-top: 0/);

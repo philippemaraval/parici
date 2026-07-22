@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v18";
+const CACHE_NAME = "camino-paris-v19";
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3500;
 
 const CORE_PRECACHE_URLS = [
@@ -7,11 +7,11 @@ const CORE_PRECACHE_URLS = [
   "/regles.html",
   "/arbre-rangs.html",
   "/reset-password.html",
-  "/style.css?v=20260707-v040",
-  "/main.js?v=20260707-v040",
+  "/style.css?v=20260722-daily-share",
+  "/main.js?v=20260722-daily-share",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
-  "/src/public/css/site-shell.css?v=20260707-v040",
-  "/src/public/js/site-shell.js?v=20260707-v040",
+  "/src/public/css/site-shell.css?v=20260722-daily-share",
+  "/src/public/js/site-shell.js?v=20260722-daily-share",
   "/data_rules.js",
   "/site.webmanifest?v=20260628-centered",
   "/apple-touch-icon.png?v=20260628-centered",
