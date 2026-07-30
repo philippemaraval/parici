@@ -23,6 +23,20 @@ test("historical weekly Daily podiums ignore the launch week medals", () => {
   assert.match(database, /WHERE completed\.week_start > first_historical_week\.week_start/);
 });
 
+test("historical weekly Daily podiums include the migrated carryovers", () => {
+  const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
+  const migration = fs.readFileSync(
+    path.join(root, "migrations/20260731_restore_daily_podiums.sql"),
+    "utf8",
+  );
+
+  assert.match(database, /LEFT JOIN daily_podium_carryovers carryovers/);
+  assert.match(database, /COALESCE\(podiums\.first_places, 0\)[\s\S]*COALESCE\(carryovers\.first_places, 0\)/);
+  assert.match(migration, /\('robz2295', 3, 1, 0, 4, NOW\(\)\)/);
+  assert.match(migration, /\('mphil', 1, 3, 0, 4, NOW\(\)\)/);
+  assert.match(migration, /\('victoire', 0, 0, 3, 3, NOW\(\)\)/);
+});
+
 test("historical Daily average leaderboard counts failures as 8", () => {
   const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
   const frontend = fs.readFileSync(path.join(root, "src/leaderboard.js"), "utf8");

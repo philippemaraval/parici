@@ -5,11 +5,17 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-07-22-remove-test-daily-attempt';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-07-31-restore-daily-podiums';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
 const MPHIL_ADMIN_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260705_restore_mphil_admin.sql');
+const DAILY_PODIUMS_SQL_PATH = path.join(
+  __dirname,
+  '..',
+  'migrations',
+  '20260731_restore_daily_podiums.sql'
+);
 const TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH = path.join(
   __dirname,
   '..',
@@ -115,6 +121,16 @@ async function restoreMPhilAdminRole(client) {
   }
 }
 
+async function restoreDailyPodiums(client) {
+  if (!fs.existsSync(DAILY_PODIUMS_SQL_PATH)) {
+    return;
+  }
+  const podiumsSql = fs.readFileSync(DAILY_PODIUMS_SQL_PATH, 'utf8');
+  if (podiumsSql.trim()) {
+    await client.query(podiumsSql);
+  }
+}
+
 async function removeTestDailyAttempt(client) {
   if (!fs.existsSync(TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH)) {
     return;
@@ -205,6 +221,7 @@ async function initDb() {
       )
     `);
     await restoreMPhilAdminRole(client);
+    await restoreDailyPodiums(client);
     await applyReferralSchema(client);
     await applyPushNotificationSchema(client);
 
@@ -1472,17 +1489,48 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
          COUNT(*)::int AS weeks_played
        FROM weekly_stats
        GROUP BY user_id
+     ),
+     podium_totals AS (
+       SELECT
+         u.id AS user_id,
+         (
+           COALESCE(podiums.first_places, 0)
+           + COALESCE(carryovers.first_places, 0)
+         )::int AS first_places,
+         (
+           COALESCE(podiums.second_places, 0)
+           + COALESCE(carryovers.second_places, 0)
+         )::int AS second_places,
+         (
+           COALESCE(podiums.third_places, 0)
+           + COALESCE(carryovers.third_places, 0)
+         )::int AS third_places,
+         (
+           COALESCE(participations.weeks_played, 0)
+           + COALESCE(carryovers.weeks_played, 0)
+         )::int AS weeks_played
+       FROM users u
+       LEFT JOIN podiums ON podiums.user_id = u.id
+       LEFT JOIN participations ON participations.user_id = u.id
+       LEFT JOIN daily_podium_carryovers carryovers
+         ON carryovers.username_key = LOWER(TRIM(u.username))
+       WHERE
+         COALESCE(podiums.first_places, 0)
+         + COALESCE(podiums.second_places, 0)
+         + COALESCE(podiums.third_places, 0)
+         + COALESCE(carryovers.first_places, 0)
+         + COALESCE(carryovers.second_places, 0)
+         + COALESCE(carryovers.third_places, 0) > 0
      )
      SELECT
        u.username,
        u.avatar,
-       podiums.first_places,
-       podiums.second_places,
-       podiums.third_places,
-       participations.weeks_played
-     FROM podiums
-     JOIN users u ON podiums.user_id = u.id
-     JOIN participations ON podiums.user_id = participations.user_id
+       podium_totals.first_places,
+       podium_totals.second_places,
+       podium_totals.third_places,
+       podium_totals.weeks_played
+     FROM podium_totals
+     JOIN users u ON podium_totals.user_id = u.id
      WHERE LOWER(TRIM(u.username)) NOT IN (
        'philo14',
        'test',
@@ -1494,9 +1542,9 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
        'allezlom!'
      )
      ORDER BY
-       podiums.first_places DESC,
-       podiums.second_places DESC,
-       podiums.third_places DESC,
+       podium_totals.first_places DESC,
+       podium_totals.second_places DESC,
+       podium_totals.third_places DESC,
        u.username ASC
      LIMIT $2`,
     [date, parsedLimit]
