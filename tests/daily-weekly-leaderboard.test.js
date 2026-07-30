@@ -31,6 +31,9 @@ test("historical weekly Daily podiums include the migrated carryovers", () => {
   );
 
   assert.match(database, /LEFT JOIN daily_podium_carryovers carryovers/);
+  assert.match(database, /carryovers\.username_key \|\| '❤'/);
+  assert.match(database, /carryovers\.username_key \|\| '❤️'/);
+  assert.match(database, /carryovers\.username_key \|\| '💚'/);
   assert.match(database, /COALESCE\(podiums\.first_places, 0\)[\s\S]*COALESCE\(carryovers\.first_places, 0\)/);
   assert.match(migration, /\('robz2295', 3, 1, 0, 4, NOW\(\)\)/);
   assert.match(migration, /\('mphil', 1, 3, 0, 4, NOW\(\)\)/);

@@ -1513,7 +1513,12 @@ async function getWeeklyDailyPodiumLeaderboard(date, limit = 20) {
        LEFT JOIN podiums ON podiums.user_id = u.id
        LEFT JOIN participations ON participations.user_id = u.id
        LEFT JOIN daily_podium_carryovers carryovers
-         ON carryovers.username_key = LOWER(TRIM(u.username))
+         ON LOWER(TRIM(u.username)) IN (
+           carryovers.username_key,
+           carryovers.username_key || '❤',
+           carryovers.username_key || '❤️',
+           carryovers.username_key || '💚'
+         )
        WHERE
          COALESCE(podiums.first_places, 0)
          + COALESCE(podiums.second_places, 0)
