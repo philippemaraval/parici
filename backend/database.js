@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-07-31-restore-daily-podiums';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-07-31-restore-weekly-daily-scores';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
@@ -15,6 +15,12 @@ const DAILY_PODIUMS_SQL_PATH = path.join(
   '..',
   'migrations',
   '20260731_restore_daily_podiums.sql'
+);
+const WEEKLY_DAILY_SCORES_SQL_PATH = path.join(
+  __dirname,
+  '..',
+  'migrations',
+  '20260731_restore_weekly_daily_scores.sql'
 );
 const TEST_DAILY_ATTEMPT_CLEANUP_SQL_PATH = path.join(
   __dirname,
@@ -128,6 +134,16 @@ async function restoreDailyPodiums(client) {
   const podiumsSql = fs.readFileSync(DAILY_PODIUMS_SQL_PATH, 'utf8');
   if (podiumsSql.trim()) {
     await client.query(podiumsSql);
+  }
+}
+
+async function restoreWeeklyDailyScores(client) {
+  if (!fs.existsSync(WEEKLY_DAILY_SCORES_SQL_PATH)) {
+    return;
+  }
+  const scoresSql = fs.readFileSync(WEEKLY_DAILY_SCORES_SQL_PATH, 'utf8');
+  if (scoresSql.trim()) {
+    await client.query(scoresSql);
   }
 }
 
@@ -272,6 +288,7 @@ async function initDb() {
       ALTER TABLE daily_user_attempts
       ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ
     `);
+    await restoreWeeklyDailyScores(client);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS friend_challenges (

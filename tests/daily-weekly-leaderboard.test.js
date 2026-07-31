@@ -15,6 +15,19 @@ test("weekly Daily leaderboard sums and displays player gaps", () => {
   assert.match(frontend, /row\.total_distance_meters/);
 });
 
+test("weekly Daily leaderboard restores the migrated Monday scores", () => {
+  const migration = fs.readFileSync(
+    path.join(root, "migrations/20260731_restore_weekly_daily_scores.sql"),
+    "utf8",
+  );
+
+  assert.match(migration, /\('robz2295💚', 3\)/);
+  assert.match(migration, /\('victoire', 6\)/);
+  assert.match(migration, /\('mphil', 6\)/);
+  assert.match(migration, /'2026-07-27'/);
+  assert.match(migration, /ON CONFLICT \(user_id, date\) DO UPDATE/);
+});
+
 test("historical weekly Daily podiums ignore the launch week medals", () => {
   const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
 
