@@ -16,9 +16,9 @@ INSERT INTO daily_podium_carryovers (
   updated_at
 )
 VALUES
-  ('robz2295', 3, 1, 0, 4, NOW()),
-  ('mphil', 1, 3, 0, 4, NOW()),
-  ('victoire', 0, 0, 3, 3, NOW())
+  ('robz2295', 3, 2, 0, 5, NOW()),
+  ('mphil', 2, 3, 0, 5, NOW()),
+  ('victoire', 0, 0, 4, 4, NOW())
 ON CONFLICT (username_key) DO UPDATE SET
   first_places = EXCLUDED.first_places,
   second_places = EXCLUDED.second_places,

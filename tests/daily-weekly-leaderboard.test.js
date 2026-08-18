@@ -48,9 +48,9 @@ test("historical weekly Daily podiums include the migrated carryovers", () => {
   assert.match(database, /carryovers\.username_key \|\| '❤️'/);
   assert.match(database, /carryovers\.username_key \|\| '💚'/);
   assert.match(database, /COALESCE\(podiums\.first_places, 0\)[\s\S]*COALESCE\(carryovers\.first_places, 0\)/);
-  assert.match(migration, /\('robz2295', 3, 1, 0, 4, NOW\(\)\)/);
-  assert.match(migration, /\('mphil', 1, 3, 0, 4, NOW\(\)\)/);
-  assert.match(migration, /\('victoire', 0, 0, 3, 3, NOW\(\)\)/);
+  assert.match(migration, /\('robz2295', 3, 2, 0, 5, NOW\(\)\)/);
+  assert.match(migration, /\('mphil', 2, 3, 0, 5, NOW\(\)\)/);
+  assert.match(migration, /\('victoire', 0, 0, 4, 4, NOW\(\)\)/);
 });
 
 test("historical Daily average leaderboard counts failures as 8", () => {
