@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-07-31-restore-weekly-daily-scores';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-08-18-add-daily-podium-medals';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
