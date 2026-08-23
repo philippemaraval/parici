@@ -2,6 +2,7 @@
 <html lang="fr">
 
 <head>
+  <script src="/src/public/js/runtime-config.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contenus Parici | Administration Parici</title>
@@ -131,6 +132,23 @@
         </div>
         <button id="close-visit-stats-btn" type="button" class="btn" aria-label="Fermer">Fermer</button>
       </div>
+      <div class="stats-grid visit-stats-averages" aria-label="Moyenne quotidienne des visiteurs uniques">
+        <div class="stat-card">
+          <span class="stat-label">7 derniers jours</span>
+          <strong id="visit-stats-average-7" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">15 derniers jours</span>
+          <strong id="visit-stats-average-15" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">30 derniers jours</span>
+          <strong id="visit-stats-average-30" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+      </div>
       <p id="visit-stats-note" class="visit-stats-note"></p>
       <div id="visit-stats-chart" class="visit-stats-chart" aria-label="Graphique des visites sur les 30 derniers jours"></div>
       <div class="visit-stats-table-wrap">
@@ -148,7 +166,7 @@
     </section>
   </div>
 
-  <script type="module" src="/admin/admin.js?v=20260706-admin-polish"></script>
+  <script type="module" src="/admin/admin.js?v=20260726-traffic-metrics"></script>
 </body>
 
 </html>

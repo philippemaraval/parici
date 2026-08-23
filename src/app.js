@@ -96,7 +96,14 @@ import {
   updateDailyResultPanelRuntime,
   updateDailyUIRuntime,
 } from "./daily-runtime.js";
-import { clearCurrentUserFromStorage, loadCurrentUserFromStorage, saveCurrentUserToStorage } from "./auth.js";
+import {
+  clearCurrentUserFromStorage,
+  enableCredentialedApiRequests,
+  loadCurrentUserFromStorage,
+  saveCurrentUserToStorage,
+} from "./auth.js";
+
+enableCredentialedApiRequests(API_URL);
 import { computeItemPoints, sampleWithoutReplacement, shuffle } from "./session.js";
 import {
   fetchWithStartupRetry,
@@ -126,8 +133,32 @@ const MAP_REGION_MAX_BOUNDS = [
 ];
 let swRegistrationPromise = null;
 let notificationConfigCache = null;
+let dailyReminderAutoPromptInFlight = false;
 let backendWarmupPromise = null;
 let runtimeContentLoadPromise = null;
+let celebrationRuntimePromise = null;
+let backendAvailabilityRetryId = null;
+let backendAvailabilityFailures = 0;
+let backendWasUnavailable = false;
+const BACKEND_RETRY_DELAYS_MS = [2000, 4000, 8000, 15000, 30000];
+
+function loadCelebrationRuntime() {
+  if (typeof window.confetti === "function") return Promise.resolve(window.confetti);
+  if (celebrationRuntimePromise) return celebrationRuntimePromise;
+  celebrationRuntimePromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+    script.async = true;
+    script.onload = () => resolve(window.confetti);
+    script.onerror = () => reject(new Error("Animation de célébration indisponible"));
+    document.head.appendChild(script);
+  }).catch((error) => {
+    celebrationRuntimePromise = null;
+    console.warn(error.message);
+    return null;
+  });
+  return celebrationRuntimePromise;
+}
 
 function scheduleAfterStartup(callback, delayMs = 0) {
   const run = () => {
@@ -331,6 +362,57 @@ function checkBackendAvailability() {
     }
     return response;
   });
+}
+
+function setOfflineBannerVisible(visible) {
+  const banner = document.getElementById("offline-banner");
+  if (banner) {
+    banner.style.display = visible ? "block" : "none";
+  }
+}
+
+function scheduleBackendAvailabilityRetry() {
+  if (backendAvailabilityRetryId !== null || !navigator.onLine) return;
+  const delayIndex = Math.min(
+    Math.max(backendAvailabilityFailures - 1, 0),
+    BACKEND_RETRY_DELAYS_MS.length - 1,
+  );
+  backendAvailabilityRetryId = window.setTimeout(() => {
+    backendAvailabilityRetryId = null;
+    monitorBackendAvailability();
+  }, BACKEND_RETRY_DELAYS_MS[delayIndex]);
+}
+
+function monitorBackendAvailability() {
+  if (!navigator.onLine) {
+    backendWasUnavailable = true;
+    setOfflineBannerVisible(true);
+    return Promise.resolve(false);
+  }
+
+  return checkBackendAvailability()
+    .then(() => {
+      const recovered = backendWasUnavailable;
+      backendAvailabilityFailures = 0;
+      backendWasUnavailable = false;
+      setOfflineBannerVisible(false);
+      if (recovered) {
+        loadAllLeaderboards();
+        loadUniqueVisitorCounter();
+      }
+      return true;
+    })
+    .catch(() => {
+      backendAvailabilityFailures += 1;
+      backendWasUnavailable = true;
+      // A first timeout generally means the free server is waking up.
+      if (backendAvailabilityFailures >= 2) {
+        setOfflineBannerVisible(true);
+      }
+      warmBackendConnection();
+      scheduleBackendAvailabilityRetry();
+      return false;
+    });
 }
 
 function loadStreetInfos() {
@@ -775,7 +857,96 @@ async function refreshDailyReminderControls() {
   }
 }
 
-async function enableDailyReminder() {
+function getDailyReminderAutoPromptStorageKey() {
+  const userId = Number(currentUser?.id);
+  return Number.isInteger(userId) && userId > 0
+    ? `camino:daily-reminder-auto-prompted:${userId}`
+    : "";
+}
+
+function wasDailyReminderAutoPromptedLocally() {
+  const key = getDailyReminderAutoPromptStorageKey();
+  if (!key) {
+    return false;
+  }
+  try {
+    return localStorage.getItem(key) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+function rememberDailyReminderAutoPromptLocally() {
+  const key = getDailyReminderAutoPromptStorageKey();
+  if (!key) {
+    return;
+  }
+  try {
+    localStorage.setItem(key, "1");
+  } catch (error) {
+    // The server remains the source of truth when local storage is unavailable.
+  }
+}
+
+function markDailyReminderAutoPrompted() {
+  rememberDailyReminderAutoPromptLocally();
+  if (!(currentUser && currentUser.token)) {
+    return Promise.resolve();
+  }
+  return fetch(`${API_URL}/api/notifications/prompted`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${currentUser.token}`,
+    },
+    keepalive: true,
+  }).then(async (response) => {
+    if (!response.ok) {
+      throw await buildApiError(response, `HTTP ${response.status}`);
+    }
+  });
+}
+
+function requestDailyReminderAfterCompletedDaily() {
+  if (
+    dailyReminderAutoPromptInFlight
+    || !dailyTargetData?.reminderAutoPromptEligible
+    || wasDailyReminderAutoPromptedLocally()
+    || !isPushReminderSupported()
+    || requiresInstalledAppForMobilePush()
+  ) {
+    return;
+  }
+
+  dailyReminderAutoPromptInFlight = true;
+  dailyTargetData.reminderAutoPromptEligible = false;
+
+  // This must happen synchronously in the click that completes the Daily:
+  // Safari and Firefox can reject permission requests after an async boundary.
+  const permissionPromise =
+    Notification.permission === "default"
+      ? Notification.requestPermission()
+      : Promise.resolve(Notification.permission);
+
+  markDailyReminderAutoPrompted().catch((error) => {
+    console.warn("Could not persist Daily reminder prompt state:", error);
+  });
+
+  if (Notification.permission === "denied") {
+    dailyReminderAutoPromptInFlight = false;
+    return;
+  }
+
+  enableDailyReminder({ permissionPromise, automatic: true })
+    .catch((error) => {
+      console.warn("Automatic Daily reminder activation failed:", error);
+    })
+    .finally(() => {
+      dailyReminderAutoPromptInFlight = false;
+    });
+}
+
+async function enableDailyReminder(options = {}) {
+  const { permissionPromise = null, automatic = false } = options;
   if (!(currentUser && currentUser.token)) {
     showMessage("Connectez-vous pour activer le rappel Daily.", "warning");
     return;
@@ -807,10 +978,14 @@ async function enableDailyReminder() {
       throw new Error("Push disabled on server");
     }
 
-    const permission =
-      Notification.permission === "granted"
-        ? "granted"
-        : await Notification.requestPermission();
+    const permission = await (
+      permissionPromise
+      || (
+        Notification.permission === "granted"
+          ? Promise.resolve("granted")
+          : Notification.requestPermission()
+      )
+    );
 
     if (permission !== "granted") {
       setDailyReminderStatus("Autorisation de notification refusée.", "error");
@@ -827,6 +1002,10 @@ async function enableDailyReminder() {
     await savePushSubscription(subscription);
     setDailyReminderIntent(true);
 
+    rememberDailyReminderAutoPromptLocally();
+    if (dailyTargetData && typeof dailyTargetData === "object") {
+      dailyTargetData.reminderAutoPromptEligible = false;
+    }
     const scheduleLabel = formatReminderTimeLabel(config.reminder || DEFAULT_REMINDER_CONFIG);
     showMessage(`Rappel Daily activé pour ${scheduleLabel}.`, "success");
   } catch (error) {
@@ -835,7 +1014,10 @@ async function enableDailyReminder() {
       handleReminderAuthError();
       showMessage("Session expirée. Reconnectez-vous puis réessayez.", "warning");
     } else {
-      showMessage(`Impossible d'activer le rappel Daily: ${getReminderErrorMessage(error, "erreur serveur")}.`, "error");
+      showMessage(
+        `${automatic ? "Activation automatique impossible" : "Impossible d'activer le rappel Daily"}: ${getReminderErrorMessage(error, "erreur serveur")}.`,
+        "error",
+      );
     }
   }
 
@@ -1830,7 +2012,16 @@ function renderFriendChallengeMiniBoard({ rows = [], infoMessage = "" } = {}) {
       row?.items_total || activeFriendChallenge.itemCount || 0,
       row?.items_correct,
     );
-    player.innerHTML = `<span class="leaderboard-avatar">${avatar}</span>${username}<br><small class="leaderboard-player-meta">${titleValue}</small>`;
+    const avatarElement = document.createElement("span");
+    avatarElement.className = "leaderboard-avatar";
+    avatarElement.textContent = String(avatar);
+    const titleElement = document.createElement("small");
+    titleElement.className = "leaderboard-player-meta";
+    titleElement.textContent = String(titleValue);
+    player.appendChild(avatarElement);
+    player.appendChild(document.createTextNode(String(username)));
+    player.appendChild(document.createElement("br"));
+    player.appendChild(titleElement);
     const scoreCell = document.createElement("td");
     if (activeFriendChallenge.gameType === "classique") {
       const parsedScore = Number(row?.score);
@@ -2876,6 +3067,7 @@ function initUI() {
     d = document.getElementById("logout-btn"),
     c = document.getElementById("auth-username"),
     m = document.getElementById("auth-password"),
+    recoveryEmailInput = document.getElementById("auth-recovery-email"),
     friendChallengeToggleBtn = document.getElementById("friends-challenge-toggle");
   (t && (currentZoneMode = t.value), updateModeDifficultyPill());
   const p = document.getElementById("mode-select-button"),
@@ -3061,24 +3253,21 @@ function initUI() {
       isStandaloneDisplayModeFn: isStandaloneDisplayMode,
       showMessage,
     }));
-  function L(e) {
-    const t = document.getElementById("offline-banner");
-    t && (t.style.display = e ? "block" : "none");
-  }
   (initTooltipPopup(),
-    window.addEventListener("offline", () => L(!0)),
+    window.addEventListener("offline", () => {
+      backendWasUnavailable = true;
+      setOfflineBannerVisible(true);
+    }),
     window.addEventListener("online", () => {
       warmBackendConnection();
-      checkBackendAvailability()
-        .then(() => L(!1))
-        .catch(() => L(!0));
+      monitorBackendAvailability();
     }),
     navigator.onLine
       ? scheduleAfterStartup(() => {
-        checkBackendAvailability().catch(() => L(!0));
+        monitorBackendAvailability();
         loadUniqueVisitorCounter();
       }, 1800)
-      : L(!0),
+      : setOfflineBannerVisible(true),
     e &&
     e.addEventListener("click", () => {
       isDailyMode && window._dailyGameOver
@@ -3320,10 +3509,13 @@ function initUI() {
     u.addEventListener("click", async () => {
       E("", "");
       const e = (c?.value || "").trim(),
-        t = m?.value || "";
-      if (e && t)
-        if (t.length < 4)
-          E("Mot de passe trop court (min. 4 caractères).", "error");
+        t = m?.value || "",
+        recoveryEmail = (recoveryEmailInput?.value || "").trim().toLowerCase();
+      if (e && t && recoveryEmail)
+        if (t.length < 8)
+          E("Mot de passe trop court (min. 8 caractères).", "error");
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recoveryEmail))
+          E("Adresse mail de récupération invalide.", "error");
         else
           try {
             const r = await fetchWithTimeout(
@@ -3331,7 +3523,7 @@ function initUI() {
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: e, password: t }),
+                body: JSON.stringify({ username: e, password: t, recoveryEmail }),
               },
               { timeoutMs: 15000 },
             ),
@@ -3352,10 +3544,15 @@ function initUI() {
             (console.error("Erreur register :", e),
               E("Le serveur met trop de temps à répondre. Réessayez dans un instant.", "error"));
           }
-      else E("Pseudo et mot de passe requis.", "error");
+      else E("Pseudo, mot de passe et mail de récupération requis pour l’inscription.", "error");
     }),
     d &&
-    d.addEventListener("click", () => {
+    d.addEventListener("click", async () => {
+      try {
+        await fetch(API_URL + "/api/logout", { method: "POST" });
+      } catch (error) {
+        console.warn("Server logout unavailable.", error);
+      }
       ((currentUser = null),
         clearCurrentUserFromStorage(),
         updateUserUI(),
@@ -3414,34 +3611,43 @@ async function prepareAndStartNewSession() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  (setMapStatus("Chargement", "loading"),
-    initMap(),
-    initUI(),
+  warmBackendConnection();
+  const needsMap = window.CaminoNeedsMapRuntime !== false;
+  let mapRuntimeReady = false;
+  if (needsMap) {
+    setMapStatus("Chargement", "loading");
+    try {
+      mapRuntimeReady = await (window.CaminoMapDependencies || Promise.resolve(true));
+      if (mapRuntimeReady) initMap();
+    } catch (error) {
+      console.error("Chargement de la carte impossible :", error);
+      setMapStatus("Erreur", "error");
+    }
+  } else {
+    setMapStatus("Mode léger", "ready");
+  }
+
+  (initUI(),
     initDailyReminderControls(),
     startTimersLoop(),
     document.body.classList.add("app-ready"));
 
-  scheduleAfterStartup(() => {
-    warmBackendConnection();
-    loadStreetInfos();
-    initFriendChallengeModeFromUrl();
-  }, 150);
+  if (mapRuntimeReady) {
+    scheduleAfterStartup(() => {
+      loadStreetInfos();
+      initFriendChallengeModeFromUrl();
+    }, 150);
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        loadStreets();
+      }, 0);
+    });
+  }
 
   scheduleAfterStartup(() => {
-    loadStreets();
-  }, 650);
-
-  scheduleAfterStartup(() => {
-    loadArrondissements();
-    loadMonuments();
     loadAllLeaderboards();
   }, 1200);
-
-  // Prepare the transport canvas while the home screen is idle so selecting
-  // this game zone only has to reveal an already-built layer.
-  scheduleAfterStartup(() => {
-    loadBusLines();
-  }, 1600);
 });
 const infoEl = document.getElementById("street-info");
 function startTimersLoop() {
@@ -3928,6 +4134,7 @@ function exitLectureModeToMenu() {
     showMessage("Retour au menu.", "info"));
 }
 function startNewSession(options = {}) {
+  void loadCelebrationRuntime();
   document.body.classList.remove("session-ended");
   clearDailyTransientUiState();
   const e = document.getElementById("arrondissement-select"),
@@ -4442,6 +4649,54 @@ function updateLayoutSessionState() {
   }
   updateDailyResultPanel();
 }
+const DAILY_GUESS_SYNC_RETRY_DELAYS_MS = [1000, 3000, 10000];
+
+function applyDailyGuessSyncResult(result) {
+  if (!result || !dailyTargetData) {
+    return;
+  }
+  dailyTargetData.userStatus = result;
+  dailyTargetData.targetGeometry = result.targetGeometry || dailyTargetData.targetGeometry;
+  if (result.targetGeometry && (result.success || result.attempts_count >= 7)) {
+    revealDailyTargetStreet(!!result.success);
+  }
+  if (result.success || result.attempts_count >= 7) {
+    loadAllLeaderboards();
+  }
+}
+
+function submitDailyGuessToServer(payload, retryIndex = 0) {
+  if (!currentUser?.token) {
+    return Promise.reject(new Error("Daily sync requires authentication"));
+  }
+
+  return fetch(API_URL + "/api/daily/guess", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${currentUser.token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(async (response) => {
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error || `Daily sync failed (${response.status})`);
+      }
+      applyDailyGuessSyncResult(result);
+      return result;
+    })
+    .catch((error) => {
+      const retryDelay = DAILY_GUESS_SYNC_RETRY_DELAYS_MS[retryIndex];
+      if (Number.isFinite(retryDelay)) {
+        window.setTimeout(() => {
+          submitDailyGuessToServer(payload, retryIndex + 1).catch(() => {});
+        }, retryDelay);
+      }
+      throw error;
+    });
+}
+
 function handleStreetClick(e, t, r) {
   const a = getZoneMode();
   if ("monuments" === a || "arrondissements-ville" === a) return;
@@ -4551,33 +4806,19 @@ function handleStreetClick(e, t, r) {
           `Essai incorrect. Écart entre les milieux : ${s >= 1e3 ? `${(s / 1e3).toFixed(1)} km` : `${Math.round(s)} m`}. Plus que ${d} essai${d > 1 ? "s" : ""}.`,
           "warning",
         ));
+    if (n || d <= 0) {
+      requestDailyReminderAfterCompletedDaily();
+    }
     return (
       updateDailyUI(),
       updateStartStopButton(),
       updateLayoutSessionState(),
-      void fetch(API_URL + "/api/daily/guess", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-        body: JSON.stringify({
-          date: dailyTargetData.date,
-          distanceMeters: Math.round(s),
-          isSuccess: n,
-        }),
+      void submitDailyGuessToServer({
+        date: dailyTargetData.date,
+        distanceMeters: Math.round(s),
+        isSuccess: n,
+        attemptsCount: u,
       })
-        .then((e) => e.json())
-        .then((e) => {
-          ((dailyTargetData.userStatus = e),
-            (dailyTargetData.targetGeometry = e.targetGeometry || dailyTargetData.targetGeometry),
-            e.targetGeometry &&
-            (e.success || e.attempts_count >= 7) &&
-            revealDailyTargetStreet(!!e.success));
-          if (e.success || e.attempts_count >= 7) {
-            loadAllLeaderboards();
-          }
-        })
         .catch((e) => {
           console.warn("Daily sync error (non-bloquant):", e);
         })
@@ -5775,6 +6016,7 @@ let dailyTargetData = null,
   dailyHighlightLayer = null,
   dailyGuessHistory = [];
 function startDailySession(e) {
+  void loadCelebrationRuntime();
   document.body.classList.remove("session-ended", "daily-game-over");
   removeDailyStreetMidpointMarker();
   ((dailyTargetData = e), (dailyTargetGeoJson = JSON.parse(e.targetGeoJson)));
@@ -5794,14 +6036,36 @@ function startDailySession(e) {
     (window._dailyGameOver = r),
     (window._dailyGuessInFlight = !1));
   const n = document.getElementById("daily-guesses-history");
-  (n && ((n.style.display = "none"), (n.innerHTML = "")),
-    r
-      ? restoreDailyGuessesFromStorage(e.date)
-      : (t.attempts_count || 0) > 0 &&
-      !t.success &&
-      (restoreDailyGuessesFromStorage(e.date),
-        dailyGuessHistory.length > 0 && renderDailyGuessHistory()),
-    cleanOldDailyGuessStorage(e.date),
+  if (n) {
+    n.style.display = "none";
+    n.innerHTML = "";
+  }
+  if (r || !t.success) {
+    restoreDailyGuessesFromStorage(e.date);
+  }
+  if (!r && dailyGuessHistory.length > 0) {
+    const lastLocalGuess = dailyGuessHistory[dailyGuessHistory.length - 1];
+    const recoveredSuccess =
+      normalizeName(lastLocalGuess?.streetName) === normalizeName(e.streetName);
+    const recoveredFailure = !recoveredSuccess && dailyGuessHistory.length >= 7;
+    if (recoveredSuccess || recoveredFailure) {
+      const recoveredAttempts = Math.min(7, dailyGuessHistory.length);
+      t.success = recoveredSuccess;
+      t.attempts_count = recoveredAttempts;
+      r = !0;
+      a = { success: recoveredSuccess, attempts: recoveredAttempts };
+      window._dailyGameOver = !0;
+      submitDailyGuessToServer({
+        date: e.date,
+        distanceMeters: recoveredSuccess ? 0 : Math.round(lastLocalGuess?.distance || 0),
+        isSuccess: recoveredSuccess,
+        attemptsCount: recoveredAttempts,
+      }).catch((error) => {
+        console.warn("Daily recovery sync error (non-bloquant):", error);
+      });
+    }
+  }
+  (cleanOldDailyGuessStorage(e.date),
     isSessionRunning && endSession(),
     clearSessionShareSlot(),
     clearDailyPendingGuess(),

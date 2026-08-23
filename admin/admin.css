@@ -474,6 +474,21 @@ textarea:focus {
   margin-top: 12px;
 }
 
+.recovery-email {
+  display: block;
+  margin-bottom: 6px;
+  overflow-wrap: anywhere;
+}
+
+.recovery-email em {
+  color: var(--text-secondary);
+}
+
+.btn-compact {
+  padding: 5px 8px;
+  font-size: 0.8rem;
+}
+
 .street-picker,
 .street-editor {
   display: grid;
@@ -849,6 +864,16 @@ button:hover {
   color: var(--text-muted);
 }
 
+.admin-date {
+  display: grid;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.admin-date small {
+  font-size: 0.78rem;
+}
+
 .user-identity {
   display: flex;
   align-items: center;
@@ -935,6 +960,15 @@ button:hover {
   color: var(--text-secondary);
   background: #edf3ff;
   font-weight: 700;
+}
+
+.visit-stats-averages {
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+}
+
+.visit-stats-averages .stat-card small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
 }
 
 .visit-stats-chart {

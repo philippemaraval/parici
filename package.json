@@ -1,8 +1,11 @@
 {
   "name": "camino-paris-frontend",
   "version": "1.0.0",
-  "main": "main.js",
+  "private": true,
+  "main": "backend/server.js",
   "scripts": {
+    "start": "node backend/server.js",
+    "dev:api": "NODE_ENV=development node --watch backend/server.js",
     "sync-osm": "node scripts/sync_osm.js",
     "sync-transit": "node scripts/sync_paris_transit_lines.js",
     "validate:osm": "node scripts/validate_osm_outputs.js",
@@ -10,17 +13,52 @@
     "daily:streetview": "node scripts/generate_daily_streetview_images.js",
     "daily:audit": "node scripts/audit_daily_images.js",
     "build": "node scripts/build.js",
-    "test": "node --test tests/*.test.js"
+    "build:map": "node scripts/build_map_assets.js",
+    "performance:check": "node scripts/check_performance_budgets.js",
+    "data:check": "node scripts/validate_osm_outputs.js",
+    "audit:production": "npm audit --omit=dev --audit-level=critical",
+    "lint": "eslint backend src scripts tests *.js",
+    "format:check": "prettier --check package.json README.md backend/domains backend/config openapi src/types scripts/check_dependencies.js scripts/anonymize_staging_database.js scripts/render_delivery.js tests/e2e playwright.config.js",
+    "typecheck": "tsc --noEmit",
+    "deps:check": "node scripts/check_dependencies.js",
+    "quality": "npm run lint && npm run format:check && npm run typecheck && npm run deps:check && npm run data:check && npm test && npm run build && npm run performance:check",
+    "pretest": "npm run build --silent",
+    "test": "node --test tests/*.test.js",
+    "test:integration": "node --test tests/integration/*.test.js",
+    "pretest:e2e": "npm run build --silent",
+    "test:e2e": "playwright test",
+    "pretest:visual": "npm run build --silent",
+    "test:visual": "playwright test tests/e2e/visual.spec.js",
+    "staging:anonymize": "node scripts/anonymize_staging_database.js",
+    "delivery:render": "node scripts/render_delivery.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "osmtogeojson": "^3.0.0-beta.5"
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-openapi-validator": "^5.6.0",
+    "jsonwebtoken": "^9.0.3",
+    "leaflet": "1.9.4",
+    "nodemailer": "^7.0.13",
+    "osmtogeojson": "^3.0.0-beta.5",
+    "pg": "^8.19.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "clean-css-cli": "^5.6.3",
-    "esbuild": "^0.27.0"
+    "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.62.0",
+    "esbuild": "^0.27.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "^0.8.11"
   }
 }

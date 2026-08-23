@@ -2,13 +2,27 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { createObservability } = require('./observability');
 const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const { spawn } = require('child_process');
 const webPush = require('web-push');
 const db = require('./database');
+const { sendPasswordResetEmail } = require('./mailer');
 const { REFERRAL_EVENTS, createReferralService } = require('./referrals');
+const {
+    config,
+    readEnvIntegerInRange,
+    readFirstDefinedEnv,
+} = require('./config');
+const asyncHandler = require('./http/async-handler');
+const { installOpenApi } = require('./openapi');
+const { domains } = require('./domains/registry');
+const { createProfileRepository } = require('./domains/profiles/repository');
+const { createProfileService } = require('./domains/profiles/service');
+const { createProfileController } = require('./domains/profiles/controller');
+const { createProfileRouter } = require('./domains/profiles/routes');
 const { shouldKeepStreetForGame } = require('../street_filter');
 const {
     FAMOUS_STREET_NAMES: DEFAULT_FAMOUS_STREET_NAMES,
@@ -37,34 +51,13 @@ const STREET_GEOMETRY_CANDIDATE_PATHS = [
     path.join(__dirname, '..', 'data', 'paris_rues_enrichi.geojson'),
 ];
 
-function readEnvIntegerInRange(name, fallback, min, max) {
-    const raw = Number.parseInt(process.env[name], 10);
-    if (!Number.isInteger(raw) || raw < min || raw > max) {
-        return fallback;
-    }
-    return raw;
-}
-
-function readFirstDefinedEnv(names, fallback = '') {
-    for (const name of names) {
-        const value = process.env[name];
-        if (typeof value === 'string' && value.trim()) {
-            return value.trim();
-        }
-    }
-    return fallback;
-}
-
-function readEnvCsvSet(name) {
-    return new Set(
-        String(process.env[name] || '')
-            .split(',')
-            .map((entry) => entry.trim().toLowerCase())
-            .filter(Boolean)
-    );
-}
-
 const app = express();
+app.disable('x-powered-by');
+const observability = createObservability({
+    service: 'parici-api',
+    metricsToken: process.env.METRICS_TOKEN || '',
+    requireMetricsToken: process.env.NODE_ENV === 'production',
+});
 const PORT = process.env.PORT || 3000;
 const startupState = {
     databaseReady: false,
@@ -83,6 +76,18 @@ const LOGIN_RATE_LIMIT_WINDOW_MS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_WINDO
 const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_MAX_ATTEMPTS', 8, 1, 100);
 const LOGIN_RATE_LIMIT_BLOCK_MS = readEnvIntegerInRange('LOGIN_RATE_LIMIT_BLOCK_MS', 10 * 60 * 1000, 1_000, 3_600_000);
 const PASSWORD_RESET_EXPIRATION_HOURS = readEnvIntegerInRange('PASSWORD_RESET_EXPIRATION_HOURS', 24, 1, 168);
+const PASSWORD_RESET_RATE_LIMIT_WINDOW_MS = readEnvIntegerInRange(
+    'PASSWORD_RESET_RATE_LIMIT_WINDOW_MS',
+    15 * 60 * 1000,
+    60_000,
+    24 * 60 * 60 * 1000,
+);
+const PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS = readEnvIntegerInRange(
+    'PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS',
+    5,
+    1,
+    50,
+);
 const PASSWORD_RESET_FRONTEND_URL = readFirstDefinedEnv([
     'PASSWORD_RESET_FRONTEND_URL',
     'FRONTEND_URL',
@@ -94,7 +99,7 @@ const DEFAULT_EDITOR_USERNAME_PATTERNS = [
 ];
 const EDITOR_USERNAMES = new Set([
     ...DEFAULT_EDITOR_USERNAMES,
-    ...readEnvCsvSet('EDITOR_USERNAMES'),
+    ...config.admin.editorUsernames,
 ]);
 const ENV_VAPID_SUBJECT = readFirstDefinedEnv([
     'VAPID_SUBJECT',
@@ -124,11 +129,32 @@ const pushRuntime = {
 };
 let pushRuntimeSignature = '';
 const loginRateLimitStore = new Map();
+const passwordResetRateLimitStore = new Map();
 const USER_ROLE_PLAYER = 'player';
 const USER_ROLE_EDITOR = 'editor';
 const USER_ROLE_ADMIN = 'admin';
 const VALID_USER_ROLES = new Set([USER_ROLE_PLAYER, USER_ROLE_EDITOR, USER_ROLE_ADMIN]);
 const CONTENT_EDITOR_ROLES = new Set([USER_ROLE_EDITOR, USER_ROLE_ADMIN]);
+const SESSION_COOKIE_NAME = 'camino_session';
+const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
+const USERNAME_PATTERN = /^[\p{L}\p{N}._-]{3,30}$/u;
+const RESERVED_USERNAMES = new Set([
+    'admin',
+    'administrator',
+    'camino',
+    'moderator',
+    'mod',
+    'root',
+    'support',
+    'system',
+]);
+const ALLOWED_AVATARS = new Set([
+    '👤', '🧑', '👧', '🧒', '🛴', '🍕', '⚓', '🐟', '⛵', '🌊',
+    '💪', '☀️', '🏖️', '😎', '🏛️', '🦅', '⚽', '👑',
+    '🚀', '⭐️', '🛸', '👽', '🎮', '🔟', '💯', '💎', '⭐', '🏙️',
+    '🗿', '🧭', '📅', '🔥', '⚡', '🏆', '🎯', '🌟',
+    '🫃', '🧗‍♂️', '👴', '🥐',
+]);
 const STREET_INFOS_SETTING_KEY = 'content_street_infos_v1';
 const CONTENT_LISTS_SETTING_KEY = 'content_lists_v1';
 const CONTENT_MONUMENTS_SETTING_KEY = 'content_monuments_v1';
@@ -472,18 +498,27 @@ const allowedOrigins = new Set([
         .filter(Boolean)
 ].filter(Boolean));
 
-const dynamicAllowedOriginPatterns = [
-    /^https:\/\/[a-z0-9-]+\.netlify\.app$/i,
-    /^https:\/\/[a-z0-9-]+\.pages\.dev$/i,
-    /^https:\/\/[a-z0-9-]+\.onrender\.com$/i,
-];
-
 function isAllowedOrigin(origin) {
-    if (!origin || allowedOrigins.has(origin)) {
-        return true;
-    }
-    return dynamicAllowedOriginPatterns.some((pattern) => pattern.test(origin));
+    return !origin || allowedOrigins.has(origin);
 }
+
+app.use((req, res, next) => {
+    const requestId = String(req.headers['x-request-id'] || crypto.randomUUID()).slice(0, 100);
+    req.requestId = requestId;
+    res.setHeader('X-Request-Id', requestId);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader(
+        'Permissions-Policy',
+        'camera=(self), geolocation=(self), microphone=(), payment=(), usb=()'
+    );
+    if (IS_PRODUCTION) {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    }
+    next();
+});
+app.use(observability.requestMiddleware);
 
 app.use(cors({
     origin: function (origin, callback) {
@@ -494,7 +529,10 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Authorization', 'Content-Type', 'X-Admin-Key', 'X-Request-Id'],
+    exposedHeaders: ['Retry-After', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-Request-Id'],
+    maxAge: 86400,
 }));
 
 app.use((err, req, res, next) => {
@@ -505,6 +543,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use(express.json({ limit: '8mb' }));
+installOpenApi(app);
 
 app.get('/api/health', (req, res) => {
     if (req.query?.prewarm === '1' || req.query?.prewarm === 'true') {
@@ -517,6 +556,7 @@ app.get('/api/health', (req, res) => {
         ok: true,
         database: startupState.databaseReady ? 'ready' : 'initializing',
         uptimeSec: Math.round(process.uptime()),
+        domains: Object.keys(domains),
     });
 });
 
@@ -548,8 +588,78 @@ app.get('/api/ready', async (req, res) => {
     }
 });
 
-// Serve static files (frontend)
-app.use(express.static(path.join(__dirname, '..')));
+app.use('/api', asyncHandler(async (req, res, next) => {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+        return next();
+    }
+    const ipHash = hashRequestIp(req);
+    const result = await db.consumeApiRateLimit(`write:${ipHash}`, 60_000, 300);
+    res.setHeader('X-RateLimit-Limit', String(result.limit));
+    res.setHeader('X-RateLimit-Remaining', String(Math.max(0, result.limit - result.count)));
+    if (!result.allowed) {
+        res.setHeader('Retry-After', String(result.retryAfterSec));
+        return res.status(429).json({
+            error: 'Too many requests',
+            code: 'RATE_LIMIT_EXCEEDED',
+        });
+    }
+    return next();
+}));
+
+app.use(['/api/editor', '/api/admin'], (req, res, next) => {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+        return next();
+    }
+    res.on('finish', () => {
+        db.recordSecurityAuditLog({
+            actorUserId: req.user?.id,
+            actorUsername: req.user?.username || (req.headers['x-admin-key'] ? 'admin-api-key' : ''),
+            action: `${req.method} ${req.baseUrl}${req.path}`,
+            target: req.originalUrl,
+            requestId: req.requestId,
+            ipHash: hashRequestIp(req),
+            statusCode: res.statusCode,
+            details: {
+                bodyFields: Object.keys(req.body || {}).sort().slice(0, 30),
+            },
+        }).catch((error) => {
+            console.error('Security audit log write failed:', error.message);
+        });
+    });
+    return next();
+});
+
+// Serve the fingerprinted build in production. Failing fast prevents Render
+// from marking a deployment healthy when its JavaScript bundle is missing.
+const frontendRoot = IS_PRODUCTION
+    ? path.join(__dirname, '..', 'dist')
+    : path.join(__dirname, '..');
+if (IS_PRODUCTION && !fs.existsSync(frontendRoot)) {
+    throw new Error('Production frontend build not found. Run npm run build before starting.');
+}
+
+// Compatibility bridge for pages cached before assets were fingerprinted.
+// Loading the current bundle lets those clients update their service worker.
+app.get('/main.js', (req, res, next) => {
+    if (!IS_PRODUCTION) {
+        return next();
+    }
+    try {
+        const assetManifest = JSON.parse(
+            fs.readFileSync(path.join(frontendRoot, 'asset-manifest.json'), 'utf8')
+        );
+        const mainAssetUrl = assetManifest['main.js'];
+        if (!mainAssetUrl || !mainAssetUrl.startsWith('/assets/')) {
+            return next();
+        }
+        res.setHeader('Cache-Control', 'no-store');
+        return res.sendFile(path.join(frontendRoot, mainAssetUrl.slice(1)));
+    } catch (error) {
+        return next(error);
+    }
+});
+
+app.use(express.static(frontendRoot));
 
 async function initializeBackgroundServices() {
     try {
@@ -598,20 +708,50 @@ app.listen(PORT, () => {
 // Auth Middleware
 // ----------------------
 
-function authenticateToken(req, res, next) {
+function issueAuthToken(user) {
+    return jwt.sign(
+        {
+            id: user.id,
+            username: user.username,
+            role: normalizeUserRole(user.role),
+            sessionVersion: Number(user.session_version || 1),
+        },
+        EFFECTIVE_JWT_SECRET,
+        {
+            expiresIn: SESSION_MAX_AGE_SECONDS,
+            jwtid: crypto.randomUUID(),
+        },
+    );
+}
+
+const authenticateToken = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers.authorization || '';
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+    const cookieToken = parseCookieHeader(req).get(SESSION_COOKIE_NAME) || '';
+    const token = bearerToken === '__cookie_session__' ? cookieToken : (bearerToken || cookieToken);
 
     if (!token) {
         return res.status(401).json({ error: 'Missing authentication token', code: 'AUTH_TOKEN_MISSING' });
     }
 
     try {
-        const user = jwt.verify(token, EFFECTIVE_JWT_SECRET);
+        const tokenUser = jwt.verify(token, EFFECTIVE_JWT_SECRET);
+        const userId = Number.parseInt(tokenUser?.id, 10);
+        const currentUser = Number.isInteger(userId) ? await db.getUserById(userId) : null;
+        if (
+            !currentUser
+            || Number(currentUser.session_version || 1) !== Number(tokenUser?.sessionVersion || 1)
+        ) {
+            clearSessionCookie(res);
+            return res.status(403).json({
+                error: 'Session revoked',
+                code: 'AUTH_SESSION_REVOKED',
+            });
+        }
         req.user = {
-            id: Number.parseInt(user?.id, 10),
-            username: String(user?.username || ''),
-            role: normalizeUserRole(user?.role),
+            id: currentUser.id,
+            username: String(currentUser.username || ''),
+            role: normalizeUserRole(currentUser.role),
         };
         return next();
     } catch (err) {
@@ -620,7 +760,7 @@ function authenticateToken(req, res, next) {
         }
         return res.status(403).json({ error: 'Invalid authentication token', code: 'AUTH_TOKEN_INVALID' });
     }
-}
+});
 
 function timingSafeSecretMatch(providedValue, expectedValue) {
     const provided = Buffer.from(String(providedValue || ''), 'utf8');
@@ -747,6 +887,30 @@ function getDailyDateKey(date = new Date()) {
     ).dateStr;
 }
 
+function shiftIsoDateKey(dateKey, dayOffset) {
+    const [year, month, day] = String(dateKey).split('-').map(Number);
+    const shiftedDate = new Date(Date.UTC(year, month - 1, day + dayOffset));
+    return shiftedDate.toISOString().slice(0, 10);
+}
+
+async function isDailyGuessDateAllowed(userId, submittedDate, expectedDate) {
+    if (submittedDate === expectedDate) {
+        return true;
+    }
+
+    const previousDailyDate = shiftIsoDateKey(expectedDate, -1);
+    if (submittedDate !== previousDailyDate) {
+        return false;
+    }
+
+    const previousStatus = await db.getDailyUserStatus(userId, submittedDate);
+    return Boolean(
+        previousStatus
+        && previousStatus.success !== true
+        && Number(previousStatus.attempts_count || 0) < 7
+    );
+}
+
 function slugifyDailyStreetName(streetName) {
     return String(streetName || '')
         .trim()
@@ -838,56 +1002,6 @@ function parseCsvRows(raw) {
     return rows;
 }
 
-function parseCsvRows(raw) {
-    const rows = [];
-    let row = [];
-    let field = '';
-    let inQuotes = false;
-
-    for (let index = 0; index < raw.length; index += 1) {
-        const char = raw[index];
-        const next = raw[index + 1];
-
-        if (char === '"') {
-            if (inQuotes && next === '"') {
-                field += '"';
-                index += 1;
-            } else {
-                inQuotes = !inQuotes;
-            }
-            continue;
-        }
-
-        if (char === ',' && !inQuotes) {
-            row.push(field);
-            field = '';
-            continue;
-        }
-
-        if ((char === '\n' || char === '\r') && !inQuotes) {
-            if (char === '\r' && next === '\n') {
-                index += 1;
-            }
-            row.push(field);
-            if (row.some((value) => String(value || '').trim())) {
-                rows.push(row);
-            }
-            row = [];
-            field = '';
-            continue;
-        }
-
-        field += char;
-    }
-
-    row.push(field);
-    if (row.some((value) => String(value || '').trim())) {
-        rows.push(row);
-    }
-
-    return rows;
-}
-
 function isValidPushSubscription(subscription) {
     if (!subscription || typeof subscription !== 'object') {
         return false;
@@ -909,12 +1023,6 @@ function getDailyReminderPayload() {
         url: '/',
         tag: 'parici-daily-reminder',
     });
-}
-
-function asyncHandler(handler) {
-    return (req, res, next) => {
-        Promise.resolve(handler(req, res, next)).catch(next);
-    };
 }
 
 function toFiniteNumber(value) {
@@ -941,6 +1049,24 @@ function normalizeOptionalText(value, maxLength = 120) {
 function normalizeUserRole(role) {
     const candidate = String(role || '').trim().toLowerCase();
     return VALID_USER_ROLES.has(candidate) ? candidate : USER_ROLE_PLAYER;
+}
+
+function normalizeUsername(value) {
+    return String(value || '').normalize('NFKC').trim();
+}
+
+function validateUsername(value) {
+    const username = normalizeUsername(value);
+    if (!USERNAME_PATTERN.test(username)) {
+        return {
+            ok: false,
+            error: 'Le pseudo doit contenir 3 à 30 lettres, chiffres, points, tirets ou underscores.',
+        };
+    }
+    if (RESERVED_USERNAMES.has(username.toLocaleLowerCase('fr-FR'))) {
+        return { ok: false, error: 'Ce pseudo est réservé.' };
+    }
+    return { ok: true, username };
 }
 
 function normalizeContentName(name) {
@@ -2043,12 +2169,24 @@ function parseDailyGuessSubmission(body) {
         return { ok: false, error: 'isSuccess must be a boolean' };
     }
 
+    const attemptsCount =
+        body?.attemptsCount === undefined || body?.attemptsCount === null
+            ? null
+            : Number(body.attemptsCount);
+    if (
+        attemptsCount !== null
+        && (!Number.isInteger(attemptsCount) || attemptsCount < 1 || attemptsCount > 7)
+    ) {
+        return { ok: false, error: 'Invalid attemptsCount value' };
+    }
+
     return {
         ok: true,
         value: {
             date,
             distanceMeters: Math.round(distanceMeters),
             isSuccess: body.isSuccess,
+            attemptsCount,
         },
     };
 }
@@ -2062,6 +2200,76 @@ function getRequestIp(req) {
         return String(forwardedRaw[0] || '').trim();
     }
     return (req.ip || req.socket?.remoteAddress || 'unknown').trim();
+}
+
+function hashRequestIp(req) {
+    return crypto
+        .createHash('sha256')
+        .update(`${EFFECTIVE_JWT_SECRET}:${getRequestIp(req)}`, 'utf8')
+        .digest('hex');
+}
+
+function createPersistentRateLimit({ name, windowMs, maxRequests, key = (req) => hashRequestIp(req) }) {
+    return asyncHandler(async (req, res, next) => {
+        const bucketIdentity = String(key(req) || 'anonymous').slice(0, 180);
+        const result = await db.consumeApiRateLimit(
+            `${name}:${bucketIdentity}`,
+            windowMs,
+            maxRequests,
+        );
+        res.setHeader('X-RateLimit-Limit', String(result.limit));
+        res.setHeader('X-RateLimit-Remaining', String(Math.max(0, result.limit - result.count)));
+        if (!result.allowed) {
+            res.setHeader('Retry-After', String(result.retryAfterSec));
+            return res.status(429).json({
+                error: 'Too many requests',
+                code: 'RATE_LIMIT_EXCEEDED',
+            });
+        }
+        return next();
+    });
+}
+
+function parseCookieHeader(req) {
+    const rawHeader = String(req.headers.cookie || '');
+    const cookies = new Map();
+    for (const part of rawHeader.split(';')) {
+        const separatorIndex = part.indexOf('=');
+        if (separatorIndex <= 0) continue;
+        const name = part.slice(0, separatorIndex).trim();
+        const rawValue = part.slice(separatorIndex + 1).trim();
+        try {
+            cookies.set(name, decodeURIComponent(rawValue));
+        } catch (error) {
+            cookies.set(name, rawValue);
+        }
+    }
+    return cookies;
+}
+
+function setSessionCookie(res, token) {
+    const attributes = [
+        `${SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
+        'Path=/',
+        'HttpOnly',
+        `Max-Age=${SESSION_MAX_AGE_SECONDS}`,
+        IS_PRODUCTION ? 'Secure' : '',
+        IS_PRODUCTION ? 'SameSite=None' : 'SameSite=Lax',
+    ].filter(Boolean);
+    res.append('Set-Cookie', attributes.join('; '));
+}
+
+function clearSessionCookie(res) {
+    const attributes = [
+        `${SESSION_COOKIE_NAME}=`,
+        'Path=/',
+        'HttpOnly',
+        'Max-Age=0',
+        'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        IS_PRODUCTION ? 'Secure' : '',
+        IS_PRODUCTION ? 'SameSite=None' : 'SameSite=Lax',
+    ].filter(Boolean);
+    res.append('Set-Cookie', attributes.join('; '));
 }
 
 function buildLoginRateLimitKey(req, username) {
@@ -2105,17 +2313,82 @@ function hashPasswordResetToken(token) {
     return crypto.createHash('sha256').update(String(token || ''), 'utf8').digest('hex');
 }
 
+function normalizeRecoveryEmail(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function isValidRecoveryEmail(value) {
+    const email = normalizeRecoveryEmail(value);
+    return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function consumePasswordResetRateLimit(req, username) {
+    const now = Date.now();
+    const ip = getRequestIp(req);
+    const keys = [`ip:${ip}`, `account:${String(username || '').trim().toLowerCase()}`];
+    let retryAfterSec = 0;
+
+    for (const key of keys) {
+        const recentAttempts = (passwordResetRateLimitStore.get(key) || [])
+            .filter((timestamp) => now - timestamp <= PASSWORD_RESET_RATE_LIMIT_WINDOW_MS);
+        if (recentAttempts.length >= PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS) {
+            const retryAt = recentAttempts[0] + PASSWORD_RESET_RATE_LIMIT_WINDOW_MS;
+            retryAfterSec = Math.max(retryAfterSec, Math.ceil((retryAt - now) / 1000));
+        } else {
+            recentAttempts.push(now);
+        }
+        passwordResetRateLimitStore.set(key, recentAttempts);
+    }
+
+    if (passwordResetRateLimitStore.size > 10_000) {
+        for (const [key, attempts] of passwordResetRateLimitStore.entries()) {
+            if (!attempts.some((timestamp) => now - timestamp <= PASSWORD_RESET_RATE_LIMIT_WINDOW_MS)) {
+                passwordResetRateLimitStore.delete(key);
+            }
+        }
+    }
+    return Math.max(0, retryAfterSec);
+}
+
+function createPasswordResetUrl(token) {
+    const resetUrl = new URL('/reset-password.html', PASSWORD_RESET_FRONTEND_URL);
+    resetUrl.searchParams.set('token', token);
+    return resetUrl.toString();
+}
+
+async function waitForPasswordResetResponseFloor(startedAt, floorMs = 400) {
+    const remainingMs = floorMs - (Date.now() - startedAt);
+    if (remainingMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remainingMs));
+    }
+}
+
 // ----------------------
 // Auth Routes
 // ----------------------
 
-app.post('/api/register', asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
+app.post(
+    '/api/register',
+    createPersistentRateLimit({ name: 'register', windowMs: 60 * 60 * 1000, maxRequests: 8 }),
+    asyncHandler(async (req, res) => {
+    const usernameValidation = validateUsername(req.body?.username);
+    const username = usernameValidation.username;
+    const password = String(req.body?.password || '');
+    const recoveryEmail = normalizeRecoveryEmail(req.body?.recoveryEmail);
     const referralCode = String(req.body?.referralCode || '').trim();
-    if (!username || !password) return res.status(400).json({ error: 'Missing fields' });
+    if (!usernameValidation.ok) {
+        return res.status(400).json({ error: usernameValidation.error, code: 'USERNAME_INVALID' });
+    }
+    if (!password || !recoveryEmail) return res.status(400).json({ error: 'Missing fields' });
+    if (password.length < 8 || password.length > 200) {
+        return res.status(400).json({ error: 'Password must contain between 8 and 200 characters' });
+    }
+    if (!isValidRecoveryEmail(recoveryEmail)) {
+        return res.status(400).json({ error: 'Invalid recovery email' });
+    }
 
     try {
-        const userId = await db.createUser(username, password);
+        const userId = await db.createUser(username, password, recoveryEmail);
         let referral = null;
         let referralWarning = null;
         if (referralCode) {
@@ -2127,7 +2400,9 @@ app.post('/api/register', asyncHandler(async (req, res) => {
         }
         const role = USER_ROLE_PLAYER;
         const createdReferralCode = await db.ensureReferralCodeForUser(userId);
-        const token = jwt.sign({ id: userId, username, role }, EFFECTIVE_JWT_SECRET, { expiresIn: '7d' });
+        const token = issueAuthToken({ id: userId, username, role, session_version: 1 });
+        setSessionCookie(res, token);
+        res.setHeader('Cache-Control', 'no-store');
         res.json({ token, id: userId, username, avatar: '👤', role, referralCode: createdReferralCode, referral, referralWarning });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -2166,8 +2441,11 @@ app.post('/api/admin/referrals/progress', requireAdminApiKey, asyncHandler(async
     return res.json({ success: true, ...result });
 }));
 
-app.post('/api/login', asyncHandler(async (req, res) => {
-    const username = String(req.body?.username || '').trim();
+app.post(
+    '/api/login',
+    createPersistentRateLimit({ name: 'login', windowMs: 10 * 60 * 1000, maxRequests: 30 }),
+    asyncHandler(async (req, res) => {
+    const username = normalizeUsername(req.body?.username);
     const password = String(req.body?.password || '');
     if (!username || !password) {
         return res.status(400).json({ error: 'Missing fields' });
@@ -2183,7 +2461,8 @@ app.post('/api/login', asyncHandler(async (req, res) => {
 
     const user = await db.getUser(username);
 
-    if (!user || !db.verifyPassword(user, password)) {
+    const passwordIsValid = db.verifyPassword(user, password);
+    if (!user || !passwordIsValid) {
         registerLoginFailure(now, rateKey);
         return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -2191,9 +2470,32 @@ app.post('/api/login', asyncHandler(async (req, res) => {
     clearLoginRateLimit(rateKey);
     const role = normalizeUserRole(user.role);
     const referralCode = await db.ensureReferralCodeForUser(user.id);
-    const token = jwt.sign({ id: user.id, username: user.username, role }, EFFECTIVE_JWT_SECRET, { expiresIn: '7d' });
+    const token = issueAuthToken(user);
+    setSessionCookie(res, token);
+    res.setHeader('Cache-Control', 'no-store');
     res.json({ token, id: user.id, username: user.username, avatar: user.avatar || '👤', role, referralCode });
 }));
+
+app.get('/api/session', authenticateToken, asyncHandler(async (req, res) => {
+    const user = await db.getUserById(req.user.id);
+    if (!user) {
+        clearSessionCookie(res);
+        return res.status(401).json({ error: 'Unknown authenticated user' });
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+        id: user.id,
+        username: user.username,
+        avatar: ALLOWED_AVATARS.has(user.avatar) ? user.avatar : '👤',
+        role: normalizeUserRole(user.role),
+        authenticated: true,
+    });
+}));
+
+app.post('/api/logout', (req, res) => {
+    clearSessionCookie(res);
+    return res.json({ success: true });
+});
 
 app.post('/api/password-reset', asyncHandler(async (req, res) => {
     const token = String(req.body?.token || '').trim();
@@ -2213,7 +2515,64 @@ app.post('/api/password-reset', asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'Invalid or expired reset link' });
     }
 
+    clearSessionCookie(res);
     return res.json({ success: true });
+}));
+
+app.post(
+    '/api/password-reset/request',
+    createPersistentRateLimit({ name: 'password-reset', windowMs: 15 * 60 * 1000, maxRequests: 10 }),
+    asyncHandler(async (req, res) => {
+    const startedAt = Date.now();
+    const username = String(req.body?.username || '').trim();
+    const recoveryEmail = normalizeRecoveryEmail(req.body?.recoveryEmail);
+    const genericResponse = {
+        success: true,
+        message: 'Si ces informations correspondent à un compte, un e-mail a été envoyé.',
+    };
+
+    const retryAfterSec = consumePasswordResetRateLimit(req, username);
+    if (retryAfterSec > 0) {
+        res.setHeader('Retry-After', String(retryAfterSec));
+        return res.status(429).json({
+            error: 'Too many password reset requests',
+            retryAfterSec,
+        });
+    }
+
+    if (!username || !isValidRecoveryEmail(recoveryEmail)) {
+        await waitForPasswordResetResponseFloor(startedAt);
+        return res.json(genericResponse);
+    }
+
+    const token = crypto.randomBytes(32).toString('base64url');
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_EXPIRATION_HOURS * 60 * 60 * 1000);
+    const user = await db.createPasswordResetTokenForRecovery(
+        username,
+        recoveryEmail,
+        hashPasswordResetToken(token),
+        expiresAt,
+    );
+
+    if (user) {
+        try {
+            const delivery = await sendPasswordResetEmail({
+                to: user.recovery_email,
+                username: user.username,
+                resetUrl: createPasswordResetUrl(token),
+                expiresInHours: PASSWORD_RESET_EXPIRATION_HOURS,
+            });
+            console.info(
+                `Password reset email accepted for user ${user.id}`,
+                { provider: delivery?.provider || 'smtp', messageId: delivery?.messageId || null },
+            );
+        } catch (error) {
+            console.error(`Password reset email failed for user ${user.id}:`, error.message);
+        }
+    }
+
+    await waitForPasswordResetResponseFloor(startedAt);
+    return res.json(genericResponse);
 }));
 
 function normalizeStreetInfoMode(mode) {
@@ -2297,6 +2656,7 @@ app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(a
         users: users.map((user) => ({
             id: user.id,
             username: user.username,
+            recoveryEmail: user.recovery_email || '',
             role: normalizeUserRole(user.role),
             avatar: user.avatar || '👤',
             createdAt: user.created_at,
@@ -2332,6 +2692,25 @@ app.post('/api/editor/users/:userId/password-reset-link', authenticateToken, req
         username: target.username,
         resetUrl: resetUrl.toString(),
         expiresAt: expiresAt.toISOString(),
+    });
+}));
+
+app.put('/api/editor/users/:userId/recovery-email', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+    const recoveryEmail = normalizeRecoveryEmail(req.body?.recoveryEmail);
+    if (recoveryEmail && !isValidRecoveryEmail(recoveryEmail)) {
+        return res.status(400).json({ error: 'Invalid recovery email' });
+    }
+    const user = await db.updateUserRecoveryEmail(req.params.userId, recoveryEmail || null);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    return res.json({
+        success: true,
+        user: {
+            id: user.id,
+            username: user.username,
+            recoveryEmail: user.recovery_email,
+        },
     });
 }));
 
@@ -2793,6 +3172,11 @@ app.post('/api/notifications/subscribe', authenticateToken, asyncHandler(async (
     }
 }));
 
+app.post('/api/notifications/prompted', authenticateToken, asyncHandler(async (req, res) => {
+    await db.markDailyReminderPromptedForUser(req.user.id);
+    return res.json({ success: true });
+}));
+
 app.post('/api/notifications/unsubscribe', authenticateToken, async (req, res) => {
     const endpoint = String(req.body?.endpoint || '').trim();
     try {
@@ -2839,7 +3223,11 @@ app.get('/api/leaderboards', async (req, res) => {
     }
 });
 
-app.post('/api/scores', authenticateToken, asyncHandler(async (req, res) => {
+app.post(
+    '/api/scores',
+    createPersistentRateLimit({ name: 'scores', windowMs: 60_000, maxRequests: 60 }),
+    authenticateToken,
+    asyncHandler(async (req, res) => {
     const parsed = parseScoreSubmission(req.body);
     if (!parsed.ok) {
         return res.status(400).json({ error: parsed.error });
@@ -2870,7 +3258,11 @@ app.post('/api/scores', authenticateToken, asyncHandler(async (req, res) => {
     return res.json({ success: true, duplicate: !saved });
 }));
 
-app.post('/api/friend-challenges', authenticateToken, asyncHandler(async (req, res) => {
+app.post(
+    '/api/friend-challenges',
+    createPersistentRateLimit({ name: 'friend-challenges', windowMs: 60_000, maxRequests: 20 }),
+    authenticateToken,
+    asyncHandler(async (req, res) => {
     const parsed = parseFriendChallengeCreateSubmission(req.body);
     if (!parsed.ok) {
         return res.status(400).json({ error: parsed.error });
@@ -2944,7 +3336,11 @@ app.get('/api/friend-challenges/:code', asyncHandler(async (req, res) => {
     });
 }));
 
-app.post('/api/friend-challenges/:code/score', authenticateToken, asyncHandler(async (req, res) => {
+app.post(
+    '/api/friend-challenges/:code/score',
+    createPersistentRateLimit({ name: 'friend-challenge-score', windowMs: 60_000, maxRequests: 60 }),
+    authenticateToken,
+    asyncHandler(async (req, res) => {
     const code = normalizeChallengeCode(req.params.code);
     if (!FRIEND_CHALLENGE_CODE_PATTERN.test(code)) {
         return res.status(400).json({ error: 'Invalid challenge code format' });
@@ -3020,67 +3416,28 @@ function getEmptyProfileStats() {
     };
 }
 
-app.get('/api/profile', authenticateToken, async (req, res) => {
-    const currentUser = await getCurrentAuthenticatedUser(req.user);
-    if (!currentUser) {
-        return res.status(401).json({ error: 'Unknown authenticated user' });
-    }
-
-    const payload = {
-        userId: currentUser.id,
-        username: currentUser.username,
-        avatar: currentUser.avatar || '👤',
-        referralCode: currentUser.referralCode || null,
-        ...getEmptyProfileStats(),
-    };
-
-    try {
-        const stats = await db.getUserStats(currentUser.id);
-        if (stats && typeof stats === 'object') {
-            Object.assign(payload, stats);
-        }
-    } catch (err) {
-        console.error('Profile stats error:', {
-            userId: currentUser.id,
-            username: currentUser.username,
-            message: err?.message || 'Unknown profile stats error',
-        });
-        payload.profileWarning = 'partial_profile_stats_unavailable';
-    }
-
-    try {
-        payload.referrals = await db.getReferralProfileForUser(currentUser.id);
-        payload.referralCode = payload.referrals?.code || payload.referralCode;
-    } catch (err) {
-        console.error('Profile referral error:', {
-            userId: currentUser.id,
-            username: currentUser.username,
-            message: err?.message || 'Unknown referral profile error',
-        });
-        payload.referralWarning = 'referral_profile_unavailable';
-    }
-
-    return res.json(payload);
+const profileRepository = createProfileRepository(db);
+const profileService = createProfileService({ repository: profileRepository });
+const profileController = createProfileController({
+    allowedAvatars: ALLOWED_AVATARS,
+    emptyStats: getEmptyProfileStats,
+    getAuthenticatedUser: getCurrentAuthenticatedUser,
+    service: profileService,
 });
-
-app.post('/api/profile/avatar', authenticateToken, async (req, res) => {
-    const { avatar } = req.body;
-    if (!avatar) return res.status(400).json({ error: 'Missing avatar' });
-
-    try {
-        await db.updateUserAvatar(req.user.id, avatar);
-        res.json({ success: true, avatar });
-    } catch (err) {
-        console.error('Update avatar error:', err);
-        res.status(500).json({ error: 'Failed to update avatar' });
-    }
-});
+app.use('/api/profile', createProfileRouter({
+    asyncHandler,
+    authenticateToken,
+    controller: profileController,
+}));
 
 // ----------------------
 // Analytics Routes
 // ----------------------
 
-app.post('/api/analytics/track', async (req, res) => {
+app.post(
+    '/api/analytics/track',
+    createPersistentRateLimit({ name: 'analytics-track', windowMs: 60_000, maxRequests: 120 }),
+    async (req, res) => {
     const { streetName, mode, correct, timeSec } = req.body;
     if (!streetName || !mode) return res.status(400).json({ error: 'Missing data' });
     try {
@@ -3093,7 +3450,7 @@ app.post('/api/analytics/track', async (req, res) => {
     }
 });
 
-app.get('/api/analytics', async (req, res) => {
+app.get('/api/analytics', authenticateToken, requireContentEditor, async (req, res) => {
     try {
         const data = await db.getAnalytics();
         res.json(data);
@@ -3148,8 +3505,13 @@ async function handleVisitorHit(req, res) {
     }
 }
 
-app.post('/api/visitors/hit', handleVisitorHit);
-app.get('/api/visitors/hit', handleVisitorHit);
+const visitorHitRateLimit = createPersistentRateLimit({
+    name: 'visitor-hit',
+    windowMs: 60_000,
+    maxRequests: 60,
+});
+app.post('/api/visitors/hit', visitorHitRateLimit, handleVisitorHit);
+app.get('/api/visitors/hit', visitorHitRateLimit, handleVisitorHit);
 
 app.get('/api/visitors/count', async (req, res) => {
     try {
@@ -4011,6 +4373,8 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
         const target = await db.getDailyTarget(date);
         const manifestEntry = getDailyManifestEntryByDate(date);
         const userStatus = await db.startDailyUserAttempt(req.user.id, date);
+        await ensurePushRuntimeReady();
+        const reminderPromptStatus = await db.getDailyReminderPromptStatusForUser(req.user.id);
 
         const response = {
             date,
@@ -4021,7 +4385,11 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
             arrondissement: target.arrondissement,
             dailyImageUrl: resolveDailyImageUrl(date, target.street_name, manifestEntry),
             targetGeoJson: target.coordinates_json,
-            userStatus
+            userStatus,
+            reminderAutoPromptEligible:
+                pushRuntime.enabled
+                && !reminderPromptStatus.prompted
+                && !reminderPromptStatus.hasActiveSubscription,
         };
 
         if (userStatus.success || userStatus.attempts_count >= 7) {
@@ -4035,7 +4403,11 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
     }
 });
 
-app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) => {
+app.post(
+    '/api/daily/guess',
+    createPersistentRateLimit({ name: 'daily-guess', windowMs: 60_000, maxRequests: 90 }),
+    authenticateToken,
+    asyncHandler(async (req, res) => {
     try {
         const parsed = parseDailyGuessSubmission(req.body);
         if (!parsed.ok) {
@@ -4043,7 +4415,12 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
         }
 
         const expectedDate = await ensureDailyTarget();
-        if (parsed.value.date !== expectedDate) {
+        const isAllowedDate = await isDailyGuessDateAllowed(
+            req.user.id,
+            parsed.value.date,
+            expectedDate,
+        );
+        if (!isAllowedDate) {
             return res.status(400).json({ error: 'Invalid daily date for current challenge' });
         }
 
@@ -4052,6 +4429,7 @@ app.post('/api/daily/guess', authenticateToken, asyncHandler(async (req, res) =>
             parsed.value.date,
             parsed.value.distanceMeters,
             parsed.value.isSuccess,
+            parsed.value.attemptsCount,
         );
 
         if (result.success || result.attempts_count >= 7) {
@@ -4354,5 +4732,21 @@ app.use((err, req, res, next) => {
     if (res.headersSent) {
         return next(err);
     }
+    if (Number.isInteger(err.status) && err.status >= 400 && err.status < 500) {
+        return res.status(err.status).json({
+            error: err.message || 'Invalid request',
+            details: Array.isArray(err.errors) ? err.errors : undefined,
+        });
+    }
     return res.status(500).json({ error: 'Internal server error' });
 });
+
+if (require.main === module) {
+    startServer();
+}
+
+module.exports = {
+    app,
+    initializeDatabase,
+    startServer,
+};

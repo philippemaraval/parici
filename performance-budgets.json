@@ -1,0 +1,14 @@
+{
+  "assets": {
+    "maxEntryJavaScriptBytes": 225280,
+    "maxInitialJavaScriptBytes": 286720,
+    "maxStylesheetBytes": 81920,
+    "maxMapOverviewBytes": 5242880,
+    "maxMapOverviewGzipBytes": 1048576
+  },
+  "webVitals": {
+    "lcpMs": 2500,
+    "inpMs": 200,
+    "cls": 0.1
+  }
+}

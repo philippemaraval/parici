@@ -24,6 +24,12 @@ const refs = {
 };
 
 const textCollator = new Intl.Collator("fr", { sensitivity: "base", numeric: true });
+const parisDayFormatter = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: "Europe/Paris",
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+});
 const rankOrder = new Map([
   ["Touriste", 0],
   ["Titi Parisien", 1],
@@ -52,6 +58,30 @@ function formatDate(value) {
   return Number.isNaN(date.getTime())
     ? "—"
     : date.toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function formatDaysAgo(value, now = new Date()) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const toDayNumber = (dateValue) => {
+    const parts = Object.fromEntries(
+      parisDayFormatter
+        .formatToParts(dateValue)
+        .filter((part) => part.type !== "literal")
+        .map((part) => [part.type, Number(part.value)]),
+    );
+    return Date.UTC(parts.year, parts.month - 1, parts.day) / 86400000;
+  };
+  const days = Math.max(0, toDayNumber(now) - toDayNumber(date));
+  return `Il y a ${days} jour${days === 1 ? "" : "s"}`;
+}
+
+function renderDateWithAge(value) {
+  const formattedDate = formatDate(value);
+  const daysAgo = formatDaysAgo(value);
+  if (!daysAgo) return formattedDate;
+  return `<span class="admin-date">${formattedDate}<small>${daysAgo}</small></span>`;
 }
 
 function formatRole(role) {
@@ -133,6 +163,7 @@ async function apiRequest(path, options = {}) {
       ...(options.body ? { "Content-Type": "application/json" } : {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
+    credentials: "include",
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -167,20 +198,24 @@ function renderUsers() {
           <span class="user-identity"><span class="user-avatar">${escapeHtml(user.avatar)}</span>
           <span><strong>${escapeHtml(user.username)}</strong><small>${escapeHtml(formatRole(user.role))}</small></span></span>
         </td>
+        <td>
+          <span class="recovery-email">${user.recoveryEmail ? escapeHtml(user.recoveryEmail) : '<em>Non renseigné</em>'}</span>
+          <button type="button" class="btn btn-compact" data-email-id="${user.id}">${user.recoveryEmail ? "Modifier" : "Ajouter"}</button>
+        </td>
         <td><strong>${user.referralCount || 0}</strong> filleul${user.referralCount === 1 ? "" : "s"}</td>
         <td>${escapeHtml(user.rank)}</td>
         <td><strong>${user.dailyDaysPlayed}</strong> jour${user.dailyDaysPlayed === 1 ? "" : "s"} joué${user.dailyDaysPlayed === 1 ? "" : "s"}<br><small>${user.dailySuccesses} réussite${user.dailySuccesses === 1 ? "" : "s"}</small></td>
         <td><strong>${user.dailyFrequency}%</strong></td>
         <td><span class="boolean-badge boolean-badge--${user.reminderEnabled ? "yes" : "no"}">${user.reminderEnabled ? "Activé" : "Non"}</span></td>
-        <td>${formatDate(user.lastDailyAt || user.lastGameAt)}</td>
-        <td>${formatDate(user.createdAt)}</td>
+        <td>${renderDateWithAge(user.lastDailyAt || user.lastGameAt)}</td>
+        <td>${renderDateWithAge(user.createdAt)}</td>
         <td class="user-actions">
           <button type="button" class="btn" data-reset-id="${user.id}">Générer un lien</button>
           <button type="button" class="btn btn-danger-outline" data-delete-id="${user.id}" ${user.id === state.currentUserId ? "disabled" : ""}>Supprimer</button>
         </td>
       </tr>
     `).join("")
-    : '<tr><td colspan="9">Aucun utilisateur trouvé.</td></tr>';
+    : '<tr><td colspan="10">Aucun utilisateur trouvé.</td></tr>';
 }
 
 async function loadUsers() {
@@ -214,6 +249,35 @@ async function generateResetLink(userId, button) {
   } catch (error) {
     setStatus(`Génération impossible : ${error.message}`, "error");
   } finally {
+    button.disabled = false;
+  }
+}
+
+async function editRecoveryEmail(userId, button) {
+  const user = state.users.find((entry) => entry.id === userId);
+  if (!user) return;
+  const entered = window.prompt(
+    `Adresse mail de récupération pour ${user.username} (laissez vide pour la supprimer) :`,
+    user.recoveryEmail || "",
+  );
+  if (entered === null) return;
+  const recoveryEmail = entered.trim().toLowerCase();
+  if (recoveryEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recoveryEmail)) {
+    setStatus("Adresse mail invalide.", "error");
+    return;
+  }
+
+  button.disabled = true;
+  try {
+    const payload = await apiRequest(`/api/editor/users/${userId}/recovery-email`, {
+      method: "PUT",
+      body: { recoveryEmail },
+    });
+    user.recoveryEmail = payload.user.recoveryEmail || "";
+    renderUsers();
+    setStatus(`Adresse de récupération mise à jour pour ${user.username}.`, "success");
+  } catch (error) {
+    setStatus(`Mise à jour impossible : ${error.message}`, "error");
     button.disabled = false;
   }
 }
@@ -255,6 +319,11 @@ refs.sortHeaders.forEach((header) => {
   });
 });
 refs.body.addEventListener("click", (event) => {
+  const emailButton = event.target.closest("[data-email-id]");
+  if (emailButton) {
+    editRecoveryEmail(Number(emailButton.dataset.emailId), emailButton);
+    return;
+  }
   const resetButton = event.target.closest("[data-reset-id]");
   if (resetButton) {
     generateResetLink(Number(resetButton.dataset.resetId), resetButton);
@@ -266,7 +335,13 @@ refs.body.addEventListener("click", (event) => {
 
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  state.token = String(saved.token || "");
+  const legacyToken = String(saved.token || "");
+  state.token = String(sessionStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || legacyToken);
+  if (legacyToken) {
+    delete saved.token;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, legacyToken);
+  }
 } catch {
   state.token = "";
 }

@@ -29,11 +29,24 @@ function isFiniteCoordinatePair(value) {
   );
 }
 
+function firstExisting(...candidates) {
+  return candidates.find((candidate) => fs.existsSync(candidate)) || candidates[0];
+}
+
 function validateOsmOutputs(projectRoot = path.resolve(__dirname, "..")) {
   const files = {
-    light: path.join(projectRoot, "data", "paris_rues_light.geojson"),
-    enriched: path.join(projectRoot, "data", "paris_rues_enrichi.geojson"),
-    backendLight: path.join(projectRoot, "backend", "data", "paris_rues_light.geojson"),
+    light: firstExisting(
+      path.join(projectRoot, "data", "paris_rues_light.geojson"),
+      path.join(projectRoot, "data", "paris_rues_light 2.geojson"),
+    ),
+    enriched: firstExisting(
+      path.join(projectRoot, "data", "paris_rues_enrichi.geojson"),
+      path.join(projectRoot, "data", "paris_rues_enrichi 2.geojson"),
+    ),
+    backendLight: firstExisting(
+      path.join(projectRoot, "backend", "data", "paris_rues_light.geojson"),
+      path.join(projectRoot, "backend", "data", "paris_rues_light 2.geojson"),
+    ),
     arrondissements: path.join(projectRoot, "data", "paris_arrondissements.geojson"),
     backendArrondissements: path.join(projectRoot, "backend", "data", "paris_arrondissements.geojson"),
     monuments: path.join(projectRoot, "data", "paris_monuments.geojson"),

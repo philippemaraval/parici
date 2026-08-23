@@ -1,0 +1,243 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Parici API",
+    "version": "1.0.0",
+    "description": "Contrat public des principaux domaines de Parici."
+  },
+  "servers": [
+    { "url": "http://localhost:3000", "description": "Développement local" },
+    { "url": "https://camino-paris.onrender.com", "description": "Production" }
+  ],
+  "tags": [
+    { "name": "auth" },
+    { "name": "scores" },
+    { "name": "daily" },
+    { "name": "profiles" },
+    { "name": "notifications" },
+    { "name": "administration" }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["administration"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "prewarm",
+            "schema": { "type": "string", "enum": ["0", "1", "true", "false"] }
+          }
+        ],
+        "responses": { "200": { "description": "État du service" } }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "tags": ["auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Compte créé" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Session ouverte" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/api/scores": {
+      "post": {
+        "tags": ["scores"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ScoreRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Score enregistré" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/daily/guess": {
+      "post": {
+        "tags": ["daily"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DailyGuessRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Tentative enregistrée" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/profile/avatar": {
+      "post": {
+        "tags": ["profiles"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["avatar"],
+                "properties": {
+                  "avatar": { "type": "string", "maxLength": 8 }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Avatar mis à jour" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/notifications/subscribe": {
+      "post": {
+        "tags": ["notifications"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["subscription"],
+                "properties": {
+                  "subscription": {
+                    "type": "object",
+                    "required": ["endpoint", "keys"],
+                    "properties": {
+                      "endpoint": {
+                        "type": "string",
+                        "format": "uri",
+                        "maxLength": 4096
+                      },
+                      "keys": {
+                        "type": "object",
+                        "required": ["p256dh", "auth"],
+                        "properties": {
+                          "p256dh": { "type": "string" },
+                          "auth": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Abonnement enregistré" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "description": "Requête invalide",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": { "error": { "type": "string" } }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["username", "password", "recoveryEmail"],
+        "properties": {
+          "username": { "type": "string", "minLength": 3, "maxLength": 30 },
+          "password": { "type": "string", "minLength": 8, "maxLength": 200 },
+          "recoveryEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 320
+          },
+          "referralCode": { "type": "string", "maxLength": 64 }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "password": { "type": "string", "minLength": 1, "maxLength": 200 }
+        },
+        "additionalProperties": false
+      },
+      "ScoreRequest": {
+        "type": "object",
+        "required": ["mode", "gameType", "score"],
+        "properties": {
+          "mode": { "type": "string", "maxLength": 80 },
+          "gameType": { "type": "string", "maxLength": 80 },
+          "score": { "type": "number", "minimum": 0 },
+          "itemsCorrect": { "type": "integer", "minimum": 0 },
+          "itemsTotal": { "type": "integer", "minimum": 0 },
+          "timeSec": { "type": "number", "minimum": 0 },
+          "arrondissementName": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 160
+          },
+          "sessionId": { "type": "string", "nullable": true, "maxLength": 160 }
+        },
+        "additionalProperties": false
+      },
+      "DailyGuessRequest": {
+        "type": "object",
+        "required": ["date", "distanceMeters", "isSuccess"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "distanceMeters": { "type": "number", "minimum": 0 },
+          "isSuccess": { "type": "boolean" },
+          "attemptsCount": { "type": "integer", "minimum": 1, "maximum": 7 }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

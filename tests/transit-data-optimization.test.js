@@ -38,14 +38,15 @@ test("transit geometry optimization removes reversed duplicate ways", () => {
   ]);
 });
 
-test("transport lines are prepared in the background and rendered on canvas", () => {
+test("transport lines are rendered on demand with canvas", () => {
   const appSource = fs.readFileSync(path.join(__dirname, "../src/app.js"), "utf8");
   const mapRuntimeSource = fs.readFileSync(
     path.join(__dirname, "../src/map-runtime.js"),
     "utf8",
   );
 
-  assert.match(appSource, /scheduleAfterStartup\(\(\) => \{\s*loadBusLines\(\);/);
+  assert.doesNotMatch(appSource, /scheduleAfterStartup\(\(\) => \{\s*loadBusLines\(\);/);
+  assert.match(appSource, /if \("lignes-transports-idf" === zoneMode/);
   assert.match(mapRuntimeSource, /const busLineRenderer = L\.canvas/);
   assert.match(mapRuntimeSource, /renderer: busLineRenderer/);
 });

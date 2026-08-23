@@ -1,0 +1,68 @@
+name: PostgreSQL backup
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: camino-postgres-backup
+  cancel-in-progress: false
+
+jobs:
+  backup-and-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: camino_restore
+          POSTGRES_PASSWORD: camino_restore
+          POSTGRES_USER: camino_restore
+        options: >-
+          --health-cmd "pg_isready -U camino_restore -d camino_restore"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+      BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+      BACKUP_DIR: backups
+      BACKUP_RETENTION_DAYS: "30"
+      RESTORE_DATABASE_URL: postgresql://camino_restore:camino_restore@localhost:5432/camino_restore
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required secrets
+        run: |
+          test -n "$DATABASE_URL"
+          test -n "$BACKUP_ENCRYPTION_PASSPHRASE"
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install --yes postgresql-client-17
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+          /usr/lib/postgresql/17/bin/pg_dump --version
+      - name: Create encrypted backup
+        id: backup
+        run: |
+          backup_path="$(bash scripts/postgres_backup.sh)"
+          echo "path=$backup_path" >> "$GITHUB_OUTPUT"
+      - name: Restore into an ephemeral PostgreSQL instance
+        run: bash scripts/postgres_restore_test.sh "${{ steps.backup.outputs.path }}"
+      - name: Upload encrypted backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: camino-postgres-${{ github.run_id }}
+          path: |
+            ${{ steps.backup.outputs.path }}
+            ${{ steps.backup.outputs.path }}.sha256
+          if-no-files-found: error
+          retention-days: 30

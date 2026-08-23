@@ -35,3 +35,17 @@ test("daily target cannot be changed after players started the date", () => {
   assert.match(serverSource, /countDailyUserAttemptsForDate\(date\)/);
   assert.match(serverSource, /Keeping existing target for \$\{date\}/);
 });
+
+test("a Daily started before 03:00 can finish after the rollover", () => {
+  const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+
+  assert.match(source, /async function isDailyGuessDateAllowed/);
+  assert.match(source, /shiftIsoDateKey\(expectedDate, -1\)/);
+  assert.match(source, /db\.getDailyUserStatus\(userId, submittedDate\)/);
+  assert.match(source, /previousStatus\.success !== true/);
+  assert.match(source, /Number\(previousStatus\.attempts_count \|\| 0\) < 7/);
+  assert.match(
+    source,
+    /await isDailyGuessDateAllowed\(\s*req\.user\.id,\s*parsed\.value\.date,\s*expectedDate/,
+  );
+});

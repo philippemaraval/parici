@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <script src="/src/public/js/runtime-config.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Utilisateurs | Administration Parici</title>
@@ -12,7 +13,7 @@
   <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
   <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
-  <link rel="stylesheet" href="/admin/admin.css?v=20260706-admin-polish">
+  <link rel="stylesheet" href="/admin/admin.css?v=20260722-recovery-email">
 </head>
 <body>
   <main class="admin-shell admin-shell--wide">
@@ -69,6 +70,7 @@
           <thead>
             <tr>
               <th data-sort-key="username"><button type="button" class="table-sort">Utilisateur<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="recoveryEmail"><button type="button" class="table-sort">Mail de récupération<span aria-hidden="true"></span></button></th>
               <th data-sort-key="referralCount"><button type="button" class="table-sort">Parrainages<span aria-hidden="true"></span></button></th>
               <th data-sort-key="rank"><button type="button" class="table-sort">Rang<span aria-hidden="true"></span></button></th>
               <th data-sort-key="dailyDaysPlayed"><button type="button" class="table-sort">Jours Daily<span aria-hidden="true"></span></button></th>
@@ -84,6 +86,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="/admin/users.js?v=20260706-admin-polish"></script>
+  <script type="module" src="/admin/users.js?v=20260726-relative-dates"></script>
 </body>
 </html>

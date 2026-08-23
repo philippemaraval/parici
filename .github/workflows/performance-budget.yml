@@ -1,0 +1,26 @@
+name: Performance budgets
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run performance:check
+      - name: Lighthouse (LCP, réactivité, CLS)
+        run: npx --yes @lhci/cli@0.15.1 autorun

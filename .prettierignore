@@ -1,0 +1,9 @@
+dist/
+node_modules/
+Explorer_images/
+data/
+backend/data/
+backend/database.js
+backend/server.js
+src/public/
+tests/fixtures/

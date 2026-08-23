@@ -848,7 +848,38 @@ export function handleDailyShareImageRuntime({
   ctx.textAlign = "center";
   ctx.fillStyle = "#f8fafc";
   ctx.font = '700 28px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
-  ctx.fillText("🖼️ Indice visuel", bestCenterX, photoPanel.y + 34);
+  const visualHintLabel = "Indice visuel";
+  const visualHintIconSize = 24;
+  const visualHintGap = 10;
+  const visualHintTextWidth = ctx.measureText(visualHintLabel).width;
+  const visualHintWidth = visualHintIconSize + visualHintGap + visualHintTextWidth;
+  const visualHintX = bestCenterX - visualHintWidth / 2;
+  const visualHintY = photoPanel.y + 34;
+
+  // Draw the icon separately: Safari/iOS reports unreliable Canvas metrics for
+  // colour emoji, which used to push the label to the right of the panel centre.
+  ctx.save();
+  ctx.strokeStyle = "#f8fafc";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.roundRect(visualHintX, visualHintY - 19, visualHintIconSize, 20, 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(visualHintX + 17, visualHintY - 13, 2.5, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(visualHintX + 3, visualHintY - 2);
+  ctx.lineTo(visualHintX + 9, visualHintY - 9);
+  ctx.lineTo(visualHintX + 13, visualHintY - 5);
+  ctx.lineTo(visualHintX + 16, visualHintY - 8);
+  ctx.lineTo(visualHintX + 21, visualHintY - 2);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.textAlign = "left";
+  ctx.fillText(visualHintLabel, visualHintX + visualHintIconSize + visualHintGap, visualHintY);
+  ctx.textAlign = "center";
 
   ctx.fillStyle = "rgba(30,41,59,0.65)";
   ctx.beginPath();

@@ -19,16 +19,17 @@
     rel="stylesheet">
 
   <!-- Favicons pour toutes les plateformes -->
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
-  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
-  <link rel="manifest" href="/site.webmanifest?v=20260703-transparent">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta name="msapplication-config" content="/camino-paris-favicon.ico/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Parici">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <script src="/src/public/js/runtime-config.js"></script>
 
   <script>
     (function () {
@@ -38,11 +39,9 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="style.css?v=20260722-daily-share">
+  <link rel="stylesheet" href="style.css?v=20260722-password-recovery">
   <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260722-daily-share">
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css">
 </head>
 
 <body>
@@ -107,16 +106,25 @@
                 <input id="auth-username" type="text" placeholder="Pseudo" autocomplete="username" spellcheck="false">
                 <div class="password-wrapper">
                   <label class="sr-only" for="auth-password">Mot de passe</label>
-                  <input id="auth-password" type="password" placeholder="Mot de passe" autocomplete="current-password">
+                  <input id="auth-password" type="password" minlength="8" maxlength="200"
+                    placeholder="Mot de passe" autocomplete="current-password">
                   <button type="button" id="toggle-password" class="password-toggle"
                     aria-label="Afficher le mot de passe">👁</button>
                 </div>
+                <label class="sr-only" for="auth-recovery-email">Mail de récupération</label>
+                <input id="auth-recovery-email" type="email" autocomplete="email"
+                  placeholder="Mail de récupération (requis à l’inscription)">
+                <p class="recovery-email-privacy">
+                  Utilisé uniquement pour récupérer votre compte.
+                  <a href="/confidentialite.html">En savoir plus</a>
+                </p>
                 <div id="auth-feedback" class="auth-feedback" role="status" aria-live="polite"></div>
                 <div class="auth-buttons">
                   <button id="login-btn" class="btn-secondary" type="button">Se connecter</button>
                   <button id="register-btn" class="btn-secondary" type="button">Créer un compte</button>
                   <button id="logout-btn" class="btn-tertiary hidden" type="button">Se déconnecter</button>
                 </div>
+                <a class="forgot-password-link" href="/forgot-password.html">Mot de passe oublié ?</a>
               </div>
 
               <!-- Profile panel (visible when logged in) -->
@@ -464,10 +472,12 @@
           <p id="map-sync-meta" class="sidebar-map-sync site-footer__sync" aria-live="polite">Carte mise à jour : —</p>
           <p class="sidebar-credit site-footer__credit">Crafted by Philippe Maraval</p>
           <div class="sidebar-social-group sidebar-social-group--right site-footer__social">
-            <a class="sidebar-social-link" href="mailto:" aria-label="Contacter le jeu par mail">Mail</a>
+            <a class="sidebar-social-link" href="/confidentialite.html">RGPD</a>
+            <a class="sidebar-social-link" href="mailto:camino.sunmedia@gmail.com"
+              aria-label="Contacter le jeu par mail">Mail</a>
             <a class="sidebar-social-link" href="https://x.com/sunmediaparici" target="_blank" rel="noopener noreferrer"
               aria-label="Compte X du jeu">X</a>
-            <a class="sidebar-social-link" href="https://www.instagram.com/" target="_blank"
+            <a class="sidebar-social-link" href="https://www.instagram.com/sunmediacamino?igsh=MWd0eGNnNTZ2a2ZxZw%3D%3D&amp;utm_source=qr" target="_blank"
               rel="noopener noreferrer" aria-label="Compte Instagram du jeu">Instagram</a>
           </div>
         </footer>
@@ -495,12 +505,9 @@
     </section>
   </div>
 
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script defer src="/src/public/js/leaflet.polylineoffset.js?v=1"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script defer src="/src/public/js/map-dependencies.js"></script>
   <script defer src="data_rules.js?v=20260504b"></script>
-  <script defer src="main.js?v=20260722-daily-share"></script>
+  <script defer src="main.js?v=20260726-daily-reminder-prompt"></script>
   <script>
     (function () {
       const syncMetaEl = document.getElementById("map-sync-meta");

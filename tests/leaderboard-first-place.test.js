@@ -12,7 +12,8 @@ function read(relativePath) {
 test("only explicitly ranked first-place rows receive the leaderboard winner style", () => {
   const leaderboardSource = read("src/leaderboard.js");
   const sourceCss = read("style.css");
-  const deployedCss = read("dist/style.css");
+  const assetManifest = JSON.parse(read("dist/asset-manifest.json"));
+  const deployedCss = read(`dist${assetManifest["style.css"]}`);
 
   assert.equal(
     leaderboardSource.match(/classList\.add\("leaderboard-first-place"\)/g)?.length,
@@ -27,12 +28,22 @@ test("only explicitly ranked first-place rows receive the leaderboard winner sty
 });
 
 test("deployed leaderboard assets use the current cache-busting version", () => {
-  const assetVersion = "20260722-daily-share";
+  const manifest = JSON.parse(read("dist/asset-manifest.json"));
+  const deployedIndex = read("dist/index.html");
+  const deployedServiceWorker = read("dist/sw.js");
 
-  assert.match(read("index.html"), new RegExp(`style\\.css\\?v=${assetVersion}`));
-  assert.match(read("dist/index.html"), new RegExp(`style\\.css\\?v=${assetVersion}`));
-  assert.match(read("index.html"), new RegExp(`main\\.js\\?v=${assetVersion}`));
-  assert.match(read("dist/index.html"), new RegExp(`main\\.js\\?v=${assetVersion}`));
-  assert.match(read("sw.js"), new RegExp(`style\\.css\\?v=${assetVersion}`));
-  assert.match(read("dist/sw.js"), new RegExp(`style\\.css\\?v=${assetVersion}`));
+  assert.match(manifest["style.css"], /^\/assets\/style\.[a-f0-9]{12}\.css$/);
+  assert.match(manifest["main.js"], /^\/assets\/main\.[a-f0-9]{12}\.js$/);
+  assert.ok(deployedIndex.includes(manifest["style.css"]));
+  assert.ok(deployedIndex.includes(manifest["main.js"]));
+  assert.ok(deployedServiceWorker.includes(manifest["style.css"]));
+  assert.ok(deployedServiceWorker.includes(manifest["main.js"]));
+  assert.ok(deployedServiceWorker.includes(manifest["leaflet-runtime.js"]));
+  assert.ok(deployedServiceWorker.includes(manifest["leaflet.css"]));
+  assert.match(read(`dist${manifest["map-dependencies.js"]}`), /leaflet-runtime/);
+  assert.doesNotMatch(
+    read(`dist${manifest["map-dependencies.js"]}`),
+    /unpkg\.com\/leaflet/,
+  );
+  assert.doesNotMatch(deployedIndex, /[?&]v=/);
 });

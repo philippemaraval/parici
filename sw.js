@@ -1,4 +1,4 @@
-const CACHE_NAME = "camino-paris-v19";
+const CACHE_NAME = "camino-paris-v21";
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3500;
 
 const CORE_PRECACHE_URLS = [
@@ -7,12 +7,19 @@ const CORE_PRECACHE_URLS = [
   "/regles.html",
   "/arbre-rangs.html",
   "/reset-password.html",
-  "/style.css?v=20260722-daily-share",
-  "/main.js?v=20260722-daily-share",
+  "/forgot-password.html",
+  "/confidentialite.html",
+  "/style.css?v=20260726-daily-reminder-prompt",
+  "/main.js?v=20260726-daily-reminder-prompt",
   "/src/public/js/leaflet.polylineoffset.js?v=1",
+  "/src/public/js/map-dependencies.js",
+  "/src/public/js/leaflet-runtime.js",
+  "/src/public/js/runtime-config.js",
+  "/vendor/leaflet.css",
   "/src/public/css/site-shell.css?v=20260722-daily-share",
   "/src/public/js/site-shell.js?v=20260722-daily-share",
   "/data_rules.js",
+  "/data/map/manifest.json",
   "/site.webmanifest?v=20260628-centered",
   "/apple-touch-icon.png?v=20260628-centered",
   "/camino-paris-favicon.ico/icon-16x16.png?v=20260628-centered",
@@ -20,14 +27,6 @@ const CORE_PRECACHE_URLS = [
   "/camino-paris-favicon.ico/icon-180x180.png?v=20260628-centered",
   "/camino-paris-favicon.ico/icon-192x192.png?v=20260628-centered",
   "/camino-paris-favicon.ico/icon-512x512.png?v=20260628-centered",
-];
-
-const OPTIONAL_CDN_PRECACHE_URLS = [
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
-  "https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.css",
-  "https://cdn.jsdelivr.net/npm/leaflet-minimap@3.6.1/dist/Control.MiniMap.min.js",
-  "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js",
 ];
 
 const CDN_HOSTS = new Set(["unpkg.com", "cdn.jsdelivr.net"]);
@@ -57,11 +56,28 @@ self.addEventListener("install", (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       await Promise.all(CORE_PRECACHE_URLS.map((url) => cacheUrlSafely(cache, url)));
-      await Promise.all(OPTIONAL_CDN_PRECACHE_URLS.map((url) => cacheUrlSafely(cache, url)));
       await self.skipWaiting();
     })(),
   );
 });
+
+const HAD_ACTIVE_WORKER_AT_INSTALL = Boolean(self.registration?.active);
+
+async function reloadWindowClientsAfterUpdate() {
+  if (!HAD_ACTIVE_WORKER_AT_INSTALL) {
+    return;
+  }
+  const windowClients = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+  windowClients.forEach((client) => {
+    if (!client?.url || typeof client.navigate !== "function") {
+      return;
+    }
+    client.navigate(client.url).catch(() => undefined);
+  });
+}
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
@@ -74,7 +90,8 @@ self.addEventListener("activate", (event) => {
             .map((key) => caches.delete(key)),
         ),
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
+      .then(() => reloadWindowClientsAfterUpdate()),
   );
 });
 

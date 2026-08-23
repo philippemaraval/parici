@@ -149,12 +149,17 @@ export async function loadStreetsRuntime({
 }) {
   const startedAt = performance.now();
   const remoteApiBase = String(apiUrl || "").trim().replace(/\/+$/, "");
-  const candidateRequests = [
-    {
-      url: "data/paris_rues_light.geojson?v=13",
-      options: {},
-    },
-  ];
+  const candidateRequests = [];
+  try {
+    const manifestResponse = await fetch("data/map/manifest.json");
+    if (manifestResponse.ok) {
+      const manifest = await manifestResponse.json();
+      if (manifest?.overview?.url) candidateRequests.push({ url: manifest.overview.url, options: {} });
+    }
+  } catch (error) {
+    console.warn("Manifest cartographique optimisé indisponible, utilisation du secours.", error);
+  }
+  candidateRequests.push({ url: "data/paris_rues_light.geojson?v=13", options: {} });
   if (remoteApiBase) {
     candidateRequests.push({
       url: `${remoteApiBase}/api/streets-light`,

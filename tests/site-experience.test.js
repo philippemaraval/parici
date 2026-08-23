@@ -10,12 +10,34 @@ function read(relativePath) {
 }
 
 test("every public Parici page exposes French metadata and app icons", () => {
-  for (const page of ["index.html", "regles.html", "arbre-rangs.html", "reset-password.html"]) {
+  for (const page of [
+    "index.html",
+    "regles.html",
+    "arbre-rangs.html",
+    "forgot-password.html",
+    "reset-password.html",
+    "confidentialite.html",
+  ]) {
     const source = read(page);
     assert.match(source, /<html lang="fr">/);
     assert.match(source, /<meta name="description"/);
     assert.match(source, /apple-touch-icon|camino-paris-favicon/);
   }
+});
+
+test("recovery email collection links to a clear privacy notice", () => {
+  const index = read("index.html");
+  const forgotPassword = read("forgot-password.html");
+  const privacy = read("confidentialite.html");
+
+  assert.match(index, /Utilisé uniquement pour récupérer votre compte/);
+  assert.match(index, /href="\/confidentialite\.html"/);
+  assert.match(forgotPassword, /uniquement à vérifier votre demande et à envoyer le lien/);
+  assert.match(forgotPassword, /href="\/confidentialite\.html"/);
+  assert.match(privacy, /n’est utilisée à aucune autre fin/);
+  assert.match(privacy, /ni publicité, ni prospection commerciale, ni revente/);
+  assert.match(privacy, /camino\.sunmedia@gmail\.com/);
+  assert.match(privacy, /cnil\.fr/);
 });
 
 test("Parici public shell does not expose the Camino Explorer mode", () => {
@@ -39,17 +61,27 @@ test("the game starts with the established satellite background", () => {
   assert.doesNotMatch(source, /const lightMapLayer/);
 });
 
-test("startup loads the local game immediately and bounds remote waits", () => {
+test("startup loads map dependencies only for map views and bounds remote waits", () => {
   const app = read("src/app.js");
   const apiClient = read("src/api-client.js");
   const serviceWorker = read("sw.js");
+  const mapDependencies = read("src/public/js/map-dependencies.js");
 
-  assert.match(app, /scheduleAfterStartup\(\(\) => \{\s*loadStreets\(\)/);
-  assert.match(app, /warmBackendConnection\(\);\s*loadStreetInfos\(\)/);
+  assert.match(
+    app,
+    /requestAnimationFrame\(\(\) => \{\s*setTimeout\(\(\) => \{\s*loadStreets\(\)/,
+  );
+  assert.match(app, /window\.CaminoMapDependencies/);
+  assert.match(app, /if \(mapRuntimeReady\)/);
+  assert.match(mapDependencies, /requestedView === "camino" \|\| requestedView === "daily"/);
+  assert.match(mapDependencies, /loadScript\("\/src\/public\/js\/leaflet-runtime\.js"\)/);
+  assert.match(mapDependencies, /SCRIPT_TIMEOUT_MS = 10000/);
+  assert.doesNotMatch(mapDependencies, /unpkg\.com\/leaflet/);
   assert.match(apiClient, /export async function fetchWithTimeout/);
   assert.match(apiClient, /export async function fetchWithStartupRetry/);
   assert.match(serviceWorker, /NAVIGATION_NETWORK_TIMEOUT_MS = 3500/);
-  assert.match(serviceWorker, /main\.js\?v=20260722-daily-share/);
+  assert.match(serviceWorker, /data\/map\/manifest\.json/);
+  assert.doesNotMatch(serviceWorker, /CORE_PRECACHE_URLS[\s\S]*paris_rues_light/);
 });
 
 test("Daily reminders persist locally and have an external server wakeup", () => {

@@ -1,18 +1,13 @@
 {
-  "name": "camino-paris-backend",
+  "name": "camino-render-backend",
   "version": "1.0.0",
-  "description": "Backend server for Parici",
-  "main": "server.js",
+  "private": true,
+  "description": "Render compatibility launcher; dependencies remain declared at the repository root.",
   "scripts": {
+    "postinstall": "npm ci --prefix .. --include=dev --ignore-scripts && npm run build --prefix ..",
     "start": "node server.js"
   },
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "osmtogeojson": "^3.0.0-beta.5",
-    "pg": "^8.19.0",
-    "web-push": "^3.6.7"
+  "engines": {
+    "node": ">=22 <23"
   }
 }

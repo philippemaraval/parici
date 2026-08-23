@@ -5,7 +5,9 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-08-18-add-daily-podium-medals';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-08-23-camino-parity-v1';
+const SCHEMA_MIGRATION_LOCK_KEY = 2026082301;
+const INVALID_LOGIN_PASSWORD_HASH = '$2b$10$HYIYU3mGmQC3.2Gd/f5wMeavOy2iGZufkgNKPKgYZ/pBW/ffpyNt6';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
 const DAILY_RESET_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260628_reset_changed_daily.sql');
 const REFERRALS_SQL_PATH = path.join(__dirname, '..', 'migrations', '20260617_referrals.sql');
@@ -188,12 +190,34 @@ async function applyPushNotificationSchema(client) {
     CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_id
     ON push_subscriptions (user_id)
   `);
+
+  await client.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS daily_reminder_prompted_at TIMESTAMPTZ
+  `);
+
+  // Existing subscribers must not receive the new automatic prompt later.
+  await client.query(`
+    UPDATE users u
+    SET daily_reminder_prompted_at = COALESCE(u.daily_reminder_prompted_at, NOW())
+    WHERE u.daily_reminder_prompted_at IS NULL
+      AND EXISTS (
+        SELECT 1
+        FROM push_subscriptions ps
+        WHERE ps.user_id = u.id
+          AND ps.enabled = TRUE
+      )
+  `);
 }
 
 // Initialize database tables
 async function initDb() {
   const client = await pool.connect();
+  let migrationLockHeld = false;
   try {
+    await client.query('SELECT pg_advisory_lock($1)', [SCHEMA_MIGRATION_LOCK_KEY]);
+    migrationLockHeld = true;
+
     // Keep the common startup path fast. Any schema change must bump
     // SCHEMA_BOOTSTRAP_VERSION so the migration block below runs exactly once.
     if (await hasCurrentSchemaBootstrap(client)) {
@@ -231,10 +255,16 @@ async function initDb() {
         id SERIAL PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        recovery_email TEXT,
         role TEXT NOT NULL DEFAULT 'player',
         avatar TEXT DEFAULT '👤',
+        daily_reminder_prompted_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
+    `);
+    await client.query(`
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS session_version INTEGER NOT NULL DEFAULT 1
     `);
     await restoreMPhilAdminRole(client);
     await restoreDailyPodiums(client);
@@ -373,6 +403,8 @@ async function initDb() {
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar TEXT DEFAULT '👤'",
       "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'player'",
       'ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code TEXT',
+      'ALTER TABLE users ADD COLUMN IF NOT EXISTS recovery_email TEXT',
+      'ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_reminder_prompted_at TIMESTAMPTZ',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS items_correct INTEGER DEFAULT 0',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS items_total INTEGER DEFAULT 0',
       'ALTER TABLE scores ADD COLUMN IF NOT EXISTS time_sec REAL DEFAULT 0',
@@ -437,6 +469,38 @@ async function initDb() {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS api_rate_limits (
+        bucket_key TEXT PRIMARY KEY,
+        window_started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        request_count INTEGER NOT NULL DEFAULT 1,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_api_rate_limits_updated_at
+      ON api_rate_limits (updated_at)
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS security_audit_logs (
+        id BIGSERIAL PRIMARY KEY,
+        actor_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        actor_username TEXT,
+        action TEXT NOT NULL,
+        target TEXT,
+        request_id TEXT,
+        ip_hash TEXT,
+        status_code INTEGER,
+        details_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_security_audit_logs_created_at
+      ON security_audit_logs (created_at DESC)
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS visitors_unique (
         visitor_hash TEXT PRIMARY KEY,
         first_seen TIMESTAMPTZ DEFAULT NOW(),
@@ -497,18 +561,26 @@ async function initDb() {
 
     console.log('Database initialized successfully.');
   } finally {
+    if (migrationLockHeld) {
+      await client
+        .query('SELECT pg_advisory_unlock($1)', [SCHEMA_MIGRATION_LOCK_KEY])
+        .catch((error) => {
+          console.error('Failed to release schema migration lock:', error.message);
+        });
+    }
     client.release();
   }
 }
 
 // ── User Helpers ──
 
-async function createUser(username, password) {
+async function createUser(username, password, recoveryEmail) {
   const hash = bcrypt.hashSync(password, 10);
+  const normalizedRecoveryEmail = String(recoveryEmail || '').trim().toLowerCase();
   try {
     const res = await pool.query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id',
-      [username, hash]
+      'INSERT INTO users (username, password_hash, recovery_email) VALUES ($1, $2, $3) RETURNING id',
+      [username, hash, normalizedRecoveryEmail]
     );
     const userId = res.rows[0].id;
     await ensureReferralCodeForUser(userId);
@@ -624,7 +696,8 @@ async function setUserRole(username, role) {
 
   const result = await pool.query(
     `UPDATE users
-     SET role = $1
+     SET role = $1,
+         session_version = COALESCE(session_version, 1) + 1
      WHERE username = $2
      RETURNING id, username, role`,
     [normalizedRole, normalizedUsername]
@@ -685,6 +758,7 @@ async function listUsersForAdmin() {
      SELECT
        u.id,
        u.username,
+       u.recovery_email,
        u.role,
        u.avatar,
        u.created_at,
@@ -711,6 +785,22 @@ async function listUsersForAdmin() {
      ORDER BY u.created_at ASC, u.username ASC`
   );
   return result.rows;
+}
+
+async function updateUserRecoveryEmail(userId, recoveryEmail) {
+  const normalizedUserId = Number.parseInt(userId, 10);
+  if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) return null;
+  const normalizedRecoveryEmail = recoveryEmail
+    ? String(recoveryEmail).trim().toLowerCase()
+    : null;
+  const result = await pool.query(
+    `UPDATE users
+     SET recovery_email = $1
+     WHERE id = $2
+     RETURNING id, username, recovery_email`,
+    [normalizedRecoveryEmail, normalizedUserId]
+  );
+  return result.rows[0] || null;
 }
 
 async function deleteUserById(userId) {
@@ -747,7 +837,7 @@ async function deleteUserById(userId) {
 }
 
 function verifyPassword(user, password) {
-  return bcrypt.compareSync(password, user.password_hash);
+  return bcrypt.compareSync(password, user?.password_hash || INVALID_LOGIN_PASSWORD_HASH);
 }
 
 async function createPasswordResetToken(username, tokenHash, expiresAt) {
@@ -757,6 +847,46 @@ async function createPasswordResetToken(username, tokenHash, expiresAt) {
     const userResult = await client.query(
       'SELECT id, username FROM users WHERE username = $1 FOR UPDATE',
       [String(username || '').trim()]
+    );
+    const user = userResult.rows[0] || null;
+    if (!user) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+
+    await client.query(
+      `UPDATE password_reset_tokens
+       SET used_at = NOW()
+       WHERE user_id = $1 AND used_at IS NULL`,
+      [user.id]
+    );
+    await client.query(
+      `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+       VALUES ($1, $2, $3)`,
+      [user.id, tokenHash, expiresAt]
+    );
+    await client.query('COMMIT');
+    return user;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function createPasswordResetTokenForRecovery(username, recoveryEmail, tokenHash, expiresAt) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const userResult = await client.query(
+      `SELECT id, username, recovery_email
+       FROM users
+       WHERE username = $1
+         AND recovery_email IS NOT NULL
+         AND LOWER(recovery_email) = LOWER($2)
+       FOR UPDATE`,
+      [String(username || '').trim(), String(recoveryEmail || '').trim()]
     );
     const user = userResult.rows[0] || null;
     if (!user) {
@@ -806,7 +936,10 @@ async function resetPasswordWithToken(tokenHash, password) {
 
     const hash = bcrypt.hashSync(password, 10);
     await client.query(
-      'UPDATE users SET password_hash = $1 WHERE id = $2',
+      `UPDATE users
+       SET password_hash = $1,
+           session_version = COALESCE(session_version, 1) + 1
+       WHERE id = $2`,
       [hash, token.user_id]
     );
     await client.query(
@@ -1337,17 +1470,29 @@ async function startDailyUserAttempt(userId, date) {
   return res.rows[0];
 }
 
-async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess) {
+async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, attemptsCount = null) {
+  const normalizedAttemptsCount =
+    Number.isInteger(attemptsCount) && attemptsCount >= 1 && attemptsCount <= 7
+      ? attemptsCount
+      : null;
   const result = await pool.query(
     `INSERT INTO daily_user_attempts (
        user_id, date, attempts_count, best_distance_meters, success, started_at, last_attempt_at
      )
-     VALUES ($1, $2, 1, $3, $4, NOW(), NOW())
+     VALUES ($1, $2, COALESCE($5, 1), $3, $4, NOW(), NOW())
      ON CONFLICT (user_id, date) DO UPDATE SET
        attempts_count = CASE
          WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE OR COALESCE(daily_user_attempts.attempts_count, 0) >= 7
            THEN daily_user_attempts.attempts_count
-         ELSE COALESCE(daily_user_attempts.attempts_count, 0) + 1
+         WHEN $5::integer IS NULL
+           THEN LEAST(7, COALESCE(daily_user_attempts.attempts_count, 0) + 1)
+         ELSE LEAST(
+           7,
+           GREATEST(
+             COALESCE(daily_user_attempts.attempts_count, 0),
+             EXCLUDED.attempts_count
+           )
+         )
        END,
        best_distance_meters = CASE
          WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE
@@ -1369,7 +1514,7 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess) {
          ELSE NOW()
        END
      RETURNING attempts_count, best_distance_meters, success`,
-    [userId, date, distanceMeters, Boolean(isSuccess)]
+    [userId, date, distanceMeters, Boolean(isSuccess), normalizedAttemptsCount]
   );
 
   return result.rows[0];
@@ -1382,7 +1527,14 @@ async function getDailyLeaderboard(date) {
        u.avatar,
        LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
        d.success,
-       d.best_distance_meters
+       d.best_distance_meters,
+       CASE
+         WHEN d.success = TRUE
+           AND LEAST(COALESCE(d.attempts_count, 0), 7) = 1
+           AND d.started_at IS NOT NULL
+           THEN GREATEST(0, EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at)))::float8
+         ELSE NULL
+       END AS solve_time_seconds
      FROM daily_user_attempts d
      JOIN users u ON d.user_id = u.id
      WHERE d.date = $1 AND (d.success = TRUE OR d.attempts_count >= 7)
@@ -1643,6 +1795,41 @@ async function upsertPushSubscription(userId, subscription, options = {}) {
        updated_at = NOW()`,
     [userId, endpoint, JSON.stringify(subscription), vapidPublicKey]
   );
+
+  await markDailyReminderPromptedForUser(userId);
+}
+
+async function getDailyReminderPromptStatusForUser(userId) {
+  const res = await pool.query(
+    `SELECT
+       u.daily_reminder_prompted_at,
+       EXISTS (
+         SELECT 1
+         FROM push_subscriptions ps
+         WHERE ps.user_id = u.id
+           AND ps.enabled = TRUE
+       ) AS has_active_subscription
+     FROM users u
+     WHERE u.id = $1
+     LIMIT 1`,
+    [userId]
+  );
+  const row = res.rows[0] || null;
+  return {
+    prompted: Boolean(row?.daily_reminder_prompted_at),
+    hasActiveSubscription: Boolean(row?.has_active_subscription),
+  };
+}
+
+async function markDailyReminderPromptedForUser(userId) {
+  const res = await pool.query(
+    `UPDATE users
+     SET daily_reminder_prompted_at = COALESCE(daily_reminder_prompted_at, NOW())
+     WHERE id = $1
+     RETURNING daily_reminder_prompted_at`,
+    [userId]
+  );
+  return Boolean(res.rows[0]?.daily_reminder_prompted_at);
 }
 
 async function getPushSubscriptionStatusForUser(userId, options = {}) {
@@ -2565,6 +2752,94 @@ async function clearAllScores() {
   await pool.query('DELETE FROM scores');
 }
 
+async function consumeApiRateLimit(bucketKey, windowMs, maxRequests) {
+  const normalizedKey = String(bucketKey || '').slice(0, 240);
+  const normalizedWindowMs = Math.max(1000, Number.parseInt(windowMs, 10) || 60_000);
+  const normalizedMaxRequests = Math.max(1, Number.parseInt(maxRequests, 10) || 60);
+  if (!normalizedKey) {
+    throw new Error('Invalid rate limit bucket key');
+  }
+
+  const result = await pool.query(
+    `INSERT INTO api_rate_limits (
+       bucket_key, window_started_at, request_count, updated_at
+     )
+     VALUES ($1, NOW(), 1, NOW())
+     ON CONFLICT (bucket_key) DO UPDATE SET
+       window_started_at = CASE
+         WHEN api_rate_limits.window_started_at <= NOW() - ($2::bigint * INTERVAL '1 millisecond')
+           THEN NOW()
+         ELSE api_rate_limits.window_started_at
+       END,
+       request_count = CASE
+         WHEN api_rate_limits.window_started_at <= NOW() - ($2::bigint * INTERVAL '1 millisecond')
+           THEN 1
+         ELSE api_rate_limits.request_count + 1
+       END,
+       updated_at = NOW()
+     RETURNING
+       request_count,
+       window_started_at,
+       GREATEST(
+         0,
+         CEIL(
+           EXTRACT(EPOCH FROM (
+             window_started_at + ($2::bigint * INTERVAL '1 millisecond') - NOW()
+           ))
+         )
+       )::integer AS retry_after_sec`,
+    [normalizedKey, normalizedWindowMs]
+  );
+
+  const row = result.rows[0];
+  const count = Number(row?.request_count || 0);
+  return {
+    allowed: count <= normalizedMaxRequests,
+    count,
+    limit: normalizedMaxRequests,
+    retryAfterSec: Math.max(1, Number(row?.retry_after_sec || 1)),
+  };
+}
+
+async function recordSecurityAuditLog({
+  actorUserId = null,
+  actorUsername = '',
+  action,
+  target = '',
+  requestId = '',
+  ipHash = '',
+  statusCode = null,
+  details = {},
+}) {
+  const normalizedAction = String(action || '').trim().slice(0, 160);
+  if (!normalizedAction) {
+    throw new Error('Invalid security audit action');
+  }
+  await pool.query(
+    `INSERT INTO security_audit_logs (
+       actor_user_id,
+       actor_username,
+       action,
+       target,
+       request_id,
+       ip_hash,
+       status_code,
+       details_json
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)`,
+    [
+      Number.isInteger(Number(actorUserId)) && Number(actorUserId) > 0 ? Number(actorUserId) : null,
+      String(actorUsername || '').slice(0, 160) || null,
+      normalizedAction,
+      String(target || '').slice(0, 500) || null,
+      String(requestId || '').slice(0, 100) || null,
+      String(ipHash || '').slice(0, 128) || null,
+      Number.isInteger(Number(statusCode)) ? Number(statusCode) : null,
+      JSON.stringify(details && typeof details === 'object' ? details : {}),
+    ]
+  );
+}
+
 module.exports = {
   pool,
   initDb,
@@ -2574,9 +2849,11 @@ module.exports = {
   getUser,
   getUserById,
   listUsersForAdmin,
+  updateUserRecoveryEmail,
   deleteUserById,
   verifyPassword,
   createPasswordResetToken,
+  createPasswordResetTokenForRecovery,
   resetPasswordWithToken,
   addScore,
   getLeaderboard,
@@ -2600,6 +2877,8 @@ module.exports = {
   getWeeklyDailyPodiumLeaderboard,
   getDailyWeeklyLeaderboard,
   upsertPushSubscription,
+  getDailyReminderPromptStatusForUser,
+  markDailyReminderPromptedForUser,
   getPushSubscriptionStatusForUser,
   removePushSubscriptionForUser,
   removeAllPushSubscriptionsForUser,
@@ -2624,6 +2903,8 @@ module.exports = {
   setAppSetting,
   setAppSettingIfMissing,
   clearAllScores,
+  consumeApiRateLimit,
+  recordSecurityAuditLog,
   updateUserAvatar,
   setUserRole
 };

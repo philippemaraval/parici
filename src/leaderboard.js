@@ -231,6 +231,58 @@ function hasLeaderboardRows(boards) {
   return Object.values(boards || {}).some((rows) => Array.isArray(rows) && rows.length > 0);
 }
 
+function appendTextCell(row, value, className = "") {
+  const cell = document.createElement("td");
+  if (className) cell.className = className;
+  cell.textContent = String(value ?? "");
+  row.appendChild(cell);
+  return cell;
+}
+
+function formatDailySolveTime(seconds) {
+  const parsedSeconds = Number(seconds);
+  if (!Number.isFinite(parsedSeconds) || parsedSeconds < 0) {
+    return "";
+  }
+  return `${parsedSeconds.toFixed(1).replace(".", ",")} s`;
+}
+
+function appendPlayerCell(row, {
+  avatar = "👤",
+  username = "Anonyme",
+  meta = "",
+  badge = null,
+} = {}) {
+  const cell = document.createElement("td");
+  const avatarElement = document.createElement("span");
+  avatarElement.className = "leaderboard-avatar";
+  avatarElement.textContent = String(avatar || "👤");
+  cell.appendChild(avatarElement);
+  cell.appendChild(document.createTextNode(String(username || "Anonyme")));
+
+  if (badge) {
+    const badgeElement = document.createElement("span");
+    badgeElement.textContent = badge.text;
+    if (badge.title) {
+      badgeElement.title = badge.title;
+      badgeElement.setAttribute("aria-label", badge.title);
+    }
+    cell.appendChild(document.createTextNode(" "));
+    cell.appendChild(badgeElement);
+  }
+
+  if (meta) {
+    cell.appendChild(document.createElement("br"));
+    const metaElement = document.createElement("small");
+    metaElement.className = "leaderboard-player-meta";
+    metaElement.textContent = String(meta);
+    cell.appendChild(metaElement);
+  }
+
+  row.appendChild(cell);
+  return cell;
+}
+
 function appendZoneLeaderboards(rootElement, boards) {
   const boardKeys = Object.keys(boards || {});
   const groupedByZone = {};
@@ -338,21 +390,25 @@ function appendZoneLeaderboards(rootElement, boards) {
           );
           const playerAvatar = row.avatar || "👤";
 
-          let rowHtml = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}<br><small class="leaderboard-player-meta">${title}</small></td>`;
+          appendTextCell(tr, rank);
+          appendPlayerCell(tr, {
+            avatar: playerAvatar,
+            username: row.username,
+            meta: title,
+          });
           const scoreCell =
             gameType === "classique"
               ? typeof row.high_score === "number"
                 ? row.high_score.toFixed(1)
                 : "-"
               : `${row.items_correct || 0}`;
-          rowHtml += `<td>${scoreCell}</td>`;
+          appendTextCell(tr, scoreCell);
           if (gameType === "marathon") {
-            rowHtml += `<td>${row.items_total || 0}</td>`;
+            appendTextCell(tr, row.items_total || 0);
           }
           if (gameType === "chrono") {
-            rowHtml += `<td>${(row.time_sec || 0).toFixed(1)}s</td>`;
+            appendTextCell(tr, `${(row.time_sec || 0).toFixed(1)}s`);
           }
-          tr.innerHTML = rowHtml;
 
           if (index < LEADERBOARD_VISIBLE_ROWS) {
             visibleTbody.appendChild(tr);
@@ -452,13 +508,22 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
     const playerAvatar = row.avatar || "👤";
     const firstWeeklyWinnerBadge =
       row.username?.trim().toLocaleLowerCase("fr-FR") === "stban"
-        ? ' <span title="à jamais le premier" aria-label="à jamais le premier">☝️</span>'
-        : "";
+        ? { text: "☝️", title: "à jamais le premier" }
+        : null;
     const totalDistance =
       row.total_distance_meters === null || row.total_distance_meters === undefined
         ? "—"
         : `${Math.round(row.total_distance_meters)}m`;
-    tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}${firstWeeklyWinnerBadge}<br><small class="leaderboard-player-meta">${row.days_played || 0} jour${row.days_played === 1 ? "" : "s"} joué${row.days_played === 1 ? "" : "s"}</small></td><td>${row.successes || 0}</td><td>${row.total_attempts || 0}</td><td>${totalDistance}</td>`;
+    appendTextCell(tr, rank);
+    appendPlayerCell(tr, {
+      avatar: playerAvatar,
+      username: row.username,
+      meta: `${row.days_played || 0} jour${row.days_played === 1 ? "" : "s"} joué${row.days_played === 1 ? "" : "s"}`,
+      badge: firstWeeklyWinnerBadge,
+    });
+    appendTextCell(tr, row.successes || 0);
+    appendTextCell(tr, row.total_attempts || 0);
+    appendTextCell(tr, totalDistance);
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -506,7 +571,14 @@ function appendWeeklyDailyPodiumLeaderboard(rootElement, podiumRows) {
       tr.classList.add("leaderboard-first-place");
     }
     const playerAvatar = row.avatar || "👤";
-    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td class="daily-podium-counts">🥇${row.first_places || 0} 🥈${row.second_places || 0} 🥉${row.third_places || 0}</td><td>${row.weeks_played || 0}</td>`;
+    appendTextCell(tr, index + 1);
+    appendPlayerCell(tr, { avatar: playerAvatar, username: row.username });
+    appendTextCell(
+      tr,
+      `🥇${row.first_places || 0} 🥈${row.second_places || 0} 🥉${row.third_places || 0}`,
+      "daily-podium-counts",
+    );
+    appendTextCell(tr, row.weeks_played || 0);
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -546,7 +618,10 @@ function appendDailyAverageLeaderboard(rootElement, averageRows) {
     const averageLabel = Number.isFinite(averageAttempts)
       ? averageAttempts.toLocaleString("fr-FR", { maximumFractionDigits: 2 })
       : "—";
-    tr.innerHTML = `<td>${index + 1}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td>${averageLabel}</td><td>${row.participations || 0}</td>`;
+    appendTextCell(tr, index + 1);
+    appendPlayerCell(tr, { avatar: playerAvatar, username: row.username });
+    appendTextCell(tr, averageLabel);
+    appendTextCell(tr, row.participations || 0);
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -633,7 +708,7 @@ export function loadAllLeaderboards() {
         dailyContent.className = "leaderboard-zone-content";
 
         const table = document.createElement("table");
-        table.className = "leaderboard-table";
+        table.className = "leaderboard-table daily-current-leaderboard";
         table.innerHTML = "<thead><tr><th>#</th><th>Joueur</th><th>Résultat</th></tr></thead>";
 
         const tbody = document.createElement("tbody");
@@ -644,10 +719,15 @@ export function loadAllLeaderboards() {
           }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const playerAvatar = row.avatar || "👤";
+          const solveTime = row.success && Number(row.attempts_count) === 1
+            ? formatDailySolveTime(row.solve_time_seconds)
+            : "";
           const resultText = row.success 
-            ? `${row.attempts_count}/7` 
+            ? `${row.attempts_count}/7${solveTime ? ` · ${solveTime}` : ""}`
             : `❌ ${Math.round(row.best_distance_meters || 0)}m`;
-          tr.innerHTML = `<td>${rank}</td><td><span class="leaderboard-avatar">${playerAvatar}</span>${row.username || "Anonyme"}</td><td>${resultText}</td>`;
+          appendTextCell(tr, rank);
+          appendPlayerCell(tr, { avatar: playerAvatar, username: row.username });
+          appendTextCell(tr, resultText);
           tbody.appendChild(tr);
         });
         table.appendChild(tbody);

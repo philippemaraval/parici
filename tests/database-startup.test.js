@@ -20,10 +20,13 @@ test('database startup skips migrations when the schema version is current', asy
   const client = {
     async query(sql, params) {
       queries.push({ sql: String(sql).trim(), params });
-      if (queries.length === 1) {
+      if (queries.length === 2) {
         return { rows: [{ app_settings_table: 'app_settings' }] };
       }
-      return { rows: [{ value_text: '2026-08-18-add-daily-podium-medals' }] };
+      if (queries.length === 3) {
+        return { rows: [{ value_text: '2026-08-23-camino-parity-v1' }] };
+      }
+      return { rows: [] };
     },
     release() {
       released = true;
@@ -57,8 +60,10 @@ test('database startup skips migrations when the schema version is current', asy
     Module._load = originalLoad;
   }
 
-  assert.equal(queries.length, 2);
-  assert.match(queries[0].sql, /to_regclass\('public\.app_settings'\)/);
-  assert.deepEqual(queries[1].params, ['schema_bootstrap_version']);
+  assert.equal(queries.length, 4);
+  assert.match(queries[0].sql, /pg_advisory_lock/);
+  assert.match(queries[1].sql, /to_regclass\('public\.app_settings'\)/);
+  assert.deepEqual(queries[2].params, ['schema_bootstrap_version']);
+  assert.match(queries[3].sql, /pg_advisory_unlock/);
   assert.equal(released, true);
 });

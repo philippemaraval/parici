@@ -37,6 +37,9 @@ const refs = {
   visitStatsPanel: document.querySelector("#visit-stats-modal .modal-panel"),
   closeVisitStatsBtn: document.getElementById("close-visit-stats-btn"),
   visitStatsSummary: document.getElementById("visit-stats-summary"),
+  visitStatsAverage7: document.getElementById("visit-stats-average-7"),
+  visitStatsAverage15: document.getElementById("visit-stats-average-15"),
+  visitStatsAverage30: document.getElementById("visit-stats-average-30"),
   visitStatsNote: document.getElementById("visit-stats-note"),
   visitStatsChart: document.getElementById("visit-stats-chart"),
   visitStatsTableBody: document.getElementById("visit-stats-table-body"),
@@ -153,11 +156,11 @@ function setUiAuthenticated(isAuthenticated) {
 
 function saveSession() {
   const payload = {
-    token: state.token,
     username: state.username,
     role: state.role,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.token);
 }
 
 function clearSession() {
@@ -166,6 +169,7 @@ function clearSession() {
   state.role = "";
   state.content = null;
   localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
 }
 
 function restoreSession() {
@@ -175,7 +179,13 @@ function restoreSession() {
   }
   try {
     const payload = JSON.parse(raw);
-    state.token = String(payload.token || "");
+    const legacyToken = String(payload.token || "");
+    state.token = String(sessionStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || legacyToken);
+    if (legacyToken) {
+      delete payload.token;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, legacyToken);
+    }
     state.username = String(payload.username || "");
     state.role = String(payload.role || "");
     return Boolean(state.token);
@@ -210,6 +220,7 @@ async function apiRequest(path, { method = "GET", body, auth = true, timeoutMs =
         headers,
         body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: controller.signal,
+        credentials: "include",
       });
       clearTimeout(timeoutId);
       const candidateText = await candidateResponse.text();
@@ -633,6 +644,11 @@ function setVisitStatsLoading(message) {
   if (refs.visitStatsChart) {
     refs.visitStatsChart.textContent = "";
   }
+  [refs.visitStatsAverage7, refs.visitStatsAverage15, refs.visitStatsAverage30]
+    .filter(Boolean)
+    .forEach((element) => {
+      element.textContent = "—";
+    });
 }
 
 function buildVisitChartRows(payload, dayCount = 30) {
@@ -671,6 +687,37 @@ function buildVisitChartRows(payload, dayCount = 30) {
     visitsAfterCurrentDay += dailyRows[index].totalVisits;
   }
   return dailyRows;
+}
+
+function getAverageDailyUniqueVisitors(chartRows, dayCount) {
+  const periodRows = chartRows.slice(-dayCount);
+  if (!periodRows.length) {
+    return 0;
+  }
+  const total = periodRows.reduce(
+    (sum, row) => sum + Math.max(0, Number(row.uniqueVisitors) || 0),
+    0,
+  );
+  return total / periodRows.length;
+}
+
+function renderVisitStatsAverages(payload) {
+  const chartRows = buildVisitChartRows(payload);
+  const averageRefs = [
+    [refs.visitStatsAverage7, 7],
+    [refs.visitStatsAverage15, 15],
+    [refs.visitStatsAverage30, 30],
+  ];
+  const formatter = new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 1,
+  });
+  averageRefs.forEach(([element, dayCount]) => {
+    if (element) {
+      element.textContent = formatter.format(
+        getAverageDailyUniqueVisitors(chartRows, dayCount),
+      );
+    }
+  });
 }
 
 function renderVisitStatsChart(payload) {
@@ -792,6 +839,7 @@ function renderVisitStats(payload) {
       payload?.note ||
       "Les visites quotidiennes ne sont disponibles qu’à partir de l’activation du suivi.";
   }
+  renderVisitStatsAverages(payload);
   renderVisitStatsChart(payload);
   if (!refs.visitStatsTableBody) {
     return;
@@ -1262,7 +1310,12 @@ async function onSaveMonuments() {
 
 function bindEvents() {
   refs.loginForm.addEventListener("submit", onLoginSubmit);
-  refs.logoutBtn.addEventListener("click", () => {
+  refs.logoutBtn.addEventListener("click", async () => {
+    try {
+      await apiRequest("/api/logout", { method: "POST" });
+    } catch (error) {
+      // Local logout remains available if the server cannot be reached.
+    }
     clearSession();
     setUiAuthenticated(false);
     setGlobalStatus("Vous êtes déconnecté.", "info");
