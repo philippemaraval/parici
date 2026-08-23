@@ -21,9 +21,15 @@ jobs:
     if: github.event_name != 'workflow_run' && vars.PRODUCTION_HEALTHCHECK_URL != ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      failed: ${{ steps.health.outcome == 'failure' }}
     env:
       HEALTHCHECK_URL: ${{ vars.PRODUCTION_HEALTHCHECK_URL }}
       MAX_HEALTH_LATENCY_MS: ${{ vars.MAX_HEALTH_LATENCY_MS || '2500' }}
+      HEALTH_REQUEST_TIMEOUT_MS: ${{ vars.HEALTH_REQUEST_TIMEOUT_MS || '60000' }}
+      HEALTH_MAX_ATTEMPTS: ${{ vars.HEALTH_MAX_ATTEMPTS || '3' }}
+      HEALTH_RETRY_DELAY_MS: ${{ vars.HEALTH_RETRY_DELAY_MS || '5000' }}
+      METRICS_REQUEST_TIMEOUT_MS: ${{ vars.METRICS_REQUEST_TIMEOUT_MS || '30000' }}
       METRICS_URL: ${{ vars.PRODUCTION_METRICS_URL }}
       METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
       MAX_API_ERRORS: ${{ vars.MAX_API_ERRORS || '50' }}
@@ -33,7 +39,9 @@ jobs:
       MAX_DAILY_FAILURES: ${{ vars.MAX_DAILY_FAILURES || '10' }}
     steps:
       - uses: actions/checkout@v4
-      - run: node scripts/check_production_health.js
+      - id: health
+        continue-on-error: true
+        run: node scripts/check_production_health.js
 
   workflow-alert:
     if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success'
@@ -61,7 +69,7 @@ jobs:
 
   health-alert:
     needs: production-health
-    if: always() && github.event_name != 'workflow_run' && needs.production-health.result == 'failure'
+    if: always() && github.event_name != 'workflow_run' && needs.production-health.result != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -74,11 +82,21 @@ jobs:
               repo: context.repo.repo,
               state: 'open',
             });
-            if (!existing.some((issue) => issue.title === title)) {
+            const issue = existing.find((candidate) => candidate.title === title);
+            const failed = '${{ needs.production-health.outputs.failed }}' === 'true';
+            if (failed && !issue) {
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title,
                 body: `Le contrôle de santé ou de latence a échoué.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              });
+            }
+            if (!failed && issue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
               });
             }
