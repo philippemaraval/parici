@@ -1006,8 +1006,11 @@ async function enableDailyReminder(options = {}) {
     if (dailyTargetData && typeof dailyTargetData === "object") {
       dailyTargetData.reminderAutoPromptEligible = false;
     }
-    const scheduleLabel = formatReminderTimeLabel(config.reminder || DEFAULT_REMINDER_CONFIG);
-    showMessage(`Rappel Daily activé pour ${scheduleLabel}.`, "success");
+    const morningLabel = formatReminderTimeLabel(config.reminder || DEFAULT_REMINDER_CONFIG);
+    const streakLabel = config.streakReminder
+      ? formatReminderTimeLabel(config.streakReminder)
+      : "16 h";
+    showMessage(`Rappels Daily activés pour ${morningLabel} et ${streakLabel}.`, "success");
   } catch (error) {
     console.warn("Enable daily reminder failed:", error);
     if (isAuthStatus(error?.status)) {
@@ -4657,6 +4660,10 @@ function applyDailyGuessSyncResult(result) {
   }
   dailyTargetData.userStatus = result;
   dailyTargetData.targetGeometry = result.targetGeometry || dailyTargetData.targetGeometry;
+  if (result.dailyStreak) {
+    dailyTargetData.dailyStreak = result.dailyStreak;
+    updateDailyStreakDisplay(result.dailyStreak);
+  }
   if (result.targetGeometry && (result.success || result.attempts_count >= 7)) {
     revealDailyTargetStreet(!!result.success);
   }
@@ -5829,6 +5836,9 @@ function updateUserUI() {
       console.warn("Refresh reminder controls after auth change failed:", error);
     });
   }
+  refreshDailyStreakDisplay().catch((error) => {
+    console.warn("Refresh Daily streak failed:", error);
+  });
   if (!activeFriendChallenge && getFriendChallengeCodeFromUrl()) {
     initFriendChallengeModeFromUrl();
     return;
@@ -6015,11 +6025,65 @@ let dailyTargetData = null,
   isDailyMode = !1,
   dailyHighlightLayer = null,
   dailyGuessHistory = [];
+function updateDailyStreakDisplay(streak = {}) {
+  const count = Number.isInteger(Number(streak.current))
+    ? Math.max(0, Number(streak.current))
+    : 0;
+  const completedToday = Boolean(streak.completedToday);
+  document.querySelectorAll("[data-daily-streak]").forEach((element) => {
+    const countElement = element.querySelector("[data-daily-streak-count]");
+    if (countElement) countElement.textContent = String(count);
+    element.classList.remove("hidden");
+    element.setAttribute("aria-busy", "false");
+    element.classList.toggle("is-complete", completedToday);
+    element.title = completedToday
+      ? `Daily du jour terminé · série de ${count}`
+      : count > 0
+        ? `Série de ${count} à préserver aujourd’hui`
+        : "Termine le Daily du jour pour démarrer ta série";
+  });
+}
+function setDailyStreakPendingDisplay({ unavailable = false } = {}) {
+  document.querySelectorAll("[data-daily-streak]").forEach((element) => {
+    const countElement = element.querySelector("[data-daily-streak-count]");
+    if (countElement) countElement.textContent = unavailable ? "—" : "…";
+    element.classList.remove("hidden", "is-complete");
+    element.setAttribute("aria-busy", unavailable ? "false" : "true");
+    element.title = unavailable
+      ? "Série temporairement indisponible"
+      : "Chargement de ta série Daily";
+  });
+}
+async function refreshDailyStreakDisplay() {
+  const streakElements = document.querySelectorAll("[data-daily-streak]");
+  if (document.documentElement.dataset.mobileView !== "daily" || !currentUser?.token) {
+    streakElements.forEach((element) => element.classList.add("hidden"));
+    return;
+  }
+
+  setDailyStreakPendingDisplay();
+  try {
+    const response = await fetchWithTimeout(
+      `${API_URL}/api/daily/streak`,
+      { headers: { Authorization: `Bearer ${currentUser.token}` } },
+      { timeoutMs: 12000 },
+    );
+    if (!response.ok) {
+      throw await buildApiError(response, `HTTP ${response.status}`);
+    }
+    const payload = await response.json();
+    updateDailyStreakDisplay(payload.dailyStreak);
+  } catch (error) {
+    setDailyStreakPendingDisplay({ unavailable: true });
+    throw error;
+  }
+}
 function startDailySession(e) {
   void loadCelebrationRuntime();
   document.body.classList.remove("session-ended", "daily-game-over");
   removeDailyStreetMidpointMarker();
   ((dailyTargetData = e), (dailyTargetGeoJson = JSON.parse(e.targetGeoJson)));
+  updateDailyStreakDisplay(e.dailyStreak);
   saveDailyMetaToStorage();
   const t = e.userStatus || {};
   const dailyDisplayStreetName = e.displayStreetName || e.streetName;

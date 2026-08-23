@@ -2974,6 +2974,50 @@ select:focus-visible,
   text-align: center;
 }
 
+.daily-streak-card {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 3px 7px 3px 4px;
+  border: 1px solid rgba(201, 107, 59, 0.22);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(255, 249, 229, 0.96), rgba(255, 239, 216, 0.9));
+  box-shadow: 0 3px 10px rgba(168, 90, 0, 0.1);
+  color: var(--state-warning);
+  transform: translateY(-50%);
+}
+
+.daily-streak-card.is-complete {
+  border-color: rgba(31, 157, 102, 0.25);
+  box-shadow: 0 3px 10px rgba(31, 157, 102, 0.1);
+}
+
+.daily-streak-flame {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: rgba(242, 169, 0, 0.14);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.daily-streak-card > strong {
+  color: var(--primary-dark);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.daily-streak-card.hidden {
+  display: none;
+}
+
 .daily-reminder-card {
   position: absolute;
   top: 50%;

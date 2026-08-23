@@ -2,9 +2,9 @@ name: Daily reminder wakeup
 
 on:
   schedule:
-    # 10:00 in Paris: 08:00 UTC in summer, 09:00 UTC in winter.
-    # Both runs are intentional; the database makes delivery idempotent.
-    - cron: "0 8,9 * * *"
+    # 10:00 and 16:00 in Paris: UTC shifts with daylight saving time.
+    # All four runs are intentional; the database makes each reminder idempotent.
+    - cron: "0 8,9,14,15 * * *"
   workflow_dispatch:
 
 permissions:

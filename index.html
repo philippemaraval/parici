@@ -39,7 +39,7 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="style.css?v=20260722-password-recovery">
+  <link rel="stylesheet" href="style.css?v=20260823-daily-streak">
   <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260722-daily-share">
 
 </head>
@@ -182,6 +182,10 @@
 
         <section class="mobile-mode-intro mobile-mode-intro--daily site-mode-intro">
           <div class="daily-intro-header">
+            <section class="daily-streak-card daily-streak-card--intro hidden" data-daily-streak aria-label="Série Daily" aria-live="polite" aria-busy="true">
+              <span class="daily-streak-flame" aria-hidden="true">🔥</span>
+              <strong data-daily-streak-count>…</strong>
+            </section>
             <div class="daily-intro-heading">
               <p>Mode de jeu</p>
               <h2>Daily</h2>
@@ -507,7 +511,7 @@
 
   <script defer src="/src/public/js/map-dependencies.js"></script>
   <script defer src="data_rules.js?v=20260504b"></script>
-  <script defer src="main.js?v=20260726-daily-reminder-prompt"></script>
+  <script defer src="main.js?v=20260823-daily-streak"></script>
   <script>
     (function () {
       const syncMetaEl = document.getElementById("map-sync-meta");

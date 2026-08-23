@@ -9,6 +9,10 @@ const path = require('path');
 const { spawn } = require('child_process');
 const webPush = require('web-push');
 const db = require('./database');
+const {
+    buildDailyAvailabilityPayload,
+    buildDailyStreakReminderPayload,
+} = require('./daily-streak');
 const { sendPasswordResetEmail } = require('./mailer');
 const { REFERRAL_EVENTS, createReferralService } = require('./referrals');
 const {
@@ -69,6 +73,8 @@ const ENABLE_ADMIN_ROUTES = process.env.ENABLE_ADMIN_ROUTES === 'true';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
 const PUSH_REMINDER_HOUR = readEnvIntegerInRange('PUSH_REMINDER_HOUR', 10, 0, 23);
 const PUSH_REMINDER_MINUTE = readEnvIntegerInRange('PUSH_REMINDER_MINUTE', 0, 0, 59);
+const PUSH_STREAK_REMINDER_HOUR = readEnvIntegerInRange('PUSH_STREAK_REMINDER_HOUR', 16, 0, 23);
+const PUSH_STREAK_REMINDER_MINUTE = readEnvIntegerInRange('PUSH_STREAK_REMINDER_MINUTE', 0, 0, 59);
 const PUSH_REMINDER_TIMEZONE = process.env.PUSH_REMINDER_TIMEZONE || 'Europe/Paris';
 const DAILY_TIMEZONE = process.env.DAILY_TIMEZONE || PUSH_REMINDER_TIMEZONE || 'Europe/Paris';
 const DAILY_ROLLOVER_HOUR = readEnvIntegerInRange('DAILY_ROLLOVER_HOUR', 3, 0, 23);
@@ -1017,12 +1023,11 @@ function isValidPushSubscription(subscription) {
 }
 
 function getDailyReminderPayload() {
-    return JSON.stringify({
-        title: 'Parici Daily',
-        body: 'Le Daily est dispo. Lance ta partie du jour !',
-        url: '/',
-        tag: 'parici-daily-reminder',
-    });
+    return JSON.stringify(buildDailyAvailabilityPayload());
+}
+
+function getDailyStreakReminderPayload(streakCount) {
+    return JSON.stringify(buildDailyStreakReminderPayload(streakCount));
 }
 
 function toFiniteNumber(value) {
@@ -3089,6 +3094,11 @@ app.get('/api/notifications/public-key', asyncHandler(async (req, res) => {
             minute: PUSH_REMINDER_MINUTE,
             timezone: PUSH_REMINDER_TIMEZONE,
         },
+        streakReminder: {
+            hour: PUSH_STREAK_REMINDER_HOUR,
+            minute: PUSH_STREAK_REMINDER_MINUTE,
+            timezone: PUSH_REMINDER_TIMEZONE,
+        },
     });
 }));
 
@@ -4367,12 +4377,19 @@ async function getTargetGeometry(target) {
     return null;
 }
 
+app.get('/api/daily/streak', authenticateToken, asyncHandler(async (req, res) => {
+    const date = getDailyDateKey();
+    const dailyStreak = await db.getDailyStreakForUser(req.user.id, date);
+    return res.json({ date, dailyStreak });
+}));
+
 app.get('/api/daily', authenticateToken, async (req, res) => {
     try {
         const date = await ensureDailyTarget();
         const target = await db.getDailyTarget(date);
         const manifestEntry = getDailyManifestEntryByDate(date);
         const userStatus = await db.startDailyUserAttempt(req.user.id, date);
+        const dailyStreak = await db.getDailyStreakForUser(req.user.id, date);
         await ensurePushRuntimeReady();
         const reminderPromptStatus = await db.getDailyReminderPromptStatusForUser(req.user.id);
 
@@ -4386,6 +4403,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
             dailyImageUrl: resolveDailyImageUrl(date, target.street_name, manifestEntry),
             targetGeoJson: target.coordinates_json,
             userStatus,
+            dailyStreak,
             reminderAutoPromptEligible:
                 pushRuntime.enabled
                 && !reminderPromptStatus.prompted
@@ -4431,6 +4449,10 @@ app.post(
             parsed.value.isSuccess,
             parsed.value.attemptsCount,
         );
+
+        if (result.success || result.attempts_count >= 7) {
+            result.dailyStreak = await db.getDailyStreakForUser(req.user.id, expectedDate);
+        }
 
         if (result.success || result.attempts_count >= 7) {
             const target = await db.getDailyTarget(parsed.value.date);
@@ -4497,15 +4519,22 @@ app.get('/api/daily/leaderboard/averages', async (req, res) => {
     }
 });
 
-async function sendDailyReminderPushesForDate(dateStr) {
+const DAILY_REMINDER_KIND_AVAILABILITY = 'availability';
+const DAILY_REMINDER_KIND_STREAK = 'streak';
+
+async function sendDailyReminderPushesForDate(dateStr, reminderKind = DAILY_REMINDER_KIND_AVAILABILITY) {
     if (!pushRuntime.enabled) {
         return { sent: 0, removed: 0, failed: 0 };
     }
 
-    const payload = getDailyReminderPayload();
-    const subscriptions = await db.listPushSubscriptionsDueForDate(dateStr, {
-        vapidPublicKey: pushRuntime.publicKey,
-    });
+    const isStreakReminder = reminderKind === DAILY_REMINDER_KIND_STREAK;
+    const subscriptions = isStreakReminder
+        ? await db.listPushSubscriptionsDueForStreakDate(dateStr, {
+            vapidPublicKey: pushRuntime.publicKey,
+        })
+        : await db.listPushSubscriptionsDueForDate(dateStr, {
+            vapidPublicKey: pushRuntime.publicKey,
+        });
 
     let sent = 0;
     let removed = 0;
@@ -4514,10 +4543,17 @@ async function sendDailyReminderPushesForDate(dateStr) {
     for (const row of subscriptions) {
         const endpoint = row.endpoint;
         const subscription = row.subscription_json;
+        const payload = isStreakReminder
+            ? getDailyStreakReminderPayload(row.streak_count)
+            : getDailyReminderPayload();
 
         try {
             await webPush.sendNotification(subscription, payload, { TTL: 60 * 60 });
-            await db.markPushSubscriptionNotified(endpoint, dateStr);
+            if (isStreakReminder) {
+                await db.markPushSubscriptionStreakNotified(endpoint, dateStr);
+            } else {
+                await db.markPushSubscriptionNotified(endpoint, dateStr);
+            }
             sent += 1;
         } catch (err) {
             const statusCode = Number(err?.statusCode || 0);
@@ -4540,15 +4576,52 @@ async function sendDailyReminderPushesForDate(dateStr) {
     return { sent, removed, failed };
 }
 
-let lastReminderDateKey = '';
-let reminderRetryNotBeforeMs = 0;
 const PUSH_REMINDER_RETRY_BACKOFF_MS = 10 * 60 * 1000;
+const reminderSchedulerStates = {
+    [DAILY_REMINDER_KIND_AVAILABILITY]: { lastDateKey: '', retryNotBeforeMs: 0 },
+    [DAILY_REMINDER_KIND_STREAK]: { lastDateKey: '', retryNotBeforeMs: 0 },
+};
 
-function hasReachedReminderTime(nowParts) {
+function hasReachedReminderTime(nowParts, hour, minute) {
     return (
-        nowParts.hour > PUSH_REMINDER_HOUR ||
-        (nowParts.hour === PUSH_REMINDER_HOUR && nowParts.minute >= PUSH_REMINDER_MINUTE)
+        nowParts.hour > hour ||
+        (nowParts.hour === hour && nowParts.minute >= minute)
     );
+}
+
+async function runScheduledDailyReminder(nowParts, { kind, hour, minute }) {
+    if (!hasReachedReminderTime(nowParts, hour, minute)) {
+        return;
+    }
+
+    const state = reminderSchedulerStates[kind];
+    if (nowParts.dateStr === state.lastDateKey) {
+        return;
+    }
+    if (Date.now() < state.retryNotBeforeMs) {
+        return;
+    }
+
+    try {
+        const result = await sendDailyReminderPushesForDate(nowParts.dateStr, kind);
+        if (result.failed > 0) {
+            state.retryNotBeforeMs = Date.now() + PUSH_REMINDER_RETRY_BACKOFF_MS;
+            console.warn(
+                `[Push Daily ${kind} ${nowParts.dateStr}] sent=${result.sent} removed=${result.removed} failed=${result.failed} (retry in ${Math.round(PUSH_REMINDER_RETRY_BACKOFF_MS / 60000)} min)`
+            );
+            return;
+        }
+
+        state.retryNotBeforeMs = 0;
+        state.lastDateKey = nowParts.dateStr;
+        console.log(
+            `[Push Daily ${kind} ${nowParts.dateStr}] sent=${result.sent} removed=${result.removed} failed=${result.failed}`
+        );
+    } catch (err) {
+        state.lastDateKey = '';
+        state.retryNotBeforeMs = Date.now() + PUSH_REMINDER_RETRY_BACKOFF_MS;
+        console.error(`Daily push scheduler error (${kind}):`, err);
+    }
 }
 
 async function runPushReminderSchedulerTick() {
@@ -4558,37 +4631,25 @@ async function runPushReminderSchedulerTick() {
     }
 
     const nowParts = getTimePartsInZone(new Date(), PUSH_REMINDER_TIMEZONE);
-    if (!hasReachedReminderTime(nowParts)) {
-        return;
+    const streakWindowStarted = hasReachedReminderTime(
+        nowParts,
+        PUSH_STREAK_REMINDER_HOUR,
+        PUSH_STREAK_REMINDER_MINUTE,
+    );
+
+    if (!streakWindowStarted) {
+        await runScheduledDailyReminder(nowParts, {
+            kind: DAILY_REMINDER_KIND_AVAILABILITY,
+            hour: PUSH_REMINDER_HOUR,
+            minute: PUSH_REMINDER_MINUTE,
+        });
     }
 
-    if (nowParts.dateStr === lastReminderDateKey) {
-        return;
-    }
-    if (Date.now() < reminderRetryNotBeforeMs) {
-        return;
-    }
-
-    try {
-        const result = await sendDailyReminderPushesForDate(nowParts.dateStr);
-        if (result.failed > 0) {
-            reminderRetryNotBeforeMs = Date.now() + PUSH_REMINDER_RETRY_BACKOFF_MS;
-            console.warn(
-                `[Push Daily ${nowParts.dateStr}] sent=${result.sent} removed=${result.removed} failed=${result.failed} (retry in ${Math.round(PUSH_REMINDER_RETRY_BACKOFF_MS / 60000)} min)`
-            );
-            return;
-        }
-
-        reminderRetryNotBeforeMs = 0;
-        lastReminderDateKey = nowParts.dateStr;
-        console.log(
-            `[Push Daily ${nowParts.dateStr}] sent=${result.sent} removed=${result.removed} failed=${result.failed}`
-        );
-    } catch (err) {
-        lastReminderDateKey = '';
-        reminderRetryNotBeforeMs = Date.now() + PUSH_REMINDER_RETRY_BACKOFF_MS;
-        console.error('Daily push scheduler error:', err);
-    }
+    await runScheduledDailyReminder(nowParts, {
+        kind: DAILY_REMINDER_KIND_STREAK,
+        hour: PUSH_STREAK_REMINDER_HOUR,
+        minute: PUSH_STREAK_REMINDER_MINUTE,
+    });
 }
 
 function startPushReminderScheduler() {
@@ -4603,7 +4664,9 @@ function startPushReminderScheduler() {
             console.error('Push scheduler tick failed:', err);
         });
     }, 30 * 1000);
-    console.log(`Push reminder scheduler enabled from ${String(PUSH_REMINDER_HOUR).padStart(2, '0')}:${String(PUSH_REMINDER_MINUTE).padStart(2, '0')} (${PUSH_REMINDER_TIMEZONE}).`);
+    console.log(
+        `Push reminder scheduler enabled at ${String(PUSH_REMINDER_HOUR).padStart(2, '0')}:${String(PUSH_REMINDER_MINUTE).padStart(2, '0')} and ${String(PUSH_STREAK_REMINDER_HOUR).padStart(2, '0')}:${String(PUSH_STREAK_REMINDER_MINUTE).padStart(2, '0')} (${PUSH_REMINDER_TIMEZONE}).`
+    );
 }
 
 async function cleanupExpiredFriendChallengesTick() {
@@ -4695,8 +4758,8 @@ app.post('/api/admin/push/send-daily-now', requireAdminApiKey, async (req, res) 
 
         const result = await sendDailyReminderPushesForDate(targetDate);
         if (targetDate === fallbackDate && result.failed === 0) {
-            lastReminderDateKey = targetDate;
-            reminderRetryNotBeforeMs = 0;
+            reminderSchedulerStates[DAILY_REMINDER_KIND_AVAILABILITY].lastDateKey = targetDate;
+            reminderSchedulerStates[DAILY_REMINDER_KIND_AVAILABILITY].retryNotBeforeMs = 0;
         }
 
         return res.json({

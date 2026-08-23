@@ -24,7 +24,7 @@ test('database startup skips migrations when the schema version is current', asy
         return { rows: [{ app_settings_table: 'app_settings' }] };
       }
       if (queries.length === 3) {
-        return { rows: [{ value_text: '2026-08-23-camino-parity-v1' }] };
+        return { rows: [{ value_text: '2026-08-23-parici-daily-streak-reminders-v1' }] };
       }
       return { rows: [] };
     },

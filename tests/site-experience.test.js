@@ -91,7 +91,7 @@ test("Daily reminders persist locally and have an external server wakeup", () =>
   assert.match(app, /DAILY_REMINDER_INTENT_PREFIX/);
   assert.match(app, /ensureCurrentPushSubscription/);
   assert.match(app, /Rappel quotidien actif et vérifié/);
-  assert.match(workflow, /cron: "0 8,9 \* \* \*"/);
+  assert.match(workflow, /cron: "0 8,9,14,15 \* \* \*"/);
   assert.match(workflow, /api\/ready/);
 });
 

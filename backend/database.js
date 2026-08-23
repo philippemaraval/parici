@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-08-23-camino-parity-v1';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-08-23-parici-daily-streak-reminders-v1';
 const SCHEMA_MIGRATION_LOCK_KEY = 2026082301;
 const INVALID_LOGIN_PASSWORD_HASH = '$2b$10$HYIYU3mGmQC3.2Gd/f5wMeavOy2iGZufkgNKPKgYZ/pBW/ffpyNt6';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
@@ -176,6 +176,7 @@ async function applyPushNotificationSchema(client) {
       vapid_public_key TEXT,
       enabled BOOLEAN NOT NULL DEFAULT TRUE,
       last_notified_on DATE,
+      last_streak_notified_on DATE,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
@@ -184,6 +185,7 @@ async function applyPushNotificationSchema(client) {
   await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS vapid_public_key TEXT`);
   await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS enabled BOOLEAN NOT NULL DEFAULT TRUE`);
   await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_notified_on DATE`);
+  await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_streak_notified_on DATE`);
   await client.query(`ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`);
 
   await client.query(`
@@ -361,6 +363,7 @@ async function initDb() {
         vapid_public_key TEXT,
         enabled BOOLEAN NOT NULL DEFAULT TRUE,
         last_notified_on DATE,
+        last_streak_notified_on DATE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
@@ -413,6 +416,7 @@ async function initDb() {
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS vapid_public_key TEXT',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS enabled BOOLEAN NOT NULL DEFAULT TRUE',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_notified_on DATE',
+      'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS last_streak_notified_on DATE',
       'ALTER TABLE push_subscriptions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()'
     ];
     for (const sql of migrations) {
@@ -1520,6 +1524,58 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, a
   return result.rows[0];
 }
 
+async function getDailyStreakForUser(userId, date) {
+  const result = await pool.query(
+    `WITH completed_dates AS (
+       SELECT DISTINCT
+         CASE
+           WHEN date ~ '^\\d{4}-\\d{2}-\\d{2}$' THEN date::date
+           ELSE NULL
+         END AS day
+       FROM daily_user_attempts
+       WHERE user_id = $1
+         AND (success = TRUE OR COALESCE(attempts_count, 0) >= 7)
+     ),
+     valid_dates AS (
+       SELECT day
+       FROM completed_dates
+       WHERE day IS NOT NULL
+         AND day <= $2::date
+     ),
+     streak_groups AS (
+       SELECT
+         day,
+         (day - (ROW_NUMBER() OVER (ORDER BY day))::int) AS grp
+       FROM valid_dates
+     ),
+     streaks AS (
+       SELECT MAX(day) AS end_day, COUNT(*)::int AS streak_len
+       FROM streak_groups
+       GROUP BY grp
+     )
+     SELECT
+       COALESCE((SELECT MAX(streak_len) FROM streaks), 0)::int AS max_streak,
+       COALESCE((
+         SELECT streak_len
+         FROM streaks
+         WHERE end_day = $2::date OR end_day = ($2::date - 1)
+         ORDER BY end_day DESC
+         LIMIT 1
+       ), 0)::int AS current_streak,
+       EXISTS (
+         SELECT 1 FROM valid_dates WHERE day = $2::date
+       ) AS completed_today`,
+    [userId, date]
+  );
+
+  const row = result.rows[0] || {};
+  return {
+    current: Number(row.current_streak || 0),
+    longest: Number(row.max_streak || 0),
+    completedToday: Boolean(row.completed_today),
+  };
+}
+
 async function getDailyLeaderboard(date) {
   const res = await pool.query(
     `SELECT
@@ -1933,6 +1989,73 @@ async function listPushSubscriptionsDueForDate(dateStr, options = {}) {
   return res.rows;
 }
 
+async function listPushSubscriptionsDueForStreakDate(dateStr, options = {}) {
+  const vapidPublicKey = String(options?.vapidPublicKey || '').trim();
+  const params = [dateStr];
+  const vapidFilter = vapidPublicKey
+    ? 'AND (ps.vapid_public_key IS NULL OR ps.vapid_public_key = $2)'
+    : '';
+  if (vapidPublicKey) {
+    params.push(vapidPublicKey);
+  }
+
+  const res = await pool.query(
+    `WITH completed_dates AS (
+       SELECT DISTINCT
+         user_id,
+         CASE
+           WHEN date ~ '^\\d{4}-\\d{2}-\\d{2}$' THEN date::date
+           ELSE NULL
+         END AS day
+       FROM daily_user_attempts
+       WHERE success = TRUE OR COALESCE(attempts_count, 0) >= 7
+     ),
+     previous_dates AS (
+       SELECT user_id, day
+       FROM completed_dates
+       WHERE day IS NOT NULL
+         AND day < $1::date
+     ),
+     streak_groups AS (
+       SELECT
+         user_id,
+         day,
+         (day - (ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY day))::int) AS grp
+       FROM previous_dates
+     ),
+     streaks AS (
+       SELECT user_id, MAX(day) AS end_day, COUNT(*)::int AS streak_len
+       FROM streak_groups
+       GROUP BY user_id, grp
+     ),
+     current_streaks AS (
+       SELECT user_id, streak_len
+       FROM streaks
+       WHERE end_day = ($1::date - 1)
+     )
+     SELECT
+       ps.endpoint,
+       ps.subscription_json,
+       COALESCE(cs.streak_len, 0)::int AS streak_count
+     FROM push_subscriptions ps
+     LEFT JOIN current_streaks cs ON cs.user_id = ps.user_id
+     WHERE ps.enabled = TRUE
+       ${vapidFilter}
+       AND COALESCE(cs.streak_len, 0) > 0
+       AND (ps.last_streak_notified_on IS NULL OR ps.last_streak_notified_on < $1::date)
+       AND NOT EXISTS (
+         SELECT 1
+         FROM daily_user_attempts dua
+         WHERE dua.user_id = ps.user_id
+           AND dua.date = $1::text
+           AND (dua.success = TRUE OR COALESCE(dua.attempts_count, 0) >= 7)
+       )
+     ORDER BY ps.updated_at ASC`,
+    params
+  );
+  return res.rows;
+}
+
 async function markPushSubscriptionNotified(endpoint, dateStr) {
   const normalizedEndpoint = String(endpoint || '').trim();
   if (!normalizedEndpoint) {
@@ -1941,6 +2064,20 @@ async function markPushSubscriptionNotified(endpoint, dateStr) {
   await pool.query(
     `UPDATE push_subscriptions
      SET last_notified_on = $1::date,
+         updated_at = NOW()
+     WHERE endpoint = $2`,
+    [dateStr, normalizedEndpoint]
+  );
+}
+
+async function markPushSubscriptionStreakNotified(endpoint, dateStr) {
+  const normalizedEndpoint = String(endpoint || '').trim();
+  if (!normalizedEndpoint) {
+    return;
+  }
+  await pool.query(
+    `UPDATE push_subscriptions
+     SET last_streak_notified_on = $1::date,
          updated_at = NOW()
      WHERE endpoint = $2`,
     [dateStr, normalizedEndpoint]
@@ -2135,7 +2272,7 @@ async function getUserStats(userId) {
        SELECT DISTINCT date::date AS day
        FROM daily_user_attempts
        WHERE user_id = $1
-         AND success = TRUE
+         AND (success = TRUE OR COALESCE(attempts_count, 0) >= 7)
          AND date ~ '^\\d{4}-\\d{2}-\\d{2}$'
      ),
      streak_groups AS (
@@ -2872,6 +3009,7 @@ module.exports = {
   countDailyUserAttemptsForDate,
   startDailyUserAttempt,
   updateDailyUserAttempt,
+  getDailyStreakForUser,
   getDailyLeaderboard,
   getDailyAverageLeaderboard,
   getWeeklyDailyPodiumLeaderboard,
@@ -2884,7 +3022,9 @@ module.exports = {
   removeAllPushSubscriptionsForUser,
   removePushSubscriptionByEndpoint,
   listPushSubscriptionsDueForDate,
+  listPushSubscriptionsDueForStreakDate,
   markPushSubscriptionNotified,
+  markPushSubscriptionStreakNotified,
   getUserStats,
   createReferralByCode,
   getReferralByReferredUserId,
