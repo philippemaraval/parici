@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_BOOTSTRAP_KEY = 'schema_bootstrap_version';
-const SCHEMA_BOOTSTRAP_VERSION = '2026-08-23-parici-daily-streak-reminders-v1';
+const SCHEMA_BOOTSTRAP_VERSION = '2026-08-24-daily-history-details-v1';
 const SCHEMA_MIGRATION_LOCK_KEY = 2026082301;
 const INVALID_LOGIN_PASSWORD_HASH = '$2b$10$HYIYU3mGmQC3.2Gd/f5wMeavOy2iGZufkgNKPKgYZ/pBW/ffpyNt6';
 const USER_RENAME_SQL_PATH = path.join(__dirname, '..', 'migrations', 'unused-user-rename.sql');
@@ -319,6 +319,46 @@ async function initDb() {
     await client.query(`
       ALTER TABLE daily_user_attempts
       ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ
+    `);
+    await client.query(`
+      ALTER TABLE daily_user_attempts
+      ADD COLUMN IF NOT EXISTS total_distance_meters INTEGER
+    `);
+    await client.query(`
+      ALTER TABLE daily_user_attempts
+      ADD COLUMN IF NOT EXISTS score INTEGER NOT NULL DEFAULT 0
+    `);
+    await client.query(`
+      ALTER TABLE daily_user_attempts
+      ADD COLUMN IF NOT EXISTS solve_time_seconds DOUBLE PRECISION
+    `);
+    await client.query(`
+      UPDATE daily_user_attempts
+      SET
+        score = CASE WHEN success THEN GREATEST(0, 8 - LEAST(attempts_count, 7)) ELSE 0 END,
+        solve_time_seconds = CASE
+          WHEN success AND started_at IS NOT NULL AND last_attempt_at IS NOT NULL
+            THEN GREATEST(0, EXTRACT(EPOCH FROM (last_attempt_at - started_at)))
+          ELSE NULL
+        END
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS daily_attempt_details (
+        id BIGSERIAL PRIMARY KEY,
+        daily_user_attempt_id INTEGER NOT NULL REFERENCES daily_user_attempts(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        date TEXT NOT NULL,
+        attempt_number INTEGER NOT NULL CHECK (attempt_number BETWEEN 1 AND 7),
+        distance_meters INTEGER NOT NULL CHECK (distance_meters >= 0),
+        success BOOLEAN NOT NULL DEFAULT FALSE,
+        elapsed_seconds DOUBLE PRECISION NOT NULL CHECK (elapsed_seconds >= 0),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, date, attempt_number)
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_daily_attempt_details_date_user
+      ON daily_attempt_details (date DESC, user_id, attempt_number)
     `);
     await restoreWeeklyDailyScores(client);
 
@@ -1517,11 +1557,100 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, a
            THEN daily_user_attempts.last_attempt_at
          ELSE NOW()
        END
-     RETURNING attempts_count, best_distance_meters, success`,
+     RETURNING id, attempts_count, best_distance_meters, success, started_at, last_attempt_at`,
     [userId, date, distanceMeters, Boolean(isSuccess), normalizedAttemptsCount]
   );
+  const summary = result.rows[0];
+  const attemptNumber = normalizedAttemptsCount || Number(summary.attempts_count);
 
-  return result.rows[0];
+  await pool.query(
+    `INSERT INTO daily_attempt_details (
+       daily_user_attempt_id, user_id, date, attempt_number, distance_meters, success, elapsed_seconds
+     )
+     VALUES (
+       $1, $2, $3, $4, $5, $6,
+       GREATEST(0, EXTRACT(EPOCH FROM ($7::timestamptz - COALESCE($8::timestamptz, $7::timestamptz))))
+     )
+     ON CONFLICT (user_id, date, attempt_number) DO NOTHING`,
+    [
+      summary.id,
+      userId,
+      date,
+      attemptNumber,
+      distanceMeters,
+      Boolean(isSuccess),
+      summary.last_attempt_at,
+      summary.started_at,
+    ]
+  );
+
+  const enriched = await pool.query(
+    `UPDATE daily_user_attempts d
+     SET
+       total_distance_meters = details.total_distance_meters,
+       score = CASE WHEN d.success THEN GREATEST(0, 8 - LEAST(d.attempts_count, 7)) ELSE 0 END,
+       solve_time_seconds = CASE
+         WHEN d.success AND d.started_at IS NOT NULL AND d.last_attempt_at IS NOT NULL
+           THEN GREATEST(0, EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at)))
+         ELSE NULL
+       END
+     FROM (
+       SELECT daily_user_attempt_id, SUM(distance_meters)::int AS total_distance_meters
+       FROM daily_attempt_details
+       WHERE daily_user_attempt_id = $1
+       GROUP BY daily_user_attempt_id
+     ) details
+     WHERE d.id = details.daily_user_attempt_id
+     RETURNING d.attempts_count, d.best_distance_meters, d.total_distance_meters, d.success, d.score, d.solve_time_seconds`,
+    [summary.id]
+  );
+
+  return enriched.rows[0];
+}
+
+async function getDailyHistory(date = null, limit = 500) {
+  const parsedLimit = Number.isInteger(limit) && limit > 0 ? Math.min(limit, 2000) : 500;
+  const result = await pool.query(
+    `SELECT
+       d.date,
+       t.street_name,
+       t.arrondissement,
+       u.id AS user_id,
+       u.username,
+       d.success,
+       LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
+       COALESCE(d.score, CASE WHEN d.success THEN GREATEST(0, 8 - LEAST(d.attempts_count, 7)) ELSE 0 END)::int AS score,
+       d.best_distance_meters,
+       d.total_distance_meters,
+       COALESCE(
+         d.solve_time_seconds,
+         CASE WHEN d.success AND d.started_at IS NOT NULL THEN GREATEST(0, EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at))) END
+       )::float8 AS solve_time_seconds,
+       d.started_at,
+       d.last_attempt_at,
+       COALESCE(
+         JSONB_AGG(
+           JSONB_BUILD_OBJECT(
+             'attemptNumber', detail.attempt_number,
+             'distanceMeters', detail.distance_meters,
+             'success', detail.success,
+             'elapsedSeconds', detail.elapsed_seconds,
+             'createdAt', detail.created_at
+           ) ORDER BY detail.attempt_number
+         ) FILTER (WHERE detail.id IS NOT NULL),
+         '[]'::jsonb
+       ) AS attempts
+     FROM daily_user_attempts d
+     JOIN users u ON u.id = d.user_id
+     LEFT JOIN daily_targets t ON t.date = d.date
+     LEFT JOIN daily_attempt_details detail ON detail.daily_user_attempt_id = d.id
+     WHERE ($1::text IS NULL OR d.date = $1)
+     GROUP BY d.id, t.street_name, t.arrondissement, u.id, u.username
+     ORDER BY d.date DESC, d.success DESC, d.score DESC, d.last_attempt_at ASC
+     LIMIT $2`,
+    [date, parsedLimit]
+  );
+  return result.rows;
 }
 
 async function getDailyStreakForUser(userId, date) {
@@ -3009,6 +3138,7 @@ module.exports = {
   countDailyUserAttemptsForDate,
   startDailyUserAttempt,
   updateDailyUserAttempt,
+  getDailyHistory,
   getDailyStreakForUser,
   getDailyLeaderboard,
   getDailyAverageLeaderboard,

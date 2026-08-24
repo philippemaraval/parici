@@ -4519,6 +4519,17 @@ app.get('/api/daily/leaderboard/averages', async (req, res) => {
     }
 });
 
+app.get('/api/editor/daily-history', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+    const date = req.query?.date ? String(req.query.date).trim() : null;
+    if (date !== null && !ISO_DATE_PATTERN.test(date)) {
+        return res.status(400).json({ error: 'Invalid date format' });
+    }
+    const requestedLimit = Number.parseInt(req.query?.limit, 10);
+    const limit = Number.isInteger(requestedLimit) ? requestedLimit : 500;
+    const rows = await db.getDailyHistory(date, limit);
+    return res.json({ date, players: rows });
+}));
+
 const DAILY_REMINDER_KIND_AVAILABILITY = 'availability';
 const DAILY_REMINDER_KIND_STREAK = 'streak';
 
