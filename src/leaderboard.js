@@ -1,6 +1,6 @@
 import { API_URL, LEADERBOARD_VISIBLE_ROWS } from "./config.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
-import { fetchWithTimeout } from "./api-client.js";
+import { fetchWithStartupRetry } from "./api-client.js";
 
 const TITLE_THRESHOLDS_BY_MODE = {
   classique: {
@@ -642,35 +642,33 @@ export function loadAllLeaderboards() {
   leaderboardRoot.innerHTML =
     '<div class="skeleton skeleton-line skeleton-line--50"></div><div class="skeleton skeleton-block"></div><div class="skeleton skeleton-block"></div>';
 
-  Promise.all([
-    fetchWithTimeout(`${API_URL}/api/leaderboards`, {}, { timeoutMs: 10000 }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      return response.json();
-    }),
-    fetchWithTimeout(
-      `${API_URL}/api/leaderboards?period=month`,
-      {},
-      { timeoutMs: 10000 },
+  const fetchLeaderboard = (path) =>
+    fetchWithStartupRetry(
+      `${API_URL}${path}`,
+      { cache: "no-store" },
+      { timeoutMs: 12000, retryDelaysMs: [1000, 2500] },
     ).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
       return response.json();
-    }),
-    fetchWithTimeout(`${API_URL}/api/daily/leaderboard`, {}, { timeoutMs: 10000 })
-      .then((response) => (response.ok ? response.json() : []))
-      .catch(() => []),
-    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/weekly`, {}, { timeoutMs: 10000 })
-      .then((response) => (response.ok ? response.json() : { rows: [] }))
-      .catch(() => ({ rows: [] })),
-    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/podiums`, {}, { timeoutMs: 10000 })
-      .then((response) => (response.ok ? response.json() : []))
-      .catch(() => []),
-    fetchWithTimeout(`${API_URL}/api/daily/leaderboard/averages`, {}, { timeoutMs: 10000 })
-      .then((response) => (response.ok ? response.json() : []))
-      .catch(() => []),
+    });
+
+  Promise.all([
+    showCaminoLeaderboards ? fetchLeaderboard("/api/leaderboards") : Promise.resolve({}),
+    showCaminoLeaderboards
+      ? fetchLeaderboard("/api/leaderboards?period=month")
+      : Promise.resolve({}),
+    showDailyLeaderboards ? fetchLeaderboard("/api/daily/leaderboard") : Promise.resolve([]),
+    showDailyLeaderboards
+      ? fetchLeaderboard("/api/daily/leaderboard/weekly").catch(() => ({ rows: [] }))
+      : Promise.resolve({ rows: [] }),
+    showDailyLeaderboards
+      ? fetchLeaderboard("/api/daily/leaderboard/podiums").catch(() => [])
+      : Promise.resolve([]),
+    showDailyLeaderboards
+      ? fetchLeaderboard("/api/daily/leaderboard/averages").catch(() => [])
+      : Promise.resolve([]),
   ])
     .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily, dailyPodiums, dailyAverages]) => {
       const hasAllTimeRows = hasLeaderboardRows(allBoards);

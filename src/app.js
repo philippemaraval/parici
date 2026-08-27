@@ -138,6 +138,7 @@ let backendWarmupPromise = null;
 let runtimeContentLoadPromise = null;
 let celebrationRuntimePromise = null;
 let backendAvailabilityRetryId = null;
+let backendAvailabilityPromise = null;
 let backendAvailabilityFailures = 0;
 let backendWasUnavailable = false;
 const BACKEND_RETRY_DELAYS_MS = [2000, 4000, 8000, 15000, 30000];
@@ -349,13 +350,12 @@ function warmBackendConnection() {
 }
 
 function checkBackendAvailability() {
-  return fetchWithTimeout(
-    `${API_URL}/api/health`,
+  return fetchWithStartupRetry(
+    `${API_URL}/api/ready`,
     {
-      method: "HEAD",
       cache: "no-store",
     },
-    { timeoutMs: 6000 },
+    { timeoutMs: 12000, retryDelaysMs: [1000, 2500] },
   ).then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -372,7 +372,7 @@ function setOfflineBannerVisible(visible) {
 }
 
 function scheduleBackendAvailabilityRetry() {
-  if (backendAvailabilityRetryId !== null || !navigator.onLine) return;
+  if (backendAvailabilityRetryId !== null) return;
   const delayIndex = Math.min(
     Math.max(backendAvailabilityFailures - 1, 0),
     BACKEND_RETRY_DELAYS_MS.length - 1,
@@ -384,13 +384,16 @@ function scheduleBackendAvailabilityRetry() {
 }
 
 function monitorBackendAvailability() {
+  if (backendAvailabilityPromise) {
+    return backendAvailabilityPromise;
+  }
+
   if (!navigator.onLine) {
     backendWasUnavailable = true;
     setOfflineBannerVisible(true);
-    return Promise.resolve(false);
   }
 
-  return checkBackendAvailability()
+  backendAvailabilityPromise = checkBackendAvailability()
     .then(() => {
       const recovered = backendWasUnavailable;
       backendAvailabilityFailures = 0;
@@ -399,6 +402,11 @@ function monitorBackendAvailability() {
       if (recovered) {
         loadAllLeaderboards();
         loadUniqueVisitorCounter();
+      }
+      if (document.documentElement.dataset.mobileView === "daily" && currentUser?.token) {
+        refreshDailyStreakDisplay().catch((error) => {
+          console.warn("Refresh Daily streak after network check failed:", error);
+        });
       }
       return true;
     })
@@ -412,7 +420,12 @@ function monitorBackendAvailability() {
       warmBackendConnection();
       scheduleBackendAvailabilityRetry();
       return false;
+    })
+    .finally(() => {
+      backendAvailabilityPromise = null;
     });
+
+  return backendAvailabilityPromise;
 }
 
 function loadStreetInfos() {
@@ -3260,17 +3273,28 @@ function initUI() {
     window.addEventListener("offline", () => {
       backendWasUnavailable = true;
       setOfflineBannerVisible(true);
+      scheduleBackendAvailabilityRetry();
     }),
     window.addEventListener("online", () => {
       warmBackendConnection();
       monitorBackendAvailability();
     }),
-    navigator.onLine
-      ? scheduleAfterStartup(() => {
+    window.addEventListener("pageshow", () => {
+      monitorBackendAvailability();
+    }),
+    window.addEventListener("focus", () => {
+      monitorBackendAvailability();
+    }),
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
         monitorBackendAvailability();
-        loadUniqueVisitorCounter();
-      }, 1800)
-      : setOfflineBannerVisible(true),
+      }
+    }),
+    !navigator.onLine && setOfflineBannerVisible(true),
+    scheduleAfterStartup(() => {
+      monitorBackendAvailability();
+      loadUniqueVisitorCounter();
+    }, 1800),
     e &&
     e.addEventListener("click", () => {
       isDailyMode && window._dailyGameOver
@@ -6039,9 +6063,7 @@ function updateDailyStreakDisplay(streak = {}) {
   const completedToday = Boolean(streak.completedToday);
   document.querySelectorAll("[data-daily-streak]").forEach((element) => {
     const countElement = element.querySelector("[data-daily-streak-count]");
-    const unitElement = element.querySelector("[data-daily-streak-unit]");
     if (countElement) countElement.textContent = String(count);
-    if (unitElement) unitElement.textContent = "j";
     element.classList.remove("hidden");
     element.setAttribute("aria-busy", "false");
     element.setAttribute(
@@ -6059,9 +6081,7 @@ function updateDailyStreakDisplay(streak = {}) {
 function setDailyStreakPendingDisplay({ unavailable = false } = {}) {
   document.querySelectorAll("[data-daily-streak]").forEach((element) => {
     const countElement = element.querySelector("[data-daily-streak-count]");
-    const unitElement = element.querySelector("[data-daily-streak-unit]");
     if (countElement) countElement.textContent = unavailable ? "—" : "…";
-    if (unitElement) unitElement.textContent = "j";
     element.classList.remove("hidden", "is-complete");
     element.setAttribute("aria-busy", unavailable ? "false" : "true");
     element.title = unavailable

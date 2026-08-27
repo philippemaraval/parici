@@ -62,7 +62,7 @@ test("Daily page loads the streak and schedules both reminders", () => {
   assert.match(app, /function refreshDailyStreakDisplay/);
   assert.match(app, /fetchWithStartupRetry\(\s*`\$\{API_URL\}\/api\/daily\/streak`/);
   assert.match(page, /data-daily-streak/);
-  assert.match(page, /data-daily-streak-unit>j<\/span>/);
+  assert.doesNotMatch(page, /data-daily-streak-unit/);
   assert.match(page, /data-daily-streak-count>…<\/strong>/);
   assert.doesNotMatch(page, /daily-streak-inline/);
   assert.match(workflow, /cron: "0 8,9,14,15 \* \* \*"/);

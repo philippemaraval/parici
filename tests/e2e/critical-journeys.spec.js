@@ -56,10 +56,35 @@ test("le Daily affiche le nombre de jours de série à côté de la flamme", asy
   const streak = page.locator("[data-daily-streak]");
   await expect(streak).toBeVisible();
   await expect(streak.locator("[data-daily-streak-count]")).toHaveText("12");
-  await expect(streak.locator("[data-daily-streak-unit]")).toHaveText("j");
+  await expect(streak.locator("[data-daily-streak-unit]")).toHaveCount(0);
   await expect(streak).toHaveAttribute(
     "aria-label",
     "Série Daily : 12 jours d’affilée",
+  );
+});
+
+test("le Daily récupère la connexion lorsque iOS signale hors ligne à tort", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, "onLine", {
+      configurable: true,
+      get: () => false,
+    });
+    localStorage.setItem(
+      "camino_paris_user",
+      JSON.stringify({ id: 1, username: "JoueurE2E", authenticated: true }),
+    );
+    localStorage.setItem("camino_auth_token", "e2e-player-token");
+  });
+
+  await page.goto("/?view=daily");
+
+  await expect(page.locator("#offline-banner")).toBeHidden({ timeout: 8000 });
+  await expect(page.locator("[data-daily-streak-count]")).toHaveText("12");
+  await expect(page.locator("#leaderboard")).not.toContainText(
+    "Classements momentanément indisponibles",
   );
 });
 
