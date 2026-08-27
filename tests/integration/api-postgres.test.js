@@ -48,7 +48,9 @@ test(
 
     const health = await request("/api/ready");
     assert.equal(health.response.status, 200);
-    assert.deepEqual(health.body, { ok: true, database: "ready" });
+    assert.equal(health.body.ok, true);
+    assert.equal(health.body.database, "ready");
+    assert.equal(Number.isFinite(health.body.durationMs), true);
 
     const hostileRegistration = await request("/api/register", {
       method: "POST",
