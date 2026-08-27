@@ -83,8 +83,11 @@ test("CORS, analytics, rate limiting, auditing and headers are hardened", () => 
   const server = read("backend/server.js");
   const database = read("backend/database.js");
   const headers = read("_headers");
+  const render = read("render.yaml");
 
   assert.doesNotMatch(server, /dynamicAllowedOriginPatterns/);
+  assert.match(server, /'https:\/\/parici-ajm\.pages\.dev'/);
+  assert.match(render, /FRONTEND_URL\s+value: https:\/\/parici-ajm\.pages\.dev/);
   assert.match(
     server,
     /app\.get\('\/api\/analytics', authenticateToken, requireContentEditor/,

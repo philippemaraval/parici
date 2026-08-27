@@ -52,6 +52,15 @@ test(
     assert.equal(health.body.database, "ready");
     assert.equal(Number.isFinite(health.body.durationMs), true);
 
+    const cloudflareHealth = await request("/api/ready", {
+      headers: { origin: "https://parici-ajm.pages.dev" },
+    });
+    assert.equal(cloudflareHealth.response.status, 200);
+    assert.equal(
+      cloudflareHealth.response.headers.get("access-control-allow-origin"),
+      "https://parici-ajm.pages.dev",
+    );
+
     const hostileRegistration = await request("/api/register", {
       method: "POST",
       body: JSON.stringify({

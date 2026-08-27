@@ -34,7 +34,7 @@ const config = Object.freeze({
   urls: Object.freeze({
     frontend: firstDefined(
       ["PASSWORD_RESET_FRONTEND_URL", "FRONTEND_URL"],
-      "https://parici.netlify.app",
+      "https://parici-ajm.pages.dev",
     ),
   }),
 });

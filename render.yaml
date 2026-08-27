@@ -18,9 +18,9 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: FRONTEND_URL
-        value: https://parici.netlify.app
+        value: https://parici-ajm.pages.dev
       - key: PASSWORD_RESET_FRONTEND_URL
-        value: https://parici.netlify.app
+        value: https://parici-ajm.pages.dev
       - key: ADMIN_API_KEY
         generateValue: true
       - key: ENABLE_ADMIN_ROUTES

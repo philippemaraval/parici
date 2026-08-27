@@ -97,7 +97,7 @@ const PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS = readEnvIntegerInRange(
 const PASSWORD_RESET_FRONTEND_URL = readFirstDefinedEnv([
     'PASSWORD_RESET_FRONTEND_URL',
     'FRONTEND_URL',
-], 'https://parici.netlify.app');
+], 'https://parici-ajm.pages.dev');
 const DEFAULT_EDITOR_USERNAMES = new Set(['mphil', 'mphil12', 'mgm']);
 const DEFAULT_EDITOR_USERNAME_PATTERNS = [
     /^mphil\d*$/i,
@@ -497,6 +497,7 @@ const allowedOrigins = new Set([
     'https://parici8.netlify.app',
     'https://parici.netlify.app',
     'https://camino-paris.netlify.app',
+    'https://parici-ajm.pages.dev',
     process.env.FRONTEND_URL,
     ...(process.env.CORS_ALLOWED_ORIGINS || '')
         .split(',')

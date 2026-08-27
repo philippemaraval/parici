@@ -70,7 +70,7 @@ export function buildSessionShareText({
   gameLabels,
   zoneLabels,
   now = new Date(),
-  host = "parici.netlify.app",
+  host = "parici-ajm.pages.dev",
 }) {
   const modeLabel = gameLabels[gameMode] || gameMode;
   const zoneLabel = zoneLabels[zoneMode] || zoneMode;

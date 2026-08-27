@@ -1671,7 +1671,7 @@ function updateFriendChallengeCodeInUrl(code) {
 }
 
 function getFriendChallengeShareOrigin() {
-  const fallbackOrigin = "https://parici.netlify.app";
+  const fallbackOrigin = "https://parici-ajm.pages.dev";
   try {
     const { origin, hostname, protocol } = window.location;
     if (
@@ -5613,7 +5613,7 @@ function endSession() {
     "localhost" !== window.location.hostname &&
     "127.0.0.1" !== window.location.hostname
       ? window.location.host
-      : "parici.netlify.app";
+      : "parici-ajm.pages.dev";
   const sessionShareText = buildSessionShareText({
     summaryData,
     gameMode: l,
