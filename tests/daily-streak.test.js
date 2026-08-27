@@ -54,12 +54,15 @@ test("Daily page loads the streak and schedules both reminders", () => {
   assert.match(server, /PUSH_STREAK_REMINDER_HOUR', 16/);
   assert.match(server, /getDailyStreakForUser\(req\.user\.id, date\)/);
   assert.match(server, /app\.get\('\/api\/daily\/streak'/);
+  assert.match(server, /app\.get\('\/api\/daily\/health'/);
   assert.match(server, /getDailyStreakReminderPayload\(row\.streak_count\)/);
   assert.match(app, /function updateDailyStreakDisplay/);
   assert.match(app, /function setDailyStreakPendingDisplay/);
   assert.match(app, /setDailyStreakPendingDisplay\(\{ unavailable: true \}\)/);
   assert.match(app, /function refreshDailyStreakDisplay/);
+  assert.match(app, /fetchWithStartupRetry\(\s*`\$\{API_URL\}\/api\/daily\/streak`/);
   assert.match(page, /data-daily-streak/);
+  assert.match(page, /data-daily-streak-unit>j<\/span>/);
   assert.match(page, /data-daily-streak-count>…<\/strong>/);
   assert.doesNotMatch(page, /daily-streak-inline/);
   assert.match(workflow, /cron: "0 8,9,14,15 \* \* \*"/);

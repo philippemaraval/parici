@@ -40,6 +40,29 @@ test("navigation des modes Camino et Daily", async ({ page }) => {
   await expect(page.locator("#daily-mode-btn")).toContainText("Daily");
 });
 
+test("le Daily affiche le nombre de jours de série à côté de la flamme", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "camino_paris_user",
+      JSON.stringify({ id: 1, username: "JoueurE2E", authenticated: true }),
+    );
+    localStorage.setItem("camino_auth_token", "e2e-player-token");
+  });
+  await page.goto("/?view=daily");
+
+  const streak = page.locator("[data-daily-streak]");
+  await expect(streak).toBeVisible();
+  await expect(streak.locator("[data-daily-streak-count]")).toHaveText("12");
+  await expect(streak.locator("[data-daily-streak-unit]")).toHaveText("j");
+  await expect(streak).toHaveAttribute(
+    "aria-label",
+    "Série Daily : 12 jours d’affilée",
+  );
+});
+
 test("connexion à l’administration et contrôle des permissions", async ({
   page,
 }) => {

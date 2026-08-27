@@ -99,6 +99,12 @@ async function handleApi(request, response) {
   if (url.pathname === "/api/notifications/public-key") {
     return json(response, 200, { enabled: false, publicKey: null });
   }
+  if (url.pathname === "/api/daily/streak") {
+    return json(response, 200, {
+      date: "2026-08-27",
+      dailyStreak: { current: 12, longest: 18, completedToday: false },
+    });
+  }
   return json(response, 200, { success: true });
 }
 

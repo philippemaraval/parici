@@ -84,6 +84,26 @@ test(
     assert.ok(login.body.token);
 
     const authHeaders = { authorization: `Bearer ${login.body.token}` };
+    const dailyHealth = await request("/api/daily/health");
+    assert.equal(dailyHealth.response.status, 200);
+    assert.equal(dailyHealth.body.ok, true);
+    assert.equal(dailyHealth.body.targetReady, true);
+    assert.equal(dailyHealth.body.imageReady, true);
+
+    const daily = await request("/api/daily", { headers: authHeaders });
+    assert.equal(daily.response.status, 200);
+    assert.match(daily.body.date, /^\d{4}-\d{2}-\d{2}$/);
+    assert.equal(Array.isArray(JSON.parse(daily.body.targetGeoJson)), true);
+    assert.equal(daily.body.userStatus.attempts_count, 0);
+    assert.equal(daily.body.dailyStreak.current, 0);
+
+    const dailyStreak = await request("/api/daily/streak", {
+      headers: authHeaders,
+    });
+    assert.equal(dailyStreak.response.status, 200);
+    assert.equal(dailyStreak.body.date, daily.body.date);
+    assert.equal(dailyStreak.body.dailyStreak.current, 0);
+
     const score = await request("/api/scores", {
       method: "POST",
       headers: authHeaders,

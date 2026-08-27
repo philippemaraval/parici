@@ -6012,7 +6012,14 @@ async function handleDailyModeClick() {
         { headers: { Authorization: `Bearer ${currentUser.token}` } },
         { timeoutMs: 15000, retryDelaysMs: [1000, 2500] },
       );
-      if (!e.ok) throw new Error("Erreur chargement défi");
+      if (e.status === 401 || e.status === 403) {
+        currentUser = null;
+        clearCurrentUserFromStorage();
+        updateUserUI();
+        showMessage("Ta session a expiré. Reconnecte-toi pour lancer le Daily.", "warning");
+        return;
+      }
+      if (!e.ok) throw await buildApiError(e, "Erreur chargement défi");
       startDailySession(await e.json());
     } catch (e) {
       (console.error(e),
@@ -6032,9 +6039,15 @@ function updateDailyStreakDisplay(streak = {}) {
   const completedToday = Boolean(streak.completedToday);
   document.querySelectorAll("[data-daily-streak]").forEach((element) => {
     const countElement = element.querySelector("[data-daily-streak-count]");
+    const unitElement = element.querySelector("[data-daily-streak-unit]");
     if (countElement) countElement.textContent = String(count);
+    if (unitElement) unitElement.textContent = "j";
     element.classList.remove("hidden");
     element.setAttribute("aria-busy", "false");
+    element.setAttribute(
+      "aria-label",
+      `Série Daily : ${count} ${count === 1 ? "jour" : "jours"} d’affilée`,
+    );
     element.classList.toggle("is-complete", completedToday);
     element.title = completedToday
       ? `Daily du jour terminé · série de ${count}`
@@ -6046,7 +6059,9 @@ function updateDailyStreakDisplay(streak = {}) {
 function setDailyStreakPendingDisplay({ unavailable = false } = {}) {
   document.querySelectorAll("[data-daily-streak]").forEach((element) => {
     const countElement = element.querySelector("[data-daily-streak-count]");
+    const unitElement = element.querySelector("[data-daily-streak-unit]");
     if (countElement) countElement.textContent = unavailable ? "—" : "…";
+    if (unitElement) unitElement.textContent = "j";
     element.classList.remove("hidden", "is-complete");
     element.setAttribute("aria-busy", unavailable ? "false" : "true");
     element.title = unavailable
@@ -6063,17 +6078,28 @@ async function refreshDailyStreakDisplay() {
 
   setDailyStreakPendingDisplay();
   try {
-    const response = await fetchWithTimeout(
+    const response = await fetchWithStartupRetry(
       `${API_URL}/api/daily/streak`,
       { headers: { Authorization: `Bearer ${currentUser.token}` } },
-      { timeoutMs: 12000 },
+      { timeoutMs: 15000, retryDelaysMs: [1000, 2500] },
     );
+    if (response.status === 401 || response.status === 403) {
+      currentUser = null;
+      clearCurrentUserFromStorage();
+      updateUserUI();
+      showMessage("Ta session a expiré. Reconnecte-toi pour lancer le Daily.", "warning");
+      return;
+    }
     if (!response.ok) {
       throw await buildApiError(response, `HTTP ${response.status}`);
     }
     const payload = await response.json();
     updateDailyStreakDisplay(payload.dailyStreak);
   } catch (error) {
+    if (!currentUser) {
+      streakElements.forEach((element) => element.classList.add("hidden"));
+      return;
+    }
     setDailyStreakPendingDisplay({ unavailable: true });
     throw error;
   }

@@ -8,6 +8,8 @@ const healthMaxAttempts = Number(process.env.HEALTH_MAX_ATTEMPTS || 3);
 const healthRetryDelayMs = Number(process.env.HEALTH_RETRY_DELAY_MS || 5_000);
 const metricsRequestTimeoutMs = Number(process.env.METRICS_REQUEST_TIMEOUT_MS || 30_000);
 if (!healthUrl) throw new Error('HEALTHCHECK_URL is required');
+const dailyHealthUrl = process.env.DAILY_HEALTHCHECK_URL
+  || new URL('/api/daily/health', healthUrl).toString();
 
 function wait(delayMs) {
   return new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -83,14 +85,34 @@ async function checkHealth() {
   throw new Error(`Health check failed after ${healthMaxAttempts} attempts: ${lastError?.message || 'unknown error'}`);
 }
 
+async function checkDailyHealth() {
+  const response = await fetch(dailyHealthUrl, {
+    headers: { 'user-agent': 'camino-operations-monitor/1.0' },
+    signal: AbortSignal.timeout(healthRequestTimeoutMs),
+  });
+  const payload = await response.json();
+  if (
+    !response.ok
+    || payload?.ok !== true
+    || payload?.targetReady !== true
+    || payload?.streetIndexReady !== true
+    || payload?.imageReady !== true
+  ) {
+    throw new Error(`Daily unhealthy (${response.status}): ${JSON.stringify(payload)}`);
+  }
+  return payload;
+}
+
 async function main() {
   const latencyMs = await checkHealth();
+  const daily = await checkDailyHealth();
   const metrics = await checkMetrics();
   process.stdout.write(
     `${JSON.stringify({
       event: 'health_check',
       ok: true,
       latency_ms: Math.round(latencyMs),
+      daily,
       metrics,
     })}\n`,
   );

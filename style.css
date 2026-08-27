@@ -3014,6 +3014,14 @@ select:focus-visible,
   line-height: 1;
 }
 
+.daily-streak-card > .daily-streak-unit {
+  margin-left: -2px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .daily-streak-card.hidden {
   display: none;
 }

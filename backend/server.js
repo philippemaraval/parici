@@ -691,6 +691,9 @@ async function initializeBackgroundServices() {
 
 async function initializeDatabase({ startBackgroundServices = true } = {}) {
     try {
+        if (streetIndex.length === 0) {
+            reloadDailyRuntimeIndexes();
+        }
         await db.initDb();
         startupState.databaseReady = true;
         startupState.databaseError = null;
@@ -4387,6 +4390,26 @@ async function getTargetGeometry(target) {
 
     return null;
 }
+
+app.get('/api/daily/health', asyncHandler(async (req, res) => {
+    const date = await ensureDailyTarget();
+    const target = await db.getDailyTarget(date);
+    const manifestEntry = getDailyManifestEntryByDate(date);
+    const imageUrl = resolveDailyImageUrl(date, target?.street_name, manifestEntry);
+    const targetReady = Boolean(target && parseCoordinatesJson(target.coordinates_json));
+    const streetIndexReady = streetIndex.length > 0;
+    const imageReady = Boolean(imageUrl);
+    const ok = targetReady && streetIndexReady && imageReady;
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(ok ? 200 : 503).json({
+        ok,
+        date,
+        targetReady,
+        streetIndexReady,
+        imageReady,
+    });
+}));
 
 app.get('/api/daily/streak', authenticateToken, asyncHandler(async (req, res) => {
     const date = getDailyDateKey();
