@@ -689,26 +689,37 @@ async function initializeBackgroundServices() {
     warmCriticalCachesInBackground();
 }
 
-// Bind Render's port immediately. Database bootstrap can legitimately take longer
-// than Render's health-check window (for example while PostgreSQL wakes or waits
-// for a schema lock), and must not prevent the process from becoming reachable.
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    setImmediate(() => {
-        reloadDailyRuntimeIndexes();
-    });
-    db.initDb().then(() => {
+async function initializeDatabase({ startBackgroundServices = true } = {}) {
+    try {
+        await db.initDb();
         startupState.databaseReady = true;
         startupState.databaseError = null;
         console.log('Database ready.');
-        initializeBackgroundServices().catch((error) => {
-            console.error('Background services initialization failed:', error);
-        });
-    }).catch((error) => {
+
+        if (startBackgroundServices) {
+            await initializeBackgroundServices();
+        }
+    } catch (error) {
+        startupState.databaseReady = false;
         startupState.databaseError = error.message;
-        console.error('Database init failed:', error);
+        throw error;
+    }
+}
+
+// Bind Render's port immediately. Database bootstrap can legitimately take longer
+// than Render's health-check window (for example while PostgreSQL wakes or waits
+// for a schema lock), and must not prevent the process from becoming reachable.
+function startServer() {
+    return app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        setImmediate(() => {
+            reloadDailyRuntimeIndexes();
+        });
+        initializeDatabase().catch((error) => {
+            console.error('Database init failed:', error);
+        });
     });
-});
+}
 
 // ----------------------
 // Auth Middleware

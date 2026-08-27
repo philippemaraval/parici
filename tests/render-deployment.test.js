@@ -12,6 +12,10 @@ test("le lanceur Render installe les dépendances centralisées", () => {
   const rootPackage = JSON.parse(
     fs.readFileSync(path.join(root, "package.json"), "utf8"),
   );
+  const renderBlueprint = fs.readFileSync(
+    path.join(root, "render.yaml"),
+    "utf8",
+  );
 
   assert.equal(backendPackage.dependencies, undefined);
   assert.equal(backendPackage.devDependencies, undefined);
@@ -24,6 +28,10 @@ test("le lanceur Render installe les dépendances centralisées", () => {
     fs.existsSync(path.join(root, "backend", "package-lock.json")),
     false,
   );
+  assert.match(renderBlueprint, /rootDir: backend/);
+  assert.match(renderBlueprint, /buildCommand: npm run postinstall/);
+  assert.doesNotMatch(renderBlueprint, /buildCommand: npm ci(?:\s|$)/);
+  assert.match(renderBlueprint, /key: PUSH_STREAK_REMINDER_HOUR\s+value: "16"/);
 
   for (const dependency of [
     "bcrypt",

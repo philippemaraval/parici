@@ -5,7 +5,9 @@ services:
     plan: free
     region: frankfurt
     rootDir: backend
-    buildCommand: npm ci
+    # backend/package.json is a lock-free launcher. Its postinstall command
+    # installs from the repository root lockfile and builds the frontend.
+    buildCommand: npm run postinstall
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
@@ -28,6 +30,10 @@ services:
       - key: PUSH_REMINDER_HOUR
         value: "10"
       - key: PUSH_REMINDER_MINUTE
+        value: "0"
+      - key: PUSH_STREAK_REMINDER_HOUR
+        value: "16"
+      - key: PUSH_STREAK_REMINDER_MINUTE
         value: "0"
       - key: PUSH_REMINDER_TIMEZONE
         value: Europe/Paris
