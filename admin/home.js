@@ -12,6 +12,7 @@ const LOGIN_API_READY_POLL_INTERVAL_MS = 1500;
 const OSM_SYNC_POLL_INTERVAL_MS = 8000;
 const OSM_SYNC_POLL_TIMEOUT_MS = 12 * 60 * 1000;
 const STORAGE_KEY = "camino_paris_editor_user";
+const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
 const state = {
   token: "",
@@ -88,11 +89,11 @@ function saveSession() {
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify({
-      token: state.token,
       username: state.username,
       role: state.role,
     }),
   );
+  sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.token);
 }
 
 function clearSession() {
@@ -101,12 +102,19 @@ function clearSession() {
   state.role = "";
   state.canManageUsers = false;
   localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
 }
 
 function restoreSession() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    state.token = String(saved?.token || "");
+    const legacyToken = String(saved?.token || "");
+    state.token = String(sessionStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || legacyToken);
+    if (legacyToken) {
+      delete saved.token;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, legacyToken);
+    }
     state.username = String(saved?.username || "");
     state.role = String(saved?.role || "");
     return Boolean(state.token);

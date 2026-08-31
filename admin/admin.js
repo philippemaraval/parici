@@ -8,6 +8,7 @@ const API_BASE_CANDIDATES =
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
 const STORAGE_KEY = "camino_paris_editor_user";
+const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
 const state = {
   token: "",

@@ -3,6 +3,7 @@ const API_BASE =
     ? "http://localhost:3000"
     : "https://camino-paris.onrender.com";
 const STORAGE_KEY = "camino_paris_editor_user";
+const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
 const state = {
   token: "",
