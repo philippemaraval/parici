@@ -26,6 +26,11 @@
             "in": "query",
             "name": "prewarm",
             "schema": { "type": "string", "enum": ["0", "1", "true", "false"] }
+          },
+          {
+            "in": "query",
+            "name": "keepalive",
+            "schema": { "type": "string", "pattern": "^[0-9]+$" }
           }
         ],
         "responses": { "200": { "description": "État du service" } }
