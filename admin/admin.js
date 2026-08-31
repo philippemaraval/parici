@@ -7,6 +7,8 @@ const API_BASE_CANDIDATES =
 
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
+const LOGIN_API_READY_ATTEMPT_TIMEOUT_MS = 15000;
+const LOGIN_API_READY_POLL_INTERVAL_MS = 1500;
 const STORAGE_KEY = "camino_paris_editor_user";
 const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
@@ -284,11 +286,47 @@ async function apiRequest(path, { method = "GET", body, auth = true, timeoutMs =
   return responsePayload;
 }
 
-async function warmApiForLogin() {
+async function warmApiForLogin(onWaitingForDatabase = () => {}) {
+  const deadlineMs = Date.now() + LOGIN_API_REQUEST_TIMEOUT_MS;
+
+  // /api/health wakes Render up, but deliberately responds while PostgreSQL is
+  // still initializing. Do not submit credentials until /api/ready confirms
+  // that database-backed routes can answer.
   await apiRequest("/api/health", {
     auth: false,
     timeoutMs: LOGIN_API_REQUEST_TIMEOUT_MS,
   });
+
+  while (Date.now() < deadlineMs) {
+    const remainingMs = deadlineMs - Date.now();
+    try {
+      const readiness = await apiRequest("/api/ready", {
+        auth: false,
+        timeoutMs: Math.max(
+          1,
+          Math.min(LOGIN_API_READY_ATTEMPT_TIMEOUT_MS, remainingMs),
+        ),
+      });
+      if (readiness?.database === "ready") {
+        return;
+      }
+    } catch (error) {
+      if (error?.status !== 503) {
+        throw error;
+      }
+    }
+
+    onWaitingForDatabase();
+    const waitMs = Math.min(
+      LOGIN_API_READY_POLL_INTERVAL_MS,
+      Math.max(0, deadlineMs - Date.now()),
+    );
+    if (waitMs > 0) {
+      await new Promise((resolve) => window.setTimeout(resolve, waitMs));
+    }
+  }
+
+  throw new Error("l'API n'est pas encore prete; reessayez dans quelques instants");
 }
 
 function parseListTextarea(value) {
@@ -1038,7 +1076,9 @@ async function onLoginSubmit(event) {
     refs.loginBtn.disabled = true;
     refs.loginBtn.textContent = "Connexion…";
     setGlobalStatus("Démarrage du service…", "info");
-    await warmApiForLogin();
+    await warmApiForLogin(() => {
+      setGlobalStatus("Préparation de la base de données…", "info");
+    });
     setGlobalStatus("Connexion en cours…", "info");
     const payload = await apiRequest("/api/login", {
       method: "POST",
