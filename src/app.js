@@ -131,6 +131,8 @@ const MAP_REGION_MAX_BOUNDS = [
   [48.25, 1.3], // SW: terminus franciliens occidentaux et méridionaux
   [49.32, 3.45], // NE: terminus franciliens septentrionaux et orientaux
 ];
+const PARIS_MAP_CENTER = [48.8566, 2.3522];
+const PARIS_MAP_ZOOM = 12;
 let swRegistrationPromise = null;
 let notificationConfigCache = null;
 let dailyReminderAutoPromptInFlight = false;
@@ -3033,7 +3035,7 @@ function initMap() {
       maxBoundsViscosity: 1,
       minZoom: 7,
       renderer: L.canvas({ padding: 0.5 }),
-    }).setView([48.8566, 2.3522], 12)),
+    }).setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM)),
       L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
@@ -6182,6 +6184,7 @@ function startDailySession(e) {
     clearDailyLastGuessHighlight(),
     removeDailyHighlight(),
     (currentZoneMode = "ville"));
+  map.setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, { animate: !1 });
   const s = document.getElementById("mode-select"),
     i = document.getElementById("mode-select-button");
   s &&
