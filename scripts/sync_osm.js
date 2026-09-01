@@ -208,6 +208,13 @@ const STATIC_MONUMENTS = [
   ["Fondation Cartier", 2.3365, 48.8637],
   ["Bataclan", 2.3702, 48.8631],
   ["Cité de l'Économie - Hôtel Gaillard", 2.3101, 48.8827],
+  ["Hôtel de la Marine", 2.3237, 48.8666],
+  ["Cité des sciences et de l'industrie", 2.388, 48.8956],
+  ["Porte Saint-Denis", 2.3527, 48.8697],
+  ["Porte Saint-Martin", 2.3611, 48.8682],
+  ["Mémorial de la Shoah", 2.3563, 48.8547],
+  ["Grande Galerie de l'Évolution", 2.3564, 48.8422],
+  ["Arc de triomphe du Carrousel", 2.3325, 48.8618],
 ];
 
 function ensureDirs() {
@@ -877,6 +884,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  buildMonuments,
   buildExcludedStreetAreas,
   buildStreets,
   disambiguateHomonymousStreets,

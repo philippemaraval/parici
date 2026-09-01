@@ -19,7 +19,7 @@ test("content datasets keep the expected Parici depth", () => {
 
   assert.equal(quartiers.length, 80);
   assert.equal(new Set(quartiers.map((feature) => feature.properties.name)).size, 80);
-  assert.equal(monuments.length, 100);
+  assert.equal(monuments.length, 107);
   assert(transit.filter((feature) => feature.properties.transport_type === "Tramway").length >= 15);
   assert(manifest.length >= 365);
 });

@@ -12,8 +12,8 @@ const playableNames = new Set(streetIndex.map((entry) => normalizeName(entry.nam
 const readGeoJson = (relativePath) =>
   JSON.parse(fs.readFileSync(path.join(__dirname, "..", relativePath), "utf8"));
 
-test("the famous-streets selection contains 100 playable Paris ways", () => {
-  assert.equal(FAMOUS_STREET_NAMES.size, 100);
+test("the famous-streets selection contains 106 playable Paris ways", () => {
+  assert.equal(FAMOUS_STREET_NAMES.size, 106);
   for (const streetName of FAMOUS_STREET_NAMES) {
     assert.ok(playableNames.has(streetName), `${streetName} is missing from the street index`);
   }
@@ -24,6 +24,12 @@ test("the selection keeps iconic local streets and uses the playable République
   assert.ok(FAMOUS_STREET_NAMES.has("rue montorgueil"));
   assert.ok(FAMOUS_STREET_NAMES.has("place de la république - quartier de la folie-méricourt"));
   assert.ok(FAMOUS_STREET_NAMES.has("pont neuf"));
+  assert.ok(FAMOUS_STREET_NAMES.has("rue saint-louis en l'île"));
+  assert.ok(FAMOUS_STREET_NAMES.has("place des victoires"));
+  assert.ok(FAMOUS_STREET_NAMES.has("place des abbesses"));
+  assert.ok(FAMOUS_STREET_NAMES.has("rue du faubourg saint-denis"));
+  assert.ok(FAMOUS_STREET_NAMES.has("quai d'anjou"));
+  assert.ok(FAMOUS_STREET_NAMES.has("rue de bretagne"));
 });
 
 test("the selection is not padded with the boulevards des Maréchaux", () => {
@@ -37,11 +43,18 @@ test("the selection is not padded with the boulevards des Maréchaux", () => {
   }
 });
 
-test("the main-streets selection contains 350 playable movement axes", () => {
-  assert.equal(MAIN_STREET_NAMES.size, 350);
+test("the main-streets selection contains 361 selected movement axes", () => {
+  const pendingOsmStreetNames = new Set(["boulevard de l'hôpital"]);
+
+  assert.equal(MAIN_STREET_NAMES.size, 361);
   for (const streetName of MAIN_STREET_NAMES) {
+    if (pendingOsmStreetNames.has(streetName)) continue;
     assert.ok(playableNames.has(streetName), `${streetName} is missing from the street index`);
   }
+  assert.deepEqual(
+    [...MAIN_STREET_NAMES].filter((streetName) => !playableNames.has(streetName)),
+    [...pendingOsmStreetNames],
+  );
 
   for (const streetName of [
     "boulevard kellermann",
@@ -51,6 +64,17 @@ test("the main-streets selection contains 350 playable movement axes", () => {
     "quai de bercy",
     "place de la concorde",
     "place de la république - quartier de la folie-méricourt",
+    "boulevard de l'hôpital",
+    "rue du faubourg saint-denis",
+    "place de la madeleine",
+    "boulevard jules ferry",
+    "boulevard des filles du calvaire",
+    "rue claude bernard",
+    "avenue claude vellefaux",
+    "rue saint-charles",
+    "avenue de laumière",
+    "rue manin",
+    "rue marcadet",
   ]) {
     assert.ok(MAIN_STREET_NAMES.has(streetName), `${streetName} should be a main movement axis`);
   }
@@ -62,14 +86,25 @@ test("main movement axes do not inflate the famous-streets selection", () => {
   }
 });
 
-test("the monument selection contains 100 synchronized entries", () => {
+test("the monument selection contains 107 synchronized entries", () => {
   const frontend = readGeoJson("data/paris_monuments.geojson");
   const backend = readGeoJson("backend/data/paris_monuments.geojson");
   const monumentNames = new Set(frontend.features.map((feature) => normalizeName(feature.properties?.name)));
 
-  assert.equal(frontend.features.length, 100);
+  assert.equal(frontend.features.length, 107);
   assert.deepEqual(backend, frontend);
   assert.deepEqual(monumentNames, MONUMENT_NAMES);
+  for (const monumentName of [
+    "hôtel de la marine",
+    "cité des sciences et de l'industrie",
+    "porte saint-denis",
+    "porte saint-martin",
+    "mémorial de la shoah",
+    "grande galerie de l'évolution",
+    "arc de triomphe du carrousel",
+  ]) {
+    assert.ok(MONUMENT_NAMES.has(monumentName), `${monumentName} should be selected`);
+  }
 });
 
 test("the monument selection represents every Paris arrondissement", () => {
