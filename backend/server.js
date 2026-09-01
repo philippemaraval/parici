@@ -163,6 +163,7 @@ const ALLOWED_AVATARS = new Set([
 ]);
 const STREET_INFOS_SETTING_KEY = 'content_street_infos_v1';
 const CONTENT_LISTS_SETTING_KEY = 'content_lists_v1';
+const FAMOUS_STREETS_CONTENT_VERSION = 2;
 const CONTENT_MONUMENTS_SETTING_KEY = 'content_monuments_v1';
 const MAP_SYNC_META_SETTING_KEY = 'map_sync_meta_v1';
 const MAX_STREET_INFO_ENTRIES = 20000;
@@ -1622,6 +1623,13 @@ function cloneContentLists(lists) {
     };
 }
 
+function serializeContentListsSetting(lists) {
+    return JSON.stringify({
+        ...cloneContentLists(lists),
+        famousStreetsVersion: FAMOUS_STREETS_CONTENT_VERSION,
+    });
+}
+
 function cloneMonumentEntries(entries) {
     return (Array.isArray(entries) ? entries : []).map((entry) => ({
         name: String(entry?.name || ''),
@@ -1782,7 +1790,9 @@ async function getEffectiveContentLists({ monumentEntries = null } = {}) {
     }
 
     const effective = {
-        famousStreets: Object.prototype.hasOwnProperty.call(parsed, 'famousStreets')
+        famousStreets:
+            parsed.famousStreetsVersion === FAMOUS_STREETS_CONTENT_VERSION &&
+            Object.prototype.hasOwnProperty.call(parsed, 'famousStreets')
             ? normalizeNameList(parsed.famousStreets)
             : fallback.famousStreets,
         mainStreets: Object.prototype.hasOwnProperty.call(parsed, 'mainStreets')
@@ -2948,7 +2958,7 @@ app.put('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHan
     }
     await db.setAppSetting(STREET_INFOS_SETTING_KEY, JSON.stringify(streetInfos));
     if (listsUpdated) {
-        await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, JSON.stringify(lists));
+        await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, serializeContentListsSetting(lists));
     }
     invalidatePublicContentCache();
 
@@ -3058,7 +3068,7 @@ app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(a
     // Always realign the list with the effective monument dataset.
     lists.monuments = normalizeMonumentNameList(currentMonuments.map((entry) => entry.name));
 
-    await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, JSON.stringify(lists));
+    await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, serializeContentListsSetting(lists));
     invalidatePublicContentCache();
 
     const streetInfos = await getEffectiveStreetInfos();
@@ -3082,7 +3092,7 @@ app.put('/api/editor/monuments', authenticateToken, requireAdminUser, asyncHandl
 
     const lists = await getEffectiveContentLists();
     lists.monuments = normalizeMonumentNameList(monuments.map((entry) => entry.name));
-    await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, JSON.stringify(lists));
+    await db.setAppSetting(CONTENT_LISTS_SETTING_KEY, serializeContentListsSetting(lists));
     invalidatePublicContentCache();
 
     const streetInfos = await getEffectiveStreetInfos();

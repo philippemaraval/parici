@@ -114,10 +114,14 @@ import {
 let FAMOUS_STREET_INFOS = {};
 let MAIN_STREET_INFOS = {};
 let FAMOUS_STREET_NAMES_RUNTIME = new Set(
-  typeof FAMOUS_STREET_NAMES !== "undefined" ? Array.from(FAMOUS_STREET_NAMES) : [],
+  typeof FAMOUS_STREET_NAMES !== "undefined"
+    ? Array.from(FAMOUS_STREET_NAMES, normalizeName).filter(Boolean)
+    : [],
 );
 let MAIN_STREET_NAMES_RUNTIME = new Set(
-  typeof MAIN_STREET_NAMES !== "undefined" ? Array.from(MAIN_STREET_NAMES) : [],
+  typeof MAIN_STREET_NAMES !== "undefined"
+    ? Array.from(MAIN_STREET_NAMES, normalizeName).filter(Boolean)
+    : [],
 );
 let MONUMENT_NAMES_RUNTIME = new Set();
 let MONUMENT_FEATURES_RUNTIME = null;
