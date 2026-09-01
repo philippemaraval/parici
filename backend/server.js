@@ -163,8 +163,10 @@ const ALLOWED_AVATARS = new Set([
 ]);
 const STREET_INFOS_SETTING_KEY = 'content_street_infos_v1';
 const CONTENT_LISTS_SETTING_KEY = 'content_lists_v1';
-const FAMOUS_STREETS_CONTENT_VERSION = 2;
+const FAMOUS_STREETS_CONTENT_VERSION = 3;
+const MAIN_STREETS_CONTENT_VERSION = 2;
 const CONTENT_MONUMENTS_SETTING_KEY = 'content_monuments_v1';
+const MONUMENTS_CONTENT_VERSION = 2;
 const MAP_SYNC_META_SETTING_KEY = 'map_sync_meta_v1';
 const MAX_STREET_INFO_ENTRIES = 20000;
 const MAX_LIST_ENTRIES = 20000;
@@ -1627,6 +1629,14 @@ function serializeContentListsSetting(lists) {
     return JSON.stringify({
         ...cloneContentLists(lists),
         famousStreetsVersion: FAMOUS_STREETS_CONTENT_VERSION,
+        mainStreetsVersion: MAIN_STREETS_CONTENT_VERSION,
+    });
+}
+
+function serializeMonumentEntriesSetting(entries) {
+    return JSON.stringify({
+        version: MONUMENTS_CONTENT_VERSION,
+        entries: serializeMonumentEntries(entries),
     });
 }
 
@@ -1795,7 +1805,9 @@ async function getEffectiveContentLists({ monumentEntries = null } = {}) {
             Object.prototype.hasOwnProperty.call(parsed, 'famousStreets')
             ? normalizeNameList(parsed.famousStreets)
             : fallback.famousStreets,
-        mainStreets: Object.prototype.hasOwnProperty.call(parsed, 'mainStreets')
+        mainStreets:
+            parsed.mainStreetsVersion === MAIN_STREETS_CONTENT_VERSION &&
+            Object.prototype.hasOwnProperty.call(parsed, 'mainStreets')
             ? normalizeNameList(parsed.mainStreets)
             : fallback.mainStreets,
         // Monument list follows the saved monument entries so admin edits cannot silently drift.
@@ -1808,13 +1820,15 @@ async function getEffectiveContentLists({ monumentEntries = null } = {}) {
 async function getEffectiveMonumentEntries() {
     const fallback = cloneMonumentEntries(DEFAULT_CONTENT_SNAPSHOT.monuments);
     const parsed = parseJsonSetting(await db.getAppSetting(CONTENT_MONUMENTS_SETTING_KEY));
-    if (!parsed) {
+    if (
+        !parsed ||
+        Array.isArray(parsed) ||
+        parsed.version !== MONUMENTS_CONTENT_VERSION
+    ) {
         return fallback;
     }
 
-    const rawEntries = Array.isArray(parsed)
-        ? parsed
-        : (Array.isArray(parsed?.entries) ? parsed.entries : null);
+    const rawEntries = Array.isArray(parsed.entries) ? parsed.entries : null;
     if (!rawEntries) {
         return fallback;
     }
@@ -3060,7 +3074,7 @@ app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(a
     if (monumentsSettingUpdated) {
         await db.setAppSetting(
             CONTENT_MONUMENTS_SETTING_KEY,
-            JSON.stringify(serializeMonumentEntries(currentMonuments)),
+            serializeMonumentEntriesSetting(currentMonuments),
         );
     }
 
@@ -3088,7 +3102,7 @@ app.put('/api/editor/monuments', authenticateToken, requireAdminUser, asyncHandl
 
     const monuments = normalizeMonumentEntries(rawEntries);
     const serializedMonuments = serializeMonumentEntries(monuments);
-    await db.setAppSetting(CONTENT_MONUMENTS_SETTING_KEY, JSON.stringify(serializedMonuments));
+    await db.setAppSetting(CONTENT_MONUMENTS_SETTING_KEY, serializeMonumentEntriesSetting(monuments));
 
     const lists = await getEffectiveContentLists();
     lists.monuments = normalizeMonumentNameList(monuments.map((entry) => entry.name));
