@@ -92,7 +92,18 @@ const EXCLUDED_MANUAL_STREET_NAMES = [
   "Autoroute de l’Est",
   "Autoroute de Normandie",
   "Bretelle de contournement de la place Valhubert",
+  "Esplanade Pierre Vidal-Naquet",
+  "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 6 m",
+  "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 14 m",
   "rampe PMR",
+  "Quai A",
+  "Quai B",
+  "Quai C",
+  "Quai D",
+  "Quai E",
+  "Quai F",
+  "Rond-point des Champs-Elysées",
+  "Rond-point des Champs-Élysées-Marcel-Dassault",
 ];
 const EXCLUDED_MANUAL_STREET_NAME_KEYS = new Set(
   EXCLUDED_MANUAL_STREET_NAMES.map((name) => normalizeStreetNameForFilter(name)),

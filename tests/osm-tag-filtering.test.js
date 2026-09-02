@@ -79,6 +79,27 @@ test("Paris OSM import extracts flat osmtogeojson tags before filtering", () => 
   assert.equal(shouldKeepStreetForGame(tags), false);
 });
 
+test("Paris street filter excludes lettered quays", () => {
+  for (const letter of ["A", "B", "C", "D", "E", "F"]) {
+    assert.equal(shouldKeepStreetForGame({ name: `Quai ${letter}` }), false);
+  }
+  assert.equal(shouldKeepStreetForGame({ name: "Quai Branly" }), true);
+});
+
+test("Paris street filter excludes duplicate display names", () => {
+  const excludedNames = [
+    "Esplanade Pierre Vidal-Naquet",
+    "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 6 m",
+    "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 14 m",
+    "Rond-point des Champs-Elysées",
+    "Rond-point des Champs-Élysées-Marcel-Dassault",
+  ];
+  for (const name of excludedNames) {
+    assert.equal(shouldKeepStreetForGame({ name }), false);
+    assert.equal(isManuallyExcludedStreetName(name), true);
+  }
+});
+
 test("Paris OSM import excludes paths and private streets from generated streets", () => {
   const { features, skipped } = buildStreets(overpassFixture(), [TEST_ARRONDISSEMENT]);
 
@@ -238,6 +259,8 @@ test("Paris OSM import applies manual street exclusions without excluding nearby
   assert.equal(isManuallyExcludedStreetName("Escalier Daumesnil (accès PC12)"), true);
   assert.equal(isManuallyExcludedStreetName("Autoroute de l’Est"), true);
   assert.equal(isManuallyExcludedStreetName("Bretelle de contournement de la place Valhubert"), true);
+  assert.equal(isManuallyExcludedStreetName("Quai A"), true);
+  assert.equal(isManuallyExcludedStreetName("Quai F"), true);
   assert.equal(isManuallyExcludedStreetName("Rampe Caulaincourt"), false);
   assert.equal(skipped.excludedManualNames, 3);
   assert.deepEqual(features.map((feature) => feature.properties.name), ["Rampe Caulaincourt"]);

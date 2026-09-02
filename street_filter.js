@@ -27,6 +27,20 @@ const EXCLUDED_KEYWORDS = [
   "complexe",
 ];
 
+const EXCLUDED_EXACT_NAMES = new Set([
+  "esplanade pierre vidal-naquet",
+  "promenade bernard lafray-quartier de la plaine-de-monceau-6 m",
+  "promenade bernard lafray-quartier de la plaine-de-monceau-14 m",
+  "quai a",
+  "quai b",
+  "quai c",
+  "quai d",
+  "quai e",
+  "quai f",
+  "rond-point des champs-elysees",
+  "rond-point des champs-elysees-marcel-dassault",
+]);
+
 const SAFE_PREFIXES = new Set([
   "rue",
   "boulevard",
@@ -153,6 +167,10 @@ function shouldKeepStreetForGame(input = {}) {
   }
 
   if (shouldExcludeOsmTags(tags)) {
+    return false;
+  }
+
+  if (EXCLUDED_EXACT_NAMES.has(normalizedName)) {
     return false;
   }
 
