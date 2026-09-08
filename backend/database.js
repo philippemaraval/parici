@@ -2345,6 +2345,7 @@ async function getUserStats(userId) {
     `SELECT
        arrondissement_name,
        COUNT(*)::int AS games_played,
+       COUNT(*) FILTER (WHERE items_total > 0)::int AS measured_games,
        ROUND(
          AVG(
            CASE
@@ -2361,8 +2362,7 @@ async function getUserStats(userId) {
        AND arrondissement_name IS NOT NULL
        AND arrondissement_name <> ''
      GROUP BY arrondissement_name
-     ORDER BY games_played DESC, success_rate DESC, arrondissement_name ASC
-     LIMIT 40`,
+     ORDER BY games_played DESC, success_rate DESC, arrondissement_name ASC`,
     [userId]
   );
 

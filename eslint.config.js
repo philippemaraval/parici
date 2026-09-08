@@ -49,5 +49,9 @@ module.exports = [
       sourceType: "module",
     },
   },
+  {
+    files: ["src/public/js/camino-art.js", "src/public/js/canvas-avatar.js", "src/public/js/interface-icons.js"],
+    languageOptions: { sourceType: "module" },
+  },
   prettier,
 ];
