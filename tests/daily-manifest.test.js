@@ -48,3 +48,44 @@ test("Daily manifest uses diverse streets and rotates through administrative qua
   ]);
   assert(rows.some(({ street }) => !previouslyRestrictedNames.has(street.toLowerCase())));
 });
+
+test("Daily generation excludes Quai E even when an old street index contains it", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "parici-daily-exclusions-"));
+  try {
+    const index = path.join(dir, "index.json");
+    const output = path.join(dir, "manifest.csv");
+    const entries = Array.from({ length: 30 }, (_, i) => ({
+      name: `Rue Test ${i}`, arrondissement: `Secteur ${i}`,
+    }));
+    entries.push({ name: "Quai E", arrondissement: "Quartier de la Gare" });
+    fs.writeFileSync(index, JSON.stringify(entries));
+    const args = [path.join(ROOT, "scripts/generate_daily_manifest.js"),
+      "--from", "2027-01-01", "--days", "30", "--index", index, "--output", output];
+    execFileSync(process.execPath, args, { stdio: "pipe" });
+    const csv = fs.readFileSync(output, "utf8");
+    assert.equal(csv.trim().split("\n").length, 31);
+    assert.doesNotMatch(csv, /Quai E/);
+    args[args.indexOf("--days") + 1] = "31";
+    assert.throws(() => execFileSync(process.execPath, args, { stdio: "pipe" }), /Not enough unique streets: 30/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("the server ignores excluded Daily entries even in a cached manifest", () => {
+  const vm = require("node:vm");
+  const { shouldKeepStreetForGame } = require("../street_filter");
+  const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+  const start = source.indexOf("function getDailyManifestEntryByDate(");
+  const end = source.indexOf("\nfunction ", start + 1);
+  const valid = { streetName: "Rue Bruneseau" };
+  const entries = new Map([
+    ["2027-01-03", { streetName: "Quai E" }],
+    ["2027-04-17", valid],
+  ]);
+  const context = vm.createContext({ shouldKeepStreetForGame, loadDailyManifestByDate: () => entries });
+  vm.runInContext(source.slice(start, end), context);
+  assert.equal(context.getDailyManifestEntryByDate("2027-01-03"), null);
+  assert.equal(context.getDailyManifestEntryByDate("2027-04-17"), valid);
+  assert.equal(context.getDailyManifestEntryByDate("2027-01-04"), null);
+});
