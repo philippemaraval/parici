@@ -57,6 +57,31 @@ test("map zoom keeps Leaflet animations enabled without rewriting street styles"
   assert.doesNotMatch(app, /function synchronizeMapLayersAfterZoom/);
 });
 
+test("starting any game restores the full Paris view", () => {
+  const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
+  assert.match(app, /const PARIS_MAP_CENTER = \[48\.8566, 2\.3522\]/);
+  assert.match(app, /const PARIS_MAP_ZOOM = 12/);
+  assert.match(
+    app,
+    /function resetMapViewForSession\(\) \{[\s\S]*map\.setView\(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, \{ animate: !1 \}\)/,
+  );
+  assert.match(
+    app,
+    /function startNewSession\(options = \{\}\) \{[\s\S]*?clearHighlight\(\),\s*resetMapViewForSession\(\)/,
+  );
+  assert.match(app, /function startDailySession\(e\) \{[\s\S]*?resetMapViewForSession\(\)/);
+});
+
+test("map gestures cannot trigger pull-to-refresh", () => {
+  const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
+  const styles = fs.readFileSync(path.join(root, "style.css"), "utf8");
+  assert.match(
+    app,
+    /function canStartPullToRefresh\(e, t\) \{\s*if \(document\.body\.classList\.contains\("session-running"\)\) return !1;\s*if \(e instanceof Element && e\.closest\("#map"\)\) return !1/,
+  );
+  assert.match(styles, /#map\s*\{[^}]*overscroll-behavior:\s*none/s);
+});
+
 test("the Daily share artwork uses the Parici green palette without a sun", () => {
   const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
   assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);

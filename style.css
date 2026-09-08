@@ -115,6 +115,7 @@ body {
 #map {
   flex: 1 1 auto;
   z-index: 1;
+  overscroll-behavior: none;
 }
 
 #sidebar {

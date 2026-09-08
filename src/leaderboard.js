@@ -335,11 +335,21 @@ function appendZoneLeaderboards(rootElement, boards) {
       modeTitle.textContent = GAME_LABELS[gameType] || gameType;
       modeContainer.appendChild(modeTitle);
 
-      sections.sort((left, right) =>
-        left.arrondissementName && right.arrondissementName
-          ? left.arrondissementName.localeCompare(right.arrondissementName)
-          : 0,
-      );
+      sections.sort((left, right) => {
+        const leftName = left.arrondissementName || "";
+        const rightName = right.arrondissementName || "";
+        const leftNumber = Number.parseInt(leftName.match(/^\d{1,2}/)?.[0], 10);
+        const rightNumber = Number.parseInt(rightName.match(/^\d{1,2}/)?.[0], 10);
+        if (Number.isFinite(leftNumber) && Number.isFinite(rightNumber)) {
+          return leftNumber - rightNumber;
+        }
+        if (Number.isFinite(leftNumber)) return -1;
+        if (Number.isFinite(rightNumber)) return 1;
+        return leftName.localeCompare(rightName, "fr", {
+          numeric: true,
+          sensitivity: "base",
+        });
+      });
 
       sections.forEach((sectionData) => {
         const isArrondissementSection = zoneMode === "arrondissement" && sectionData.arrondissementName && sectionData.arrondissementName !== "unknown";
