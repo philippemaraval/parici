@@ -16,9 +16,11 @@
   Cache-Control: public, max-age=604800, immutable
   Content-Type: application/json; charset=utf-8
 
-# Fingerprinted build assets can be cached forever. Keeping this rule under
-# /assets avoids also marking /sw.js immutable.
-/assets/*
+# CSS/JS: cache long, URLs versionnées dans index.html
+/*.css
+  Cache-Control: public, max-age=604800, immutable
+
+/*.js
   Cache-Control: public, max-age=604800, immutable
 
 # HTML: NO cache

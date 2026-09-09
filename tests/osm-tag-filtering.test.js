@@ -109,16 +109,6 @@ test("Paris OSM import excludes paths and private streets from generated streets
   assert.equal(features[0].properties.osm_tags.highway, "residential");
 });
 
-test("Paris OSM import keeps public streets whose name starts with Cité", () => {
-  assert.equal(
-    shouldKeepStreetForGame({
-      name: "Cité Dupont",
-      highway: "residential",
-    }),
-    true,
-  );
-});
-
 test("Paris OSM import excludes streets located inside excluded woods", () => {
   const fixture = {
     version: 0.6,

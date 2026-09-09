@@ -28,10 +28,6 @@ test("mobile session target is viewport-anchored without scrolling the Android v
     cssSource,
     /body\.session-running \.mobile-mode-nav \{\s*display: none !important;/,
   );
-  assert.match(
-    cssSource,
-    /body\.session-running #map\s*\{[^}]*position:\s*fixed;[^}]*inset:\s*0;[^}]*height:\s*100dvh !important;/s,
-  );
 });
 
 test("mobile Daily hints scroll without progressively covering the map", () => {

@@ -35,6 +35,7 @@ const FREE_MODE_EXCLUDED_PREFIXES = new Set([
   "gare",
   "station",
   "metro",
+  "cite",
   "acces",
   "campagne",
   "parc",
@@ -108,7 +109,6 @@ const FREE_MODE_SAFE_PREFIXES = new Set([
   "passage",
   "allee",
   "allees",
-  "cite",
 ]);
 
 const FREE_MODE_WHITELIST = new Set([

@@ -5,6 +5,7 @@ const EXCLUDED_PREFIXES = new Set([
   "gare",
   "station",
   "metro",
+  "cite",
   "acces",
   "campagne",
   "parc",
@@ -78,7 +79,6 @@ const SAFE_PREFIXES = new Set([
   "passage",
   "allee",
   "allees",
-  "cite",
 ]);
 
 const RAW_WHITELIST = [

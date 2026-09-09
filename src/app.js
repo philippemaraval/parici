@@ -139,9 +139,6 @@ const MAP_REGION_MAX_BOUNDS = [
 const PARIS_MAP_CENTER = [48.8566, 2.3522];
 const PARIS_MAP_ZOOM = 12;
 let swRegistrationPromise = null;
-let swUpdatePromise = null;
-let swControllerReloadBound = false;
-let swControllerReloadTriggered = false;
 let notificationConfigCache = null;
 let dailyReminderAutoPromptInFlight = false;
 let backendWarmupPromise = null;
@@ -701,27 +698,12 @@ async function ensureServiceWorkerRegistration() {
     return null;
   }
 
-  if (!swControllerReloadBound) {
-    swControllerReloadBound = true;
-    let hasActiveController = Boolean(navigator.serviceWorker.controller);
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (!hasActiveController) {
-        hasActiveController = true;
-        return;
-      }
-      if (swControllerReloadTriggered) {
-        return;
-      }
-      swControllerReloadTriggered = true;
-      window.location.reload();
-    });
-  }
-
   if (!swRegistrationPromise) {
     swRegistrationPromise = navigator.serviceWorker
       .register("/sw.js", { updateViaCache: "none" })
       .then((registration) => {
         console.log("SW registered:", registration.scope);
+        registration.update().catch(() => { });
         return registration;
       })
       .catch((error) => {
@@ -732,31 +714,6 @@ async function ensureServiceWorkerRegistration() {
   }
 
   return swRegistrationPromise;
-}
-
-function requestServiceWorkerUpdate() {
-  if (!("serviceWorker" in navigator)) {
-    return Promise.resolve(null);
-  }
-  if (swUpdatePromise) {
-    return swUpdatePromise;
-  }
-  swUpdatePromise = ensureServiceWorkerRegistration()
-    .then(async (registration) => {
-      if (!registration) {
-        return null;
-      }
-      await registration.update();
-      return registration;
-    })
-    .catch((error) => {
-      console.warn("SW update failed:", error);
-      return null;
-    })
-    .finally(() => {
-      swUpdatePromise = null;
-    });
-  return swUpdatePromise;
 }
 
 async function getNotificationConfig(forceReload = false) {
@@ -3340,16 +3297,13 @@ function initUI() {
     }),
     window.addEventListener("pageshow", () => {
       monitorBackendAvailability();
-      requestServiceWorkerUpdate();
     }),
     window.addEventListener("focus", () => {
       monitorBackendAvailability();
-      requestServiceWorkerUpdate();
     }),
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
         monitorBackendAvailability();
-        requestServiceWorkerUpdate();
       }
     }),
     !navigator.onLine && setOfflineBannerVisible(true),
@@ -6499,7 +6453,9 @@ function fitTargetStreetText() {
   }),
   window.addEventListener("load", () => {
     if ("serviceWorker" in navigator) {
-      requestServiceWorkerUpdate();
+      ensureServiceWorkerRegistration().catch((e) =>
+        console.warn("SW registration failed:", e),
+      );
     }
 
     updateHapticsUI();
