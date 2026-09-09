@@ -82,21 +82,6 @@ test("map gestures cannot trigger pull-to-refresh", () => {
   assert.match(styles, /#map\s*\{[^}]*overscroll-behavior:\s*none/s);
 });
 
-test("the Daily button stays actionable while the mobile map is loading", () => {
-  const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
-  assert.match(app, /let isDailyLaunchPending = false/);
-  assert.match(
-    app,
-    /\(!areStreetsReady && !!streetsLoadingPromise\) \|\| isDailyLaunchPending/,
-  );
-  assert.match(app, /dailyModeBtn\.disabled = false/);
-  assert.match(app, /label\.textContent = isLoading \? "Chargement…" : "Daily"/);
-  assert.match(
-    app,
-    /async function handleDailyModeClick\(\) \{[\s\S]*?isDailyLaunchPending = true;[\s\S]*?await loadStreets\(\{ force: true \}\)[\s\S]*?finally \{\s*isDailyLaunchPending = false;/,
-  );
-});
-
 test("the Daily share artwork uses the Parici green palette without a sun", () => {
   const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
   assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);

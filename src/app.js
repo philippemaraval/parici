@@ -1290,7 +1290,6 @@ let sessionStreets = [],
   pendingFriendChallengeArrondissementName = null;
 let streetsLoadingPromise = null;
 let areStreetsReady = false;
-let isDailyLaunchPending = false;
 let mapInvalidateTimeoutIds = [];
 let arrondissementsLoadingPromise = null;
 let monumentsLoadingPromise = null;
@@ -3839,17 +3838,10 @@ function syncDailyModeButtonLoadingState() {
     return;
   }
 
-  const isLoading =
-    (!areStreetsReady && !!streetsLoadingPromise) || isDailyLaunchPending;
-  const label = dailyModeBtn.querySelector("span");
-  dailyModeBtn.disabled = false;
+  const isLoading = !areStreetsReady && !!streetsLoadingPromise;
+  dailyModeBtn.disabled = isLoading;
   dailyModeBtn.setAttribute("aria-busy", isLoading ? "true" : "false");
-  dailyModeBtn.title = isLoading
-    ? "Le Daily se lancera dès que la carte sera prête."
-    : "";
-  if (label) {
-    label.textContent = isLoading ? "Chargement…" : "Daily";
-  }
+  dailyModeBtn.title = isLoading ? "Chargement des rues..." : "";
 }
 
 function requestMapInvalidateSize() {
@@ -6047,47 +6039,35 @@ async function handleDailyModeClick() {
     showMessage("Désactivez le défi amis avant de lancer un Daily.", "warning");
     return;
   }
-  if (!currentUser?.token) {
-    showMessage("Connectez-vous pour accéder au défi quotidien.", "warning");
-    return;
-  }
-  if (isDailyLaunchPending) {
-    showMessage("Le Daily se prépare...", "info");
-    return;
-  }
-
-  isDailyLaunchPending = true;
-  syncDailyModeButtonLoadingState();
-  try {
-    if (!areStreetsReady) {
-      showMessage("Chargement des rues...", "info");
-      const loaded = await loadStreets({ force: true });
-      if (!loaded) {
-        showMessage("Impossible de lancer le Daily: rues indisponibles.", "error");
+  if (currentUser && currentUser.token)
+    try {
+      if (!areStreetsReady) {
+        showMessage("Chargement des rues...", "info");
+        const loaded = await loadStreets({ force: true });
+        if (!loaded) {
+          showMessage("Impossible de lancer le Daily: rues indisponibles.", "error");
+          return;
+        }
+      }
+      const e = await fetchWithStartupRetry(
+        API_URL + "/api/daily",
+        { headers: { Authorization: `Bearer ${currentUser.token}` } },
+        { timeoutMs: 15000, retryDelaysMs: [1000, 2500] },
+      );
+      if (e.status === 401 || e.status === 403) {
+        currentUser = null;
+        clearCurrentUserFromStorage();
+        updateUserUI();
+        showMessage("Ta session a expiré. Reconnecte-toi pour lancer le Daily.", "warning");
         return;
       }
+      if (!e.ok) throw await buildApiError(e, "Erreur chargement défi");
+      startDailySession(await e.json());
+    } catch (e) {
+      (console.error(e),
+        showMessage("Impossible de charger le défi quotidien.", "error"));
     }
-    const e = await fetchWithStartupRetry(
-      API_URL + "/api/daily",
-      { headers: { Authorization: `Bearer ${currentUser.token}` } },
-      { timeoutMs: 15000, retryDelaysMs: [1000, 2500] },
-    );
-    if (e.status === 401 || e.status === 403) {
-      currentUser = null;
-      clearCurrentUserFromStorage();
-      updateUserUI();
-      showMessage("Ta session a expiré. Reconnecte-toi pour lancer le Daily.", "warning");
-      return;
-    }
-    if (!e.ok) throw await buildApiError(e, "Erreur chargement défi");
-    startDailySession(await e.json());
-  } catch (e) {
-    console.error(e);
-    showMessage("Impossible de charger le défi quotidien.", "error");
-  } finally {
-    isDailyLaunchPending = false;
-    syncDailyModeButtonLoadingState();
-  }
+  else showMessage("Connectez-vous pour accéder au défi quotidien.", "warning");
 }
 let dailyTargetData = null,
   dailyTargetGeoJson = null,
