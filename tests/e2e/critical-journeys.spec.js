@@ -88,8 +88,8 @@ test("le Daily récupère la connexion lorsque iOS signale hors ligne à tort", 
   );
 });
 
-for (const rejectReset of [false, true]) {
-  test(`le Daily ouvre une carte utilisable (recentrage en erreur : ${rejectReset})`, async ({
+for (const scenario of ["normal", "reset-error", "stale-manifest"]) {
+  test(`le Daily ouvre une carte utilisable (${scenario})`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 412, height: 915 });
@@ -101,11 +101,25 @@ for (const rejectReset of [false, true]) {
       localStorage.setItem("camino_auth_token", "e2e-player-token");
     });
 
+    if (scenario === "stale-manifest") {
+      await page.route("**/data/map/manifest.json*", (route) =>
+        route.fulfill({
+          json: { overview: { url: "/data/map/removed.geojson" } },
+        }),
+      );
+      await page.route("**/data/map/removed.geojson", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "text/html",
+          body: "<!doctype html><title>Parici</title>",
+        }),
+      );
+    }
     await page.goto("/?view=daily&e2eMap=1");
     const dailyButton = page.locator("#daily-mode-btn");
     await expect(page.locator("#map-status")).toHaveText("Carte OK");
     await expect(dailyButton).toBeEnabled();
-    if (rejectReset)
+    if (scenario === "reset-error")
       await page.evaluate(() => {
         window.L.Map.prototype.setView = () => {
           throw new Error("recentrage Leaflet simulé indisponible");

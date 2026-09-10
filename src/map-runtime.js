@@ -79,16 +79,14 @@ function normalizeQuarterLookupKey(value) {
 
 async function normalizeStreetArrondissements(features) {
   let response;
+  let payload;
   try {
     response = await fetch("data/paris_quartiers.geojson?v=2");
+    if (!response.ok) return features;
+    payload = await response.json();
   } catch {
     return features;
   }
-  if (!response.ok) {
-    return features;
-  }
-
-  const payload = await response.json();
   const arrondissementByQuarter = new Map();
   (payload.features || []).forEach((feature) => {
     const properties = feature?.properties || {};
@@ -151,7 +149,7 @@ export async function loadStreetsRuntime({
   const remoteApiBase = String(apiUrl || "").trim().replace(/\/+$/, "");
   const candidateRequests = [];
   try {
-    const manifestResponse = await fetch("data/map/manifest.json");
+    const manifestResponse = await fetch("data/map/manifest.json?v=20260910-recovery", { cache: "no-store" });
     if (manifestResponse.ok) {
       const manifest = await manifestResponse.json();
       if (manifest?.overview?.url) candidateRequests.push({ url: manifest.overview.url, options: {} });
@@ -159,7 +157,7 @@ export async function loadStreetsRuntime({
   } catch (error) {
     console.warn("Manifest cartographique optimisé indisponible, utilisation du secours.", error);
   }
-  candidateRequests.push({ url: "data/paris_rues_light.geojson?v=13", options: {} });
+  candidateRequests.push({ url: "data/paris_rues_light.geojson?v=20260910-recovery", options: { cache: "no-store" } });
   if (remoteApiBase) {
     candidateRequests.push({
       url: `${remoteApiBase}/api/streets-light`,
@@ -167,7 +165,7 @@ export async function loadStreetsRuntime({
     });
   }
 
-  let response = null;
+  let payload = null;
   let selectedUrl = "";
   let lastError = null;
   for (const candidate of candidateRequests) {
@@ -177,7 +175,14 @@ export async function loadStreetsRuntime({
         lastError = new Error(`Erreur HTTP ${nextResponse.status} (${candidate.url})`);
         continue;
       }
-      response = nextResponse;
+      // A removed hashed asset can return the HTML application shell with HTTP 200.
+      // Validate the body inside the fallback loop, not after selecting the source.
+      const candidatePayload = await nextResponse.json();
+      if (candidatePayload?.type !== "FeatureCollection" ||
+          !Array.isArray(candidatePayload.features) || !candidatePayload.features.length) {
+        throw new Error(`Carte invalide ou vide (${candidate.url})`);
+      }
+      payload = candidatePayload;
       selectedUrl = candidate.url;
       break;
     } catch (error) {
@@ -185,11 +190,10 @@ export async function loadStreetsRuntime({
     }
   }
 
-  if (!response) {
+  if (!payload) {
     throw lastError || new Error("Impossible de charger les rues");
   }
 
-  const payload = await response.json();
   const allStreetFeatures = await normalizeStreetArrondissements(payload.features || []);
   const streetLayersById = new Map();
   const streetLayersByName = new Map();

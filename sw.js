@@ -162,6 +162,14 @@ self.addEventListener("fetch", (event) => {
 
   const isNavigation = request.mode === "navigate";
   const isSameOrigin = url.origin === self.location.origin;
+  if (isSameOrigin && request.cache === "no-store") {
+    event.respondWith(fetch(request));
+    return;
+  }
+  if (isSameOrigin && url.pathname === "/data/map/manifest.json") {
+    event.respondWith(networkFirst(request, undefined, NAVIGATION_NETWORK_TIMEOUT_MS));
+    return;
+  }
   const isDataRequest = isSameOrigin && url.pathname.startsWith("/data/");
   const isStaticAsset =
     isSameOrigin &&

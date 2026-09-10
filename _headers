@@ -11,9 +11,9 @@
   Cache-Control: no-cache, no-store, must-revalidate
   Service-Worker-Allowed: /
 
-# GeoJSON data files: cache 1 week (data changes via OSM sync + redeploy)
+# Mutable data and manifests must be revalidated after each deployment.
 /data/*
-  Cache-Control: public, max-age=604800, immutable
+  Cache-Control: no-cache, must-revalidate
   Content-Type: application/json; charset=utf-8
 
 # Fingerprinted build assets can be cached forever. Keeping this rule under
