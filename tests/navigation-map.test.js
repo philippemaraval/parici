@@ -59,17 +59,33 @@ test("map zoom keeps Leaflet animations enabled without rewriting street styles"
 
 test("starting any game restores the full Paris view", () => {
   const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
+  const dailySession = app.slice(
+    app.indexOf("function startDailySession(e)"),
+    app.indexOf("function endDailySession()"),
+  );
   assert.match(app, /const PARIS_MAP_CENTER = \[48\.8566, 2\.3522\]/);
   assert.match(app, /const PARIS_MAP_ZOOM = 12/);
   assert.match(
     app,
-    /function resetMapViewForSession\(\) \{[\s\S]*map\.setView\(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, \{ animate: !1 \}\)/,
+    /function resetMapViewForSession\(\) \{[\s\S]*try \{[\s\S]*map\.setView\(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, \{ animate: !1 \}\)[\s\S]*catch \(error\)/,
+  );
+  assert.match(
+    app,
+    /function scheduleMapViewResetForSession\(\) \{[\s\S]*requestAnimationFrame\(\(\) => \{[\s\S]*resetMapViewForSession\(\);[\s\S]*requestMapInvalidateSize\(\)/,
   );
   assert.match(
     app,
     /function startNewSession\(options = \{\}\) \{[\s\S]*?clearHighlight\(\),\s*resetMapViewForSession\(\)/,
   );
-  assert.match(app, /function startDailySession\(e\) \{[\s\S]*?resetMapViewForSession\(\)/);
+  assert.doesNotMatch(
+    dailySession.slice(0, dailySession.indexOf("(isSessionRunning = !0)")),
+    /resetMapViewForSession\(\)|scheduleMapViewResetForSession\(\)/,
+  );
+  assert.ok(
+    dailySession.indexOf("scheduleMapViewResetForSession()")
+      > dailySession.indexOf("(isSessionRunning = !0)"),
+    "the Daily map reset must run only after the session layout is visible",
+  );
 });
 
 test("map gestures cannot trigger pull-to-refresh", () => {
