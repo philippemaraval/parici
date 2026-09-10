@@ -4768,6 +4768,21 @@ function applyDailyGuessSyncResult(result) {
   }
   if (result.success || result.attempts_count >= 7) {
     loadAllLeaderboards();
+    if (dailyTargetData.catchUp) {
+      const history = document.getElementById("daily-guesses-history");
+      if (history && !document.getElementById("daily-catchup-next")) {
+        const next = document.createElement("button");
+        next.id = "daily-catchup-next";
+        next.className = "btn-primary";
+        next.textContent = "Jouer au Daily d’aujourd’hui";
+        next.onclick = () => {
+          endSession();
+          void handleDailyModeClick();
+        };
+        history.appendChild(next);
+      }
+      showMessage("Rattrapage enregistré ! Le Daily d’aujourd’hui est disponible.", "success");
+    }
   }
 }
 
@@ -6299,7 +6314,7 @@ function startDailySession(e) {
       ? t.success
         ? "🎉 Défi réussi !"
         : "❌ Défi échoué"
-      : `🎯 Défi quotidien — ${o} essai${o > 1 ? "s" : ""} restant${o > 1 ? "s" : ""}`;
+      : `🎯 ${e.catchUp ? "Rattrapage du 09/09" : "Défi quotidien"} — ${o} essai${o > 1 ? "s" : ""} restant${o > 1 ? "s" : ""}`;
   (setTargetPanelTitleText(u),
     updateTargetItemCounter(),
     (isSessionRunning = !0),

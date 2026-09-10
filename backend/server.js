@@ -9,6 +9,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const webPush = require('web-push');
 const db = require('./database');
+const { selectDailyDateForUser } = require('./daily-catchup');
 const {
     buildDailyAvailabilityPayload,
     buildDailyStreakReminderPayload,
@@ -4445,7 +4446,8 @@ app.get('/api/daily/streak', authenticateToken, asyncHandler(async (req, res) =>
 
 app.get('/api/daily', authenticateToken, async (req, res) => {
     try {
-        const date = await ensureDailyTarget();
+        const today = await ensureDailyTarget();
+        const date = await selectDailyDateForUser(db, req.user, today);
         const target = await db.getDailyTarget(date);
         const manifestEntry = getDailyManifestEntryByDate(date);
         const userStatus = await db.startDailyUserAttempt(req.user.id, date);
@@ -4455,6 +4457,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
 
         const response = {
             date,
+            catchUp: date !== today,
             streetName: target.street_name,
             displayStreetName:
                 resolveStreetIndexEntry(target.street_name, target.arrondissement)?.osmName
@@ -4474,6 +4477,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
             response.targetGeometry = await getTargetGeometry(target);
         }
 
+        res.setHeader('Cache-Control', 'no-store');
         res.json(response);
     } catch (err) {
         console.error('Daily status error:', err);
