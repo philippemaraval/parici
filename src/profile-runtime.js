@@ -1,5 +1,3 @@
-import { mountProfileHeatmap } from "./profile-heatmap.js";
-import { avatarMarkup, iconMarkup } from "./public/js/camino-art.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
 import { fetchWithStartupRetry } from "./api-client.js";
 
@@ -217,13 +215,13 @@ function buildReferralPanelHtml(profile) {
     : "";
 
   return `
-    <details class="profile-section-collapsible profile-invite"><summary>Inviter des proches</summary><section class="profile-referral-card">
+    <section class="profile-referral-card">
       <div class="profile-referral-header">
         <div>
-          <div class="profile-referral-title">Jouez à plusieurs</div>
-          ${buildReferralHeaderHtml(profile)}
+          <div class="profile-referral-title">Parrainage</div>
+          <div class="profile-referral-code" title="Code de parrainage">${code || "—"}</div>
         </div>
-        <div class="profile-referral-count">${tier1Count}/3<small>parrainages validés</small></div>
+        <div class="profile-referral-count">${tier1Count}/3</div>
       </div>
       <form id="referral-claim-form" class="profile-referral-form">
         <input id="referral-code-input" type="text" inputmode="text" autocomplete="off" maxlength="32" placeholder="Code reçu" aria-label="Code de parrainage reçu">
@@ -231,7 +229,7 @@ function buildReferralPanelHtml(profile) {
       </form>
       <div id="referral-claim-status" class="profile-referral-status">${totalCount} filleul${totalCount > 1 ? "s" : ""}</div>
       ${linkedLabel}
-    </section></details>`;
+    </section>`;
 }
 
 function buildReferralHeaderHtml(profile) {
@@ -360,6 +358,19 @@ function getModeLabel(mode, zoneLabels) {
   return zoneLabels?.[mode] || mode || "—";
 }
 
+function getHeatClass(gamesPlayed, successRate) {
+  if (gamesPlayed < 3) {
+    return "profile-heat--unknown";
+  }
+  if (successRate >= 70) {
+    return "profile-heat--known";
+  }
+  if (successRate >= 45) {
+    return "profile-heat--mid";
+  }
+  return "profile-heat--weak";
+}
+
 function buildProfileCompactStatsHTML(profile, zoneLabels) {
   const weeklyProgress = Array.isArray(profile.weekly_progress) ? profile.weekly_progress : [];
   const arrondissementStats = Array.isArray(profile.arrondissement_stats) ? profile.arrondissement_stats : [];
@@ -374,7 +385,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
     .sort((left, right) => toNumber(left.success_rate) - toNumber(right.success_rate))[0];
   const insight = weakestMode
     ? `Zone à travailler: ${getModeLabel(weakestMode.mode, zoneLabels)} (${toNumber(weakestMode.success_rate).toFixed(1)}% de réussite).`
-    : "Jouez quelques parties pour voir votre progression.";
+    : "Joue quelques sessions pour débloquer des insights personnalisés.";
 
   const maxWeeklyGames = Math.max(1, ...weeklyProgress.map((row) => toNumber(row.games_played, 0)));
   const weeklyChartHtml = weeklyProgress.length > 0
@@ -391,6 +402,15 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
       })
       .join("")
     : '<p class="profile-stats-empty">Pas assez de sessions pour afficher une évolution.</p>';
+
+  const heatChipsHtml = arrondissementStats.length > 0
+    ? arrondissementStats.slice(0, 24).map((row) => {
+      const gamesPlayed = toNumber(row.games_played, 0);
+      const successRate = toNumber(row.success_rate, 0);
+      const heatClass = getHeatClass(gamesPlayed, successRate);
+      return `<span class="profile-heat-chip ${heatClass}" title="${row.arrondissement_name}: ${successRate.toFixed(1)}% • ${gamesPlayed} parties">${row.arrondissement_name}</span>`;
+    }).join("")
+    : '<p class="profile-stats-empty">Aucune donnée arrondissement pour le moment.</p>';
 
   const arrondissementRowsHtml = arrondissementStats.length > 0
     ? arrondissementStats.slice(0, 10).map((row) => `
@@ -427,7 +447,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
 
   return `
     <section class="profile-compact-stats">
-      <div class="profile-compact-header">Statistiques</div>
+      <div class="profile-compact-header">Mes stats (compact)</div>
       <div class="profile-kpi-grid">
         <div class="profile-kpi-card">
           <span class="profile-kpi-value">${globalSuccessRate.toFixed(1)}%</span>
@@ -453,10 +473,9 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
         </details>
 
         <details class="profile-stats-section">
-          <summary>Votre aisance par arrondissement</summary>
+          <summary>Carte de chaleur arrondissements</summary>
           <div class="profile-stats-section-content">
-            <div class="profile-heatmap" data-profile-heatmap>Chargement de la carte…</div>
-            <div class="profile-heatmap-legend"><span style="--heat:#e4e7eb">Sans résultat</span><span style="--heat:#db7951">Moins de 45 %</span><span style="--heat:#f2a900">45 à 69 %</span><span style="--heat:#33865b">70 % et plus</span></div>
+            <div class="profile-heat-grid">${heatChipsHtml}</div>
           </div>
         </details>
 
@@ -473,7 +492,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
         </details>
 
         <details class="profile-stats-section">
-          <summary>Réussite par terrain de jeu</summary>
+          <summary>Réussite par difficulté</summary>
           <div class="profile-stats-section-content">
             <div class="profile-difficulty-list">${difficultyBarsHtml}</div>
           </div>
@@ -514,7 +533,7 @@ export function renderUserStickerRuntime(currentUser) {
     const avatarEl = document.createElement("span");
     const nameEl = document.createElement("span");
     avatarEl.className = "user-sticker-avatar";
-    avatarEl.innerHTML = avatarMarkup(avatarValue);
+    avatarEl.textContent = avatarValue;
     nameEl.className = "user-sticker-name";
     nameEl.textContent = currentUser.username;
     sticker.replaceChildren(avatarEl, nameEl);
@@ -537,7 +556,6 @@ export function updateUserUIRuntime({
   renderUserSticker,
   loadProfile,
 }) {
-  document.getElementById("profile")?.classList.toggle("is-connected", Boolean(currentUser?.username));
   const currentUserLabel = document.getElementById("current-user-label");
   const authBlock = document.querySelector(".auth-block");
   const logoutBtn = document.getElementById("logout-btn");
@@ -704,69 +722,116 @@ export function loadProfileRuntime({
           })
           : "—";
 
-        const badges = computeBadgesRuntime(profile, hasReachedGlobalRank, hasReachedVilleRank);
-        const unlocked = badges.filter((badge) => badge.unlocked);
-        const renderReward = (badge) => `<div class="profile-badge ${badge.unlocked ? "unlocked" : "locked"}" tabindex="0" title="${escapeHtml(badge.name)} — ${escapeHtml(badge.desc)}" aria-label="${escapeHtml(badge.name)} : ${badge.unlocked ? "débloqué" : "verrouillé"}. ${escapeHtml(badge.desc)}">
-          <span class="badge-emoji">${badge.unlocked ? avatarMarkup(badge.emoji) : iconMarkup("lock")}</span>
-          <span class="badge-name">${escapeHtml(badge.name)}</span>
-        </div>`;
-
         let html = `
           <div class="profile-header">
-            <div class="profile-avatar">${avatarMarkup(profile.avatar)}</div>
+            <div class="profile-avatar">
+              ${profile.avatar || "👤"}
+              <button type="button" class="edit-avatar-badge" id="btn-edit-avatar" title="Changer d'avatar" aria-label="Changer d'avatar">✏️</button>
+            </div>
             <div class="profile-info">
-              <div class="profile-name">${escapeHtml(profile.username)}</div>
-              <div class="profile-title"><a href="/arbre-rangs.html" class="profile-rank-link" title="Voir ma progression dans les rangs">${globalTitle}</a></div>
-              <p class="profile-member-since">Membre depuis le ${memberSince}</p>
+              <div class="profile-name">${profile.username}</div>
+              <div class="profile-title">
+                <a
+                  href="/arbre-rangs.html"
+                  class="profile-rank-link"
+                  title="Afficher l'arbre d'avancement des rangs"
+                >
+                  ${globalTitle}
+                </a>
+              </div>
+              ${buildReferralHeaderHtml(profile)}
             </div>
           </div>
-          <button type="button" class="profile-avatar-action" id="btn-edit-avatar">${iconMarkup("edit")} Changer d’avatar</button>
-          <div class="profile-stats-grid" aria-label="Votre activité en bref">
-            <div class="profile-stat"><span class="profile-stat-value">${totalGames}</span><span class="profile-stat-label">Parties jouées</span></div>
-            <div class="profile-stat"><span class="profile-stat-value">${dailySuccesses}<small>/${dailyTotalDays}</small></span><span class="profile-stat-label">Daily réussis</span></div>
-            <div class="profile-stat"><span class="profile-stat-value">${unlocked.length}<small>/${badges.length}</small></span><span class="profile-stat-label">Récompenses</span></div>
-          </div>
-          <section class="profile-daily-summary" aria-labelledby="profile-daily-heading">
-            <h3 id="profile-daily-heading" class="profile-section-heading">Votre rendez-vous Daily</h3>
-            ${dailyTotalDays > 0
-              ? `<span>En moyenne, ${dailyAverageAttempts.toFixed(1)} essais pour trouver la rue.</span><br><span class="profile-daily-current-streak">🔥 Série actuelle : ${parseInt(profile.daily?.current_streak) || 0}</span><br><span class="profile-daily-best-streak">🏆 Meilleure série : ${parseInt(profile.daily?.max_streak) || 0}</span>`
-              : `<span>Une nouvelle rue à découvrir chaque jour.</span><br><a href="/?view=daily">Jouer mon premier Daily</a>`}
-          </section>
-          <section class="profile-rewards" aria-labelledby="profile-rewards-heading">
-            <h3 id="profile-rewards-heading" class="profile-section-heading">Vos récompenses</h3>
-            <p class="profile-section-copy">${unlocked.length ? "Des souvenirs de vos parties, à porter en avatar." : "Jouez votre première partie pour commencer la collection."}</p>
-            ${unlocked.length ? `<div class="profile-reward-preview">${unlocked.slice(0, 4).map(renderReward).join("")}</div>` : ""}
-            <details class="profile-section-collapsible">
-              <summary>Voir toute la collection · ${unlocked.length}/${badges.length}</summary>
-              <div class="profile-badges-grid">${badges.map(renderReward).join("")}</div>
-            </details>
-          </section>
-          <details class="profile-analysis">
-            <summary>Statistiques et progression</summary>
-            <div class="profile-score-summary"><span>Meilleur score : <strong>${bestScore.toFixed(1)}</strong></span><span>Score moyen : <strong>${Number(averageScore).toFixed(1)}</strong></span></div>
-            ${buildProfileCompactStatsHTML(profile, zoneLabels)}`;
+
+          <div class="profile-stats-grid">
+            <div class="profile-stat">
+              <span class="profile-stat-value">${totalGames}</span>
+              <span class="profile-stat-label">Parties</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat-value">${bestScore.toFixed(1)}</span>
+              <span class="profile-stat-label">Meilleur</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat-value">${averageScore}</span>
+              <span class="profile-stat-label">Moyenne</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat-value">${dailySuccesses}/${dailyTotalDays}</span>
+              <span class="profile-stat-label">Daily ✅</span>
+            </div>
+          </div>`;
+        html += buildProfileCompactStatsHTML(profile, zoneLabels);
+        html += buildReferralPanelHtml(profile);
 
         if (profile.modes && profile.modes.length > 0) {
-          html += '<details class="profile-section-collapsible"><summary class="profile-section-title">Résultats par mode</summary><div class="profile-modes">';
+          html += '<details class="profile-section-collapsible">';
+          html += '<summary class="profile-section-title">Détail par mode</summary>';
+          html += '<div class="profile-modes">';
           profile.modes.forEach((modeEntry) => {
             const zoneLabel = zoneLabels[modeEntry.mode] || modeEntry.mode;
             const gameLabel = gameLabels[modeEntry.game_type] || modeEntry.game_type;
             const highScore = parseFloat(modeEntry.high_score) || 0;
-            const scoreLabel = modeEntry.game_type === "classique" ? highScore.toFixed(1) : String(Math.round(highScore));
-            const title = getPlayerTitle(highScore, modeEntry.mode, modeEntry.game_type, modeEntry.best_items_total || 0, modeEntry.best_items_correct || 0);
-            html += `<div class="profile-mode-row">
-              <div class="profile-mode-name">${escapeHtml(zoneLabel)} — ${escapeHtml(gameLabel)}</div>
-              <div class="profile-mode-details"><span>🏆 ${scoreLabel}</span><span>📊 Moyenne ${Number.parseFloat(modeEntry.avg_score || 0).toFixed(1)}</span><span>🎮 ${modeEntry.games_played} parties</span></div>
-              <div class="profile-mode-title">${title}</div>
-            </div>`;
+            const scoreLabel =
+              modeEntry.game_type === "classique"
+                ? highScore.toFixed(1)
+                : String(Math.round(highScore));
+            const title = getPlayerTitle(
+              highScore,
+              modeEntry.mode,
+              modeEntry.game_type,
+              modeEntry.best_items_total || 0,
+              modeEntry.best_items_correct || 0,
+            );
+            html += `
+              <div class="profile-mode-row">
+                <div class="profile-mode-name">${zoneLabel} — ${gameLabel}</div>
+                <div class="profile-mode-details">
+                  <span>🏆 ${scoreLabel}</span>
+                  <span>📊 Ø${parseFloat(modeEntry.avg_score).toFixed(1)}</span>
+                  <span>🎮 ${modeEntry.games_played}</span>
+                </div>
+                <div class="profile-mode-title">${title}</div>
+              </div>`;
           });
           html += "</div></details>";
         }
-        html += "</details>";
-        html += buildReferralPanelHtml(profile);
+
+        if (dailyTotalDays > 0) {
+          html += `
+            <div class="profile-daily-summary">
+              <span>📅 Daily : ${dailyAverageAttempts} essais en moyenne</span>
+              ${profile.daily?.current_streak > 0 ? `<br><span class="profile-daily-current-streak">🔥 Série actuelle : ${profile.daily.current_streak}</span>` : ""}
+              ${profile.daily?.max_streak > 0 ? `<br><span class="profile-daily-best-streak">🏆 Meilleure série : ${profile.daily.max_streak}</span>` : ""}
+            </div>`;
+        }
+
+        const badges = computeBadgesRuntime(profile, hasReachedGlobalRank, hasReachedVilleRank);
+        const unlocked = badges.filter((badge) => badge.unlocked);
+        const locked = badges.filter((badge) => !badge.unlocked);
+
+        html += `<details class="profile-section-collapsible">`;
+        html += `<summary class="profile-badges-title">Succès (${unlocked.length}/${badges.length})</summary>`;
+        html += '<div class="profile-badges-grid">';
+
+        unlocked.forEach((badge) => {
+          html += `<div class="profile-badge unlocked" tabindex="0" title="${badge.name}\n✅ ${badge.desc}" data-tooltip="${badge.name}\n✅ ${badge.desc}" aria-label="${badge.name} débloqué. ${badge.desc}">
+            <span class="badge-emoji">${badge.emoji}</span>
+            <span class="badge-name">${badge.name}</span>
+          </div>`;
+        });
+
+        locked.forEach((badge) => {
+          html += `<div class="profile-badge locked" tabindex="0" title="${badge.name}\n🔒 ${badge.desc}" data-tooltip="${badge.name}\n🔒 ${badge.desc}" aria-label="${badge.name} verrouillé. ${badge.desc}">
+            <span class="badge-emoji">🔒</span>
+            <span class="badge-name">${badge.name}</span>
+          </div>`;
+        });
+
+        html += "</div></details>";
+        html += `<div class="profile-member-since">Membre depuis le ${memberSince}</div>`;
 
         profileContent.innerHTML = html;
-        mountProfileHeatmap(profileContent, profile.arrondissement_stats || []);
         initAvatarSelector(profile.avatar || "👤", globalRankMeta.level, profile);
         bindSingleOpenAccordion(profileContent);
         bindReferralCopyButton(profileContent);
@@ -858,9 +923,7 @@ export function renderAvatarGridRuntime({
     const item = document.createElement("button");
     item.type = "button";
     item.className = "avatar-item";
-    item.innerHTML = avatarMarkup(avatarDef.emoji);
-    item.setAttribute("aria-label", avatarDef.name || "Avatar " + avatarDef.emoji);
-    item.setAttribute("aria-pressed", String(avatarDef.emoji === currentAvatar));
+    item.textContent = avatarDef.emoji;
 
     if (avatarDef.emoji === currentAvatar) {
       item.classList.add("selected");

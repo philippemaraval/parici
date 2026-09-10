@@ -11,7 +11,7 @@ test("leaderboards never interpolate usernames or avatars into HTML", () => {
   const leaderboard = read("src/leaderboard.js");
   const app = read("src/app.js");
 
-  assert.match(leaderboard, /avatarElement\.innerHTML = avatarMarkup\(avatar\)/);
+  assert.match(leaderboard, /avatarElement\.textContent/);
   assert.match(leaderboard, /document\.createTextNode\(String\(username/);
   assert.doesNotMatch(
     leaderboard,
@@ -99,11 +99,4 @@ test("CORS, analytics, rate limiting, auditing and headers are hardened", () => 
   assert.match(headers, /Strict-Transport-Security:/);
   assert.match(headers, /Permissions-Policy:/);
   assert.match(headers, /frame-ancestors 'none'/);
-});
-
-test("avatar artwork cannot interpolate untrusted input", async () => {
-  const source = read("src/public/js/camino-art.js");
-  const { avatarMarkup } = await import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
-  assert.match(avatarMarkup('<img src=x onerror=alert(1)>'), /icons\/person\.svg/);
-  assert.doesNotMatch(avatarMarkup('<img src=x onerror=alert(1)>'), /onerror/);
 });

@@ -1,6 +1,5 @@
-(async function () {
+(function () {
   "use strict";
-  const { renderToggle } = await import("/src/public/js/camino-art.js");
 
   const soundButton = document.querySelector(".site-header__control--sound");
   const hapticsButton = document.querySelector(".site-header__control--haptics");
@@ -19,8 +18,23 @@
       : "https://camino-paris.onrender.com";
 
   function render() {
-    renderToggle(soundButton, "sound", localStorage.getItem(soundKey) !== "off");
-    renderToggle(hapticsButton, "haptics", localStorage.getItem(hapticsKey) !== "false");
+    if (soundButton) {
+      const enabled = localStorage.getItem(soundKey) !== "off";
+      soundButton.textContent = enabled ? "🔊" : "🔇";
+      soundButton.setAttribute("aria-label", enabled ? "Désactiver le son" : "Activer le son");
+      soundButton.title = enabled ? "Désactiver le son" : "Activer le son";
+    }
+    if (hapticsButton) {
+      const enabled = localStorage.getItem(hapticsKey) !== "false";
+      hapticsButton.textContent = enabled ? "📳" : "📴";
+      hapticsButton.setAttribute(
+        "aria-label",
+        enabled ? "Désactiver les vibrations" : "Activer les vibrations",
+      );
+      hapticsButton.title = enabled
+        ? "Désactiver les vibrations"
+        : "Activer les vibrations";
+    }
   }
 
   soundButton?.addEventListener("click", () => {

@@ -22,8 +22,7 @@ function createStorage(initial = {}) {
 async function loadSiteShell(storage, generatedIds) {
   const requests = [];
   const script = new vm.Script(
-    fs.readFileSync(path.join(ROOT, "src/public/js/site-shell.js"), "utf8")
-      .replace('const { renderToggle } = await import("/src/public/js/camino-art.js");', 'const renderToggle = () => {};'),
+    fs.readFileSync(path.join(ROOT, "src/public/js/site-shell.js"), "utf8"),
   );
   const visitorCounter = { textContent: "" };
   const window = {

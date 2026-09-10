@@ -1,4 +1,3 @@
-import { avatarMarkup, iconMarkup, renderPasswordToggle } from "./public/js/camino-art.js";
 import {
   API_URL,
   CHRONO_DURATION,
@@ -577,8 +576,6 @@ function setDailyReminderButtons({
   }
   enableBtn.classList.toggle("hidden", !canEnable);
   disableBtn.classList.toggle("hidden", !canDisable);
-  const reminderIcon = document.querySelector(".daily-reminder-icon");
-  if (reminderIcon) reminderIcon.innerHTML = iconMarkup(canDisable ? "bellCheck" : "bell");
   enableBtn.disabled = loading;
   disableBtn.disabled = loading;
 }
@@ -2039,7 +2036,7 @@ function renderFriendChallengeMiniBoard({ rows = [], infoMessage = "" } = {}) {
     );
     const avatarElement = document.createElement("span");
     avatarElement.className = "leaderboard-avatar";
-    avatarElement.innerHTML = avatarMarkup(avatar);
+    avatarElement.textContent = String(avatar);
     const titleElement = document.createElement("small");
     titleElement.className = "leaderboard-player-meta";
     titleElement.textContent = String(titleValue);
@@ -3494,12 +3491,11 @@ function initUI() {
     T && ((T.textContent = e), (T.className = "auth-feedback " + (t || "")));
   }
   const C = document.getElementById("toggle-password");
-  if (C && m) renderPasswordToggle(C, m.type === "text");
   (C &&
     m &&
     C.addEventListener("click", () => {
       const e = "password" === m.type;
-      ((m.type = e ? "text" : "password"), renderPasswordToggle(C, e));
+      ((m.type = e ? "text" : "password"), (C.textContent = e ? "🙈" : "👁"));
     }),
     o &&
     o.addEventListener("click", async () => {

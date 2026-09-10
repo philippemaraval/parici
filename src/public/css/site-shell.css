@@ -100,8 +100,8 @@
   grid-template-columns: 1fr auto;
   grid-template-areas:
     "visitors social"
-    "sync sync"
-    "credit credit";
+    "sync social"
+    "credit social";
   align-items: start;
   gap: 4px 10px;
   width: 100%;
@@ -127,14 +127,13 @@
   font-size: 11px;
 }
 
-.site-footer .site-footer__credit {
+.site-footer__credit {
   grid-area: credit;
   overflow: hidden;
   font-size: 11px;
   font-style: italic;
-  text-overflow: clip;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .site-footer__social {
@@ -330,25 +329,5 @@
 
   .site-shell-page > main {
     padding-top: 0;
-  }
-}
-
-/* Give the complete map timestamp and credits their own full-width rows. */
-.site-footer .site-footer__visitors,
-.site-footer .site-footer__sync,
-.site-footer .site-footer__credit {
-  min-width: 0;
-  overflow: visible;
-  text-overflow: clip;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  line-height: 1.35;
-}
-@media (max-width: 900px) {
-  .site-footer .site-footer__visitors,
-  .site-footer .site-footer__sync,
-  .site-footer .site-footer__credit {
-    font-size: 10px;
-    letter-spacing: 0;
   }
 }

@@ -39,12 +39,9 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="style.css?v=20260908-parici-design">
+  <link rel="stylesheet" href="style.css?v=20260823-daily-streak">
   <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260722-daily-share">
 
-  <link rel="stylesheet" href="/src/public/css/camino-art.css">
-  <script type="module" src="/src/public/js/interface-icons.js"></script>
-  <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
 </head>
 
 <body>
@@ -66,7 +63,8 @@
             <p class="header-subtitle site-header__subtitle">Connaissez-vous vraiment votre ville ?</p>
           </div>
 
-          <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">V0.4.1
+          <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">
+            V0.4.0
           </div>
 
           <!-- Petit statut carte, particulièrement utile sur mobile -->
@@ -74,9 +72,9 @@
             <!-- rempli par le JS -->
           </div>
           <button id="sound-toggle" class="sound-toggle site-header__control site-header__control--sound"
-            type="button" title="Activer ou désactiver le son" aria-label="Désactiver le son"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4Z"/><path d="M17 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></button>
+            type="button" title="Activer ou désactiver le son" aria-label="Désactiver le son">🔊</button>
           <button id="haptics-toggle" class="haptics-toggle site-header__control site-header__control--haptics"
-            type="button" title="Activer ou désactiver les vibrations" aria-label="Désactiver les vibrations"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 17h2M4 7l-2 3 2 4-2 3m18-10 2 3-2 4 2 3"/></svg></button>
+            type="button" title="Activer ou désactiver les vibrations" aria-label="Désactiver les vibrations">📳</button>
         </header>
 
         <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
@@ -96,7 +94,7 @@
             <div class="profile-page-content">
               <div class="profile-page-heading">
                 <p>Compte joueur</p>
-                <h2>Votre profil</h2>
+                <h2>Profil</h2>
               </div>
 
               <div class="info-block">
@@ -111,7 +109,7 @@
                   <input id="auth-password" type="password" minlength="8" maxlength="200"
                     placeholder="Mot de passe" autocomplete="current-password">
                   <button type="button" id="toggle-password" class="password-toggle"
-                    aria-label="Afficher le mot de passe"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3l18 18M9 5a12 12 0 0 1 13 7 18 18 0 0 1-3 4M6 6a18 18 0 0 0-4 6s4 7 10 7a13 13 0 0 0 5-1M10 10a3 3 0 0 0 4 4"/></svg></button>
+                    aria-label="Afficher le mot de passe">👁</button>
                 </div>
                 <label class="sr-only" for="auth-recovery-email">Mail de récupération</label>
                 <input id="auth-recovery-email" type="email" autocomplete="email"
@@ -149,23 +147,23 @@
 
         <main class="mobile-home" aria-labelledby="mobile-home-title">
           <div class="mobile-home__intro">
-            <h2 id="mobile-home-title">Vous connaissez Paris ?</h2>
-            <p>Une ville, deux façons de jouer.</p>
+            <h2 id="mobile-home-title">Comment voulez-vous jouer ?</h2>
+            <p>Deux façons distinctes de découvrir Paris, chacune avec son propre espace.</p>
           </div>
           <div class="mobile-home__modes">
             <a class="mobile-mode-card mobile-mode-card--camino" href="/?view=camino">
-              <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/home-route.svg" alt="" width="34" height="34"></span>
+              <span class="mobile-mode-card__icon" aria-hidden="true">C</span>
               <span>
                 <strong>Parici</strong>
-                <small>Rues, quartiers, monuments, transports… À vous de les retrouver.</small>
+                <small>Le jeu complet : rues, arrondissements, transports, monuments et défis entre amis.</small>
               </span>
               <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
             </a>
             <a class="mobile-mode-card mobile-mode-card--daily" href="/?view=daily">
-              <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/calendar.svg" alt="" width="34" height="34"></span>
+              <span class="mobile-mode-card__icon" aria-hidden="true">D</span>
               <span>
                 <strong>Daily</strong>
-                <small>Une rue par jour. Sept essais. À vous de jouer.</small>
+                <small>Le défi du jour en 7 essais et ses classements.</small>
               </span>
               <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
             </a>
@@ -175,10 +173,10 @@
         <section class="mobile-mode-intro mobile-mode-intro--camino site-mode-intro">
           <p>Mode de jeu</p>
           <h2>Parici</h2>
-          <span>Vous connaissez le quartier ?</span>
+          <span>Découvrez les rues, arrondissements, transports et monuments de Paris</span>
           <div class="site-mode-intro__details">
-            <strong>Choisissez un terrain de jeu. Retrouvez les lieux sur la carte.</strong>
-            <span>Jouez à votre rythme ou défiez vos amis sur la même partie.</span>
+            <strong>Choisissez votre terrain de jeu, puis retrouvez chaque lieu directement sur la carte.</strong>
+            <span>Enchaînez les bonnes réponses, gagnez des points selon votre précision et votre rapidité, ou lancez un défi à vos amis.</span>
           </div>
         </section>
 
@@ -193,7 +191,7 @@
               <h2>Daily</h2>
             </div>
             <section class="daily-reminder-card" aria-labelledby="daily-reminder-title">
-              <span class="daily-reminder-icon" aria-hidden="true"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2"/></svg></span>
+              <span class="daily-reminder-icon" aria-hidden="true">🔔</span>
               <div class="daily-reminder-copy">
                 <span id="daily-reminder-title" class="sr-only">Rappel Daily</span>
                 <p id="daily-reminder-status" class="profile-notification-status" aria-live="polite">Chargement…</p>
@@ -204,10 +202,10 @@
               </div>
             </section>
           </div>
-          <span>La même rue pour tout le monde, chaque jour.</span>
+          <span>Une rue mystère différente chaque jour dans Paris</span>
           <div class="site-mode-intro__details">
-            <strong>Sept essais pour trouver la rue du jour.</strong>
-            <span>Après chaque essai, la distance et la direction vous rapprochent du but.</span>
+            <strong>Retrouvez la même rue mystère que tous les joueurs en 7 essais maximum.</strong>
+            <span>Chaque réponse compare le milieu de la rue choisie à celui de la rue cible, puis révèle une distance et une direction pour guider votre prochain essai.</span>
           </div>
         </section>
 
@@ -247,12 +245,13 @@
               <span class="panel-title--camino">Paramètres</span>
               <span class="panel-title--daily">Daily</span>
             </div>
-            <button id="daily-mode-btn" class="btn-emphasis btn-emphasis--compact hidden">🏆 <span>Daily</span></button>
+            <button id="daily-mode-btn" class="btn-emphasis btn-emphasis--compact hidden">🏆
+              Daily</button>
             <p id="daily-login-prompt" class="daily-login-prompt hidden">
               <a href="/?view=profile#profile">Connectez-vous</a> pour jouer au Daily.
             </p>
           </div>
-          <p class="daily-mode-intro">Votre résultat rejoint le classement du jour.</p>
+          <p class="daily-mode-intro">Trouvez la rue mystère du jour en 7 essais maximum.</p>
 
           <div class="info-block" id="mode-select-block">
             <label id="mode-select-label">Zone de jeu <span class="tooltip-icon"

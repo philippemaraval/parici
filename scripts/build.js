@@ -197,29 +197,6 @@ async function fingerprintProductionAssets() {
     assetManifest,
   );
 
-  // Content-address this shared stylesheet so returning players see visual updates.
-  const caminoArtCssUrl = writeFingerprintedAsset(
-    "camino-art", "css",
-    await minifiedSource("src/public/css/camino-art.css", "css"),
-    assetManifest,
-  );
-  const fluidLayoutUrl = writeFingerprintedAsset(
-    "fluid-layout", "css", await minifiedSource("src/public/css/fluid-layout.css", "css"), assetManifest,
-  );
-  const interfaceIconsUrl = writeFingerprintedAsset(
-    "interface-icons", "js",
-    await minifiedSource("src/public/js/interface-icons.js", "js"),
-    assetManifest,
-  );
-  for (const page of ["index.html", "regles.html", "arbre-rangs.html", "admin/users.html"]) {
-    const pagePath = path.join(DIST_DIR, page);
-    if (!fs.existsSync(pagePath)) continue;
-    const html = fs.readFileSync(pagePath, "utf8");
-    const artStyles = replaceAssetReference(html, "/src/public/css/camino-art.css", caminoArtCssUrl);
-    const withStyles = replaceAssetReference(artStyles, "/src/public/css/fluid-layout.css", fluidLayoutUrl);
-    fs.writeFileSync(pagePath, replaceAssetReference(withStyles, "/src/public/js/interface-icons.js", interfaceIconsUrl));
-  }
-
   const indexPath = path.join(DIST_DIR, "index.html");
   let indexHtml = fs.readFileSync(indexPath, "utf8");
   indexHtml = replaceAssetReference(indexHtml, "style.css", styleUrl);

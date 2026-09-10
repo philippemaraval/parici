@@ -46,7 +46,7 @@ async function handleApi(request, response) {
   }
 
   const url = new URL(request.url, "http://127.0.0.1:3000");
-  if (url.pathname === "/api/health" || url.pathname === "/api/ready") {
+  if (url.pathname === "/api/health") {
     return json(response, 200, { ok: true, database: "ready" });
   }
   if (url.pathname === "/api/register" && request.method === "POST") {
