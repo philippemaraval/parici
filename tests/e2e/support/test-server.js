@@ -99,6 +99,22 @@ async function handleApi(request, response) {
   if (url.pathname === "/api/notifications/public-key") {
     return json(response, 200, { enabled: false, publicKey: null });
   }
+  if (url.pathname === "/api/daily") {
+    return json(response, 200, {
+      date: "2026-08-27",
+      streetName: "Rue du Test",
+      displayStreetName: "Rue du Test",
+      arrondissement: "1er arrondissement",
+      dailyImageUrl: null,
+      targetGeoJson: JSON.stringify({
+        type: "FeatureCollection",
+        features: [],
+      }),
+      userStatus: { attempts_count: 0, success: false },
+      dailyStreak: { current: 12, longest: 18, completedToday: false },
+      reminderAutoPromptEligible: false,
+    });
+  }
   if (url.pathname === "/api/daily/streak") {
     return json(response, 200, {
       date: "2026-08-27",
@@ -123,7 +139,15 @@ function handleStatic(request, response) {
     return json(response, 200, { ok: true });
   }
 
-  if (/\/assets\/map-dependencies\.[a-f0-9]+\.js$/.test(url.pathname)) {
+  const referer = new URL(
+    request.headers.referer || "http://127.0.0.1:4173/",
+    "http://127.0.0.1:4173",
+  );
+  const useRealMapRuntime = referer.searchParams.get("e2eMap") === "1";
+  if (
+    /\/assets\/map-dependencies\.[a-f0-9]+\.js$/.test(url.pathname) &&
+    !useRealMapRuntime
+  ) {
     response.writeHead(200, {
       "content-type": "text/javascript; charset=utf-8",
     });
