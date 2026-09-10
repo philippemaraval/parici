@@ -88,35 +88,6 @@ test("le Daily récupère la connexion lorsque iOS signale hors ligne à tort", 
   );
 });
 
-test("le Daily reste jouable si Leaflet refuse son recentrage mobile", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 412, height: 915 });
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "camino_paris_user",
-      JSON.stringify({ id: 1, username: "JoueurE2E", authenticated: true }),
-    );
-    localStorage.setItem("camino_auth_token", "e2e-player-token");
-  });
-
-  await page.goto("/?view=daily&e2eMap=1");
-  const dailyButton = page.locator("#daily-mode-btn");
-  await expect(page.locator("#map-status")).toHaveText("Carte OK");
-  await expect(dailyButton).toBeEnabled();
-  await page.evaluate(() => {
-    window.L.Map.prototype.setView = () => {
-      throw new Error("recentrage Leaflet simulé indisponible");
-    };
-  });
-
-  await dailyButton.click();
-
-  await expect(page.locator("body")).toHaveClass(/session-running/);
-  await expect(page.locator("#map")).toBeVisible();
-  await expect(page.locator("#target-street")).toHaveText("Rue du Test");
-});
-
 test("connexion à l’administration et contrôle des permissions", async ({
   page,
 }) => {

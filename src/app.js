@@ -1435,8 +1435,6 @@ function getScrollableAncestor(e) {
 }
 
 function canStartPullToRefresh(e, t) {
-  if (document.body.classList.contains("session-running")) return !1;
-  if (e instanceof Element && e.closest("#map")) return !1;
   if (t > getPullToRefreshTopZonePx()) return !1;
   const r =
     window.scrollY ||
@@ -3076,22 +3074,6 @@ function initMap() {
     map.whenReady(enforceRegionalMapBounds),
     map.on("resize", enforceRegionalMapBounds));
 }
-
-function resetMapViewForSession() {
-  if (!map) return;
-  try {
-    map.setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, { animate: !1 });
-  } catch (error) {
-    console.warn("Impossible de recentrer la carte pour la session :", error);
-  }
-}
-
-function scheduleMapViewResetForSession() {
-  requestAnimationFrame(() => {
-    resetMapViewForSession();
-    requestMapInvalidateSize();
-  });
-}
 function initUI() {
   (IS_TOUCH_DEVICE && document.body.classList.add("touch-mode"),
     initMobilePullToRefresh());
@@ -4232,7 +4214,6 @@ function startNewSession(options = {}) {
   (a && ((a.textContent = ""), (a.style.display = "none")),
     clearDailyLastGuessHighlight(),
     clearHighlight(),
-    resetMapViewForSession(),
     (activeSessionId = generateSessionId()),
     (correctCount = 0),
     (totalAnswered = 0),
@@ -6211,6 +6192,7 @@ function startDailySession(e) {
     clearDailyLastGuessHighlight(),
     removeDailyHighlight(),
     (currentZoneMode = "ville"));
+  map.setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, { animate: !1 });
   const s = document.getElementById("mode-select"),
     i = document.getElementById("mode-select-button");
   s &&
@@ -6233,7 +6215,6 @@ function startDailySession(e) {
     (isSessionRunning = !0),
     refreshLectureStreetSearchForCurrentMode(),
     updateLayoutSessionState());
-  scheduleMapViewResetForSession();
   const d = document.getElementById("skip-btn"),
     c = document.getElementById("pause-btn");
   (d && (d.style.display = "none"), c && (c.style.display = "none"));

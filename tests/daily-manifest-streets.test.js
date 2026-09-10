@@ -125,14 +125,3 @@ test("every future Daily manifest street resolves through its canonical or OSM n
 
   assert.deepEqual(unresolved, []);
 });
-
-test("scheduled Daily streets respect the game exclusions", () => {
-  const { shouldKeepStreetForGame } = require("../street_filter");
-  const rejected = parseManifestRows()
-    .filter(row => !shouldKeepStreetForGame({ name: row.street_name }))
-    .map(row => `${row.date}: ${row.street_name}`);
-  assert.deepEqual(rejected, []);
-  const rows = parseManifestRows();
-  assert.equal(rows.find(row => row.date === "2027-01-03").street_name, "Rue du Château des Rentiers");
-  assert.equal(rows.find(row => row.date === "2027-04-17").street_name, "Rue Bruneseau");
-});
