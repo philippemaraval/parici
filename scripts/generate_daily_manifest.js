@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { shouldKeepStreetForGame } = require("../street_filter");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const DEFAULT_INDEX_PATH = path.join(ROOT_DIR, "backend", "data", "streets_index.json");
@@ -64,7 +65,7 @@ function buildStreetPool(entries) {
   for (const entry of entries) {
     const name = String(entry?.name || "").trim();
     const normalized = normalizeName(name);
-    if (!name || !normalized || unique.has(normalized)) continue;
+    if (!name || !normalized || unique.has(normalized) || !shouldKeepStreetForGame({ name })) continue;
     unique.set(normalized, {
       name,
       arrondissement: String(entry?.arrondissement || entry?.quartier || "").trim(),

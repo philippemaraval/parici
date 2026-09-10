@@ -1,3 +1,4 @@
+import { avatarMarkup, iconMarkup, renderPasswordToggle } from "./public/js/camino-art.js";
 import {
   API_URL,
   CHRONO_DURATION,
@@ -576,6 +577,8 @@ function setDailyReminderButtons({
   }
   enableBtn.classList.toggle("hidden", !canEnable);
   disableBtn.classList.toggle("hidden", !canDisable);
+  const reminderIcon = document.querySelector(".daily-reminder-icon");
+  if (reminderIcon) reminderIcon.innerHTML = iconMarkup(canDisable ? "bellCheck" : "bell");
   enableBtn.disabled = loading;
   disableBtn.disabled = loading;
 }
@@ -1432,6 +1435,8 @@ function getScrollableAncestor(e) {
 }
 
 function canStartPullToRefresh(e, t) {
+  if (document.body.classList.contains("session-running")) return !1;
+  if (e instanceof Element && e.closest("#map")) return !1;
   if (t > getPullToRefreshTopZonePx()) return !1;
   const r =
     window.scrollY ||
@@ -2036,7 +2041,7 @@ function renderFriendChallengeMiniBoard({ rows = [], infoMessage = "" } = {}) {
     );
     const avatarElement = document.createElement("span");
     avatarElement.className = "leaderboard-avatar";
-    avatarElement.textContent = String(avatar);
+    avatarElement.innerHTML = avatarMarkup(avatar);
     const titleElement = document.createElement("small");
     titleElement.className = "leaderboard-player-meta";
     titleElement.textContent = String(titleValue);
@@ -3071,6 +3076,11 @@ function initMap() {
     map.whenReady(enforceRegionalMapBounds),
     map.on("resize", enforceRegionalMapBounds));
 }
+
+function resetMapViewForSession() {
+  if (!map) return;
+  map.setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, { animate: !1 });
+}
 function initUI() {
   (IS_TOUCH_DEVICE && document.body.classList.add("touch-mode"),
     initMobilePullToRefresh());
@@ -3491,11 +3501,12 @@ function initUI() {
     T && ((T.textContent = e), (T.className = "auth-feedback " + (t || "")));
   }
   const C = document.getElementById("toggle-password");
+  if (C && m) renderPasswordToggle(C, m.type === "text");
   (C &&
     m &&
     C.addEventListener("click", () => {
       const e = "password" === m.type;
-      ((m.type = e ? "text" : "password"), (C.textContent = e ? "🙈" : "👁"));
+      ((m.type = e ? "text" : "password"), renderPasswordToggle(C, e));
     }),
     o &&
     o.addEventListener("click", async () => {
@@ -4210,6 +4221,7 @@ function startNewSession(options = {}) {
   (a && ((a.textContent = ""), (a.style.display = "none")),
     clearDailyLastGuessHighlight(),
     clearHighlight(),
+    resetMapViewForSession(),
     (activeSessionId = generateSessionId()),
     (correctCount = 0),
     (totalAnswered = 0),
@@ -6188,7 +6200,7 @@ function startDailySession(e) {
     clearDailyLastGuessHighlight(),
     removeDailyHighlight(),
     (currentZoneMode = "ville"));
-  map.setView(PARIS_MAP_CENTER, PARIS_MAP_ZOOM, { animate: !1 });
+  resetMapViewForSession();
   const s = document.getElementById("mode-select"),
     i = document.getElementById("mode-select-button");
   s &&

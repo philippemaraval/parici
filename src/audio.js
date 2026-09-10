@@ -1,3 +1,4 @@
+import { renderToggle } from "./public/js/camino-art.js";
 import { triggerHaptic } from "./haptics.js";
 
 const SOUND_STORAGE_KEY = "camino-paris-sound";
@@ -75,12 +76,7 @@ export function syncSoundToggleUI() {
     return;
   }
 
-  button.textContent = soundEnabled ? "🔊" : "🔇";
-  button.setAttribute(
-    "aria-label",
-    soundEnabled ? "Désactiver le son" : "Activer le son",
-  );
-  button.title = soundEnabled ? "Désactiver le son" : "Activer le son";
+  renderToggle(button, "sound", soundEnabled);
 }
 
 export function toggleSound() {

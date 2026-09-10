@@ -1,3 +1,4 @@
+import { renderToggle } from "./public/js/camino-art.js";
 const HAPTICS_ENABLED_KEY = "camino_paris_haptics_enabled";
 
 export function isHapticsEnabled() {
@@ -11,14 +12,7 @@ export function updateHapticsUI() {
     return;
   }
 
-  button.textContent = isHapticsEnabled() ? "📳" : "📴";
-  button.setAttribute(
-    "aria-label",
-    isHapticsEnabled() ? "Désactiver les vibrations" : "Activer les vibrations",
-  );
-  button.title = isHapticsEnabled()
-    ? "Désactiver les vibrations"
-    : "Activer les vibrations";
+  renderToggle(button, "haptics", isHapticsEnabled());
 }
 
 export function triggerHaptic(type = "click") {

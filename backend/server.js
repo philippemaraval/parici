@@ -4122,7 +4122,8 @@ function loadDailyManifestByDate() {
 
 function getDailyManifestEntryByDate(dateStr) {
     const byDate = loadDailyManifestByDate();
-    return byDate.get(dateStr) || null;
+    const entry = byDate.get(dateStr);
+    return entry && shouldKeepStreetForGame({ name: entry.streetName }) ? entry : null;
 }
 
 function getCoordinatesFromStreetIndex(streetName) {

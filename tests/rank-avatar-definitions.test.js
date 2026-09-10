@@ -42,7 +42,9 @@ function loadRenderAvatarGridRuntime(document) {
     .replace(/^import .*;\n/gm, "")
     .replace(/export const /g, "const ")
     .replace(/export function /g, "function ");
+  const art = fs.readFileSync(path.join(ROOT, "src/public/js/camino-art.js"), "utf8").replace(/export /g, "");
   const context = vm.createContext({ console, document });
+  vm.runInContext(art, context);
   vm.runInContext(`${source}
     globalThis.renderAvatarGridRuntime = renderAvatarGridRuntime;
   `, context);
@@ -102,7 +104,8 @@ test("avatar unlock checks use loaded profile stats, not the auth-only current u
   });
 
   assert.equal(grid.children.length, 1);
-  assert.equal(grid.children[0].textContent, "🚀");
+  assert.match(grid.children[0].innerHTML, /rocket\.svg/);
+  assert.equal(grid.children[0]["aria-pressed"], "false");
   assert.equal(grid.children[0].classList.values.has("locked"), false);
 });
 

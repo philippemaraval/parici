@@ -1,3 +1,5 @@
+import { loadCanvasAvatar } from "./public/js/canvas-avatar.js";
+import { avatarMarkup } from "./public/js/camino-art.js";
 import { API_URL, LEADERBOARD_VISIBLE_ROWS } from "./config.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
 import { fetchWithStartupRetry } from "./api-client.js";
@@ -253,10 +255,12 @@ function appendPlayerCell(row, {
   meta = "",
   badge = null,
 } = {}) {
+  const viewer = getCurrentShareUsername();
+  if (viewer !== "Anonyme" && String(username).trim() === viewer) row.classList.add("leaderboard-current-player");
   const cell = document.createElement("td");
   const avatarElement = document.createElement("span");
   avatarElement.className = "leaderboard-avatar";
-  avatarElement.textContent = String(avatar || "👤");
+  avatarElement.innerHTML = avatarMarkup(avatar);
   cell.appendChild(avatarElement);
   cell.appendChild(document.createTextNode(String(username || "Anonyme")));
 
@@ -331,11 +335,21 @@ function appendZoneLeaderboards(rootElement, boards) {
       modeTitle.textContent = GAME_LABELS[gameType] || gameType;
       modeContainer.appendChild(modeTitle);
 
-      sections.sort((left, right) =>
-        left.arrondissementName && right.arrondissementName
-          ? left.arrondissementName.localeCompare(right.arrondissementName)
-          : 0,
-      );
+      sections.sort((left, right) => {
+        const leftName = left.arrondissementName || "";
+        const rightName = right.arrondissementName || "";
+        const leftNumber = Number.parseInt(leftName.match(/^\d{1,2}/)?.[0], 10);
+        const rightNumber = Number.parseInt(rightName.match(/^\d{1,2}/)?.[0], 10);
+        if (Number.isFinite(leftNumber) && Number.isFinite(rightNumber)) {
+          return leftNumber - rightNumber;
+        }
+        if (Number.isFinite(leftNumber)) return -1;
+        if (Number.isFinite(rightNumber)) return 1;
+        return leftName.localeCompare(rightName, "fr", {
+          numeric: true,
+          sensitivity: "base",
+        });
+      });
 
       sections.forEach((sectionData) => {
         const isArrondissementSection = zoneMode === "arrondissement" && sectionData.arrondissementName && sectionData.arrondissementName !== "unknown";
@@ -470,6 +484,166 @@ function formatShortDate(dateValue) {
   }).format(new Date(`${dateValue}T12:00:00`));
 }
 
+function formatWeeklyDistance(value) {
+  return value === null || value === undefined ? "—" : `${Math.round(value)} m`;
+}
+
+function getWeeklyRankLabel(index) {
+  return index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+}
+
+function getCurrentShareUsername() {
+  return String(document.querySelector(".user-sticker-name")?.textContent || "Anonyme").trim() || "Anonyme";
+}
+
+export function buildWeeklyLeaderboardShareText(weeklyPayload, username = getCurrentShareUsername()) {
+  const rows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows : [];
+  const playerName = String(username || "Anonyme").trim() || "Anonyme";
+  const range = weeklyPayload?.weekStart && weeklyPayload?.weekEnd
+    ? `Du ${formatShortDate(weeklyPayload.weekStart)} au ${formatShortDate(weeklyPayload.weekEnd)}`
+    : "Cette semaine";
+  const lines = [`👤 Joueur : ${playerName}`, "🏆 Parici Daily — Classement de la semaine", `📅 ${range}`, ""];
+
+  rows.slice(0, 10).forEach((row, index) => {
+    const successes = Number(row.successes) || 0;
+    const attempts = Number(row.total_attempts) || 0;
+    lines.push(
+      `${getWeeklyRankLabel(index)} ${row.avatar || "👤"} ${row.username || "Anonyme"} — ${successes} réussite${successes > 1 ? "s" : ""} · ${attempts} essais · ${formatWeeklyDistance(row.total_distance_meters)}`,
+    );
+  });
+
+  lines.push("", "À toi de jouer sur parici-ajm.pages.dev");
+  return lines.join("\n");
+}
+
+async function copyWeeklyLeaderboardText(weeklyPayload) {
+  const text = buildWeeklyLeaderboardShareText(weeklyPayload);
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
+}
+
+async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurrentShareUsername()) {
+  const rows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows.slice(0, 10) : [];
+  const playerName = String(username || "Anonyme").trim() || "Anonyme";
+  const avatarImages = await Promise.all(rows.map(row => loadCanvasAvatar(row.avatar)));
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1350;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  const background = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  background.addColorStop(0, "#f2a900");
+  background.addColorStop(0.38, "#4057b2");
+  background.addColorStop(1, "#12297a");
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(2, 6, 23, 0.72)";
+  ctx.beginPath();
+  ctx.roundRect(55, 55, 970, 1240, 38);
+  ctx.fill();
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = '600 25px "Nunito", "Avenir Next", sans-serif';
+  ctx.fillText(`Joueur : ${playerName}`, 540, 88, 800);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = '700 62px "Montserrat", "Avenir Next", sans-serif';
+  ctx.fillText("PARICI DAILY", 540, 155);
+  ctx.fillStyle = "#fde68a";
+  ctx.font = '700 39px "Nunito", "Avenir Next", sans-serif';
+  ctx.fillText("Classement de la semaine", 540, 215);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = '500 28px "Nunito", "Avenir Next", sans-serif';
+  ctx.fillText(
+    `Du ${formatShortDate(weeklyPayload?.weekStart)} au ${formatShortDate(weeklyPayload?.weekEnd)}`,
+    540,
+    260,
+  );
+
+  rows.forEach((row, index) => {
+    const y = 300 + index * 88;
+    ctx.fillStyle = index < 3 ? "rgba(255,255,255,0.16)" : "rgba(15,23,42,0.55)";
+    ctx.beginPath();
+    ctx.roundRect(95, y, 890, 72, 18);
+    ctx.fill();
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = '700 30px "Nunito", "Apple Color Emoji", sans-serif';
+    ctx.fillText(String(index + 1), 120, y + 47);
+    if (avatarImages[index]) ctx.drawImage(avatarImages[index], 178, y + 17, 38, 38);
+    const rawName = String(row.username || "Anonyme");
+    const playerName = rawName.length > 20 ? `${rawName.slice(0, 19)}…` : rawName;
+    ctx.font = '700 28px "Nunito", "Avenir Next", sans-serif';
+    ctx.fillText(playerName, 255, y + 45, 310);
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#fde68a";
+    ctx.font = '600 24px "Nunito", "Avenir Next", sans-serif';
+    ctx.fillText(
+      `${Number(row.successes) || 0} réuss. · ${Number(row.total_attempts) || 0} essais · ${formatWeeklyDistance(row.total_distance_meters)}`,
+      955,
+      y + 45,
+      390,
+    );
+  });
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#cbd5e1";
+  ctx.font = '500 27px "Nunito", "Avenir Next", sans-serif';
+  ctx.fillText("À toi de jouer sur", 540, 1230);
+  ctx.fillStyle = "#93c5fd";
+  ctx.font = '700 29px "Nunito", "Avenir Next", sans-serif';
+  ctx.fillText("parici-ajm.pages.dev", 540, 1270);
+  return canvas;
+}
+
+async function shareWeeklyLeaderboardImage(weeklyPayload) {
+  const username = getCurrentShareUsername();
+  const canvas = await createWeeklyLeaderboardCanvas(weeklyPayload, username);
+  if (!canvas) throw new Error("Canvas unavailable");
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+  if (!blob) throw new Error("Image generation failed");
+  const file = new File([blob], "parici-daily-classement-semaine.png", { type: "image/png" });
+
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({
+      title: "Parici Daily — Classement de la semaine",
+      text: buildWeeklyLeaderboardShareText(weeklyPayload, username),
+      files: [file],
+    });
+    return "shared";
+  }
+  if (navigator.clipboard && typeof ClipboardItem !== "undefined") {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      return "copied";
+    } catch (error) {
+      // Fall through to a download when image clipboard access is unavailable.
+    }
+  }
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = file.name;
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+  return "downloaded";
+}
+
 function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   const weeklyRows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows : [];
   const weeklyDetails = document.createElement("details");
@@ -540,6 +714,50 @@ function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
   section.appendChild(table);
   modeContainer.appendChild(section);
 
+  const buttons = document.createElement("div");
+  buttons.className = "daily-share-buttons weekly-share-buttons";
+  const copyButton = document.createElement("button");
+  copyButton.type = "button";
+  copyButton.className = "btn-secondary daily-share-btn";
+  copyButton.textContent = "📋 Copier le texte";
+  const imageButton = document.createElement("button");
+  imageButton.type = "button";
+  imageButton.className = "btn-primary daily-share-btn";
+  imageButton.textContent = "📸 Partager l’image";
+  const status = document.createElement("p");
+  status.className = "daily-share-hint weekly-share-status";
+  status.setAttribute("aria-live", "polite");
+  status.textContent = "Partagez le classement de la semaine en cours.";
+
+  copyButton.addEventListener("click", async () => {
+    copyButton.disabled = true;
+    try {
+      await copyWeeklyLeaderboardText(weeklyPayload);
+      status.textContent = "Texte copié !";
+    } catch (error) {
+      status.textContent = "Impossible de copier le texte.";
+    } finally {
+      copyButton.disabled = false;
+    }
+  });
+  imageButton.addEventListener("click", async () => {
+    imageButton.disabled = true;
+    try {
+      const result = await shareWeeklyLeaderboardImage(weeklyPayload);
+      status.textContent = result === "copied"
+        ? "Image copiée dans le presse-papier !"
+        : result === "downloaded"
+          ? "Image téléchargée !"
+          : "Classement partagé !";
+    } catch (error) {
+      if (error?.name !== "AbortError") status.textContent = "Impossible de partager l’image.";
+    } finally {
+      imageButton.disabled = false;
+    }
+  });
+
+  buttons.append(copyButton, imageButton);
+  modeContainer.append(buttons, status);
   weeklyContent.appendChild(modeContainer);
   weeklyDetails.appendChild(weeklyContent);
   rootElement.appendChild(weeklyDetails);
@@ -682,7 +900,7 @@ export function loadAllLeaderboards() {
         showDailyLeaderboards && (hasDailyRows || hasWeeklyRows || hasPodiumRows || hasAverageRows);
       const hasVisibleCaminoRows = showCaminoLeaderboards && (hasAllTimeRows || hasMonthlyRows);
       if (!hasVisibleDailyRows && !hasVisibleCaminoRows) {
-        leaderboardRoot.innerHTML = "<p>Aucun score enregistré.</p>";
+        leaderboardRoot.innerHTML = '<p class="leaderboard-empty">Le classement attend ses premiers joueurs.</p>';
         return;
       }
 

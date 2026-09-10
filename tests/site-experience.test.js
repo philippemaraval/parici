@@ -107,13 +107,13 @@ test("rules mirror the actual Daily and Parici rank behavior", () => {
   assert.doesNotMatch(rules, /Explorer/);
 });
 
-test("page headings share one rhythm and expose version 0.4.0", () => {
+test("page headings share one rhythm and expose version 0.4.1", () => {
   const index = read("index.html");
   const rules = read("regles.html");
   const styles = read("style.css");
 
   [index, rules].forEach((source) => {
-    assert.match(source, /V0\.4\.0/);
+    assert.match(source, /V0\.4\.1/);
     assert.match(source, /20260722-daily-share/);
   });
   assert.match(styles, /html\[data-mobile-view="home"\] \.mobile-home[\s\S]*padding: 0 0 8px/);
