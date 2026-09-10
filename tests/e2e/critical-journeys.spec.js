@@ -126,6 +126,31 @@ for (const rejectReset of [false, true]) {
   });
 }
 
+test("une panne serveur reste visible sous le bouton Daily et permet de réessayer", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "camino_paris_user",
+      JSON.stringify({ id: 1, username: "Test", authenticated: true }),
+    );
+    localStorage.setItem("camino_auth_token", "e2e-player-token");
+  });
+  await page.route("**/api/daily", (route) =>
+    route.fulfill({ status: 500, json: { error: "fixture error" } }),
+  );
+  await page.goto("/?view=daily&e2eMap=1");
+  await expect(page.locator("#map-status")).toHaveText("Carte OK");
+  await page.locator("#daily-mode-btn").click();
+  await expect(page.locator("#daily-launch-status")).toBeVisible();
+  await expect(page.locator("#daily-launch-status")).toContainText(
+    "serveur · HTTP 500",
+  );
+  await expect(page.locator("#daily-mode-btn")).toBeEnabled();
+  await expect(page.locator("body")).not.toHaveClass(/session-running/);
+});
+
 test("connexion à l’administration et contrôle des permissions", async ({
   page,
 }) => {
