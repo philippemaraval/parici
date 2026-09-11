@@ -9,7 +9,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const webPush = require('web-push');
 const db = require('./database');
-const { selectDailyDateForUser } = require('./daily-catchup');
+const { selectDailyDateForUser, isCatchUpGuessAllowed } = require('./daily-catchup');
 const {
     buildDailyAvailabilityPayload,
     buildDailyStreakReminderPayload,
@@ -918,8 +918,12 @@ function shiftIsoDateKey(dateKey, dayOffset) {
     return shiftedDate.toISOString().slice(0, 10);
 }
 
-async function isDailyGuessDateAllowed(userId, submittedDate, expectedDate) {
+async function isDailyGuessDateAllowed(userId, submittedDate, expectedDate, user = null) {
     if (submittedDate === expectedDate) {
+        return true;
+    }
+
+    if (user && await isCatchUpGuessAllowed(db, user, submittedDate, expectedDate)) {
         return true;
     }
 
@@ -4501,6 +4505,7 @@ app.post(
             req.user.id,
             parsed.value.date,
             expectedDate,
+            req.user,
         );
         if (!isAllowedDate) {
             return res.status(400).json({ error: 'Invalid daily date for current challenge' });
