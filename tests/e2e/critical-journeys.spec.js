@@ -140,7 +140,7 @@ for (const scenario of ["normal", "reset-error", "stale-manifest"]) {
   });
 }
 
-test("une panne serveur reste visible sous le bouton Daily et permet de réessayer", async ({
+test("une panne serveur permet de réessayer sans diagnostic sous le bouton Daily", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 393, height: 852 });
@@ -156,11 +156,11 @@ test("une panne serveur reste visible sous le bouton Daily et permet de réessay
   );
   await page.goto("/?view=daily&e2eMap=1");
   await expect(page.locator("#map-status")).toHaveText("Carte OK");
+  await expect(page.locator("#daily-launch-status")).toHaveCount(0);
+  const response = page.waitForResponse("**/api/daily");
   await page.locator("#daily-mode-btn").click();
-  await expect(page.locator("#daily-launch-status")).toBeVisible();
-  await expect(page.locator("#daily-launch-status")).toContainText(
-    "serveur · HTTP 500",
-  );
+  await response;
+  await expect(page.locator("#daily-launch-status")).toHaveCount(0);
   await expect(page.locator("#daily-mode-btn")).toBeEnabled();
   await expect(page.locator("body")).not.toHaveClass(/session-running/);
 });

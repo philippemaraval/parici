@@ -1799,7 +1799,6 @@ select:focus-visible,
     padding: 10px 2px;
   }
 
-  html[data-mobile-view="camino"] #daily-launch-status,
   html[data-mobile-view="camino"] #daily-mode-btn,
   html[data-mobile-view="camino"] #daily-result-panel {
     display: none !important;
