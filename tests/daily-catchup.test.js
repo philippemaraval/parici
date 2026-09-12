@@ -75,7 +75,8 @@ test('finishing catch-up offers today only after server confirmation', () => {
     assert.deepEqual(actions, ['end', 'load']);
 });
 
-test('Robz2295 can finish September 9 and 10 in order on September 11', async () => {
+for (const today of ['2026-09-11', '2026-09-12']) {
+test(`Robz2295 can finish September 9 and 10 in order on ${today}`, async () => {
     const statuses = {};
     const user = { id: 42, username: 'Robz2295' };
     const db = {
@@ -86,18 +87,19 @@ test('Robz2295 can finish September 9 and 10 in order on September 11', async ()
     const context = vm.createContext({ db, isCatchUpGuessAllowed });
     vm.runInContext(source.slice(source.indexOf('function shiftIsoDateKey('), source.indexOf('function slugifyDailyStreetName(')), context);
     for (const date of ['2026-09-09', '2026-09-10']) {
-        assert.equal(await selectDailyDateForUser(db, user, '2026-09-11'), date);
-        assert.equal(await context.isDailyGuessDateAllowed(42, date, '2026-09-11', user), true);
+        assert.equal(await selectDailyDateForUser(db, user, today), date);
+        assert.equal(await context.isDailyGuessDateAllowed(42, date, today, user), true);
         statuses[date] = { attempts_count: 2, success: false };
-        assert.equal(await selectDailyDateForUser(db, user, '2026-09-11'), date);
+        assert.equal(await selectDailyDateForUser(db, user, today), date);
         statuses[date] = date.endsWith('09') ? { attempts_count: 2, success: true } : { attempts_count: 7, success: false };
-        assert.equal(await context.isDailyGuessDateAllowed(42, date, '2026-09-11', user), false);
+        assert.equal(await context.isDailyGuessDateAllowed(42, date, today, user), false);
     }
-    assert.equal(await selectDailyDateForUser(db, user, '2026-09-11'), '2026-09-11');
+    assert.equal(await selectDailyDateForUser(db, user, today), today);
     for (const username of ['MPhil', 'Victoire', 'SomeoneElse']) {
-        assert.equal(await selectDailyDateForUser({}, { username }, '2026-09-11'), '2026-09-11');
-        assert.equal(await context.isDailyGuessDateAllowed(42, '2026-09-09', '2026-09-11', { username }), false);
+        assert.equal(await selectDailyDateForUser({}, { username }, today), today);
+        assert.equal(await context.isDailyGuessDateAllowed(42, '2026-09-09', today, { username }), false);
     }
-    assert.equal(await selectDailyDateForUser({}, user, '2026-09-12'), '2026-09-12');
-    assert.equal(await context.isDailyGuessDateAllowed(42, '2026-09-09', '2026-09-12', user), false);
+    assert.equal(await selectDailyDateForUser({}, user, '2026-09-13'), '2026-09-13');
+    assert.equal(await context.isDailyGuessDateAllowed(42, '2026-09-09', '2026-09-13', user), false);
 });
+}
