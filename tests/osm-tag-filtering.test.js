@@ -89,6 +89,7 @@ test("Paris street filter excludes lettered quays", () => {
 test("Paris street filter excludes duplicate display names", () => {
   const excludedNames = [
     "Esplanade Pierre Vidal-Naquet",
+    "Passage F/7",
     "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 6 m",
     "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 14 m",
     "Rond-point des Champs-Elysées",

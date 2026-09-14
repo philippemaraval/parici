@@ -93,6 +93,7 @@ const EXCLUDED_MANUAL_STREET_NAMES = [
   "Autoroute de Normandie",
   "Bretelle de contournement de la place Valhubert",
   "Esplanade Pierre Vidal-Naquet",
+  "Passage F/7",
   "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 6 m",
   "Promenade Bernard Lafray - Quartier de la Plaine-de-Monceau - 14 m",
   "rampe PMR",

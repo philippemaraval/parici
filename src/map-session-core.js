@@ -58,6 +58,7 @@ const FREE_MODE_EXCLUDED_KEYWORDS = [
 
 const FREE_MODE_EXCLUDED_EXACT_NAMES = new Set([
   "esplanade pierre vidal-naquet",
+  "passage f 7",
   "promenade bernard lafray-quartier de la plaine-de-monceau-6 m",
   "promenade bernard lafray-quartier de la plaine-de-monceau-14 m",
   "quai a",
