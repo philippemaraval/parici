@@ -89,3 +89,17 @@ test("the server ignores excluded Daily entries even in a cached manifest", () =
   assert.equal(context.getDailyManifestEntryByDate("2027-04-17"), valid);
   assert.equal(context.getDailyManifestEntryByDate("2027-01-04"), null);
 });
+
+test("the server force-syncs a replacement for an excluded current Daily target", () => {
+  const vm = require("node:vm");
+  const { shouldKeepStreetForGame } = require("../street_filter");
+  const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+  const start = source.indexOf("function shouldForceSyncExcludedDailyTarget(");
+  const end = source.indexOf("\nfunction ", start + 1);
+  const context = vm.createContext({ shouldKeepStreetForGame });
+  vm.runInContext(source.slice(start, end), context);
+
+  assert.equal(context.shouldForceSyncExcludedDailyTarget({ street_name: "Passage F/7" }), true);
+  assert.equal(context.shouldForceSyncExcludedDailyTarget({ street_name: "Passage du Grand-Cerf" }), false);
+  assert.equal(context.shouldForceSyncExcludedDailyTarget(null), false);
+});

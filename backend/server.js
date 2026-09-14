@@ -4274,6 +4274,13 @@ function shouldSyncDailyTargetFromManifest(target, desired) {
     return getCoordinateDistanceMeters(storedCoordinates, desired.coordinates) > 25;
 }
 
+function shouldForceSyncExcludedDailyTarget(target) {
+    return Boolean(
+        target?.street_name
+        && !shouldKeepStreetForGame({ name: target.street_name })
+    );
+}
+
 function dateHash(dateStr) {
     let h = 0;
     for (let i = 0; i < dateStr.length; i++) {
@@ -4296,8 +4303,16 @@ async function ensureDailyTarget() {
             const needsSync = shouldSyncDailyTargetFromManifest(target, desired);
 
             if (needsSync) {
-                const canSyncWithoutChangingStartedChallenge = !target || sameStreet;
+                const forceExcludedTargetSync = shouldForceSyncExcludedDailyTarget(target);
+                const canSyncWithoutChangingStartedChallenge = !target || sameStreet || forceExcludedTargetSync;
                 let canSync = canSyncWithoutChangingStartedChallenge;
+
+                if (forceExcludedTargetSync) {
+                    console.warn(
+                        `[Daily] Replacing excluded target for ${date}: "${target.street_name}" ` +
+                        `with manifest "${desired.streetName}" even if players already started.`
+                    );
+                }
 
                 if (!canSync) {
                     const attemptCount = await db.countDailyUserAttemptsForDate(date);
