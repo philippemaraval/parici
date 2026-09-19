@@ -61,7 +61,7 @@ Secrets de l’environnement GitHub `production` :
 Variable de l’environnement `production` :
 
 - `PRODUCTION_HEALTHCHECK_URL`, par exemple
-  `https://camino-paris.onrender.com/api/ready`
+  `https://parici.onrender.com/api/ready`
 
 La variable de dépôt `CAMINO_DELIVERY_ENABLED` doit rester à `false` pendant la
 configuration, puis passer à `true` une fois les secrets vérifiés.

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
-      PARICI_API_URL: ${{ vars.PARICI_API_URL || 'https://camino-paris.onrender.com' }}
+      PARICI_API_URL: ${{ vars.PARICI_API_URL || 'https://parici.onrender.com' }}
     steps:
       - name: Wake API and warm public caches
         run: >

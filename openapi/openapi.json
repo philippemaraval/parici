@@ -7,7 +7,7 @@
   },
   "servers": [
     { "url": "http://localhost:3000", "description": "Développement local" },
-    { "url": "https://camino-paris.onrender.com", "description": "Production" }
+    { "url": "https://parici.onrender.com", "description": "Production" }
   ],
   "tags": [
     { "name": "auth" },

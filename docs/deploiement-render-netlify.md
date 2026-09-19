@@ -14,7 +14,7 @@ Dans Render :
 3. Sélectionner la branche `main` et le fichier `render.yaml`.
 4. Appliquer le Blueprint.
 5. Attendre que PostgreSQL soit disponible puis que le service web soit déployé.
-6. Vérifier `https://camino-paris.onrender.com/api/health`.
+6. Vérifier `https://parici.onrender.com/api/health`.
 
 La réponse attendue contient :
 
@@ -24,7 +24,7 @@ La réponse attendue contient :
 
 Cette route vérifie réellement PostgreSQL avec une requête avant de répondre.
 
-Si Render attribue une URL différente de `https://camino-paris.onrender.com`,
+Si Render attribue une URL différente de `https://parici.onrender.com`,
 remplacer cette URL dans :
 
 - `src/config.js` ;

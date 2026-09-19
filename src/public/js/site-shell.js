@@ -16,7 +16,7 @@
   const apiOrigin =
     location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"
       ? "http://localhost:3000"
-      : "https://camino-paris.onrender.com";
+      : "https://parici.onrender.com";
 
   function render() {
     renderToggle(soundButton, "sound", localStorage.getItem(soundKey) !== "off");
