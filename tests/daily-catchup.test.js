@@ -51,6 +51,29 @@ test('missing historical target fails safely rather than replacing yesterday', a
     await assert.rejects(selectDailyDateForUser(db, { username: 'MPhil' }, '2026-09-10'), /Historical/);
 });
 
+test('Robz2295 receives September 19 first throughout the September 20 Daily', async () => {
+    let status = null;
+    const user = { id: 42, username: 'Robz2295' };
+    const db = {
+        getDailyUserStatus: async (id, date) => {
+            assert.equal(id, 42);
+            assert.equal(date, '2026-09-19');
+            return status;
+        },
+        getDailyTarget: async date => ({ date }),
+    };
+
+    assert.equal(await selectDailyDateForUser(db, user, '2026-09-20'), '2026-09-19');
+    assert.equal(await isCatchUpGuessAllowed(db, user, '2026-09-19', '2026-09-20'), true);
+
+    status = { attempts_count: 3, success: true };
+    assert.equal(await selectDailyDateForUser(db, user, '2026-09-20'), '2026-09-20');
+    assert.equal(await isCatchUpGuessAllowed(db, user, '2026-09-19', '2026-09-20'), false);
+
+    assert.equal(await selectDailyDateForUser({}, { id: 7, username: 'SomeoneElse' }, '2026-09-20'), '2026-09-20');
+    assert.equal(await selectDailyDateForUser({}, user, '2026-09-21'), '2026-09-21');
+});
+
 test('finishing catch-up offers today only after server confirmation', () => {
     const source = fs.readFileSync(path.join(__dirname, '../src/app.js'), 'utf8');
     const functionSource = source.slice(source.indexOf('function applyDailyGuessSyncResult('), source.indexOf('function submitDailyGuessToServer('));

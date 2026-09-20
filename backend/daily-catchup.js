@@ -1,6 +1,9 @@
 // One-off recovery for the installed-webapp map outage. Never grants arbitrary dates.
 function recoveryDates(user, today) {
     const username = String(user?.username || '').toLowerCase();
+    if (today === '2026-09-20' && username === 'robz2295') {
+        return ['2026-09-19'];
+    }
     if (['2026-09-11', '2026-09-12'].includes(today) && username === 'robz2295') {
         return ['2026-09-09', '2026-09-10'];
     }
