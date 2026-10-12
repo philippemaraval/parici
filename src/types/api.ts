@@ -18,13 +18,12 @@ export interface ScoreSubmission {
   itemsCorrect: number;
   itemsTotal: number;
   timeSec: number;
-  quartierName?: string | null;
+  arrondissementName?: string | null;
   sessionId?: string;
 }
 
 export interface DailyGuessSubmission {
   date: string;
-  distanceMeters: number;
-  isSuccess: boolean;
-  attemptsCount?: number;
+  answerName: string;
+  requestId: string;
 }

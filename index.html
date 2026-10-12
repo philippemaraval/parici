@@ -45,6 +45,8 @@
   <link rel="stylesheet" href="/src/public/css/camino-art.css">
   <script type="module" src="/src/public/js/interface-icons.js"></script>
   <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
+<script defer src="/src/public/js/site-navigation.js?v=20261013"></script>
+<script defer src="/src/public/js/page-gestures.js?v=20261013"></script>
 </head>
 
 <body>
@@ -73,19 +75,14 @@
           <div id="map-status" class="map-status-pill" aria-live="polite">
             <!-- rempli par le JS -->
           </div>
-          <button id="sound-toggle" class="sound-toggle site-header__control site-header__control--sound"
-            type="button" title="Activer ou désactiver le son" aria-label="Désactiver le son"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4Z"/><path d="M17 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></button>
-          <button id="haptics-toggle" class="haptics-toggle site-header__control site-header__control--haptics"
-            type="button" title="Activer ou désactiver les vibrations" aria-label="Désactiver les vibrations"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 17h2M4 7l-2 3 2 4-2 3m18-10 2 3-2 4 2 3"/></svg></button>
-        </header>
+
+
+        <button id="site-notification-bell" class="site-header__control site-header__control--notifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="site-notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2"/></svg><span id="site-notification-count" class="site-notification-count" hidden></span></button></header>
 
         <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
-          <a class="mobile-mode-nav__home" href="/" aria-label="Accueil Parici">Accueil</a>
-          <a href="/?view=camino">Parici</a>
-          <a href="/?view=daily">Daily</a>
-          <a href="/?view=profile#profile">Profil</a>
-          <a href="/regles.html">Règles</a>
-        </nav>
+<a href="/">Accueil</a><a href="/?view=camino">Parici</a><a href="/?view=daily">Daily</a>
+<button id="site-menu-toggle" class="site-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-menu-drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+</nav>
 
         <!-- Panneau profil / auth repliable -->
         <section id="profile" class="panel user-panel">

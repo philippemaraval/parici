@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <script src="/src/public/js/runtime-config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parici — Historique des versions</title>
+  <meta name="description" content="Les nouveautés et améliorations de Parici.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0c1d57">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Parici">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --brand-sea-950: #0c1d57;
+      --brand-sea-900: #12297a;
+      --brand-sea-600: #4057b2;
+      --brand-sun-500: #f2a900;
+      --brand-terra-500: #c96b3b;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --surface: rgba(255, 252, 247, 0.78);
+      --surface-soft: #edf1fb;
+      --border: rgba(196, 212, 218, 0.66);
+      --shadow: 0 8px 32px rgba(18, 41, 122, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Nunito", system-ui, sans-serif;
+      color: var(--text-primary);
+      background:
+        radial-gradient(1200px 520px at 10% -10%, rgba(242, 169, 0, 0.14), transparent 60%),
+        radial-gradient(1100px 420px at 100% 0%, rgba(64, 87, 178, 0.18), transparent 62%),
+        linear-gradient(135deg, #fefbf5 0%, #eef3ff 100%);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 18px 42px;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: clamp(27px, 4.4vw, 38px);
+      line-height: 1.05;
+      letter-spacing: 0;
+      color: var(--brand-sea-950);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--text-secondary);
+      font-size: 16px;
+      max-width: 72ch;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--brand-sea-900);
+      border: 1px solid rgba(18, 41, 122, 0.16);
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-weight: 700;
+    }
+
+    section {
+      max-width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-top: 14px;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 21px;
+      line-height: 1.2;
+      color: var(--brand-sea-950);
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 16px 0 6px;
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 16px;
+      color: var(--brand-sea-900);
+    }
+
+    p {
+      margin: 0 0 10px;
+      overflow-wrap: anywhere;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 10px;
+      padding-left: 20px;
+      overflow-wrap: anywhere;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .highlight {
+      border-left: 4px solid var(--brand-sun-500);
+      background: #fff9ee;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .formula {
+      background: #111f57;
+      color: #f8fbff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 13px;
+      margin: 10px 0;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 8px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(18, 41, 122, 0.08);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: var(--surface-soft);
+      color: var(--brand-sea-900);
+      font-family: "Montserrat", system-ui, sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .pill-score {
+      background: #fff4dc;
+      border-color: rgba(242, 169, 0, 0.35);
+      color: #7a4f09;
+    }
+
+    .pill-danger {
+      background: #fde8e6;
+      border-color: rgba(210, 70, 60, 0.4);
+      color: #8b2a23;
+    }
+
+    .pill-info {
+      background: #e8efff;
+      border-color: rgba(18, 41, 122, 0.35);
+      color: var(--brand-sea-900);
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 12px 12px 28px;
+      }
+
+      .hero,
+      section {
+        padding: 14px;
+      }
+
+      th,
+      td {
+        font-size: 13px;
+        padding: 8px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/src/public/css/site-shell.css?v=20260722-daily-share">
+  <script defer src="/src/public/js/site-shell.js?v=20260722-daily-share"></script>
+  <link rel="stylesheet" href="/src/public/css/camino-art.css">
+  <script type="module" src="/src/public/js/interface-icons.js"></script>
+  <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
+<script defer src="/src/public/js/site-navigation.js?v=20261013"></script>
+<script defer src="/src/public/js/page-gestures.js?v=20261013"></script>
+<link rel="stylesheet" href="/src/public/css/versions.css">
+</head>
+
+<body class="site-shell-page versions-page"><div class="site-shell-top"><header class="panel header-panel site-header">
+          <div class="header-main">
+            <h1 class="header-title site-header__title">
+              <a href="/" class="header-title-link">Parici</a>
+              <span class="header-byline site-header__byline">un jeu Camino</span>
+            </h1>
+            <p class="header-subtitle site-header__subtitle">Connaissez-vous vraiment votre ville ?</p>
+          </div>
+
+          <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">V0.4.1
+          </div>
+
+          <!-- Petit statut carte, particulièrement utile sur mobile -->
+          <div id="map-status" class="map-status-pill" aria-live="polite">
+            <!-- rempli par le JS -->
+          </div>
+
+
+        <button id="site-notification-bell" class="site-header__control site-header__control--notifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="site-notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2"/></svg><span id="site-notification-count" class="site-notification-count" hidden></span></button></header>
+
+        <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
+<a href="/">Accueil</a><a href="/?view=camino">Parici</a><a href="/?view=daily">Daily</a>
+<button id="site-menu-toggle" class="site-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-menu-drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+</nav></div>
+<main class="versions-content" id="historique"><div class="versions-intro"><h1>Parici au fil des versions</h1><p>Retrouvez les nouveautés et les améliorations du jeu.</p><p class="versions-updated">Mis à jour le 13 octobre 2026 · Dernière version : V0.4.1</p></div>
+<nav class="versions-index" aria-label="Grandes étapes de Parici"><a href="#versions-0-4">V0.4</a></nav>
+    <section class="version-family" id="versions-0-4" aria-labelledby="family-0.4"><h2 id="family-0.4">Parici · V0.4</h2><ol class="version-list" reversed><li class="version-entry" id="version-0-4-1"><article aria-labelledby="heading-0.4.1"><header class="version-heading"><h3 id="heading-0.4.1">V0.4.1</h3><p>Septembre 2026</p></header><p>Retrouvez le jeu sur les rues, monuments, arrondissements et transports parisiens, le Daily et votre progression par arrondissement. Les prochaines nouveautés seront publiées ici chaque semaine.</p></article></li></ol></section></main>
+<script src="/src/public/js/runtime-config.js"></script><script defer src="/src/public/js/site-shell.js"></script></body></html>

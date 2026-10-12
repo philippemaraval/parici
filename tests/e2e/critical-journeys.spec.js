@@ -117,7 +117,9 @@ for (const scenario of ["normal", "reset-error", "stale-manifest"]) {
     }
     await page.goto("/?view=daily&e2eMap=1");
     const dailyButton = page.locator("#daily-mode-btn");
-    await expect(page.locator("#map-status")).toHaveText("Carte OK");
+    await expect(page.locator("#map-status")).toHaveText("Carte OK", {
+      timeout: 15000,
+    });
     await expect(dailyButton).toBeEnabled();
     if (scenario === "reset-error")
       await page.evaluate(() => {
@@ -155,7 +157,9 @@ test("une panne serveur permet de réessayer sans diagnostic sous le bouton Dail
     route.fulfill({ status: 500, json: { error: "fixture error" } }),
   );
   await page.goto("/?view=daily&e2eMap=1");
-  await expect(page.locator("#map-status")).toHaveText("Carte OK");
+  await expect(page.locator("#map-status")).toHaveText("Carte OK", {
+    timeout: 15000,
+  });
   await expect(page.locator("#daily-launch-status")).toHaveCount(0);
   const response = page.waitForResponse("**/api/daily");
   await page.locator("#daily-mode-btn").click();

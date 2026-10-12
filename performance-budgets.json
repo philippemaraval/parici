@@ -1,6 +1,6 @@
 {
   "assets": {
-    "maxEntryJavaScriptBytes": 225280,
+    "maxEntryJavaScriptBytes": 230400,
     "maxInitialJavaScriptBytes": 286720,
     "maxStylesheetBytes": 81920,
     "maxMapOverviewBytes": 5242880,

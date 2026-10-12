@@ -602,6 +602,51 @@ export async function loadBusLinesRuntime({
         (layer._busSegmentDirection || 1),
     );
   };
+  let linePicker = null;
+  const chooseBusLine = (layer, event) => {
+    const names = layer._validBusLineNames;
+    if (names.length === 1) {
+      handleBusLineClick(layer.feature, layer, [names[0]]);
+      return;
+    }
+    if (linePicker) map.closePopup(linePicker);
+    const panel = document.createElement("div");
+    panel.textContent = "Plusieurs lignes passent ici. Choisis une couleur :";
+    const dropdown = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = "Sélectionner une couleur…";
+    summary.style.cssText = "padding:12px 0;cursor:pointer;font-size:16px";
+    const options = document.createElement("div");
+    options.style.cssText = "max-height:180px;overflow-y:auto";
+    const colors = new Map();
+    names.forEach(name => {
+      const color = busLineLayersByName.get(name)[0].options.color;
+      if (!colors.has(color)) colors.set(color, []);
+      colors.get(color).push(name);
+    });
+    colors.forEach((colorNames, color) => {
+      const option = document.createElement("button");
+      option.type = "button";
+      option.setAttribute("aria-label", `Couleur ${color}`);
+      option.style.cssText = "display:block;width:100%;min-height:44px;padding:10px;margin:4px 0;background:#fff;border:1px solid #555;border-radius:4px;cursor:pointer";
+      const swatch = document.createElement("span");
+      swatch.style.cssText = `display:block;height:20px;background:${color};border:1px solid #555;border-radius:3px`;
+      option.append(swatch);
+      option.addEventListener("click", () => {
+        const chosen = busLineLayersByName.get(colorNames[0])[0];
+        map.closePopup(linePicker);
+        handleBusLineClick(chosen.feature, chosen, colorNames);
+      });
+      options.append(option);
+    });
+    dropdown.append(summary, options);
+    dropdown.addEventListener("toggle", () => linePicker?.update());
+    panel.append(dropdown);
+    L.DomEvent.disableClickPropagation(panel);
+    L.DomEvent.disableScrollPropagation(panel);
+    linePicker = L.popup({ maxWidth: 260, closeOnClick: true })
+      .setLatLng(event.latlng || layer.getBounds().getCenter()).setContent(panel).openOn(map);
+  };
   allBusLines.forEach((feature) => {
     const lineName = feature.properties.name;
     const color = `#${feature.properties.color || uiTheme.mapBusLine.replace("#", "")}`;
@@ -646,9 +691,7 @@ export async function loadBusLinesRuntime({
         busLineLayersByName.get(lineName).push(layer);
         layer.on("mouseover", () => beginBusLineHover(lineName));
         layer.on("mouseout", () => endBusLineHover(lineName));
-        layer.on("click", () =>
-          handleBusLineClick(feature, layer, isTouchDevice ? validNames : [lineName]),
-        );
+        layer.on("click", event => chooseBusLine(layer, event));
         busLinesLayer.addLayer(layer);
       }
     });
@@ -667,16 +710,16 @@ export async function loadBusLinesRuntime({
       });
       hitArea._isBusHitArea = true;
       hitArea._visibleBusLine = layer;
-      hitArea.on("click", () =>
-        handleBusLineClick(layer.feature, layer, layer._validBusLineNames),
-      );
+      hitArea.on("click", event => chooseBusLine(layer, event));
       busLinesLayer.addLayer(hitArea);
     });
   }
-  map?.on("zoomend", () => {
-    busLinesLayer.eachLayer(applyBusSegmentZoomStyle);
-  });
-  return { allBusLines, busLinesLayer, busLineLayersByName };
+  const updateBusZoom = () => busLinesLayer.eachLayer(applyBusSegmentZoomStyle);
+  map?.on("zoomend", updateBusZoom);
+  return { allBusLines, busLinesLayer, busLineLayersByName, destroy: () => {
+    map?.off("zoomend", updateBusZoom);
+    if (linePicker) map.closePopup(linePicker);
+  } };
 }
 
 export function setLectureTooltipsEnabledRuntime(enabled, {

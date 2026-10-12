@@ -5,6 +5,10 @@ const SOUND_STORAGE_KEY = "camino-paris-sound";
 
 let soundEnabled = localStorage.getItem(SOUND_STORAGE_KEY) !== "off";
 let audioContext = null;
+window.addEventListener("camino:preferences-change", () => {
+  soundEnabled = localStorage.getItem(SOUND_STORAGE_KEY) !== "off";
+  syncSoundToggleUI();
+});
 
 function getAudioContext() {
   if (!audioContext) {

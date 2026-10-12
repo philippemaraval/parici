@@ -208,6 +208,7 @@ export function highlightDailyTargetRuntime({
 
 export function renderDailyGuessHistoryRuntime({
   dailyGuessHistory,
+  onReviewGuess,
   finalStatus,
   dailyTargetData,
   onLayoutShift,
@@ -280,7 +281,7 @@ export function renderDailyGuessHistoryRuntime({
 
         html += `<tr class="${isLastAnimatedRow ? "daily-row-enter" : ""}">`;
         html += `<td>${index + 1}</td>`;
-        html += `<td>${guess.streetName}</td>`;
+        html += `<td><button type="button" class="map-review-button" data-review-guess="${index}"></button></td>`;
         html += `<td class="${distanceClass}">${distanceLabel}</td>`;
         html += `<td class="daily-arrow">${guess.arrow || ""}</td>`;
         html += "</tr>";
@@ -348,6 +349,11 @@ export function renderDailyGuessHistoryRuntime({
     }
 
     historyRoot.innerHTML = html;
+    historyRoot.querySelectorAll('[data-review-guess]').forEach(button => {
+      const guess = dailyGuessHistory[Number(button.dataset.reviewGuess)];
+      button.textContent = guess.streetName;
+      button.addEventListener('click', () => onReviewGuess?.(guess));
+    });
 
     const dailyImageHintEl = historyRoot.querySelector(".daily-image-hint");
     if (targetPanelEl) {

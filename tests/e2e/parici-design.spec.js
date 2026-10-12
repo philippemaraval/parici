@@ -14,12 +14,16 @@ test("accueil compact, illustrations et commandes cohérentes sans signature", a
     "src",
     /home-route.svg$/,
   );
-  await expect(page.locator("#sound-toggle svg")).toHaveCount(1);
-  await page.locator("#sound-toggle").click();
-  await expect(page.locator("#sound-toggle")).toHaveAttribute(
-    "aria-pressed",
-    "false",
-  );
+  await page.locator("#site-menu-toggle").click();
+  await page.getByRole("button", { name: "Réglages", exact: true }).click();
+  const sound = page.getByRole("switch", { name: /Sons/ });
+  await expect(sound).toBeChecked();
+  await sound.uncheck();
+  await expect(sound).not.toBeChecked();
+  expect(
+    await page.evaluate(() => localStorage.getItem("camino-paris-sound")),
+  ).toBe("off");
+  await page.locator("[data-close-drawer]").click();
   expect(
     await page
       .locator(".mobile-home__intro")

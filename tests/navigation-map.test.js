@@ -12,7 +12,7 @@ test("home, Camino, Daily and profile views are selected before first paint", ()
   assert.match(html, /href="\/\?view=camino"/);
   assert.match(html, /href="\/\?view=daily"/);
   assert.match(html, /href="\/\?view=profile#profile"/);
-  assert.match(html, /href="\/regles\.html"/);
+  assert.match(fs.readFileSync(path.join(root, "src/public/js/site-menu.js"), "utf8"), /href="\/regles\.html"/);
 });
 
 test("every main view and the rules page display the complete three-line header", () => {

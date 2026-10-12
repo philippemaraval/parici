@@ -213,6 +213,15 @@ async function applyPushNotificationSchema(client) {
 }
 
 // Initialize database tables
+async function applyPlayerUpgradeSchema(client) {
+  await client.query('BEGIN');
+  try {
+    await client.query(fs.readFileSync(path.join(__dirname, '..', 'migrations', '20261013_game_integrity.sql'), 'utf8'));
+    await client.query(fs.readFileSync(path.join(__dirname, '..', 'migrations', '20261013_site_shell.sql'), 'utf8'));
+    await client.query('COMMIT');
+  } catch (error) { await client.query('ROLLBACK'); throw error; }
+}
+
 async function initDb() {
   const client = await pool.connect();
   let migrationLockHeld = false;
@@ -220,9 +229,10 @@ async function initDb() {
     await client.query('SELECT pg_advisory_lock($1)', [SCHEMA_MIGRATION_LOCK_KEY]);
     migrationLockHeld = true;
 
-    // Keep the common startup path fast. Any schema change must bump
-    // SCHEMA_BOOTSTRAP_VERSION so the migration block below runs exactly once.
+    // Preserve the historical bootstrap marker to avoid replaying data repairs.
+    // Additive player schemas are idempotent and also apply on this fast path.
     if (await hasCurrentSchemaBootstrap(client)) {
+      await applyPlayerUpgradeSchema(client);
       console.log('Database schema already up to date.');
       return;
     }
@@ -601,6 +611,7 @@ async function initDb() {
 
     await applyChangedDailyReset(client);
     await removeTestDailyAttempt(client);
+    await applyPlayerUpgradeSchema(client);
     await markSchemaBootstrapComplete(client);
 
     console.log('Database initialized successfully.');
@@ -1514,12 +1525,12 @@ async function startDailyUserAttempt(userId, date) {
   return res.rows[0];
 }
 
-async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, attemptsCount = null) {
+async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, attemptsCount = null, executor = pool) {
   const normalizedAttemptsCount =
     Number.isInteger(attemptsCount) && attemptsCount >= 1 && attemptsCount <= 7
       ? attemptsCount
       : null;
-  const result = await pool.query(
+  const result = await executor.query(
     `INSERT INTO daily_user_attempts (
        user_id, date, attempts_count, best_distance_meters, success, started_at, last_attempt_at
      )
@@ -1547,7 +1558,7 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, a
          ELSE daily_user_attempts.best_distance_meters
        END,
        success = CASE
-         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE
+         WHEN COALESCE(daily_user_attempts.success, FALSE) = TRUE OR COALESCE(daily_user_attempts.attempts_count, 0) >= 7
            THEN daily_user_attempts.success
          ELSE (COALESCE(daily_user_attempts.success, FALSE) OR EXCLUDED.success)
        END,
@@ -1563,7 +1574,7 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, a
   const summary = result.rows[0];
   const attemptNumber = normalizedAttemptsCount || Number(summary.attempts_count);
 
-  await pool.query(
+  await executor.query(
     `INSERT INTO daily_attempt_details (
        daily_user_attempt_id, user_id, date, attempt_number, distance_meters, success, elapsed_seconds
      )
@@ -1584,7 +1595,7 @@ async function updateDailyUserAttempt(userId, date, distanceMeters, isSuccess, a
     ]
   );
 
-  const enriched = await pool.query(
+  const enriched = await executor.query(
     `UPDATE daily_user_attempts d
      SET
        total_distance_meters = details.total_distance_meters,

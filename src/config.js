@@ -1,9 +1,9 @@
-export const API_URL =
+export const API_URL = window.CaminoRuntimeConfig?.apiUrl || (
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
   window.location.protocol === "file:"
     ? "http://localhost:3000"
-    : window.CaminoRuntimeConfig?.apiUrl || "https://parici.onrender.com";
+    : "https://parici.onrender.com");
 
 export const SESSION_SIZE = 20;
 export const MAX_ERRORS_MARATHON = 3;

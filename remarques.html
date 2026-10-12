@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content="Envoyer une remarque ou une recommandation pour améliorer Parici.">
+  <title>Parici - Remarques et recommandations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color: #1e293b; background: linear-gradient(135deg, #fefbf5 0%, #eef3ff 100%); font-family: "Nunito", system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; padding: 24px 16px; }
+    main { width: min(100%, 720px); margin: 0 auto; padding: clamp(24px, 5vw, 44px); border: 1px solid rgba(18, 41, 122, .16); border-radius: 16px; background: rgba(255, 255, 255, .95); box-shadow: 0 18px 40px rgba(12, 29, 87, .14); }
+    h1 { margin: 0 0 8px; color: #0c1d57; font-family: "Montserrat", system-ui, sans-serif; font-size: clamp(27px, 6vw, 38px); }
+    p { line-height: 1.6; }
+    label { display: block; margin: 24px 0 8px; color: #0c1d57; font-weight: 700; }
+    textarea { display: block; width: 100%; min-height: 190px; padding: 12px; border: 1px solid rgba(18, 41, 122, .25); border-radius: 8px; color: inherit; font: inherit; resize: vertical; }
+    button, .back-link { display: inline-block; margin-top: 16px; padding: 10px 16px; border: 0; border-radius: 999px; background: #12297a; color: #fff; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .back-link { margin-left: 8px; background: #edf1fb; color: #12297a; }
+    .note { color: #64748b; font-size: 14px; }
+  </style>
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+</head>
+
+<body>
+  <main>
+    <h1>Remarques et recommandations</h1>
+    <p>Une idée, une erreur à signaler ou une suggestion pour améliorer Parici ? Écris-moi directement.</p>
+    <form id="remarks-form" action="mailto:camino.sunmedia@gmail.com" method="get">
+      <label for="message">Ton message</label>
+      <textarea id="message" name="body" maxlength="5000" required placeholder="Ta remarque ou ta recommandation..."></textarea>
+      <button type="submit">Envoyer par mail</button>
+      <a class="back-link" href="/">Retour à Parici</a>
+    </form>
+    <p class="note">Le bouton ouvre ton application de messagerie avec le message prérempli. Termine l’envoi dans cette application. Tu peux aussi écrire à <a href="mailto:camino.sunmedia@gmail.com">camino.sunmedia@gmail.com</a>.</p>
+  </main>
+  <script src="/src/public/js/remarques.js" defer></script>
+</body>
+
+</html>

@@ -439,7 +439,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
         </div>
         <div class="profile-kpi-card">
           <span class="profile-kpi-value">${trend.icon} ${trend.delta >= 0 ? "+" : ""}${trend.delta.toFixed(1)}</span>
-          <span class="profile-kpi-label">Progression</span>
+          <span class="profile-kpi-label">Évolution du score moyen</span><small class="profile-kpi-period">4 dernières semaines / 4 précédentes</small>
         </div>
       </div>
       <p class="profile-compact-insight">${insight}</p>
@@ -966,7 +966,7 @@ export function sendScoreToServerRuntime({
   }
 
   try {
-    fetch(`${apiUrl}/api/scores`, {
+    return fetch(`${apiUrl}/api/scores`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -983,14 +983,17 @@ export function sendScoreToServerRuntime({
         sessionId: payload.sessionId,
       }),
     })
-      .then((response) => response.json())
-      .then(() => {
+      .then(async(response) => {const result=await response.json();if(!response.ok)throw new Error(result.error || "Résultat non enregistré");return result;})
+      .then((result) => {
         loadAllLeaderboards();
+        return result;
       })
       .catch((error) => {
         console.error("Erreur envoi score :", error);
+        throw error;
       });
   } catch (error) {
     console.error("Erreur envoi score (synchrone) :", error);
+    throw error;
   }
 }

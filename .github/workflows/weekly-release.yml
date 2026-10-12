@@ -1,0 +1,64 @@
+name: Weekly player release
+
+on:
+  schedule:
+    - cron: "17 9 * * 1"
+      timezone: Europe/Paris
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: parici-weekly-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Vérifier le moteur de publication
+        run: node --test tests/weekly-release.test.js
+      - name: Préparer la version des joueurs
+        id: release
+        run: node scripts/weekly_release.js
+      - name: Installer les dépendances
+        if: steps.release.outputs.changed == 'true'
+        run: npm ci
+      - name: Vérifier la version et construire le site
+        if: steps.release.outputs.changed == 'true'
+        run: |
+          npm run lint
+          npm run build
+          npm run performance:check
+          git diff --check
+      - name: Publier sur main
+        if: steps.release.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          test "$(git branch --show-current)" = main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/releases/state.json index.html regles.html versions.html
+          git diff --cached --check
+          git commit -m "chore(release): publish V${VERSION}"
+          git push origin main
+      # A push with GITHUB_TOKEN does not trigger push workflows. Explicitly
+      # dispatch quality so the normal workflow_run delivery can follow it.
+      - name: Déclencher les contrôles et la livraison habituelle
+        if: steps.release.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run quality.yml --ref main

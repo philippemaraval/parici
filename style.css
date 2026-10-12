@@ -1744,8 +1744,8 @@ select:focus-visible,
     font-weight: 800;
   }
 
-  html[data-mobile-view="home"] #sidebar-content > :not(.header-panel, .mobile-mode-nav, .mobile-home, .sidebar-footer),
-  html[data-mobile-view="profile"] #sidebar-content > :not(.header-panel, .mobile-mode-nav, .user-panel, .sidebar-footer) {
+  html[data-mobile-view="home"] #sidebar-content > :not(.header-panel, .mobile-mode-nav, .site-nav-placeholder, .mobile-home, .sidebar-footer),
+  html[data-mobile-view="profile"] #sidebar-content > :not(.header-panel, .mobile-mode-nav, .site-nav-placeholder, .user-panel, .sidebar-footer) {
     display: none !important;
   }
 
@@ -4184,3 +4184,17 @@ select:focus:not(:focus-visible) {
     transform: none !important;
   }
 }
+
+/* Keep Daily authentication/loading and leaderboard areas stable. */
+.site-footer a,.forgot-password-link{min-height:24px;display:inline-flex;align-items:center}
+summary{min-height:28px;box-sizing:border-box}
+
+.daily-streak-card--intro.hidden{display:flex;visibility:hidden}
+@media(max-width:900px){html[data-mobile-view="daily"] .panel-params .panel-title-row{min-height:80px;box-sizing:border-box}}
+@media(max-width:900px){
+  html[data-mobile-view="daily"] body:not(.session-running) #sidebar{min-height:100vh;min-height:100dvh;max-height:none;overflow-y:auto}
+  html[data-mobile-view="daily"] body:not(.session-running) #map{height:0!important;opacity:0;visibility:hidden}
+  html[data-mobile-view="daily"] body:not(.session-running):not(.session-ended) :is(.info-panel,.panel-feedback,.stats-panel,.target-panel),
+  html[data-mobile-view="daily"] body:not(.session-running) .actions-row{display:none!important}
+}
+.profile-collect-visibility{display:flex;align-items:center;gap:8px;margin:12px 0;min-height:32px}

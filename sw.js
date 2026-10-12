@@ -1,10 +1,15 @@
-const CACHE_NAME = "camino-paris-v21";
+const CACHE_NAME = "camino-paris-v22";
 const NAVIGATION_NETWORK_TIMEOUT_MS = 3500;
 
 const CORE_PRECACHE_URLS = [
   "/",
   "/index.html",
   "/regles.html",
+  "/versions.html",
+  "/remarques.html",
+  "/src/public/js/site-navigation.js",
+  "/src/public/js/site-menu.js",
+  "/src/public/js/page-gestures.js",
   "/arbre-rangs.html",
   "/reset-password.html",
   "/forgot-password.html",

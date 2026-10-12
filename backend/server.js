@@ -2205,39 +2205,13 @@ function serializeFriendChallenge(challenge) {
 
 function parseDailyGuessSubmission(body) {
     const date = String(body?.date || '').trim();
-    if (!ISO_DATE_PATTERN.test(date)) {
-        return { ok: false, error: 'Invalid date format' };
+    const answerName = String(body?.answerName || '').trim();
+    const requestId = String(body?.requestId || '');
+    if (!ISO_DATE_PATTERN.test(date) || !answerName || answerName.length > 255
+        || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) {
+        return { ok: false, error: 'Date, lieu sélectionné et identifiant de réponse requis' };
     }
-
-    const distanceMeters = toFiniteNumber(body?.distanceMeters);
-    if (distanceMeters === null || distanceMeters < 0 || distanceMeters > MAX_DAILY_DISTANCE_METERS) {
-        return { ok: false, error: 'Invalid distanceMeters value' };
-    }
-
-    if (typeof body?.isSuccess !== 'boolean') {
-        return { ok: false, error: 'isSuccess must be a boolean' };
-    }
-
-    const attemptsCount =
-        body?.attemptsCount === undefined || body?.attemptsCount === null
-            ? null
-            : Number(body.attemptsCount);
-    if (
-        attemptsCount !== null
-        && (!Number.isInteger(attemptsCount) || attemptsCount < 1 || attemptsCount > 7)
-    ) {
-        return { ok: false, error: 'Invalid attemptsCount value' };
-    }
-
-    return {
-        ok: true,
-        value: {
-            date,
-            distanceMeters: Math.round(distanceMeters),
-            isSuccess: body.isSuccess,
-            attemptsCount,
-        },
-    };
+    return { ok: true, value: { date, answerName, requestId } };
 }
 
 function getRequestIp(req) {
@@ -3277,6 +3251,49 @@ app.get('/api/leaderboards', async (req, res) => {
     }
 });
 
+app.post('/api/site/reports',authenticateToken,createPersistentRateLimit({name:'site-reports',windowMs:3600000,maxRequests:10}),asyncHandler(async(req,res)=>{
+ const p=req.body||{};
+ if(!['camino','daily','technical'].includes(p.domain)||!['image','description','question','geography','bug','other'].includes(p.category)||typeof p.detail!=='string'||p.detail.trim().length<10||p.detail.length>2000||typeof p.entity_key!=='string'||p.entity_key.length>200) return res.status(400).json({error:'Précisez le jeu, le contenu et le problème (10 à 2 000 caractères).'});
+ const existing=await db.pool.query("SELECT id FROM admin_reports WHERE reporter_id=$1 AND domain=$2 AND entity_key=$3 AND category=$4 AND detail=$5 AND status IN ('open','investigating')",[req.user.id,p.domain,p.entity_key,p.category,p.detail.trim()]);
+ if(existing.rowCount)return res.json({reported:true,id:existing.rows[0].id});
+ const row=(await db.pool.query('INSERT INTO admin_reports(domain,entity_key,category,detail,reporter_id) VALUES($1,$2,$3,$4,$5) RETURNING id',[p.domain,p.entity_key,p.category,p.detail.trim(),req.user.id])).rows[0];res.status(201).json({reported:true,id:row.id});
+}));
+
+app.get('/api/admin/site-reports',authenticateToken,requireAdminUser,asyncHandler(async(req,res)=>{
+    res.setHeader('Cache-Control','private, no-store');
+    return res.json({reports:(await db.pool.query('SELECT r.*,u.username FROM admin_reports r LEFT JOIN users u ON u.id=r.reporter_id ORDER BY r.created_at DESC LIMIT 100')).rows});
+}));
+app.get('/api/site/notifications',authenticateToken,asyncHandler(async(req,res)=>{
+    res.setHeader('Cache-Control','private, no-store');
+    return res.json(await require('./domains/site-shell/service').inbox(db,req.user.id,getDailyDateKey()));
+}));
+app.post('/api/site/notifications/open',authenticateToken,asyncHandler(async(req,res)=>{
+    res.setHeader('Cache-Control','private, no-store');
+    return res.json(await require('./domains/site-shell/service').opened(db,req.user.id,req.body));
+}));
+app.get('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{
+    res.setHeader('Cache-Control','private, no-store');
+    return res.json(await require('./domains/site-shell/service').settings(db,req.user.id,String(req.query.endpoint||'')));
+}));
+
+const verifiedSessions = require('./domains/game-integrity/sessions');
+app.post('/api/game-sessions', authenticateToken, asyncHandler(async(req,res)=>{
+    if(!req.body || typeof req.body!=='object' || Array.isArray(req.body))return res.status(400).json({error:'Configuration invalide'});
+    let targets;
+    if(req.body.mode==='lignes-transports-idf') {
+        targets=JSON.parse(fs.readFileSync(path.join(__dirname,'..','data','paris_transit_lines.geojson'),'utf8')).features.map(f=>f.properties.name);
+        targets=shuffleCopy(targets);
+        if(req.body.gameType==='classique')targets=targets.slice(0,20);
+    } else {
+        const built=await buildFriendChallengeTargets({...req.body,lists:await getEffectiveContentLists()});
+        if(!built.ok)return res.status(400).json({error:built.error});
+        targets=built.value.targetNames.map(value => typeof value === 'string' ? value : value.name);
+    }
+    return res.status(201).json(await verifiedSessions.start(db,req.user.id,req.body,targets));
+}));
+app.post('/api/game-sessions/:id/answers', authenticateToken, asyncHandler(async(req,res)=>res.json(await verifiedSessions.answer(db,req.user.id,req.params.id,req.body))));
+app.post('/api/game-sessions/:id/pause', authenticateToken, asyncHandler(async(req,res)=>res.json(await verifiedSessions.pause(db,req.user.id,req.params.id,req.body?.paused))));
+
 app.post(
     '/api/scores',
     createPersistentRateLimit({ name: 'scores', windowMs: 60_000, maxRequests: 60 }),
@@ -3292,24 +3309,25 @@ app.post(
         return res.status(401).json({ error: 'Unknown authenticated user' });
     }
 
+    const verified = await verifiedSessions.finish(db,currentUser.id,parsed.value.sessionId);
     const saved = await db.addScore(
         currentUser.id,
         currentUser.username,
-        parsed.value.mode,
-        parsed.value.gameType,
-        parsed.value.score,
-        parsed.value.itemsCorrect,
-        parsed.value.itemsTotal,
-        parsed.value.timeSec,
-        parsed.value.arrondissementName,
-        parsed.value.sessionId,
+        verified.mode,
+        verified.gameType,
+        verified.score,
+        verified.itemsCorrect,
+        verified.itemsTotal,
+        verified.timeSec,
+        verified.arrondissementName,
+        verified.sessionId,
     );
 
     if (saved) {
         invalidateLeaderboardCaches();
     }
 
-    return res.json({ success: true, duplicate: !saved });
+    return res.json({ success: true, duplicate: !saved, result: verified });
 }));
 
 app.post(
@@ -3410,13 +3428,14 @@ app.post(
         return res.status(400).json({ error: parsed.error });
     }
 
+    const verified = await verifiedSessions.finish(db,req.user.id,req.body.sessionId,challenge.id);
     const updated = await db.addFriendChallengeScore(
         challenge.id,
         req.user.id,
-        parsed.value.score,
-        parsed.value.itemsCorrect,
-        parsed.value.itemsTotal,
-        parsed.value.timeSec,
+        verified.score,
+        verified.itemsCorrect,
+        verified.itemsTotal,
+        verified.timeSec,
         challenge.game_type,
     );
 
@@ -4526,13 +4545,10 @@ app.post(
             return res.status(400).json({ error: 'Invalid daily date for current challenge' });
         }
 
-        const result = await db.updateDailyUserAttempt(
-            req.user.id,
-            parsed.value.date,
-            parsed.value.distanceMeters,
-            parsed.value.isSuccess,
-            parsed.value.attemptsCount,
-        );
+        const target = await db.getDailyTarget(parsed.value.date);
+        if (!target) return res.status(404).json({error: 'Daily introuvable'});
+        const integrity = require('./domains/game-integrity/daily');
+        const result = await integrity.submitGuess(db, req.user.id, parsed.value, target, integrity.getStreetFeatures());
 
         if (result.success || result.attempts_count >= 7) {
             result.dailyStreak = await db.getDailyStreakForUser(req.user.id, expectedDate);
@@ -4556,6 +4572,7 @@ app.post(
 
         return res.json(result);
     } catch (err) {
+        if (Number.isInteger(err.status) && err.status >= 400 && err.status < 500) return res.status(err.status).json({error:err.message});
         console.error('Daily guess error:', err);
         return res.status(500).json({ error: 'Server error' });
     }

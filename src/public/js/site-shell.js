@@ -13,10 +13,7 @@
   const visitorCountKey = "camino_paris_visits_cache";
   const visitSessionTimeoutMs = 30 * 60 * 1000;
   const visitSessionHeartbeatMs = 60 * 1000;
-  const apiOrigin =
-    location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"
-      ? "http://localhost:3000"
-      : "https://parici.onrender.com";
+  const apiOrigin = window.CaminoRuntimeConfig?.apiUrl || "http://localhost:3000";
 
   function render() {
     renderToggle(soundButton, "sound", localStorage.getItem(soundKey) !== "off");

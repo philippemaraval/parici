@@ -26,6 +26,8 @@ const DIST_INCLUDE = [
   "index.html",
   "arbre-rangs.html",
   "regles.html",
+  "versions.html",
+  "remarques.html",
   "reset-password.html",
   "forgot-password.html",
   "confidentialite.html",
@@ -220,6 +222,18 @@ async function fingerprintProductionAssets() {
     fs.writeFileSync(pagePath, replaceAssetReference(withStyles, "/src/public/js/interface-icons.js", interfaceIconsUrl));
   }
 
+  const menuUrl = writeFingerprintedAsset("site-menu", "js", await minifiedSource("src/public/js/site-menu.js", "js"), assetManifest);
+  const navigationSource = (await minifiedSource("src/public/js/site-navigation.js", "js")).replace(/\/src\/public\/js\/site-menu\.js(?:\?[^"']*)?/, menuUrl);
+  const navigationUrl = writeFingerprintedAsset("site-navigation", "js", navigationSource, assetManifest);
+  const gesturesUrl = writeFingerprintedAsset("page-gestures", "js", await minifiedSource("src/public/js/page-gestures.js", "js"), assetManifest);
+  for (const page of DIST_INCLUDE.filter(file => file.endsWith(".html"))) {
+    const file = path.join(DIST_DIR, page);
+    if (!fs.existsSync(file)) continue;
+    let html = fs.readFileSync(file, "utf8");
+    for (const [source, target] of [["/src/public/js/site-navigation.js", navigationUrl], ["/src/public/js/page-gestures.js", gesturesUrl], ["/src/public/js/site-shell.js", siteShellJsUrl], ["/src/public/css/site-shell.css", siteShellCssUrl]]) html = replaceAssetReference(html, source, target);
+    fs.writeFileSync(file, html);
+  }
+
   const indexPath = path.join(DIST_DIR, "index.html");
   let indexHtml = fs.readFileSync(indexPath, "utf8");
   indexHtml = replaceAssetReference(indexHtml, "style.css", styleUrl);
@@ -245,6 +259,9 @@ async function fingerprintProductionAssets() {
   const serviceWorkerPath = path.join(DIST_DIR, "sw.js");
   let serviceWorker = fs.readFileSync(serviceWorkerPath, "utf8");
   serviceWorker = serviceWorker
+    .replace('"/src/public/js/site-navigation.js"', JSON.stringify(navigationUrl))
+    .replace('"/src/public/js/site-menu.js"', JSON.stringify(menuUrl))
+    .replace('"/src/public/js/page-gestures.js"', JSON.stringify(gesturesUrl))
     .replace(/const CACHE_NAME = "[^"]+";/, `const CACHE_NAME = "camino-paris-${fingerprintName("assets", "cache", JSON.stringify(assetManifest)).split(".")[1]}";`)
     .replace(/"\/style\.css\?[^"]+",?\n/, `"${styleUrl}",\n`)
     .replace(/"\/main\.js\?[^"]+",?\n/, `"${mainUrl}",\n`)

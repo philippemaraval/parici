@@ -8,7 +8,9 @@ test(
   "API complète sur une base PostgreSQL éphémère",
   { skip: !databaseUrl, timeout: 90_000 },
   async (context) => {
-    process.env.DATABASE_URL = databaseUrl;
+    const { createTestDatabase } = require('./test-database');
+    const isolated = await createTestDatabase(databaseUrl, 'parici_api');
+    process.env.DATABASE_URL = isolated.url;
     process.env.NODE_ENV = "test";
     process.env.SECRET_KEY =
       "integration-test-secret-with-at-least-thirty-two-characters";
@@ -29,6 +31,7 @@ test(
         server.close((error) => (error ? reject(error) : resolve())),
       );
       await database.pool.end();
+      await isolated.cleanup();
     });
 
     const baseUrl = `http://127.0.0.1:${server.address().port}`;
@@ -126,8 +129,8 @@ test(
         sessionId: `integration-${Date.now()}`,
       }),
     });
-    assert.equal(score.response.status, 200);
-    assert.equal(score.body.success, true);
+    assert.equal(score.response.status, 400);
+    assert.equal(score.body.success, undefined);
 
     const hostileAvatar = await request("/api/profile/avatar", {
       method: "POST",

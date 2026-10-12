@@ -1,3 +1,4 @@
+import { reviewMapFeatures } from "./map-review.js";
 import { avatarMarkup, iconMarkup, renderPasswordToggle } from "./public/js/camino-art.js";
 import {
   API_URL,
@@ -1322,6 +1323,7 @@ let sessionStreets = [],
   dailyStreetMidpointRenderer = null,
   dailyStreetMidpointByName = new Map(),
   messageTimeoutId = null,
+  sessionEndFeedbackTimeoutId = null,
   currentUser = null,
   isLectureMode = !1,
   hasAnsweredCurrentItem = !1,
@@ -3409,7 +3411,7 @@ function initUI() {
       if (isSessionRunning && !isPaused) {
         if ("lignes-transports-idf" === getZoneMode()) {
           if (!currentBusLineTarget) return;
-          summaryData.push({ name: currentBusLineTarget.properties.name, correct: !1, time: 0 });
+          recordSessionAnswer({ name: currentBusLineTarget.properties.name, correct: !1, time: 0 });
           totalAnswered += 1;
           updateScoreUI();
           updateWeightedScoreUI();
@@ -3420,7 +3422,7 @@ function initUI() {
         }
         if ("monuments" === getZoneMode()) {
           if (!currentMonumentTarget) return;
-          summaryData.push({
+          recordSessionAnswer({
             name: currentMonumentTarget.properties.name,
             correct: !1,
             time: 0,
@@ -3438,7 +3440,7 @@ function initUI() {
         }
         if ("arrondissements-ville" === getZoneMode()) {
           if (!currentArrondissementTarget) return;
-          summaryData.push({
+          recordSessionAnswer({
             name: getArrondissementTargetName(currentArrondissementTarget),
             correct: !1,
             time: 0,
@@ -3455,7 +3457,7 @@ function initUI() {
           return;
         }
         if (currentTarget) {
-          summaryData.push({
+          recordSessionAnswer({
             name: currentTarget.properties.name,
             correct: !1,
             time: 0,
@@ -4280,6 +4282,8 @@ function startNewSession(options = {}) {
     clearHighlight(),
     resetMapViewForSession(),
     (activeSessionId = generateSessionId()),
+    (verifiedSession = null),
+    (sessionSync = Promise.resolve()),
     (correctCount = 0),
     (totalAnswered = 0),
     (summaryData = []),
@@ -4548,12 +4552,79 @@ function getCurrentZoneStreets() {
 function buildUniqueStreetList(e) {
   return buildUniqueStreetListCore(e, normalizeName);
 }
-function setNewTarget() {
+const SESSION_END_FEEDBACK_DELAY_MS = 1600;
+
+function endSessionAfterAnswerFeedback() {
+  streetStartTime = null;
+  currentTarget = null;
+  currentMonumentTarget = null;
+  currentArrondissementTarget = null;
+  currentBusLineTarget = null;
+  null !== sessionEndFeedbackTimeoutId && clearTimeout(sessionEndFeedbackTimeoutId);
+  sessionEndFeedbackTimeoutId = setTimeout(() => {
+    sessionEndFeedbackTimeoutId = null;
+    isSessionRunning && endSession();
+  }, SESSION_END_FEEDBACK_DELAY_MS);
+}
+
+let verifiedSession = null;
+let sessionSync = Promise.resolve();
+let verifiedAnswerIndex = 0;
+async function verifiedRequest(path, body) {
+  const token=currentUser?.token;
+  for(let attempt=0;attempt<4;attempt++) {
+    try {
+      const response = await fetch(API_URL + path, {method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
+      const result = await response.json();
+      if (!response.ok) throw Object.assign(new Error(result.error || 'Enregistrement impossible'),{status:response.status});
+      return result;
+    } catch(error) {
+      if(attempt===3 || (error.status && error.status<500))throw error;
+      await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));
+    }
+  }
+}
+async function prepareVerifiedSession() {
+  const mode=getZoneMode();
+  const pool=mode==='monuments'?allMonuments:mode==='arrondissements-ville'?allArrondissementFeatures:mode==='lignes-transports-idf'?allBusLines:buildUniqueStreetList(getCurrentZoneStreets());
+  const name=feature=>mode==='arrondissements-ville'?getArrondissementTargetName(feature):feature.properties.name;
+  const result=await verifiedRequest('/api/game-sessions',{mode,gameType:getGameMode(),arrondissementName:getSelectedArrondissement(),challengeCode:activeFriendChallenge?.code,availableNames:pool.map(name)});
+  if(!isSessionRunning)return;
+  const byName=new Map(pool.map(f=>[normalizeName(name(f)),f]));
+  const targets=result.targets.map(n=>byName.get(normalizeName(n)));
+  if(targets.some(f=>!f))throw new Error('Les lieux de cette session doivent être rechargés.');
+  if(mode==='monuments')sessionMonuments=targets;
+  else if(mode==='arrondissements-ville')sessionArrondissements=targets;
+  else if(mode==='lignes-transports-idf')sessionBusLines=targets;
+  else sessionStreets=targets;
+  activeSessionId=result.sessionId;
+  verifiedSession={id:result.sessionId};verifiedAnswerIndex=0;sessionSync=Promise.resolve();
+  sessionStartTime=performance.now();
+  if(isChronoMode)chronoEndTime=sessionStartTime+CHRONO_DURATION*1000;
+  setNewTarget();
+}
+function recordSessionAnswer(summary,answerName='') {
+  summaryData.push(summary);
+  if(verifiedSession?.id) {
+    const id=verifiedSession.id, index=verifiedAnswerIndex++,requestId=crypto.randomUUID();
+    sessionSync=sessionSync.then(()=>verifiedRequest(`/api/game-sessions/${id}/answers`,{index,requestId,answerName}));
+    sessionSync.catch(()=>showMessage('Connexion interrompue : résultat en attente de confirmation.', 'warning'));
+  }
+}
+function setNewTarget({ waitForAnswerFeedback = !1 } = {}) {
+  if(currentUser?.token && isSessionRunning && !verifiedSession) {
+    verifiedSession={pending:true};
+    showMessage('Préparation de la session…','info');
+    prepareVerifiedSession().catch(error=>{verifiedSession=null;isSessionRunning=false;updateStartStopButton();showMessage(error.message,'error');});
+    return;
+  }
+  if(verifiedSession?.pending)return;
   const e = getGameMode();
   if ("lignes-transports-idf" === getZoneMode()) {
     if (currentBusLineIndex >= sessionBusLines.length) {
-      if ("chrono" !== e) return void endSession();
-      shuffle(sessionBusLines);
+      if ("chrono" !== e)
+        return void (waitForAnswerFeedback ? endSessionAfterAnswerFeedback() : endSession());
+      if(!verifiedSession?.id)shuffle(sessionBusLines);
       currentBusLineIndex = 0;
     }
     ((currentTarget = null),
@@ -4572,10 +4643,11 @@ function setNewTarget() {
   }
   if ("monuments" === getZoneMode()) {
     if (currentMonumentIndex >= sessionMonuments.length) {
-      if ("chrono" !== e) return void endSession();
+      if ("chrono" !== e)
+        return void (waitForAnswerFeedback ? endSessionAfterAnswerFeedback() : endSession());
       activeFriendChallenge
         ? (currentMonumentIndex = 0)
-        : (shuffle(sessionMonuments), (currentMonumentIndex = 0));
+        : (verifiedSession?.id || shuffle(sessionMonuments), (currentMonumentIndex = 0));
     }
     ((currentTarget = null),
       (currentMonumentTarget = sessionMonuments[currentMonumentIndex]),
@@ -4594,10 +4666,11 @@ function setNewTarget() {
   }
   if ("arrondissements-ville" === getZoneMode()) {
     if (currentArrondissementIndex >= sessionArrondissements.length) {
-      if ("chrono" !== e) return void endSession();
+      if ("chrono" !== e)
+        return void (waitForAnswerFeedback ? endSessionAfterAnswerFeedback() : endSession());
       activeFriendChallenge
         ? (currentArrondissementIndex = 0)
-        : (shuffle(sessionArrondissements), (currentArrondissementIndex = 0));
+        : (verifiedSession?.id || shuffle(sessionArrondissements), (currentArrondissementIndex = 0));
     }
     ((currentTarget = null),
       (currentMonumentTarget = null),
@@ -4616,10 +4689,11 @@ function setNewTarget() {
     );
   }
   if (currentIndex >= sessionStreets.length) {
-    if ("chrono" !== e) return void endSession();
+    if ("chrono" !== e)
+      return void (waitForAnswerFeedback ? endSessionAfterAnswerFeedback() : endSession());
     activeFriendChallenge
       ? (currentIndex = 0)
-      : (shuffle(sessionStreets), (currentIndex = 0));
+      : (verifiedSession?.id || shuffle(sessionStreets), (currentIndex = 0));
   }
   ((currentMonumentTarget = null),
     (currentArrondissementTarget = null),
@@ -4676,6 +4750,11 @@ function stopSessionManually() {
       endSession());
 }
 function togglePause() {
+  if (isSessionRunning && verifiedSession?.id) {
+    const id=verifiedSession.id, paused=!isPaused;
+    sessionSync=sessionSync.then(()=>verifiedRequest(`/api/game-sessions/${id}/pause`,{paused}));
+    sessionSync.catch(()=>showMessage('Pause non confirmée par le serveur.', 'warning'));
+  }
   if (isSessionRunning) {
     if (isPaused) {
       const e = performance.now(),
@@ -4886,6 +4965,7 @@ function handleStreetClick(e, t, r) {
     );
     showDailyStreetMidpointMarker(e, t);
     (dailyGuessHistory.push({
+      requestId: crypto.randomUUID(),
       streetName: e.properties.name,
       distance: Math.round(s),
       arrow: i,
@@ -4936,9 +5016,8 @@ function handleStreetClick(e, t, r) {
       updateLayoutSessionState(),
       void submitDailyGuessToServer({
         date: dailyTargetData.date,
-        distanceMeters: Math.round(s),
-        isSuccess: n,
-        attemptsCount: u,
+        answerName: e.properties.name,
+        requestId: dailyGuessHistory.at(-1).requestId,
       })
         .catch((e) => {
           console.warn("Daily sync error (non-bloquant):", e);
@@ -4948,7 +5027,7 @@ function handleStreetClick(e, t, r) {
         })
     );
   }
-  if (!currentTarget || null === sessionStartTime || null === streetStartTime)
+  if (!currentTarget || hasAnsweredCurrentItem || null === sessionStartTime || null === streetStartTime)
     return;
   const n = getGameMode(),
     s = (performance.now() - streetStartTime) / 1e3,
@@ -4956,6 +5035,7 @@ function handleStreetClick(e, t, r) {
       normalizeName(e.properties.name) ===
       normalizeName(currentTarget.properties.name),
     l = currentTarget;
+  hasAnsweredCurrentItem = !0;
   if (i) {
     correctCount += 1;
     (hasAnsweredCurrentItem = !0);
@@ -4991,24 +5071,25 @@ function handleStreetClick(e, t, r) {
       triggerHaptic('error'),
       feedbackError());
   ((totalAnswered += 1),
-    summaryData.push({
+    recordSessionAnswer({
       name: currentTarget.properties.name,
       correct: i,
       time: s.toFixed(1),
-    }),
+    }, e.properties.name),
     trackAnswer(currentTarget.properties.name, getZoneMode(), i, s),
     updateWeightedScoreUI(),
     updateScoreUI(),
     showStreetInfo(l),
     !i && "marathon" === n && errorsCount >= MAX_ERRORS_MARATHON
-      ? endSession()
-      : ((currentIndex += 1), setNewTarget()));
+      ? endSessionAfterAnswerFeedback()
+      : ((currentIndex += 1), setNewTarget({ waitForAnswerFeedback: !0 })));
 }
 function handleMonumentClick(e, t) {
   if ("monuments" !== getZoneMode()) return;
   if (isPaused) return;
   if (
     !currentMonumentTarget ||
+    hasAnsweredCurrentItem ||
     null === sessionStartTime ||
     null === streetStartTime
   )
@@ -5020,6 +5101,7 @@ function handleMonumentClick(e, t) {
       normalizeName(currentMonumentTarget.properties.name),
     s = currentMonumentTarget.properties.name,
     i = findMonumentLayerByName(currentMonumentTarget.properties.name);
+  hasAnsweredCurrentItem = !0;
   if (n) {
     correctCount += 1;
     (hasAnsweredCurrentItem = !0);
@@ -5055,19 +5137,20 @@ function handleMonumentClick(e, t) {
       triggerHaptic('error'),
       feedbackError());
   ((totalAnswered += 1),
-    summaryData.push({ name: s, correct: n, time: a.toFixed(1) }),
+    recordSessionAnswer({ name: s, correct: n, time: a.toFixed(1) }, e.properties.name),
     trackAnswer(s, "monuments", n, a),
     updateWeightedScoreUI(),
     updateScoreUI(),
     !n && "marathon" === r && errorsCount >= MAX_ERRORS_MARATHON
-      ? endSession()
-      : ((currentMonumentIndex += 1), setNewTarget()));
+      ? endSessionAfterAnswerFeedback()
+      : ((currentMonumentIndex += 1), setNewTarget({ waitForAnswerFeedback: !0 })));
 }
 function handleArrondissementClick(e, t) {
   if ("arrondissements-ville" !== getZoneMode()) return;
   if (isPaused) return;
   if (
     !currentArrondissementTarget ||
+    hasAnsweredCurrentItem ||
     null === sessionStartTime ||
     null === streetStartTime
   )
@@ -5078,6 +5161,7 @@ function handleArrondissementClick(e, t) {
     s = getArrondissementTargetName(currentArrondissementTarget),
     i = normalizeArrondissementKey(n) === normalizeArrondissementKey(s),
     l = findArrondissementLayersByName(s);
+  hasAnsweredCurrentItem = !0;
   if (i) {
     correctCount += 1;
     (hasAnsweredCurrentItem = !0);
@@ -5118,22 +5202,29 @@ function handleArrondissementClick(e, t) {
       triggerHaptic('error'),
       feedbackError());
   ((totalAnswered += 1),
-    summaryData.push({ name: s, correct: i, time: a.toFixed(1) }),
+    recordSessionAnswer({ name: s, correct: i, time: a.toFixed(1) }, n),
     trackAnswer(s, "arrondissements-ville", i, a),
     updateWeightedScoreUI(),
     updateScoreUI(),
     !i && "marathon" === r && errorsCount >= MAX_ERRORS_MARATHON
-      ? endSession()
-      : ((currentArrondissementIndex += 1), setNewTarget()));
+      ? endSessionAfterAnswerFeedback()
+      : ((currentArrondissementIndex += 1), setNewTarget({ waitForAnswerFeedback: !0 })));
 }
 function handleBusLineClick(feature, layer, validLineNames = []) {
-  if ("lignes-transports-idf" !== getZoneMode() || isPaused || !currentBusLineTarget || !streetStartTime) return;
+  if (
+    "lignes-transports-idf" !== getZoneMode() ||
+    isPaused ||
+    hasAnsweredCurrentItem ||
+    !currentBusLineTarget ||
+    !streetStartTime
+  ) return;
   const gameMode = getGameMode();
   const elapsed = (performance.now() - streetStartTime) / 1e3;
   const targetName = currentBusLineTarget.properties.name;
   const isCorrect =
     feature.properties.name === targetName ||
     validLineNames.includes(targetName);
+  hasAnsweredCurrentItem = !0;
   if (isCorrect) {
     correctCount += 1;
     hasAnsweredCurrentItem = !0;
@@ -5163,14 +5254,15 @@ function handleBusLineClick(feature, layer, validLineNames = []) {
     feedbackError();
   }
   totalAnswered += 1;
-  summaryData.push({ name: targetName, correct: isCorrect, time: elapsed.toFixed(1) });
+  recordSessionAnswer({ name: targetName, correct: isCorrect, time: elapsed.toFixed(1) }, feature.properties.name);
   trackAnswer(targetName, "lignes-transports-idf", isCorrect, elapsed);
   updateWeightedScoreUI();
   updateScoreUI();
-  if (!isCorrect && "marathon" === gameMode && errorsCount >= MAX_ERRORS_MARATHON) endSession();
+  if (!isCorrect && "marathon" === gameMode && errorsCount >= MAX_ERRORS_MARATHON)
+    endSessionAfterAnswerFeedback();
   else {
     currentBusLineIndex += 1;
-    setNewTarget();
+    setNewTarget({ waitForAnswerFeedback: !0 });
   }
 }
 function highlightMonument(e, t) {
@@ -5599,6 +5691,8 @@ function focusArrondissementByName(e) {
   return t[0] || null;
 }
 function endSession() {
+  null !== sessionEndFeedbackTimeoutId && clearTimeout(sessionEndFeedbackTimeoutId);
+  sessionEndFeedbackTimeoutId = null;
   document.body.classList.add("session-ended");
   playVictory();
   const e = performance.now(),
@@ -6048,13 +6142,21 @@ function renderAvatarGrid(currentAvatar, globalRankLevel, profileStats = current
 }
 
 function sendScoreToServer(e) {
-  sendScoreToServerRuntime({
+  const status=message=>{
+    if(e.sessionId!==activeSessionId || isSessionRunning)return;
+    const summary=document.querySelector('#summary .summary-global');
+    if(!summary)return;
+    let node=summary.querySelector('.summary-save-status');
+    if(!node){node=document.createElement('p');node.className='summary-save-status';node.setAttribute('role','status');summary.appendChild(node);}
+    node.textContent=message;
+  };
+  sessionSync.then(() => sendScoreToServerRuntime({
     isDailyMode,
     currentUser,
     apiUrl: API_URL,
     payload: e,
     loadAllLeaderboards,
-  });
+  })).then(result=>{if(result?.success)status(`Classement : ${result.result.score} points enregistrés.`);}).catch(error=>{status(`Classement : ${error.message}`);showMessage(error.message,"error");});
 }
 
 function sendFriendChallengeScoreToServer(e) {
@@ -6068,19 +6170,20 @@ function sendFriendChallengeScoreToServer(e) {
   }
 
   try {
-    fetch(`${API_URL}/api/friend-challenges/${encodeURIComponent(activeFriendChallenge.code)}/score`, {
+    sessionSync.then(() => fetch(`${API_URL}/api/friend-challenges/${encodeURIComponent(activeFriendChallenge.code)}/score`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${currentUser.token}`,
       },
       body: JSON.stringify({
+        sessionId: e.sessionId,
         score: e.score,
         itemsCorrect: e.itemsCorrect,
         itemsTotal: e.itemsTotal,
         timeSec: e.totalTimeSec,
       }),
-    })
+    }))
       .then((response) =>
         response
           .json()
@@ -6255,27 +6358,16 @@ function startDailySession(e) {
   if (r || !t.success) {
     restoreDailyGuessesFromStorage(e.date);
   }
-  if (!r && dailyGuessHistory.length > 0) {
-    const lastLocalGuess = dailyGuessHistory[dailyGuessHistory.length - 1];
-    const recoveredSuccess =
-      normalizeName(lastLocalGuess?.streetName) === normalizeName(e.streetName);
-    const recoveredFailure = !recoveredSuccess && dailyGuessHistory.length >= 7;
-    if (recoveredSuccess || recoveredFailure) {
-      const recoveredAttempts = Math.min(7, dailyGuessHistory.length);
-      t.success = recoveredSuccess;
-      t.attempts_count = recoveredAttempts;
-      r = !0;
-      a = { success: recoveredSuccess, attempts: recoveredAttempts };
-      window._dailyGameOver = !0;
-      submitDailyGuessToServer({
-        date: e.date,
-        distanceMeters: recoveredSuccess ? 0 : Math.round(lastLocalGuess?.distance || 0),
-        isSuccess: recoveredSuccess,
-        attemptsCount: recoveredAttempts,
-      }).catch((error) => {
-        console.warn("Daily recovery sync error (non-bloquant):", error);
-      });
-    }
+  const serverAttempts = Number(t.attempts_count) || 0;
+  if (!r && dailyGuessHistory.length > serverAttempts) {
+    const unsynced = dailyGuessHistory.slice(serverAttempts);
+    unsynced.forEach(guess => { if (!guess.requestId) guess.requestId = crypto.randomUUID(); });
+    saveDailyGuessesToStorage(e.date);
+    window._dailyGuessInFlight = true;
+    unsynced.reduce((previous, guess) => previous.then(() => submitDailyGuessToServer({
+      date: e.date, answerName: guess.streetName, requestId: guess.requestId,
+    })), Promise.resolve()).catch(error => showMessage(error.message, 'warning'))
+      .finally(() => { window._dailyGuessInFlight = false; });
   }
   (cleanOldDailyGuessStorage(e.date),
     isSessionRunning && endSession(),
@@ -6352,6 +6444,8 @@ function renderDailyGuessHistory(e) {
   renderDailyGuessHistoryRuntime({
     dailyGuessHistory,
     finalStatus: e,
+    onReviewGuess: guess => reviewMapFeatures(map, L, allStreetFeatures.filter(feature =>
+      normalizeName(feature.properties?.name) === normalizeName(guess.streetName))),
     dailyTargetData,
     onLayoutShift: requestMapInvalidateSize,
     normalizeArrondissementKey,
