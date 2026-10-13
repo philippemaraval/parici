@@ -15,6 +15,7 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   const streets = catalog.records.filter(c => c.family === 'street');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
   assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.8), 'Street photo coverage must remain at least 80%');
+  assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length >= 160);
   for (const [key, entry] of Object.entries(manifest)) {
     const card = cards.get(key), v = entry.verification;
     assert.ok(card, key);
@@ -22,15 +23,25 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
     assert.equal(illustrations[key].image, entry.image);
     assert.equal(entry.verifiedEntity, key);
     assert.equal(entry.kind, 'photograph');
-    assert.equal(entry.author, 'Google Street View');
-    assert.match(v.copyright, /Google/);
-    assert.ok(v.evidence && v.reviewedAt && v.panoId && v.captureDate);
+    assert.ok(v.evidence && v.reviewedAt && v.captureDate);
     assert.ok(v.coordinate.every(Number.isFinite));
-    assert.ok(v.heading >= 0 && v.heading < 360);
     assert.ok(v.distanceMeters <= (card.family === 'street' ? 18 : card.family === 'district' ? 25 : 150));
     const source = new URL(entry.sourcePage);
-    assert.equal(source.hostname, 'www.google.com');
-    assert.equal(source.searchParams.get('pano'), v.panoId);
+    if (entry.source === 'panoramax') {
+      assert.ok(entry.author);
+      assert.equal(entry.license, 'CC-BY-SA-4.0');
+      assert.equal(source.hostname, 'api.panoramax.xyz');
+      assert.equal(source.searchParams.get('pic'), v.pictureId);
+      assert.ok(v.metadataPage.includes(v.pictureId));
+      if (v.azimuth != null) assert.ok(v.azimuth >= 0 && v.azimuth < 360);
+    } else {
+      assert.equal(entry.author, 'Google Street View');
+      assert.match(v.copyright, /Google/);
+      assert.ok(v.panoId);
+      assert.ok(v.heading >= 0 && v.heading < 360);
+      assert.equal(source.hostname, 'www.google.com');
+      assert.equal(source.searchParams.get('pano'), v.panoId);
+    }
     const bytes = fs.readFileSync(path.join(__dirname, '..', entry.image));
     assert.equal(bytes.readUInt16BE(0), 0xffd8);
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), v.sha256, key);
