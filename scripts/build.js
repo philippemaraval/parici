@@ -25,6 +25,7 @@ const DIST_INCLUDE = [
   "googlee4a7e2d5ea351f02.html",
   "index.html",
   "explorer.html",
+  "collect.html",
   "arbre-rangs.html",
   "regles.html",
   "versions.html",
@@ -66,6 +67,7 @@ function generateDistFolder() {
   fs.mkdirSync(DIST_DIR, { recursive: true });
 
   DIST_INCLUDE.forEach(copyItemToDist);
+  for(const privateFile of ["collect_paris_catalog.json","collect_question_additions.json","collect_fragment_plan.json"])fs.rmSync(path.join(DIST_DIR,"data",privateFile),{force:true});
 
   const backendDataInDist = path.join(DIST_DIR, "backend", "data");
   if (fs.existsSync(backendDataInDist)) {
@@ -234,6 +236,34 @@ async function fingerprintProductionAssets() {
     for (const [source, target] of [["/src/public/js/site-navigation.js", navigationUrl], ["/src/public/js/page-gestures.js", gesturesUrl], ["/src/public/js/site-shell.js", siteShellJsUrl], ["/src/public/css/site-shell.css", siteShellCssUrl]]) html = replaceAssetReference(html, source, target);
     fs.writeFileSync(file, html);
   }
+
+  // Collect uses the same locally bundled Leaflet runtime as Camino and Daily.
+  const collectLoaderUrl = writeFingerprintedAsset(
+    "collect-map-loader", "js",
+    (await minifiedSource("src/public/js/collect-map-loader.js", "js"))
+      .replace("/src/public/js/leaflet-runtime.js", leafletRuntimeUrl)
+      .replace("/src/public/js/leaflet.polylineoffset.js", polylineOffsetUrl), assetManifest,
+  );
+  const collectPagePath = path.join(DIST_DIR, "collect.html");
+  let collectHtml = fs.readFileSync(collectPagePath, "utf8");
+  collectHtml = replaceAssetReference(collectHtml, "/style.css", styleUrl);
+  collectHtml = replaceAssetReference(collectHtml, "/src/public/css/site-shell.css", siteShellCssUrl);
+  collectHtml = replaceAssetReference(collectHtml, "/vendor/leaflet.css", leafletCssUrl);
+  collectHtml = replaceAssetReference(collectHtml, "/src/public/js/site-shell.js", siteShellJsUrl);
+  collectHtml = replaceAssetReference(collectHtml, "/src/public/js/collect-map-loader.js", collectLoaderUrl);
+  for (const [source, label, type] of [
+    ["src/public/js/collect.js", "collect", "js"],
+    ["src/public/js/collect-notifications.js", "collect-notifications", "js"],
+    ...["collect", "collect-details", "collect-sections", "collect-reveal", "collect-theme", "collect-cards"]
+      .map(name => [`src/public/css/${name}.css`, name, "css"]),
+  ]) {
+    const content = ["collect","collect-notifications"].includes(label) && type === "js"
+      ? (await esbuild.build({ entryPoints:[path.join(ROOT,source)], bundle:true, write:false, minify:true, format:"iife", target:"es2019" })).outputFiles[0].text
+      : await minifiedSource(source, type);
+    const url = writeFingerprintedAsset(label, type, content, assetManifest);
+    collectHtml = replaceAssetReference(collectHtml, "/" + source, url);
+  }
+  fs.writeFileSync(collectPagePath, collectHtml);
 
   const explorerCssUrl = writeFingerprintedAsset(
     "explorer",

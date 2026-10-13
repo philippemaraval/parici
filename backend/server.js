@@ -567,6 +567,7 @@ app.get('/api/health', (req, res) => {
         ok: true,
         database: startupState.databaseReady ? 'ready' : 'initializing',
         uptimeSec: Math.round(process.uptime()),
+        collectApiVersion: 4,
         domains: Object.keys(domains),
     });
 });
@@ -670,6 +671,7 @@ app.get('/main.js', (req, res, next) => {
     }
 });
 
+app.get(['/data/collect_paris_catalog.json','/data/collect_question_additions.json','/data/collect_fragment_plan.json'], (_req,res)=>res.sendStatus(404));
 app.use(express.static(frontendRoot));
 
 async function initializeBackgroundServices() {
@@ -700,12 +702,15 @@ async function initializeDatabase({ startBackgroundServices = true } = {}) {
             reloadDailyRuntimeIndexes();
         }
         await db.initDb();
+        Object.assign(db, require("./collect-database"));
+        await require("./domains/collect-social/migrate").migrate(db.pool);
         startupState.databaseReady = true;
         startupState.databaseError = null;
         console.log('Database ready.');
 
         if (startBackgroundServices) {
             await initializeBackgroundServices();
+            require("./domains/collect/background").start(db,()=>pushRuntime,(...args)=>webPush.sendNotification(...args));
         }
     } catch (error) {
         startupState.databaseReady = false;
@@ -3209,12 +3214,8 @@ app.post('/api/notifications/unsubscribe', authenticateToken, async (req, res) =
     const endpoint = String(req.body?.endpoint || '').trim();
     try {
         await ensurePushRuntimeReady();
-        if (endpoint) {
-            await db.removePushSubscriptionForUser(req.user.id, endpoint);
-        } else {
-            await db.removeAllPushSubscriptionsForUser(req.user.id);
-        }
-        return res.json({ success: true });
+        const kept=await db.pool.query(`UPDATE push_subscriptions SET daily_enabled=FALSE,enabled=collect_enabled,updated_at=NOW() WHERE user_id=$1 AND ($2='' OR endpoint=$2) RETURNING collect_enabled`,[req.user.id,endpoint]);
+        return res.json({success:true,keepSubscription:kept.rows.some(row=>row.collect_enabled)});
     } catch (err) {
         console.error('Push unsubscribe error:', err);
         return res.status(500).json({ error: 'Failed to remove push subscription' });
@@ -3277,6 +3278,7 @@ app.get('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{
 }));
 
 app.use('/api/explorer/admin',(_req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
+require('./collect-routes')({app,db,authenticateToken,requireAdminUser,asyncHandler,getStreetIndex:()=>streetIndex,getEffectiveContentLists,parseCookieHeader,SESSION_COOKIE_NAME,isValidPushSubscription,ensurePushRuntimeReady,getPushRuntime:()=>pushRuntime});
 app.use('/api/explorer', require('./domains/explorer/routes')({authenticateToken, requireContentEditor, asyncHandler}));
 app.get('/data/explorer_uploads/:filename', asyncHandler(async(req,res)=>{
  if(!/^[a-f0-9]{64}\.(png|jpg|webp)$/.test(req.params.filename))return res.sendStatus(404);
@@ -4558,6 +4560,8 @@ app.post(
         if (!target) return res.status(404).json({error: 'Daily introuvable'});
         const integrity = require('./domains/game-integrity/daily');
         const result = await integrity.submitGuess(db, req.user.id, parsed.value, target, integrity.getStreetFeatures());
+
+        if(result.success) await db.grantDailyCardCopy(req.user.id,parsed.value.date,target.street_name,result.attempts_count);
 
         if (result.success || result.attempts_count >= 7) {
             result.dailyStreak = await db.getDailyStreakForUser(req.user.id, expectedDate);

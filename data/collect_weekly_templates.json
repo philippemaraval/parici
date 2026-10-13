@@ -1,0 +1,12 @@
+{
+  "objectiveCounts": [2, 3],
+  "templates": [
+    { "kind": "arrondissement", "min": 4, "max": 6, "label": "Rues d'arrondissements différents" },
+    { "kind": "quartier", "min": 5, "max": 8, "label": "Rues de quartiers différents" },
+    { "kind": "monument", "min": 2, "max": 4, "label": "Monuments différents" },
+    { "kind": "bus", "min": 2, "max": 3, "label": "Lignes de transport différentes" },
+    { "kind": "district", "min": 2, "max": 4, "label": "Quartiers différents" },
+    { "kind": "famous", "min": 2, "max": 4, "label": "Rues célèbres différentes" },
+    { "kind": "main", "min": 3, "max": 5, "label": "Rues principales différentes" }
+  ]
+}

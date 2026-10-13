@@ -32,3 +32,12 @@
 
 /explorer.html
   X-Robots-Tag: noindex, nofollow
+
+/data/collect_images/*.svg
+  Content-Type: image/svg+xml
+
+/collect.html
+  X-Robots-Tag: noindex, nofollow
+
+/data/collect_paris_catalog.json
+  X-Robots-Tag: noindex, nofollow

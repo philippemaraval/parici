@@ -3,6 +3,7 @@
 const domains = Object.freeze({
   administration: ["/api/admin", "/api/analytics"],
   auth: ["/api/register", "/api/login", "/api/session", "/api/password"],
+  collect: ["/api/collect"],
   daily: ["/api/daily"],
   explorer: ["/api/explorer"],
   notifications: ["/api/notifications"],

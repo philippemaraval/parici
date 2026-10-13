@@ -26,6 +26,7 @@ test('database startup skips migrations when the schema version is current', asy
       if (queries.length === 3) {
         return { rows: [{ value_text: '2026-08-24-daily-history-details-v1' }] };
       }
+      if(String(sql).includes("key='parici_collect_schema'"))return {rows:[{value_text:'20261013-1'}]};
       return { rows: [] };
     },
     release() {
@@ -60,13 +61,13 @@ test('database startup skips migrations when the schema version is current', asy
     Module._load = originalLoad;
   }
 
-  assert.equal(queries.length, 10);
+  assert.equal(queries.length, 11);
   assert.match(queries[3].sql, /BEGIN/);
   assert.match(queries[4].sql, /daily_guess_receipts/);
   assert.match(queries[5].sql, /site_notification_reads/);
   assert.match(queries[0].sql, /pg_advisory_lock/);
   assert.match(queries[1].sql, /to_regclass\('public\.app_settings'\)/);
   assert.deepEqual(queries[2].params, ['schema_bootstrap_version']);
-  assert.match(queries[9].sql, /pg_advisory_unlock/);
+  assert.match(queries[10].sql, /pg_advisory_unlock/);
   assert.equal(released, true);
 });

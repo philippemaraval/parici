@@ -1,0 +1,206 @@
+#social-settings label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+}
+.collect-social-tabs,
+.collect-social-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+}
+.collect-social-tabs {
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 0.6rem 0 0.35rem;
+}
+#collect-social-space .collect-social-tabs button {
+  flex: 1 0 auto;
+  width: auto;
+  letter-spacing: 0;
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.collect-social-status:empty {
+  display: none;
+}
+#collect-social-content > h3:first-child {
+  margin-top: 0.35rem;
+}
+.collect-social-tabs button[aria-pressed="true"] {
+  background: #c93434;
+  color: white;
+  border-color: #c93434;
+}
+.collect-social-list {
+  display: grid;
+  gap: 1rem;
+}
+.collect-social-list article,
+.collect-offer,
+#social-manager-cards article,
+#collect-social-content > article {
+  padding: 1rem;
+  border: 1px solid #eac7bf;
+  border-radius: 14px;
+  background: #fffaf7;
+  margin: 0.8rem 0;
+}
+.collect-match {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.collect-match section {
+  min-width: 0;
+  padding: 0.8rem;
+  background: #fff6f1;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.collect-match h3,
+.collect-match h4 {
+  margin-top: 0;
+}
+.collect-social-dialog {
+  width: min(850px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  padding: 1.2rem;
+  border: 1px solid #eac7bf;
+  border-radius: 18px;
+  color: #14255b;
+  background: #fffcf7;
+  box-sizing: border-box;
+  overflow: auto;
+}
+.collect-social-dialog::backdrop {
+  background: rgb(15 23 42 / 60%);
+}
+.collect-social-dialog label,
+#collect-social-content label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.65rem 0;
+}
+.collect-copy-picker {
+  border: 1px solid #ead4cd;
+  border-radius: 12px;
+  margin: 0.8rem 0;
+  padding: 0.65rem;
+}
+.collect-copy-picker label,
+.collect-copy-settings label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 0.55rem !important;
+}
+.collect-copy-picker small {
+  display: block;
+}
+.collect-copy-picker input[type="checkbox"],
+.collect-copy-settings input {
+  flex: 0 0 auto;
+  width: 20px;
+  min-height: 20px;
+}
+.collect-copy-picker legend {
+  font-weight: 700;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.collect-social-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.6rem;
+}
+.collect-social-filters label {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+.collect-social-filters input,
+.collect-social-dialog input:not([type="checkbox"]),
+.collect-social-dialog select,
+#social-settings select {
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0.55rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: white;
+  color: #14255b;
+}
+.collect-last-copy-warning {
+  padding: 0.8rem;
+  border-left: 4px solid #c93434;
+  background: #fff0eb;
+  color: #8b2525;
+}
+.collect-social-status,
+.collect-modal-status {
+  color: #9b2929;
+  min-height: 1.4rem;
+}
+.collect-social-activity small {
+  display: block;
+  color: #65728a;
+}
+.collect-social-card {
+  margin: 1rem 0;
+  border-top: 1px solid #eac7bf;
+  padding-top: 0.8rem;
+}
+.collect-social-card .collect-copy-destroy {
+  color: #b52e2e;
+}
+.collect-personal-progress {
+  color: #6b4352;
+  font-size: 0.85rem;
+}
+.collect-social-dialog button {
+  min-height: 36px;
+}
+.collect-social-dialog :focus-visible {
+  outline: 3px solid #193dba;
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .collect-match {
+    grid-template-columns: 1fr;
+  }
+  .collect-social-dialog {
+    padding: 0.8rem;
+  }
+  .collect-social-tabs {
+    gap: 2px;
+  }
+  #collect-social-space .collect-social-tabs button {
+    font-size: clamp(9px, 2.8vw, 11px);
+    font-weight: 500;
+    padding: 6px 2px;
+  }
+}
+
+.collect-card-management{border-top:1px solid #ead4cd;padding-top:20px;margin-top:20px}
+.collect-copy-settings{display:grid;gap:12px}
+.collect-copy-settings fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;border:0;padding:0;margin:0;min-width:0}
+.collect-copy-settings legend{font-weight:700;margin-bottom:12px}
+.collect-copy-settings label{margin:0!important;padding:12px;border:1px solid #ead4cd;border-radius:10px;line-height:1.4}
+.collect-copy-settings small,.collect-management-help{display:block;color:#68758b;font-size:12px;margin-top:4px;line-height:1.5}
+.collect-copy-settings>button{justify-self:start}
+.collect-copy-picker>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #ead4cd}
+.collect-copy-picker>div label{flex:1;min-width:0;margin:0}
+.collect-copy-picker>div label span{overflow-wrap:anywhere}
+.collect-copy-picker>div button{flex-shrink:0}
+.collect-card-management input[type=checkbox]{height:20px;margin:2px 0;accent-color:#bd332a}
+.collect-copy-destroy{margin-top:6px}
+@media(max-width:520px){.collect-copy-settings fieldset{grid-template-columns:1fr}.collect-copy-picker>div{flex-wrap:wrap}.collect-copy-picker>div button{margin-left:29px}}

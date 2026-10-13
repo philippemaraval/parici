@@ -1,0 +1,563 @@
+const test = require("node:test"),
+  assert = require("node:assert/strict"),
+  http = require("node:http"),
+  crypto = require("node:crypto"),
+  fs = require("node:fs");
+const { createTestDatabase } = require("./test-database");
+test(
+  "Collect Paris: catalog, game receipts, quota, fragments, albums, Daily and browser",
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 300000 },
+  async (t) => {
+    const isolated = await createTestDatabase(
+      process.env.TEST_DATABASE_URL,
+      "parici_collect",
+    );
+    process.env.DATABASE_URL = isolated.url;
+    process.env.NODE_ENV = "production";
+    process.env.CORS_ALLOWED_ORIGINS = "http://127.0.0.1:4173";
+    process.env.SECRET_KEY =
+      "parici-collect-local-test-secret-with-32-characters";
+    const db = require("../../backend/database"),
+      { app, initializeDatabase } = require("../../backend/server");
+    const server = http.createServer(app);
+    let browser;
+    t.after(async () => {
+      await browser?.close();
+      server.closeAllConnections();
+      await new Promise((resolve) => server.close(resolve));
+      await db.pool.end();
+      await isolated.cleanup();
+    });
+    await initializeDatabase({ startBackgroundServices: false });
+    await initializeDatabase({ startBackgroundServices: false });
+    await new Promise((resolve) =>
+      server.listen(
+        process.env.PARICI_COLLECT_BROWSER === "1" ? 4173 : 0,
+        "127.0.0.1",
+        resolve,
+      ),
+    );
+    const base = "http://127.0.0.1:" + server.address().port;
+    async function request(route, user, body, method = body ? "POST" : "GET") {
+      const response = await fetch(base + route, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          ...(user ? { Authorization: "Bearer " + user.token } : {}),
+        },
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      });
+      return {
+        status: response.status,
+        body: await response.json().catch(() => ({})),
+      };
+    }
+    async function register(name) {
+      const r = await request("/api/register", null, {
+        username: name,
+        password: "collect-local-test-password",
+        recoveryEmail: name + "@example.test",
+      });
+      assert.equal(r.status, 200, JSON.stringify(r.body));
+      return r.body;
+    }
+    const player = await register("collect_player"),
+      other = await register("collect_other");
+    assert.equal((await request("/api/collect/quota")).status, 401);
+    assert.equal((await request("/api/collect/v2/config")).body.enabled, true);
+    const privateDailyPlayer = await register("collect_private_daily");
+    const privateDailyTarget = (await request("/api/daily", privateDailyPlayer))
+      .body;
+    const privateDailyWin = await request(
+      "/api/daily/guess",
+      privateDailyPlayer,
+      {
+        date: privateDailyTarget.date,
+        answerName:
+          privateDailyTarget.displayStreetName || privateDailyTarget.streetName,
+        requestId: crypto.randomUUID(),
+      },
+    );
+    assert.equal(privateDailyWin.status, 200);
+    assert.equal(privateDailyWin.body.success, true);
+    assert.equal(
+      Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*) FROM card_copies WHERE user_id=$1 AND source='daily'",
+            [privateDailyPlayer.id],
+          )
+        ).rows[0].count,
+      ),
+      0,
+    );
+    const cards = (await db.pool.query("SELECT * FROM cards ORDER BY id")).rows;
+    assert.equal(cards.length, 5943);
+    assert.deepEqual(
+      Object.fromEntries(
+        ["street", "district", "monument", "bus"].map((f) => [
+          f,
+          cards.filter((c) => c.family === f).length,
+        ]),
+      ),
+      { street: 5711, district: 80, monument: 107, bus: 45 },
+    );
+    for (const family of ["street", "district", "monument", "bus"]) {
+      const map = await request("/api/collect/map/" + family);
+      assert.equal(map.status, 200);
+      assert.ok(map.body.features.length);
+      const card = cards.find((c) => c.family === family);
+      const image = await fetch(base + card.image_reference);
+      assert.equal(image.status, 200, card.image_reference);
+    }
+    assert.equal(
+      (await fetch(base + "/data/collect_paris_catalog.json")).status,
+      404,
+    );
+    const first = await request("/api/collect/games", player, {});
+    assert.equal(first.status, 201, JSON.stringify(first.body));
+    const resumed = await request("/api/collect/games", player, {});
+    assert.equal(resumed.body.gameId, first.body.gameId);
+    assert.equal(resumed.body.resumed, true);
+    assert.equal(
+      (await request("/api/collect/games/pending", other)).body.game,
+      null,
+    );
+    await request(
+      "/api/collect/games/" + first.body.gameId,
+      player,
+      {},
+      "DELETE",
+    );
+    const normal = cards.find((c) => c.family === "monument");
+    async function fixtureGame(user, card) {
+      const id = crypto.randomUUID();
+      await db.pool.query(
+        "INSERT INTO collect_games(id,user_id,card_id,max_attempts) VALUES($1,$2,$3,3)",
+        [id, user.id, card.id],
+      );
+      return id;
+    }
+    async function answer(user, id, card) {
+      return request("/api/collect/games/" + id + "/answer", user, {
+        answerEntityId: card.source_entity_id,
+        requestId: crypto.randomUUID(),
+      });
+    }
+    const id = await fixtureGame(player, normal),
+      payload = {
+        answerEntityId: normal.source_entity_id,
+        requestId: crypto.randomUUID(),
+      };
+    const wins = await Promise.all([
+      request("/api/collect/games/" + id + "/answer", player, payload),
+      request("/api/collect/games/" + id + "/answer", player, payload),
+    ]);
+    wins.forEach((r) => assert.equal(r.status, 200, JSON.stringify(r.body)));
+    assert.equal(wins[0].body.rewardGranted, true);
+    assert.equal(
+      Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*) FROM card_copies WHERE user_id=$1",
+            [player.id],
+          )
+        ).rows[0].count,
+      ),
+      1,
+    );
+    assert.equal(
+      (await request("/api/collect/games/" + id + "/answer", other, payload))
+        .status,
+      404,
+    );
+    for (let i = 0; i < 3; i++) {
+      const game = await fixtureGame(player, normal);
+      assert.equal(
+        (await answer(player, game, normal)).body.rewardGranted,
+        true,
+      );
+    }
+    assert.equal((await request("/api/collect/quota", player)).body.copies, 4);
+    const noReward = await answer(
+      player,
+      await fixtureGame(player, normal),
+      normal,
+    );
+    assert.equal(noReward.body.correct, true);
+    assert.equal(noReward.body.rewardGranted, false);
+    assert.equal(
+      (await request("/api/collect/notifications", player)).body.full,
+      true,
+    );
+    await db.pool.query(
+      "UPDATE collect_awards SET obtained_at=NOW()-INTERVAL '21 minutes' WHERE user_id=$1 AND source='collect'",
+      [player.id],
+    );
+    await db.pool.query(
+      "UPDATE collect_quota_notifications SET active_until=NULL, due_at=NOW()-INTERVAL '1 minute' WHERE user_id=$1",
+      [player.id],
+    );
+    assert.equal(
+      (await request("/api/collect/notifications", player)).body.badge,
+      true,
+    );
+    await request("/api/collect/notifications/open", player, {});
+    assert.equal(
+      (await request("/api/collect/notifications", player)).body.badge,
+      false,
+    );
+    const fragment = cards.find((c) => c.fragments_enabled);
+    let questionId;
+    for (let i = 0; i < fragment.fragments_required; i++) {
+      const game = await fixtureGame(player, fragment),
+        placement = await answer(player, game, fragment);
+      assert.equal(placement.status, 200, JSON.stringify(placement.body));
+      assert.equal(placement.body.stage, "question");
+      assert.equal(Object.hasOwn(placement.body, "correct_index"), false);
+      const snapshot = (
+        await db.pool.query(
+          "SELECT question_snapshot FROM collect_games WHERE id=$1",
+          [game],
+        )
+      ).rows[0].question_snapshot;
+      questionId = snapshot.id;
+      const result = await request(
+        "/api/collect/games/" + game + "/question",
+        player,
+        { answerIndex: snapshot.correct_index },
+      );
+      assert.equal(result.status, 200, JSON.stringify(result.body));
+      assert.equal(
+        result.body.rewardGranted,
+        i === fragment.fragments_required - 1,
+      );
+    }
+    assert.ok(questionId);
+    assert.equal(
+      (
+        await db.pool.query(
+          "SELECT fragments FROM collect_fragment_progress WHERE user_id=$1 AND card_id=$2",
+          [player.id, fragment.id],
+        )
+      ).rows[0].fragments,
+      0, // Completing a card starts the next fragment cycle.
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/collect/cards/" + normal.id + "/favorite",
+          player,
+          { favorite: true },
+          "PUT",
+        )
+      ).status,
+      200,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/collect/collection/page?ownership=favorites",
+          player,
+        )
+      ).body.cards.length,
+      1,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/collect/collection/page?family=street-arrondissement&arrondissement=20&ownership=all",
+          player,
+        )
+      ).status,
+      200,
+    );
+    const album = await request("/api/collect/personal-albums", player, {
+      name: "Paris à retrouver",
+    });
+    assert.equal(album.status, 201, JSON.stringify(album.body));
+    const albumId = album.body.album?.id || album.body.id;
+    assert.equal(
+      (
+        await request(
+          "/api/collect/personal-albums/" + albumId + "/cards",
+          player,
+          { cardIds: [normal.id] },
+        )
+      ).status,
+      200,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/collect/personal-albums/" + albumId + "/cards",
+          other,
+        )
+      ).status,
+      404,
+    );
+    const albums = await request("/api/collect/albums", player);
+    assert.ok(albums.body.albums.length >= 100);
+    assert.ok(albums.body.badges.some((b) => b.earned));
+    const goal = albums.body.albums.find((a) =>
+      a.slug.startsWith("street-arrondissement-"),
+    );
+    assert.equal(
+      (await request("/api/collect/goal", player, { slug: goal.slug }, "PUT"))
+        .body.goal.slug,
+      goal.slug,
+    );
+    const day = "2026-10-13",
+      daily = cards.find((c) => c.family === "street" && !c.fragments_enabled);
+    await db.pool.query(
+      "INSERT INTO daily_targets(date,street_name,arrondissement,coordinates_json) VALUES($1,$2,'Paris',$3) ON CONFLICT(date) DO UPDATE SET street_name=EXCLUDED.street_name",
+      [day, daily.source_entity_id, "2.35,48.85"],
+    );
+    await db.pool.query(
+      "INSERT INTO daily_user_attempts(user_id,date,success,attempts_count,last_attempt_at) VALUES($1,$2,TRUE,2,NOW())",
+      [other.id, day],
+    );
+    assert.equal(
+      await db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999),
+      null,
+    );
+    assert.equal(
+      Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*) FROM card_copies WHERE source='daily'",
+          )
+        ).rows[0].count,
+      ),
+      0,
+    );
+    // Simulate the future public launch; pre-launch wins remain ineligible.
+    await db.pool.query(
+      "UPDATE app_settings SET value_text=NOW()::text WHERE key='collect_launch_at'",
+    );
+    assert.equal(
+      await db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999),
+      null,
+    );
+    await db.pool.query(
+      "UPDATE daily_user_attempts SET last_attempt_at=NOW() WHERE user_id=$1 AND date=$2",
+      [other.id, day],
+    );
+    const dailyReward = await db.grantDailyCardCopy(
+      other.id,
+      day,
+      daily.source_entity_id,
+      999,
+    );
+    assert.ok(dailyReward);
+    assert.equal(
+      await db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999),
+      null,
+    );
+    assert.equal(
+      (
+        await db.pool.query(
+          "SELECT daily_attempt_count FROM card_copies WHERE user_id=$1 AND source='daily'",
+          [other.id],
+        )
+      ).rows[0].daily_attempt_count,
+      2,
+    );
+    assert.equal((await db.getCollectQuota(other.id)).copies, 0);
+    await db.pool.query(
+      "UPDATE app_settings SET value_text='infinity' WHERE key='collect_launch_at'",
+    );
+    const weekly = await request("/api/collect/weekly-challenge", player);
+    assert.equal(weekly.status, 200, JSON.stringify(weekly.body));
+    assert.ok(
+      weekly.body.objectives?.length ||
+        weekly.body.challenge?.objectives?.length,
+    );
+    await initializeDatabase({ startBackgroundServices: false });
+    assert.equal(
+      Number((await db.pool.query("SELECT COUNT(*) FROM cards")).rows[0].count),
+      5943,
+    );
+    assert.ok(
+      Number(
+        (await db.pool.query("SELECT COUNT(*) FROM card_copies")).rows[0].count,
+      ) >= 6,
+    );
+    const endpoint = "https://push.example.test/parici-collect-test";
+    await db.upsertPushSubscription(player.id, {
+      endpoint,
+      keys: { p256dh: "local-test", auth: "local-test" },
+    });
+    await db.pool.query(
+      "UPDATE push_subscriptions SET collect_enabled=TRUE WHERE endpoint=$1",
+      [endpoint],
+    );
+    assert.equal(
+      (await request("/api/notifications/unsubscribe", player, { endpoint }))
+        .body.keepSubscription,
+      true,
+    );
+    assert.equal(
+      (await db.getPushSubscriptionStatusForUser(player.id)).enabled,
+      false,
+    );
+    assert.equal(
+      (await request("/api/collect/push/unsubscribe", player, { endpoint }))
+        .body.keepSubscription,
+      false,
+    );
+    await db.upsertPushSubscription(player.id, {
+      endpoint,
+      keys: { p256dh: "local-test", auth: "local-test" },
+    });
+    await db.pool.query(
+      "UPDATE push_subscriptions SET collect_enabled=TRUE WHERE endpoint=$1",
+      [endpoint],
+    );
+    assert.equal(
+      (await request("/api/collect/push/unsubscribe", player, { endpoint }))
+        .body.keepSubscription,
+      true,
+    );
+    assert.equal(
+      (await db.getPushSubscriptionStatusForUser(player.id)).enabled,
+      true,
+    );
+    if (process.env.PARICI_COLLECT_BROWSER === "1") {
+      const { chromium } = require("@playwright/test");
+      browser = await chromium.launch({ channel: "chrome", headless: true });
+      const context = await browser.newContext({
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+        serviceWorkers: "block",
+      });
+      const page = await context.newPage(),
+        errors = [];
+      page.on("pageerror", (e) => {
+        errors.push(e.message);
+        console.log("PAGEERROR", e.message);
+      });
+      page.on("requestfailed", (r) =>
+        console.log("REQUESTFAILED", r.url(), r.failure()),
+      );
+      page.on("response", (r) => {
+        if (r.status() >= 400) console.log("HTTPERROR", r.status(), r.url());
+      });
+      page.on("console", (message) => {
+        if (message.type() === "error") console.log("BROWSER", message.text());
+      });
+      await page.route("**/src/public/js/runtime-config.js", (route) =>
+        route.fulfill({
+          contentType: "application/javascript",
+          body:
+            "window.CaminoRuntimeConfig=Object.freeze({apiUrl:" +
+            JSON.stringify(base) +
+            "});",
+        }),
+      );
+      await page.addInitScript((user) => {
+        localStorage.setItem("camino_auth_token", user.token);
+        localStorage.setItem(
+          "camino_paris_user",
+          JSON.stringify({ ...user, authenticated: true }),
+        );
+      }, player);
+      fs.mkdirSync("/tmp/parici-collect-review", { recursive: true });
+      await page.goto(base + "/collect.html");
+      await page
+        .locator("#collect-next")
+        .waitFor({ state: "visible" })
+        .catch(async (e) => {
+          await page.screenshot({
+            path: "/tmp/parici-collect-review/error.png",
+            fullPage: true,
+          });
+          console.log("PAGEBODY", await page.locator("body").innerText());
+          throw e;
+        });
+      await page.screenshot({
+        path: "/tmp/parici-collect-review/play-mobile.png",
+        fullPage: true,
+      });
+      assert.equal(
+        await page
+          .locator(
+            'nav.site-nav a[href*="collect.html"],nav.site-nav a[href*="explorer.html"],.site-drawer-links a[href*="collect.html"],.site-drawer-links a[href*="explorer.html"]',
+          )
+          .count(),
+        0,
+      );
+      assert.equal(await page.locator(".site-header").count(), 1);
+      await page.screenshot({
+        path: "/tmp/parici-collect-review/play-viewport.png",
+      });
+      await page.locator("#collect-next").click();
+      await page.locator("body.collect-session-active").waitFor();
+      assert.equal(await page.locator("nav.site-nav").isVisible(), false);
+      assert.equal(
+        await page.locator("#collect-weekly-play").isVisible(),
+        false,
+      );
+      await page.screenshot({
+        path: "/tmp/parici-collect-review/game-mobile.png",
+        fullPage: true,
+      });
+      await page.reload();
+      await page.locator("#collect-next").waitFor({ state: "visible" });
+      await page.locator("#collect-next").click();
+      await page.locator("body.collect-session-active").waitFor();
+      await page.locator("#collect-exit").click();
+      await page.locator("nav.site-nav").waitFor({ state: "visible" });
+      await page.locator('[data-panel="collection"]').click();
+      await page.locator(".collect-tile").first().waitFor();
+      await page.screenshot({
+        path: "/tmp/parici-collect-review/collection-mobile.png",
+        fullPage: true,
+      });
+      await page.locator('[data-panel="community"]').click();
+      await page
+        .locator('[data-community-tab="social"]')
+        .waitFor({ state: "visible" });
+      await page
+        .locator("#collect-settings")
+        .evaluate((el) => (el.open = true));
+      await page
+        .locator('#collect-settings-form select[name="visibility"]')
+        .selectOption("private");
+      await page.locator("#collect-settings-form button").click();
+      await page
+        .locator("#collect-settings-status")
+        .filter({ hasText: "Réglages enregistrés" })
+        .waitFor();
+      assert.equal(
+        (await request("/api/collect/profiles/" + player.username, other))
+          .status,
+        404,
+      );
+      await page.locator('[data-community-tab="social"]').click();
+      await page.screenshot({
+        path: "/tmp/parici-collect-review/social-mobile.png",
+        fullPage: true,
+      });
+      for (const width of [320, 390, 430, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        assert.equal(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth > innerWidth + 1,
+          ),
+          false,
+          "Collect overflow " + width,
+        );
+      }
+      await page.goto(base + "/?view=home");
+      assert.equal(
+        await page
+          .locator('a[href*="collect.html"],a[href*="explorer.html"]')
+          .count(),
+        0,
+      );
+      assert.deepEqual(errors, []);
+    }
+  },
+);

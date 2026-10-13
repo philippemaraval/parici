@@ -1,0 +1,13 @@
+# Collect Paris — accès direct de test
+
+Périmètre : points 13 à 21 du rattrapage Camino. Page `/collect.html`, sans lien depuis les pages publiques, sans entrée de menu et sans annonce de version. Explorer reste lui aussi accessible uniquement par URL directe.
+
+Le catalogue contient 5 943 cartes : 5 711 rues, 80 quartiers, 107 monuments et 45 lignes de transport du référentiel parisien existant. Il comporte 106 albums géographiques et thématiques. Huit cartes patrimoniales issues des contenus Explorer existants proposent des fragments et des questions sourcées. Les albums personnels, favoris, exemplaires, badges, objectifs, récompenses Daily, défis hebdomadaires et échanges utilisent PostgreSQL.
+
+Les illustrations reprennent les géométries disponibles ; 301 cartes utilisent les photographies Daily/Explorer déjà présentes. Les autres utilisent des illustrations explicitement identifiées comme cartographiques, avec un pictogramme générique pour les monuments ponctuels. Les descriptions générales décrivent le référentiel, sans inventer d'histoire. Les textes patrimoniaux et leurs sources viennent d'Explorer. Les raretés initiales sont des paramètres de départ ; le recalcul mensuel utilise les performances observées et un minimum d'observations.
+
+Génération reproductible : `node scripts/build_collect_paris_catalog.js`. Les réponses aux questions et les données du catalogue serveur ne sont pas publiées dans `dist`.
+
+La migration du 13 octobre est additive et exécutée une seule fois sous le verrou de démarrage existant. Elle conserve les comptes, tentatives Daily et exemplaires. Les récompenses Daily sont désactivées pendant cette phase privée (`collect_launch_at = infinity`). La mise en ligne publique devra fixer cette date ; les victoires antérieures resteront inéligibles, sans attribution rétroactive. Les quotas Collect reposent sur les attributions, indépendamment des échanges et destructions. Les abonnements push Daily et Collect sont distincts ; les alertes nécessitent le consentement du joueur et la configuration VAPID du serveur.
+
+Validation : tests PostgreSQL isolés pour les parties, reprises, quotas, fragments, albums, récompenses Daily, confidentialité, amis, échanges concurrents et annulation des transactions. Contrôle Chrome de la page directe et des largeurs 320, 390, 430, 768 et 1440 pixels. Aucun déploiement public n'est présumé par un push Git.

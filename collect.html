@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Joue à Collect dans Parici et gagne des cartes en reconnaissant Paris.">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <title>Collect · Parici</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/src/public/css/site-shell.css">
+  <link rel="stylesheet" href="/vendor/leaflet.css">
+  <link rel="stylesheet" href="/src/public/css/collect.css">
+  <link rel="stylesheet" href="/src/public/css/collect-details.css">
+  <link rel="stylesheet" href="/src/public/css/collect-sections.css">
+  <link rel="stylesheet" href="/src/public/css/collect-reveal.css">
+  <link rel="stylesheet" href="/src/public/css/camino-art.css">
+  <link rel="stylesheet" href="/src/public/css/collect-theme.css">
+  <link rel="stylesheet" href="/src/public/css/collect-cards.css">
+  <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
+  <script defer src="/src/public/js/site-shell.js"></script>
+  <script type="module" src="/src/public/js/collect-notifications.js"></script>
+  <script type="module" src="/src/public/js/interface-icons.js"></script>
+  <script defer src="/src/public/js/collect-map-loader.js"></script>
+  <script src="/src/public/js/runtime-config.js"></script>
+  <script type="module" src="/src/public/js/collect.js"></script>
+  <script defer src="/src/public/js/site-navigation.js"></script>
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+</head>
+<body class="collect-page site-shell-page">
+  <div class="site-shell-top">
+    <header class="site-header">
+      <div><h1 class="site-header__title"><a href="/">Parici</a></h1>
+      <p class="site-header__subtitle">Connaissez-vous vraiment votre ville ?</p></div>
+      <div id="app-version" class="app-version-pill site-header__version" aria-label="Version du jeu">V0.4.1</div>
+      <button id="site-notification-bell" class="site-header__control site-header__control--notifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="site-notifications"><svg class="camino-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2"/></svg><span id="site-notification-count" class="site-notification-count" hidden></span></button>
+
+    </header>
+    <nav class="collect-mode-nav site-nav" aria-label="Navigation des modes de jeu">
+      <a href="/">Accueil</a><a href="/?view=camino">Parici</a><a href="/?view=daily">Daily</a>
+      <button id="site-menu-toggle" class="site-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-menu-drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+    </nav>
+  </div>
+  <main class="collect-shell">
+    <section class="collect-intro site-mode-intro">
+      <p class="collect-eyebrow">Mode de jeu</p>
+      <div class="collect-title-row">
+        <div class="collect-quota-bar"><span id="collect-quota" class="collect-quota" aria-live="polite">— / 4 cartes</span></div>
+        <h2>Collect</h2>
+
+      </div>
+      <span>Retrouve un lieu. Gagne sa carte. Collectionne Paris.</span>
+    </section>
+    <div id="collect-internal-navigation" class="collect-tabs" role="group" aria-label="Collect" hidden>
+      <button type="button" class="is-active" data-panel="play">Jouer</button>
+      <button type="button" data-panel="collection">Ma collection</button>
+      <button type="button" data-panel="albums">Albums</button>
+      <button type="button" data-panel="community">Communauté</button>
+    </div>
+    <section id="collect-play" class="collect-panel">
+      <div class="collect-game-card">
+        <section id="collect-auth-gate" class="collect-auth-gate" aria-labelledby="collect-auth-title">
+          <span class="collect-target-title">Connexion requise</span>
+          <h3 id="collect-auth-title">Connecte-toi pour jouer à Collect</h3>
+          <p>Retrouve les lieux de Paris, gagne leurs cartes et conserve ta collection sur ton profil Parici.</p>
+          <a class="btn-primary" href="/?view=profile#profile">Se connecter à Parici</a>
+        </section>
+        <div id="collect-game-controls" class="collect-game-controls panel target-panel" hidden>
+          <button id="collect-exit" class="btn-secondary" type="button" hidden>Quitter la partie</button>
+          <div class="collect-map-copy"><span id="collect-target-title" class="collect-target-title panel-title">Lieu à trouver</span><strong id="collect-family-label" class="target-name">Quel lieu vas-tu découvrir ?</strong><span id="collect-map-hint">Lance une partie, puis sélectionne le lieu demandé sur la carte.</span></div>
+          <div id="collect-game-status" class="collect-game-status" aria-live="polite">Prêt à jouer ?</div>
+          <details hidden id="collect-visual-hint" class="collect-visual-hint daily-image-hint"><summary class="daily-image-hint-summary">🖼️ Indice visuel</summary><div class="daily-image-hint-body"><img id="collect-hint-image" src="/apple-touch-icon.png" alt="Indice visuel du lieu à trouver"><small id="collect-hint-credit"></small></div></details><div class="collect-game-actions"><button id="collect-next" class="btn-primary" type="button">Lancer une partie</button></div>
+          <div id="collect-weekly-play" class="collect-weekly-play" aria-live="polite"></div><div id="collect-revealed-card" hidden></div><details class="collect-rules"><summary>Comment jouer ?</summary><p>Retrouve le lieu sur la carte pour gagner sa carte. Tu as 1 à 3 essais selon sa rareté, avec une direction et une distance après un placement manqué. Les cartes légendaires s’assemblent en répondant à des questions : chaque bonne réponse donne un fragment. Tu peux gagner 4 cartes en 20 minutes et continuer à jouer ensuite. Termine aussi le défi de la semaine pour gagner une carte bonus.</p></details>
+        </div>
+        <p id="collect-keyboard-help" class="sr-only">Carte : flèches pour déplacer, plus et moins pour zoomer, espace pour sélectionner le lieu au centre, Entrée pour confirmer.</p><div id="collect-map" tabindex="0" aria-describedby="collect-keyboard-help" hidden role="application" aria-label="Carte interactive de Paris"></div>
+        <section id="collect-question" class="collect-question" hidden aria-labelledby="collect-question-title"><button id="collect-question-exit" class="btn-secondary" type="button">Quitter la partie</button><p id="collect-question-theme"></p><h2 id="collect-question-title" tabindex="-1"></h2><p id="collect-question-progress"></p><div id="collect-question-fragments"></div><div id="collect-question-answers"></div><p id="collect-question-feedback" aria-live="polite"></p><button id="collect-question-continue" class="btn-primary" type="button" hidden>Continuer</button></section>
+      </div>
+    <section id="collect-leaderboard" class="collect-play-rankings" aria-label="Classement Collect">
+      <h2>Classements Collect</h2>
+      <section class="collect-weekly-challenge" aria-labelledby="collect-weekly-title">
+        <h3 id="collect-weekly-title">Défi de la semaine</h3>
+        <label>Semaine <select id="collect-weekly-week"><option value="">Cette semaine</option></select></label><p id="collect-weekly-note">Chargement du défi de la semaine…</p><div id="collect-weekly-summary" class="collect-weekly-summary"></div><div id="collect-weekly-ranking" class="collect-ranking"></div>
+      </section>
+      <h3>Classement des collections</h3>
+      <div class="collect-profile-search collect-ranking-filters">
+        <label>Classement <select id="collect-ranking-type"><option value="collection">Collection</option><option value="performance">Performance</option></select></label>
+        <label id="collect-ranking-geography-label" hidden>Choisir <select id="collect-ranking-geography"></select></label>
+      </div>
+      <p id="collect-ranking-note"></p><div id="collect-podium" class="collect-podium"></div><div id="collect-ranking" class="collect-ranking"></div>
+    </section>
+    </section>
+    <section id="collect-collection" class="collect-panel hidden" aria-label="Ma collection">
+      <div id="collect-progress" class="collect-progress"></div>
+      <div class="collect-profile-search">
+        <div class="collect-collection-primary-filters">
+          <label>Famille <select id="collect-filter-family"><option value="">Toutes</option><option value="street">Toutes les rues</option><option value="famous">Rues célèbres</option><option value="main">Rues principales (hors célèbres)</option><option value="street-district">Rues par quartier</option><option value="street-arrondissement">Rues par arrondissement</option><option value="district">Quartiers</option><option value="monument">Monuments</option><option value="bus">Transports</option></select></label>
+          <label>Cartes <select id="collect-filter-owned"><option value="owned" selected>Obtenues</option><option value="favorites">Favorites</option><option value="fragments">Fragments en cours</option><option value="missing">À découvrir</option><option value="">Toutes</option></select></label>
+        </div>
+        <label id="collect-district-filter" hidden>Quartier <select id="collect-filter-district"></select></label>
+        <label id="collect-arrondissement-filter" hidden>Arrondissement <select id="collect-filter-arrondissement"></select></label>
+        <fieldset id="collect-filter-rarity" class="collect-rarity-filter"><legend>Rareté</legend>
+          <label><input type="radio" name="collect-rarity" value="" checked><span>Toutes</span></label>
+          <label><input type="radio" name="collect-rarity" value="1"><span>Commune</span></label>
+          <label><input type="radio" name="collect-rarity" value="2"><span>Peu commune</span></label>
+          <label><input type="radio" name="collect-rarity" value="3"><span>Rare</span></label>
+          <label><input type="radio" name="collect-rarity" value="4"><span>Épique</span></label>
+          <label><input type="radio" name="collect-rarity" value="5"><span>Légendaire</span></label>
+        </fieldset>
+      </div>
+      <div class="collect-profile-search"><label>Rechercher<input id="collect-search" type="search" maxlength="100" placeholder="Nom ou numéro de carte"></label><label>Trier par<select id="collect-sort"><option value="rarity">Rareté</option><option value="name">Nom</option><option value="recent">Acquisition récente</option><option value="copies">Nombre d’exemplaires</option></select></label></div>
+      <p id="collect-album-goal" class="collect-goal" aria-live="polite"></p>
+      <div id="collect-grid" class="collect-grid" aria-live="polite"></div>
+      <div class="collect-pagination"><button id="collect-prev-page" class="btn-secondary" type="button">Précédent</button><span id="collect-page-label"></span><button id="collect-next-page" class="btn-secondary" type="button">Suivant</button></div>
+    </section>
+    <section id="collect-albums" class="collect-panel hidden" aria-label="Albums et badges">
+      <label>Albums <select id="collect-album-family"><option value="">Tous</option><option value="street">Toutes les rues</option><option value="famous">Rues célèbres</option><option value="main">Rues principales</option><option value="street-district">Rues par quartier</option><option value="street-arrondissement">Rues par arrondissement</option><option value="district">Quartiers</option><option value="monument">Monuments</option><option value="bus">Transports</option></select></label><label id="collect-album-geography-label" hidden>Choisir <select id="collect-album-geography"></select></label><div id="collect-album-grid" class="collect-album-grid"></div><section id="collect-album-view" hidden><h2 id="collect-album-title"></h2><p id="collect-album-map-note"></p><div id="collect-album-map" role="application" aria-label="Carte des lieux possédés dans cet album"></div><button id="collect-album-close" class="btn-secondary" type="button">Fermer la carte</button></section>
+      <div class="collect-goal-filters"><label>Mon album à terminer <select id="collect-goal-select"><option value="">Choisir</option><option value="street-district">Par quartier</option><option value="street-arrondissement">Par arrondissement</option></select></label><label id="collect-goal-geography-label" hidden>Choisir <select id="collect-goal-geography"></select></label></div><p id="collect-goal-status" role="status"></p><section id="collect-personal-albums" class="collect-personal-albums"></section><h2>Badges</h2><div id="collect-badge-grid" class="collect-badge-grid"></div>
+    </section>
+    <section id="collect-social" class="collect-panel hidden" aria-label="Communauté Collect">
+      <h2>Communauté</h2>
+      <details id="collect-settings"><summary>Confidentialité et alertes Collect</summary><form id="collect-settings-form">
+      <label>Ma collection <select name="visibility"><option value="public">Publique</option><option value="friends">Visible par mes amis</option><option value="private">Privée</option></select></label>
+      <label>Propositions d’échange <select name="exchanges"><option value="everyone">Tous les joueurs</option><option value="friends">Mes amis</option><option value="nobody">Personne</option></select></label>
+      <label><input name="quota" type="checkbox"> M’avertir quand je peux gagner une nouvelle carte</label>
+      <label><input name="push" type="checkbox"> Alertes push pour les amis et échanges</label>
+      <button class="btn-secondary" type="submit">Enregistrer mes réglages</button><p id="collect-settings-status" role="status"></p></form></details>
+      <nav class="collect-community-tabs" aria-label="Communauté"><button type="button" data-community-tab="profile" aria-pressed="true">Collections</button><button type="button" data-community-tab="social" aria-pressed="false" hidden>Amis & échanges</button></nav>
+    <section id="collect-profile" class="collect-community-profile" aria-label="Profil public Collect">
+      <form id="collect-profile-form" class="collect-profile-search"><label for="collect-profile-username">Pseudo du joueur</label><input id="collect-profile-username" maxlength="100" required autocomplete="off"><button class="btn-secondary" type="submit">Voir le profil</button></form>
+      <div id="collect-profile-content" aria-live="polite"><p>Explore les collections des joueurs depuis le classement ou recherche un pseudo.</p></div>
+    </section>
+      <section id="collect-social-space" hidden aria-label="Amis et échanges"></section>
+    </section>
+    <p id="collect-push-feedback" class="collect-error" role="status"></p><p id="collect-error" class="collect-error" role="status"></p>
+  </main>
+  <footer class="site-footer" aria-label="Réseaux sociaux et crédits">
+    <p class="site-footer__visitors">Visites : —</p>
+    <p class="site-footer__sync">Carte mise à jour : —</p>
+    <p class="site-footer__credit">Créé par Philippe Maraval</p>
+    <div class="site-footer__actions">
+      <div class="site-footer__social">
+        <a href="https://x.com/SunMediaParici" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="https://www.instagram.com/sunmediaparici?igsh=MWd0eGNnNTZ2a2ZxZw%3D%3D&amp;utm_source=qr" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </div>
+      <div class="site-footer__utility-links"></div>
+    </div>
+  </footer>
+</body>
+</html>

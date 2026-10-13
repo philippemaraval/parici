@@ -51,7 +51,7 @@ jobs:
           test "$(git branch --show-current)" = main
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/releases/state.json index.html regles.html versions.html explorer.html
+          git add .github/releases/state.json index.html regles.html versions.html explorer.html collect.html
           git diff --cached --check
           git commit -m "chore(release): publish V${VERSION}"
           git push origin main

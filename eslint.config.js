@@ -55,6 +55,8 @@ module.exports = [
       "src/public/js/site-menu.js",
       "src/public/js/canvas-avatar.js",
       "src/public/js/interface-icons.js",
+      "src/public/js/collect*.js",
+      "src/public/js/personal-albums-view.js",
     ],
     languageOptions: { sourceType: "module" },
   },

@@ -1,0 +1,15 @@
+const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const labels = { 1: "Commune", 2: "Peu commune", 3: "Rare", 4: "Épique", 5: "Légendaire" };
+export function renderCardArtwork(card, rarityLabels = labels) {
+  const rarity = card.fragments_enabled ? 5 : Number(card.current_rarity) || 1;
+  const number = `${{ street: "R", district: "Q", monument: "M", bus: "B" }[card.family] || "R"}-${String(card.collection_number).padStart(card.family === "street" ? 4 : 3, "0")}`;
+  const image = /^(?:\/(?!\/)|https:\/\/)/.test(card.image_reference || "") ? card.image_reference : "/apple-touch-icon.png";
+  const daily = card.daily_origin || card.copies?.some(copy => copy.source === "daily");
+  return `<div class="collect-card-art"><img src="${escape(image)}" alt="" loading="lazy"><header><span>${{ street: "Rue", district: "Quartier", monument: "Monument", bus: "Transport" }[card.family] || "Rue"}</span><span>${number}</span></header><div class="collect-card-rarity">${"★".repeat(rarity)} · ${escape(rarityLabels[rarity] || labels[rarity])}</div>${daily ? '<span class="collect-card-daily" title="Carte gagnée au Daily" aria-label="Carte gagnée au Daily">D</span>' : ""}</div>`;
+}
+export function renderDailyCardReward(reward) {
+  if (!reward?.card) return "";
+  const card = reward.card;
+  const rarity = card.fragments_enabled ? 5 : Number(card.current_rarity) || 1;
+  return `<section class="daily-card-reward" aria-label="Carte gagnée au Daily"><p><strong>Bravo ! Vous avez gagné cette carte.</strong></p><article class="collect-card rarity-${rarity}">${renderCardArtwork({ ...card, daily_origin: true })}<div class="collect-card-body"><strong class="collect-tile__name">${escape(card.name)}</strong><p class="collect-card-description">${escape(card.short_description || card.description || "Un lieu à collectionner à Paris.")}</p></div></article><a class="btn-primary daily-collect-link" href="/collect.html">Découvrir Collect →</a><p>Retrouvez votre carte et collectionnez d’autres lieux de Paris.</p></section>`;
+}

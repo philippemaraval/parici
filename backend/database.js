@@ -224,6 +224,7 @@ async function applyPlayerUpgradeSchema(client) {
       SELECT seed_key,way_id,street_name_clean,riddle_text,hint_text,explanation_text,image_url,latitude,longitude,source_url
       FROM jsonb_to_recordset($1::jsonb) AS r(seed_key text,way_id bigint,street_name_clean text,riddle_text text,hint_text text,explanation_text text,image_url text,latitude double precision,longitude double precision,source_url text)
       ON CONFLICT(seed_key) DO NOTHING`, [JSON.stringify(explorerSeed)]);
+    await require('./domains/collect/paris-schema').applyParisCollect(client);
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
 }
@@ -807,7 +808,7 @@ async function listUsersForAdmin() {
        GROUP BY user_id
      ),
      reminder_stats AS (
-       SELECT user_id, BOOL_OR(enabled = TRUE) AS reminder_enabled
+       SELECT user_id, BOOL_OR(enabled = TRUE AND daily_enabled = TRUE) AS reminder_enabled
        FROM push_subscriptions
        GROUP BY user_id
      ),
@@ -1986,14 +1987,16 @@ async function upsertPushSubscription(userId, subscription, options = {}) {
   const vapidPublicKey = String(options?.vapidPublicKey || '').trim() || null;
 
   await pool.query(
-    `INSERT INTO push_subscriptions (user_id, endpoint, subscription_json, vapid_public_key, enabled, updated_at)
-     VALUES ($1, $2, $3::jsonb, $4, TRUE, NOW())
+    `INSERT INTO push_subscriptions (user_id, endpoint, subscription_json, vapid_public_key, enabled, daily_enabled, updated_at)
+     VALUES ($1, $2, $3::jsonb, $4, TRUE, TRUE, NOW())
      ON CONFLICT (endpoint)
      DO UPDATE SET
        user_id = EXCLUDED.user_id,
        subscription_json = EXCLUDED.subscription_json,
        vapid_public_key = EXCLUDED.vapid_public_key,
        enabled = TRUE,
+       daily_enabled = TRUE,
+       collect_enabled = CASE WHEN push_subscriptions.user_id = EXCLUDED.user_id THEN push_subscriptions.collect_enabled ELSE FALSE END,
        updated_at = NOW()`,
     [userId, endpoint, JSON.stringify(subscription), vapidPublicKey]
   );
@@ -2009,7 +2012,7 @@ async function getDailyReminderPromptStatusForUser(userId) {
          SELECT 1
          FROM push_subscriptions ps
          WHERE ps.user_id = u.id
-           AND ps.enabled = TRUE
+           AND ps.enabled = TRUE AND ps.daily_enabled = TRUE
        ) AS has_active_subscription
      FROM users u
      WHERE u.id = $1
@@ -2056,7 +2059,7 @@ async function getPushSubscriptionStatusForUser(userId, options = {}) {
   }
 
   const res = await pool.query(
-    `SELECT endpoint, enabled, vapid_public_key, updated_at
+    `SELECT endpoint, (enabled AND daily_enabled) AS enabled, vapid_public_key, updated_at
      FROM push_subscriptions
      WHERE user_id = $1 ${endpointFilter}
      ${orderBy}
@@ -2119,7 +2122,7 @@ async function listPushSubscriptionsDueForDate(dateStr, options = {}) {
   const res = await pool.query(
     `SELECT ps.endpoint, ps.subscription_json
      FROM push_subscriptions ps
-     WHERE ps.enabled = TRUE
+     WHERE ps.enabled = TRUE AND ps.daily_enabled = TRUE
        ${vapidFilter}
        AND (ps.last_notified_on IS NULL OR ps.last_notified_on < $1::date)
        AND NOT EXISTS (
@@ -2185,7 +2188,7 @@ async function listPushSubscriptionsDueForStreakDate(dateStr, options = {}) {
        COALESCE(cs.streak_len, 0)::int AS streak_count
      FROM push_subscriptions ps
      LEFT JOIN current_streaks cs ON cs.user_id = ps.user_id
-     WHERE ps.enabled = TRUE
+     WHERE ps.enabled = TRUE AND ps.daily_enabled = TRUE
        ${vapidFilter}
        AND COALESCE(cs.streak_len, 0) > 0
        AND (ps.last_streak_notified_on IS NULL OR ps.last_streak_notified_on < $1::date)

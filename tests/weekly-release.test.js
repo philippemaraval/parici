@@ -12,7 +12,7 @@ const {
   release,
 } = require("../scripts/weekly_release");
 const root = path.resolve(__dirname, "..");
-const pages = ["index.html", "regles.html", "versions.html", "explorer.html"];
+const pages = ["index.html", "regles.html", "versions.html", "explorer.html", "collect.html"];
 const monday = new Date("2026-10-19T07:17:00Z");
 
 function repository(t) {

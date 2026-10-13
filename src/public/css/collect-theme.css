@@ -1,0 +1,197 @@
+/* Shared Camino typography, stone surfaces and compact Daily game layout. */
+.collect-page{--collect-red:#c43832;--collect-red-dark:#a82d28;--collect-red-soft:#fff0eb;overflow:auto;height:auto;min-height:100dvh;background:linear-gradient(135deg,var(--bg-gradient-start),var(--bg-gradient-end));color:var(--text-primary);font-family:var(--font-body)}
+.collect-page *{box-sizing:border-box}
+.collect-shell{width:100%;max-width:1120px;padding:12px 16px 32px;margin:auto}
+.collect-mode-nav.site-nav{display:grid;position:static;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:8px 0;padding:5px;border:1px solid var(--border-color);border-radius:8px;background:rgba(255,252,247,.95);box-shadow:0 2px 8px #12297a0a}
+.collect-mode-nav.site-nav a{display:block;padding:9px 4px;color:var(--brand-sea-900);text-align:center;text-decoration:none;font-size:12px;font-weight:800;border-radius:5px;white-space:nowrap}
+.collect-mode-nav.site-nav a:hover{background:var(--primary-soft)}
+.collect-mode-nav.site-nav a.is-active--collect{background:#bd3633;color:#fff}
+.collect-intro.site-mode-intro{padding:10px 0 6px;margin:0;text-align:center}
+.collect-intro .collect-eyebrow{color:var(--collect-red);letter-spacing:0;font-size:10px}
+.collect-intro.site-mode-intro h2{color:var(--collect-red);font-size:25px;font-weight:800;line-height:1.2}
+.collect-title-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;width:100%;min-height:38px}
+.collect-title-row .daily-reminder-card[hidden]{display:none}
+.collect-title-row .profile-notification-actions .hidden{display:none}
+.collect-title-row .daily-reminder-icon{background:var(--collect-red);color:#fff}
+.collect-page #collect-push-enable{background:var(--collect-red);border-color:var(--collect-red);color:#fff}
+.collect-page #collect-push-enable:hover{background:var(--collect-red-dark);border-color:var(--collect-red-dark);color:#fff}
+.collect-page #collect-push-disable{background:var(--collect-red-soft);color:var(--collect-red-dark)}
+.collect-intro .collect-quota-bar{display:flex;align-items:center;align-self:start;justify-self:start;width:fit-content;min-width:0;margin:0}
+.collect-title-row .collect-quota{display:inline-block;flex:none;width:fit-content;max-width:100%;height:auto;min-height:0;padding:4px 7px;white-space:normal;text-align:left;line-height:1.25}
+.collect-intro.site-mode-intro>span{display:block;margin-top:4px;color:var(--text-secondary);font-size:13px}
+.collect-tabs{display:flex;gap:4px;overflow-x:auto;margin:14px 0 12px;padding:4px;background:rgba(255,252,247,.88);border:1px solid var(--brand-stone-300);border-radius:8px}
+.collect-tabs button{width:auto;flex:1;white-space:nowrap;min-height:42px;padding:8px 12px;border:0;border-radius:5px;font:800 13px var(--font-body);color:var(--brand-sea-900)}
+.collect-tabs button.is-active{background:var(--collect-red);color:white;box-shadow:0 2px 6px #a82d2824}
+.collect-game-card{padding:0;overflow:hidden;border:1px solid var(--brand-stone-300);border-radius:8px;background:rgba(255,252,247,.92);box-shadow:var(--glass-shadow)}
+.collect-game-controls{padding:14px 16px}
+.collect-game-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.collect-turn-label{font-size:11px;font-weight:800;color:var(--collect-red);text-transform:uppercase}
+.collect-quota{margin:0;padding:5px 9px;border:1px solid #c4383226;border-radius:6px;background:var(--collect-red-soft);color:var(--collect-red-dark);font-size:12px;font-weight:800;white-space:nowrap}
+.collect-map-copy{display:flex;flex-direction:column;align-items:flex-start;gap:5px;margin:0 0 10px}
+.collect-map-copy strong{font:800 19px var(--font-heading);color:var(--brand-sea-950);overflow-wrap:anywhere}
+.collect-map-copy span{font-size:13px;line-height:1.45;color:var(--text-secondary)}
+.collect-game-status{margin:0 0 10px;min-height:0;color:var(--brand-sea-950);font-size:13px;font-weight:700}
+.collect-tabs[hidden]{display:none}
+.collect-game-controls[hidden],.collect-auth-gate[hidden]{display:none}
+.collect-auth-gate{padding:28px 24px;border-left:5px solid var(--collect-red);background:#fff}.collect-auth-gate h3{margin:8px 0;color:var(--brand-sea-950);font:800 clamp(22px,4vw,30px) var(--font-heading)}.collect-auth-gate p{max-width:620px;margin:0 0 20px;color:var(--text-secondary);line-height:1.55}.collect-auth-gate .btn-primary{display:inline-flex;text-decoration:none}
+.collect-game-actions{display:flex;gap:8px}
+.collect-page .btn-primary,.collect-page .btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:46px;width:auto;padding:10px 16px;border-radius:8px;font:800 14px var(--font-body);cursor:pointer;box-shadow:none;line-height:1.3}
+.collect-page .btn-primary{background:var(--collect-red);border:1px solid var(--collect-red);color:#fff}
+.collect-page .btn-primary:hover{background:var(--collect-red-dark)}
+.collect-page .btn-secondary{background:var(--collect-red-soft);border:1px solid #c4383233;color:var(--collect-red-dark)}
+.collect-page button:disabled{opacity:.45;cursor:not-allowed}
+.collect-game-actions button{flex:1}
+.collect-page button:focus-visible,.collect-page a:focus-visible,.collect-page summary:focus-visible{outline:3px solid var(--collect-red);outline-offset:3px}
+.collect-rules{margin-top:10px;color:var(--text-secondary);font-size:12px}
+.collect-rules summary{width:fit-content;cursor:pointer;font-weight:800}
+.collect-rules p{max-width:680px;margin:6px 0;line-height:1.5}
+#collect-map{width:100%;height:clamp(380px,55dvh,640px);min-height:0;border-radius:0;border-top:1px solid var(--brand-stone-300);background:var(--brand-stone-100)}
+.collect-tile,.collect-album,.collect-badge,.collect-ranking{border-color:var(--brand-stone-300);border-radius:8px;background:rgba(255,252,247,.92);box-shadow:0 3px 12px #12297a08}
+.collect-tile__name,.collect-panel h2,.collect-panel h3{color:var(--brand-sea-950)}
+.collect-panel h2,.collect-panel h3{font-family:var(--font-heading)}
+.collect-tile--hidden,.collect-placeholder{background:var(--brand-stone-100);color:var(--text-secondary)}
+.collect-progress-track{background:var(--brand-stone-100)}
+.collect-progress-track i{background:var(--collect-red)}
+.collect-badge.is-earned{border-color:#c4383255;background:var(--collect-red-soft)}
+.collect-public-stats article{background:var(--collect-red-soft);border:1px solid #c4383226;border-radius:8px;padding:18px}
+.collect-public-stats strong{color:var(--collect-red);font-family:var(--font-mono)}
+.collect-error:empty{display:none}.collect-error{padding:10px 12px;background:var(--collect-red-soft);border-radius:8px;color:var(--collect-red-dark)}
+.collect-footer{padding-top:16px;text-align:center;font-size:12px}
+@media(max-width:650px){.collect-shell{padding:8px 10px 24px}.collect-game-controls{padding:12px}.collect-mode-nav.site-nav a{font-size:10px;padding:9px 1px}.collect-tabs{margin-top:10px}.collect-tabs button{flex:0 0 auto;font-size:12px;padding:8px 11px}.collect-game-meta{gap:6px}.collect-turn-label{font-size:10px}.collect-quota{font-size:11px}.collect-game-actions{flex-direction:column}.collect-game-actions button{width:100%;min-height:46px}.collect-map-copy strong{font-size:17px}#collect-map{height:clamp(320px,52dvh,480px)}.collect-intro.site-mode-intro>span{font-size:12px}.collect-public-stats article{padding:14px}.collect-tile__name{overflow-wrap:anywhere}}
+
+.collect-page [hidden]{display:none!important}
+
+.collect-question {position:fixed;inset:0;z-index:1600;display:flex;flex-direction:column;justify-content:center;gap:12px;overflow:auto;padding:24px max(20px,calc((100vw - 620px)/2));background:var(--stone-50,#faf9f6);color:var(--sea-900,#12297a)}
+.collect-question h2 {font-size:clamp(20px,4vw,28px);margin:0;line-height:1.3}
+.collect-question-answer {width:100%;min-height:54px;padding:14px;text-align:left;white-space:normal;border:1px solid #d4d7e0;border-radius:12px;background:white;font:inherit;cursor:pointer;margin-bottom:10px;color:#12297a}
+.collect-question-answer.is-correct {border-color:#087d83;background:#daf3eb;color:#075650;opacity:1}
+.collect-question-answer.is-incorrect {border-color:#c43832;background:#fee9e7;color:#8c241f;opacity:1}
+#collect-question-feedback {line-height:1.5;max-height:28dvh;overflow:auto}
+@media(max-width:900px) {
+ body.collect-session-active {overflow:hidden}
+ .collect-session-active #collect-map {position:fixed;inset:0;width:100%;height:100dvh;min-height:0;z-index:1000;border-radius:0}
+ .collect-session-active .collect-game-controls {position:fixed;top:max(10px,env(safe-area-inset-top));left:12px;right:12px;z-index:1100;padding:12px;border-radius:16px;background:rgba(250,249,246,.96);box-shadow:0 4px 24px #12297a25;max-height:48dvh;overflow:auto;pointer-events:auto}
+ .collect-session-active .collect-game-meta,.collect-session-active .collect-rules {display:none}
+ .collect-session-active .collect-game-actions {margin-top:8px}
+ .collect-session-active #collect-exit {font-size:12px;min-height:32px;padding:4px 10px;margin-bottom:8px}
+ .collect-session-active .collect-map-copy {gap:5px}
+ .collect-session-active .leaflet-top {top:auto;bottom:calc(44px + env(safe-area-inset-bottom))}
+ .collect-session-active #collect-error:not(:empty) {position:fixed;bottom:24px;left:12px;right:12px;z-index:1700;background:#fff;padding:14px;border-radius:12px}
+ .collect-question {padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));justify-content:flex-start}
+ .collect-question-answer {font-size:15px}
+}
+
+.collect-visual-hint {margin-top:10px}
+.collect-visual-hint summary {cursor:pointer;font-weight:800;color:#12297a;padding:6px 0}
+.collect-visual-hint .daily-image-hint-body>img {display:block;width:100%;max-width:none;height:auto;max-height:420px;object-fit:contain;border-radius:12px;background:#f1f0eb;margin:8px auto}
+.collect-visual-hint small {display:block;font-size:12px;line-height:1.4}
+
+.collect-tile img.collect-placeholder {object-fit:contain;padding:18px;box-sizing:border-box;background:#faf9f6}
+
+.collect-image-credit {display:block;font-size:11px;line-height:1.4;margin-top:6px;overflow-wrap:anywhere}
+.collect-image-credit a,#collect-hint-credit a {color:#12297a;text-decoration:underline}
+
+.collect-tile>img {object-fit:contain;background:#faf9f6}
+/* Keep Leaflet panes below the game controls at every viewport size. */
+.collect-game-controls {position:relative;z-index:1001}
+#collect-map {isolation:isolate}
+/* Collectible cards: illustration, identity, description and rarity. */
+.collect-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));align-items:start}
+.collect-card{--rarity:#68758b;border:3px solid var(--rarity);border-radius:14px;padding:0;overflow:hidden;background:linear-gradient(145deg,#fff,#faf9f6);box-shadow:0 5px 16px #12297a14}
+.collect-card.rarity-2{--rarity:#2983c4}.collect-card.rarity-3{--rarity:#8656be}.collect-card.rarity-4{--rarity:#bd8b16;background:linear-gradient(140deg,#fff7dc,#fff)}
+.collect-card header{display:flex;justify-content:space-between;gap:8px;padding:10px;background:var(--rarity);color:white;font-size:11px;font-weight:800}
+.collect-card>img{height:220px;width:100%;object-fit:contain;background:#f2f0e9;margin:0;border-bottom:2px solid var(--rarity)}
+.collect-card-body{padding:12px}.collect-card-rarity{font-size:11px;font-weight:800;color:var(--rarity);margin-bottom:7px}.collect-card .collect-tile__name{font:800 17px var(--font-heading);line-height:1.3;display:block}
+.collect-card-description{font-size:12px;line-height:1.5;min-height:54px;color:#53616c;margin:10px 0}.collect-card-footer{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #12297a18;padding-top:8px;font-size:10px;font-weight:800}.collect-card details{font-size:11px;margin-top:9px}.collect-card-seal{font-size:58px;color:#b8b7b0}
+.collect-target-title{text-transform:uppercase;letter-spacing:.08em;font-size:11px!important;color:var(--collect-red)!important;font-weight:800}.collect-map-copy{padding:14px;border:1px solid var(--brand-stone-300);border-radius:14px;background:white}.collect-map-copy strong{font-size:22px}.collect-rules{display:none}.collect-session-active .collect-game-meta{margin-bottom:8px}.collect-session-active .collect-map-copy{padding:10px;margin-bottom:6px}.collect-session-active .collect-game-status{font-size:11px}
+.collect-album-open{display:flex;flex-direction:column;gap:10px;width:100%;border:0;padding:0;text-align:left;background:transparent;color:#12297a;font:inherit;cursor:pointer}.collect-album-open strong{font-weight:800}.collect-album-open small{color:var(--collect-red);font-weight:800}.collect-album-open .collect-progress-track{width:100%;margin:0}.collect-album-open:focus-visible{outline:3px solid var(--collect-red);outline-offset:8px}
+#collect-album-map{isolation:isolate;height:clamp(360px,65dvh,650px);width:100%;border-radius:14px;margin:12px 0}.collect-badge-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.collect-badge{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px}.collect-badge .badge-emoji{font-size:32px;width:64px;height:64px;display:grid;place-items:center;background:#f1f0eb;border-radius:50%}.collect-badge.locked{opacity:.65}.collect-badge.is-earned{border-color:#d6bb67;background:#fffaf0}.collect-badge.is-earned .badge-emoji{background:#fff0c3}
+.collect-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.collect-podium-player{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 8px;background:#fff;border:1px solid var(--brand-stone-300);border-radius:14px;text-decoration:none;color:#12297a;text-align:center;overflow-wrap:anywhere}.collect-podium-medal{font-size:30px}.collect-podium-player.place-1{border-color:#d6b347;background:#fff9e5}.collect-ranking .leaderboard-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.collect-ranking th,.collect-ranking td{padding:12px;border-bottom:1px solid #12297a12}.collect-ranking thead{background:#f1f0eb}.collect-ranking .leaderboard-first-place{background:#fffae8}.collect-ranking th[scope=row]{overflow-wrap:anywhere}
+@media(max-width:550px){.collect-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.collect-card>img{height:160px}.collect-card-body{padding:9px}.collect-card .collect-tile__name{font-size:13px}.collect-card header{font-size:9px;padding:7px}.collect-card-description{font-size:11px}.collect-card-footer{flex-direction:column}.collect-podium{gap:6px}.collect-podium-player{padding:12px 6px;font-size:11px}.collect-ranking th,.collect-ranking td{padding:10px 6px;font-size:11px}.collect-image-credit{overflow-wrap:anywhere}}
+.collect-page [hidden]{display:none!important}
+.collect-badge .badge-emoji .camino-avatar-art,.collect-badge .badge-emoji .camino-ui-icon{width:40px;height:40px}.collect-podium-medal img{width:40px;height:40px}.collect-ranking .camino-avatar-art{width:26px;height:26px;vertical-align:middle}.collect-ranking td img{vertical-align:middle}.collect-player-avatar .camino-avatar-art{width:40px;height:40px}
+.collect-podium:empty{display:none}
+.collect-ranking.is-weekly{background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.collect-ranking.is-weekly .leaderboard-table{table-layout:fixed;font-size:12px}
+.collect-ranking.is-weekly th,.collect-ranking.is-weekly td{padding:10px 8px;border-bottom:1px solid #12297a14}
+.collect-ranking.is-weekly thead{background:transparent}
+.collect-ranking.is-weekly thead th{font-size:10px;font-weight:600;color:#53627b}
+.collect-ranking.is-weekly th:first-child{width:14%;text-align:center}
+.collect-ranking.is-weekly th:nth-child(2){width:58%}
+.collect-ranking.is-weekly th:last-child,.collect-ranking.is-weekly td:last-child{width:28%;text-align:right;font-variant-numeric:tabular-nums}
+.collect-ranking.is-weekly td:first-child{text-align:center;font-variant-numeric:tabular-nums}
+.collect-ranking.is-weekly tbody tr:nth-child(odd) td,.collect-ranking.is-weekly tbody tr:nth-child(odd) th{background:#f0f1f3}
+.collect-ranking.is-weekly tbody tr:nth-child(even) td,.collect-ranking.is-weekly tbody tr:nth-child(even) th{background:#fff}
+.collect-ranking.is-weekly tbody tr.leaderboard-current-player td,.collect-ranking.is-weekly tbody tr.leaderboard-current-player th{background:#fff5da}
+.collect-ranking.is-weekly tr.leaderboard-current-player td:first-child{box-shadow:inset 3px 0 #f2a900}
+.collect-ranking.is-weekly .leaderboard-avatar{display:inline-flex;width:24px;height:24px;margin-right:7px;vertical-align:middle}
+.collect-ranking.is-weekly .leaderboard-avatar .camino-avatar-art,.collect-ranking.is-weekly .leaderboard-avatar .camino-ui-icon{width:24px;height:24px}
+.collect-ranking.is-weekly .collect-weekly-rank-gap td{text-align:center;color:#53627b;background:transparent!important}
+@media(max-width:550px){.collect-ranking.is-weekly th,.collect-ranking.is-weekly td{padding:9px 5px;font-size:11px}.collect-ranking.is-weekly th:first-child{width:16%}.collect-ranking.is-weekly th:nth-child(2){width:54%}.collect-ranking.is-weekly th:last-child,.collect-ranking.is-weekly td:last-child{width:30%}}
+#collect-revealed-card{margin-top:10px}#collect-revealed-card>details>summary{font-weight:800;cursor:pointer;color:var(--collect-red)}#collect-revealed-card .collect-card{max-width:280px;margin:10px auto}#collect-revealed-card .collect-card>img{height:160px}.collect-session-active .collect-game-controls:has(#collect-revealed-card details[open]){max-height:70dvh}
+.collect-album-badges{grid-column:1/-1}.collect-album-badges>summary{font-weight:800;padding:12px;cursor:pointer;color:#12297a}
+.collect-session-active .collect-game-meta{display:flex;justify-content:flex-end;margin-bottom:8px}.collect-session-active .collect-turn-label{display:none}
+
+/* Native Daily target panel dimensions and accessible geographic controls. */
+.collect-profile-search label[hidden],#collect-album-geography-label[hidden]{display:none!important}
+.collect-profile-search label:not([hidden]){display:flex;flex-direction:column;min-width:150px;gap:4px}
+.collect-profile-search select,#collect-album-geography{width:100%;min-height:40px}
+.collect-game-controls.target-panel .collect-map-copy{display:block;background:transparent;border:0;padding:0;margin:0}
+.collect-game-controls.target-panel .target-name{display:block;margin:4px 0;font-size:var(--fs-xl,22px);line-height:1.2}
+.collect-session-active .collect-game-controls.target-panel{padding:6px 10px;border-left:4px solid var(--collect-red);border-radius:8px;background:#fff}
+.collect-session-active .collect-target-title{display:block;font-size:10px!important;line-height:1.2;margin-bottom:2px}
+.collect-session-active .collect-game-controls.target-panel .target-name{font-size:16px;margin:2px 0;line-height:1.2;padding-right:75px}
+.collect-session-active #collect-exit{position:absolute;right:8px;top:6px;font-size:10px;min-height:28px;padding:3px 6px;margin:0}
+.collect-session-active #collect-map-hint{display:block;font-size:10px;line-height:1.3}
+.collect-session-active .collect-game-status{font-size:10px;min-height:0;margin:3px 0}
+.collect-session-active .collect-visual-hint{margin-top:2px}
+.collect-session-active .collect-visual-hint summary{font-size:11px;padding:2px 0}
+.collect-session-active .collect-game-actions:has(button[hidden]){display:none}
+.collect-public-album-map{height:420px;border-radius:12px;margin:12px 0}
+
+.collect-quota-bar{margin:0}
+.collect-session-active .collect-quota-bar{position:fixed;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 40px);left:12px;z-index:1701;margin:0;pointer-events:none}
+.collect-session-active .collect-game-meta{display:none}
+.collect-session-active .collect-quota{display:block;background:#fff;box-shadow:0 2px 12px #12297a25;white-space:normal;max-width:calc(100vw - 48px)}
+
+/* Keep Leaflet from adding an inline position that overrides mobile fullscreen. */
+#collect-map{position:relative}
+
+.collect-card-open{width:100%;margin-top:10px;min-height:38px;font-size:12px}
+.collect-card-dialog{width:min(620px,calc(100vw - 24px));max-height:90dvh;box-sizing:border-box;border:1px solid #d8d5ce;border-radius:16px;padding:16px;color:#12297a;background:#faf9f6;overflow:auto}
+.collect-card-dialog::backdrop{background:#12297a80}
+.collect-card-dialog .collect-card{max-width:320px;margin:12px auto}
+.collect-detail-close{position:sticky;top:0;z-index:2}
+#collect-detail-map{height:300px;border-radius:12px;isolation:isolate}
+
+#collect-question-exit{align-self:flex-start;min-height:38px}
+
+/* The map owns pan/pinch gestures; they must never scroll or refresh the page. */
+html.collect-map-active, html.collect-map-active body{overscroll-behavior:none}
+#collect-map{touch-action:none;overscroll-behavior:none}
+.collect-session-active .collect-game-controls{overscroll-behavior:contain}
+@media(max-width:900px){html.collect-map-active{overflow:hidden;height:100%}}
+
+/* Compact counter, including the floating in-game state. */
+.collect-page #collect-quota{display:inline-block;flex:0 0 auto;width:max-content;max-width:100%;min-width:0;min-height:0;height:auto;margin:0;padding:2px 5px;border-radius:4px;font-size:10px;line-height:1.2;white-space:nowrap;box-shadow:none}
+
+/* Let the target panel grow with the full-size hint. The shared .panel rule
+   forces visible overflow, so the mobile scroll boundary must override it. */
+.collect-game-controls.target-panel{height:auto;min-height:0;max-height:none;box-sizing:border-box;min-width:0}
+.collect-visual-hint{min-width:0;max-width:100%}
+.collect-visual-hint .daily-image-hint-body>img{box-sizing:border-box;max-width:100%}
+@media(max-width:900px){
+ .collect-session-active .collect-game-controls.target-panel{max-height:calc(100dvh - max(10px,env(safe-area-inset-top)) - max(48px,env(safe-area-inset-bottom)));overflow:auto!important}
+}
+
+.collect-page:not(.collect-session-active) .collect-intro .collect-quota-bar{transform:translateY(-6px)}
+
+.collect-place-district{display:block;font-size:.8em;line-height:1.25;font-weight:600;margin-top:3px}
+.collect-game-controls.target-panel .target-name .collect-place-main{font:inherit;color:inherit}
+.collect-card .collect-tile__name:has(.collect-place-district){display:block;-webkit-line-clamp:unset}
+.collect-card .collect-place-main{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+
+/* The outcome reflects card acquisition, including fragment questions and quota. */
+.collect-game-status[data-outcome="success"]{color:#167548}
+.collect-game-status[data-outcome="failure"]{color:#a32929}
+.collect-game-status[data-outcome="progress"]{color:#8a5810}

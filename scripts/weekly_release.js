@@ -4,7 +4,7 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 
 const STATE_FILE = ".github/releases/state.json";
-const PAGES = ["index.html", "regles.html", "versions.html", "explorer.html"];
+const PAGES = ["index.html", "regles.html", "versions.html", "explorer.html", "collect.html"];
 const escapeHtml = (value) =>
   String(value).replace(
     /[&<>"']/g,
