@@ -189,6 +189,15 @@ async function fingerprintProductionAssets() {
     await minifiedSource("node_modules/leaflet/dist/leaflet.css", "css"),
     assetManifest,
   );
+  const studioPagePath = path.join(DIST_DIR, "admin/studio.html");
+  if(fs.existsSync(studioPagePath)) {
+    let studioHtml=fs.readFileSync(studioPagePath,"utf8");
+    studioHtml=studioHtml.replace(/https:\/\/unpkg.com\/leaflet@1.9.4\/dist\/leaflet.css/g,leafletCssUrl).replace(/https:\/\/unpkg.com\/leaflet@1.9.4\/dist\/leaflet.js/g,leafletRuntimeUrl).replace(/ integrity="[^"]*" crossorigin=""/g,"");
+    fs.writeFileSync(studioPagePath,studioHtml);
+  }
+  let adminBuildCommit=null;
+  try {adminBuildCommit=execSync("git rev-parse HEAD",{cwd:ROOT,encoding:"utf8"}).trim();} catch { /* Source archives may have no Git directory. */ }
+  fs.writeFileSync(path.join(DIST_DIR,"admin/build-info.json"),JSON.stringify({commit:process.env.CF_PAGES_COMMIT_SHA||process.env.RENDER_GIT_COMMIT||adminBuildCommit,builtAt:new Date().toISOString()}));
   const mapDependenciesSource = (
     await minifiedSource("src/public/js/map-dependencies.js", "js")
   )

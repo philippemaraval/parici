@@ -1,17 +1,13 @@
-const API_BASE_CANDIDATES =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.protocol === "file:"
-    ? ["http://localhost:3000"]
-    : ["https://parici.onrender.com"];
+const API_BASE_CANDIDATES = [
+  window.CaminoRuntimeConfig?.apiUrl || "http://localhost:3000",
+];
 
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
-const LOGIN_API_READY_ATTEMPT_TIMEOUT_MS = 15000;
-const LOGIN_API_READY_POLL_INTERVAL_MS = 1500;
 const STORAGE_KEY = "camino_paris_editor_user";
 const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
+const dirtyFields = new Set();
 const state = {
   token: "",
   username: "",
@@ -35,17 +31,6 @@ const refs = {
   refreshContentBtn: document.getElementById("refresh-content-btn"),
   logoutBtn: document.getElementById("logout-btn"),
   statsGrid: document.getElementById("stats-grid"),
-  openVisitStatsBtn: document.getElementById("open-visit-stats-btn"),
-  visitStatsModal: document.getElementById("visit-stats-modal"),
-  visitStatsPanel: document.querySelector("#visit-stats-modal .modal-panel"),
-  closeVisitStatsBtn: document.getElementById("close-visit-stats-btn"),
-  visitStatsSummary: document.getElementById("visit-stats-summary"),
-  visitStatsAverage7: document.getElementById("visit-stats-average-7"),
-  visitStatsAverage15: document.getElementById("visit-stats-average-15"),
-  visitStatsAverage30: document.getElementById("visit-stats-average-30"),
-  visitStatsNote: document.getElementById("visit-stats-note"),
-  visitStatsChart: document.getElementById("visit-stats-chart"),
-  visitStatsTableBody: document.getElementById("visit-stats-table-body"),
   infoModeSelect: document.getElementById("info-mode-select"),
   streetSearchInput: document.getElementById("street-search-input"),
   streetSelect: document.getElementById("street-select"),
@@ -95,61 +80,6 @@ function setGlobalStatus(message, type = "info") {
   } else {
     refs.globalStatus.classList.add("status--info");
   }
-}
-
-function formatNumber(value) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) {
-    return "-";
-  }
-  return new Intl.NumberFormat("fr-FR").format(number);
-}
-
-function formatDay(value) {
-  if (!value) {
-    return "-";
-  }
-  const date = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-  return date.toLocaleDateString("fr-FR", {
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
-function formatShortDay(value) {
-  if (!value) {
-    return "";
-  }
-  const date = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-  return date.toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-}
-
-function getDateKeyInZone(date = new Date(), timeZone = "Europe/Paris") {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return `${values.year}-${values.month}-${values.day}`;
-}
-
-function addDaysToDateKey(dateKey, deltaDays) {
-  const date = new Date(`${dateKey}T12:00:00`);
-  date.setDate(date.getDate() + deltaDays);
-  return date.toISOString().slice(0, 10);
 }
 
 function setUiAuthenticated(isAuthenticated) {
@@ -218,10 +148,10 @@ async function apiRequest(path, { method = "GET", body, auth = true, timeoutMs =
       controller.abort();
     }, timeoutMs);
     try {
-      const candidateResponse = await fetch(`${base}${path}`, {
+      const candidateResponse = await window.PariciAdminFetch(`${base}${path}`, {
         method,
         headers,
-        body: body !== undefined ? JSON.stringify(body) : undefined,
+        body: body !== undefined ? JSON.stringify(path.startsWith("/api/editor/") && method !== "GET" ? { ...body, expectedRevision: state.content?.revision } : body) : undefined,
         signal: controller.signal,
         credentials: "include",
       });
@@ -283,50 +213,15 @@ async function apiRequest(path, { method = "GET", body, auth = true, timeoutMs =
   if (responsePayload === null && responseText) {
     throw new Error("API response is not valid JSON");
   }
+  if (method !== "GET" && Number.isInteger(responsePayload?.revision) && state.content) state.content.revision = responsePayload.revision;
   return responsePayload;
 }
 
-async function warmApiForLogin(onWaitingForDatabase = () => {}) {
-  const deadlineMs = Date.now() + LOGIN_API_REQUEST_TIMEOUT_MS;
-
-  // /api/health wakes Render up, but deliberately responds while PostgreSQL is
-  // still initializing. Do not submit credentials until /api/ready confirms
-  // that database-backed routes can answer.
+async function warmApiForLogin() {
   await apiRequest("/api/health", {
     auth: false,
     timeoutMs: LOGIN_API_REQUEST_TIMEOUT_MS,
   });
-
-  while (Date.now() < deadlineMs) {
-    const remainingMs = deadlineMs - Date.now();
-    try {
-      const readiness = await apiRequest("/api/ready", {
-        auth: false,
-        timeoutMs: Math.max(
-          1,
-          Math.min(LOGIN_API_READY_ATTEMPT_TIMEOUT_MS, remainingMs),
-        ),
-      });
-      if (readiness?.database === "ready") {
-        return;
-      }
-    } catch (error) {
-      if (error?.status !== 503) {
-        throw error;
-      }
-    }
-
-    onWaitingForDatabase();
-    const waitMs = Math.min(
-      LOGIN_API_READY_POLL_INTERVAL_MS,
-      Math.max(0, deadlineMs - Date.now()),
-    );
-    if (waitMs > 0) {
-      await new Promise((resolve) => window.setTimeout(resolve, waitMs));
-    }
-  }
-
-  throw new Error("l'API n'est pas encore prete; reessayez dans quelques instants");
 }
 
 function parseListTextarea(value) {
@@ -481,7 +376,7 @@ function appendMonumentRow(entry = {}) {
   longitudeInput.type = "text";
   longitudeInput.inputMode = "decimal";
   longitudeInput.className = "monument-longitude-input";
-  longitudeInput.placeholder = "Ex. : 2,352222";
+  longitudeInput.placeholder = "Ex. : 2,352200";
   longitudeInput.setAttribute("aria-label", `Longitude de ${entry.name || "ce monument"}`);
   longitudeInput.value = formatCoordinateValue(entry.longitude);
   longitudeCell.appendChild(longitudeInput);
@@ -492,7 +387,7 @@ function appendMonumentRow(entry = {}) {
   latitudeInput.type = "text";
   latitudeInput.inputMode = "decimal";
   latitudeInput.className = "monument-latitude-input";
-  latitudeInput.placeholder = "Ex. : 48,856613";
+  latitudeInput.placeholder = "Ex. : 48,856600";
   latitudeInput.setAttribute("aria-label", `Latitude de ${entry.name || "ce monument"}`);
   latitudeInput.value = formatCoordinateValue(entry.latitude);
   latitudeCell.appendChild(latitudeInput);
@@ -505,6 +400,7 @@ function appendMonumentRow(entry = {}) {
   removeBtn.textContent = "Supprimer";
   removeBtn.setAttribute("aria-label", `Supprimer ${entry.name || "cette ligne"}`);
   removeBtn.addEventListener("click", () => {
+    dirtyFields.add(refs.monumentsTableBody);
     row.remove();
     if (!refs.monumentsTableBody.querySelector("tr")) {
       appendMonumentRow();
@@ -670,285 +566,10 @@ function renderStats() {
     .join("");
 }
 
-function setVisitStatsLoading(message) {
-  if (refs.visitStatsSummary) {
-    refs.visitStatsSummary.textContent = message;
-  }
-  if (refs.visitStatsNote) {
-    refs.visitStatsNote.textContent = "";
-  }
-  if (refs.visitStatsTableBody) {
-    refs.visitStatsTableBody.innerHTML = "";
-  }
-  if (refs.visitStatsChart) {
-    refs.visitStatsChart.textContent = "";
-  }
-  [refs.visitStatsAverage7, refs.visitStatsAverage15, refs.visitStatsAverage30]
-    .filter(Boolean)
-    .forEach((element) => {
-      element.textContent = "—";
-    });
-}
-
-function buildVisitChartRows(payload, dayCount = 30) {
-  if (Array.isArray(payload?.chartRows) && payload.chartRows.length) {
-    return payload.chartRows.slice(-dayCount).map((row) => ({
-      day: row.day,
-      uniqueVisitors: Number(row.uniqueVisitors || 0),
-      totalVisits: Math.max(
-        row.totalVisits === null || row.totalVisits === undefined ? 0 : Number(row.totalVisits) || 0,
-        Number(row.uniqueVisitors || 0),
-      ),
-      cumulativeTotal: Number(row.cumulativeTotal || 0),
-    }));
-  }
-  const rows = Array.isArray(payload?.rows) ? payload.rows : [];
-  const rowsByDay = new Map(rows.map((row) => [String(row.day || ""), row]));
-  const endDay = getDateKeyInZone();
-  const days = Array.from({ length: dayCount }, (_, index) =>
-    addDaysToDateKey(endDay, index - dayCount + 1),
-  );
-  const dailyRows = days.map((day) => {
-    const row = rowsByDay.get(day) || {};
-    const totalVisits =
-      row.totalVisits === null || row.totalVisits === undefined ? 0 : Number(row.totalVisits) || 0;
-    const uniqueVisitors = Number(row.uniqueVisitors || 0);
-    return {
-      day,
-      totalVisits: Math.max(totalVisits, uniqueVisitors),
-      uniqueVisitors,
-    };
-  });
-  const allTimeTotal = Number(payload?.totalVisits || 0);
-  let visitsAfterCurrentDay = 0;
-  for (let index = dailyRows.length - 1; index >= 0; index -= 1) {
-    dailyRows[index].cumulativeTotal = Math.max(0, allTimeTotal - visitsAfterCurrentDay);
-    visitsAfterCurrentDay += dailyRows[index].totalVisits;
-  }
-  return dailyRows;
-}
-
-function getAverageDailyUniqueVisitors(chartRows, dayCount) {
-  const periodRows = chartRows.slice(-dayCount);
-  if (!periodRows.length) {
-    return 0;
-  }
-  const total = periodRows.reduce(
-    (sum, row) => sum + Math.max(0, Number(row.uniqueVisitors) || 0),
-    0,
-  );
-  return total / periodRows.length;
-}
-
-function renderVisitStatsAverages(payload) {
-  const chartRows = buildVisitChartRows(payload);
-  const averageRefs = [
-    [refs.visitStatsAverage7, 7],
-    [refs.visitStatsAverage15, 15],
-    [refs.visitStatsAverage30, 30],
-  ];
-  const formatter = new Intl.NumberFormat("fr-FR", {
-    maximumFractionDigits: 1,
-  });
-  averageRefs.forEach(([element, dayCount]) => {
-    if (element) {
-      element.textContent = formatter.format(
-        getAverageDailyUniqueVisitors(chartRows, dayCount),
-      );
-    }
-  });
-}
-
-function renderVisitStatsChart(payload) {
-  if (!refs.visitStatsChart) {
-    return;
-  }
-  const chartRows = buildVisitChartRows(payload);
-  if (!chartRows.length) {
-    refs.visitStatsChart.textContent = "";
-    return;
-  }
-
-  const width = 860;
-  const height = 320;
-  const margin = { top: 28, right: 78, bottom: 46, left: 54 };
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
-  const maxDailyValue = Math.max(
-    1,
-    ...chartRows.map((row) => Math.max(row.totalVisits, row.uniqueVisitors)),
-  );
-  const cumulativeValues = chartRows.map((row) => row.cumulativeTotal);
-  const cumulativeMin = Math.min(...cumulativeValues);
-  const cumulativeMax = Math.max(...cumulativeValues);
-  const cumulativeRange = Math.max(1, cumulativeMax - cumulativeMin);
-  const bandWidth = plotWidth / chartRows.length;
-  const barWidth = Math.max(3, Math.min(10, bandWidth * 0.28));
-
-  const xForIndex = (index) => margin.left + bandWidth * index + bandWidth / 2;
-  const yForDaily = (value) => margin.top + plotHeight - (value / maxDailyValue) * plotHeight;
-  const yForCumulative = (value) =>
-    margin.top + plotHeight - ((value - cumulativeMin) / cumulativeRange) * plotHeight;
-
-  const gridLines = [0, 0.25, 0.5, 0.75, 1]
-    .map((ratio) => {
-      const y = margin.top + plotHeight - ratio * plotHeight;
-      const label = formatNumber(Math.round(maxDailyValue * ratio));
-      return `
-        <line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" class="visit-chart-grid" />
-        <text x="${margin.left - 8}" y="${y + 4}" class="visit-chart-axis-label" text-anchor="end">${label}</text>
-      `;
-    })
-    .join("");
-
-  const cumulativeLabels = [cumulativeMin, cumulativeMax]
-    .map((value) => {
-      const y = yForCumulative(value);
-      return `<text x="${width - margin.right + 8}" y="${y + 4}" class="visit-chart-axis-label visit-chart-axis-label--right">${formatNumber(value)}</text>`;
-    })
-    .join("");
-
-  const bars = chartRows
-    .map((row, index) => {
-      const centerX = xForIndex(index);
-      const totalHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.totalVisits));
-      const uniqueHeight = Math.max(0, margin.top + plotHeight - yForDaily(row.uniqueVisitors));
-      return `
-        <rect x="${centerX - barWidth - 1}" y="${yForDaily(row.totalVisits)}" width="${barWidth}" height="${totalHeight}" class="visit-chart-bar visit-chart-bar--total">
-          <title>${formatDay(row.day)} - visites : ${formatNumber(row.totalVisits)}</title>
-        </rect>
-        <rect x="${centerX + 1}" y="${yForDaily(row.uniqueVisitors)}" width="${barWidth}" height="${uniqueHeight}" class="visit-chart-bar visit-chart-bar--unique">
-          <title>${formatDay(row.day)} - visiteurs uniques : ${formatNumber(row.uniqueVisitors)}</title>
-        </rect>
-      `;
-    })
-    .join("");
-
-  const linePoints = chartRows
-    .map((row, index) => `${xForIndex(index)},${yForCumulative(row.cumulativeTotal)}`)
-    .join(" ");
-  const lineDots = chartRows
-    .map((row, index) => {
-      const x = xForIndex(index);
-      const y = yForCumulative(row.cumulativeTotal);
-      return `<circle cx="${x}" cy="${y}" r="2.5" class="visit-chart-dot"><title>${formatDay(row.day)} - cumul total : ${formatNumber(row.cumulativeTotal)}</title></circle>`;
-    })
-    .join("");
-
-  const xLabels = chartRows
-    .filter((_, index) => index === 0 || index === chartRows.length - 1 || (index + 1) % 7 === 0)
-    .map((row, index, selectedRows) => {
-      const originalIndex = chartRows.findIndex((candidate) => candidate.day === row.day);
-      const anchor =
-        index === 0 ? "start" : index === selectedRows.length - 1 ? "end" : "middle";
-      return `<text x="${xForIndex(originalIndex)}" y="${height - 16}" class="visit-chart-axis-label" text-anchor="${anchor}">${formatShortDay(row.day)}</text>`;
-    })
-    .join("");
-
-  refs.visitStatsChart.innerHTML = `
-    <div class="visit-chart-legend">
-      <span><i class="visit-chart-swatch visit-chart-swatch--total"></i>Visiteurs quotidiens</span>
-      <span><i class="visit-chart-swatch visit-chart-swatch--unique"></i>Visiteurs uniques quotidiens</span>
-      <span><i class="visit-chart-swatch visit-chart-swatch--line"></i>Total cumulé</span>
-    </div>
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Visites quotidiennes, visiteurs uniques et total cumulé sur les 30 derniers jours">
-      <text x="${margin.left}" y="18" class="visit-chart-title">30 derniers jours</text>
-      <text x="${margin.left}" y="${height - 2}" class="visit-chart-axis-caption">Visites quotidiennes</text>
-      <text x="${width - margin.right}" y="${height - 2}" class="visit-chart-axis-caption visit-chart-axis-caption--right" text-anchor="end">Total cumulé</text>
-      ${gridLines}
-      ${cumulativeLabels}
-      <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${width - margin.right}" y2="${margin.top + plotHeight}" class="visit-chart-axis" />
-      ${bars}
-      <polyline points="${linePoints}" class="visit-chart-line" />
-      ${lineDots}
-      ${xLabels}
-    </svg>
-  `;
-}
-
-function renderVisitStats(payload) {
-  const rows = Array.isArray(payload?.rows) ? payload.rows : [];
-  if (refs.visitStatsSummary) {
-    const totalVisits = formatNumber(payload?.totalVisits);
-    const dayCount = formatNumber(payload?.chartRows?.length || rows.length);
-    refs.visitStatsSummary.textContent = `${totalVisits} visites au total sur ${dayCount} jours affichés.`;
-  }
-  if (refs.visitStatsNote) {
-    refs.visitStatsNote.textContent =
-      payload?.note ||
-      "Les visites quotidiennes ne sont disponibles qu’à partir de l’activation du suivi.";
-  }
-  renderVisitStatsAverages(payload);
-  renderVisitStatsChart(payload);
-  if (!refs.visitStatsTableBody) {
-    return;
-  }
-  if (!rows.length) {
-    refs.visitStatsTableBody.innerHTML =
-      '<tr><td colspan="3">Aucune donnée de visite disponible.</td></tr>';
-    return;
-  }
-  refs.visitStatsTableBody.innerHTML = rows
-    .map((row) => {
-      const visits =
-        row.totalVisits === null || row.totalVisits === undefined
-          ? "Non suivi"
-          : formatNumber(row.totalVisits);
-      return `
-        <tr>
-          <td>${formatDay(row.day)}</td>
-          <td>${visits}</td>
-          <td>${formatNumber(row.uniqueVisitors)}</td>
-        </tr>
-      `;
-    })
-    .join("");
-}
-
-function closeVisitStatsModal() {
-  if (!refs.visitStatsModal) {
-    return;
-  }
-  refs.visitStatsModal.classList.add("hidden");
-}
-
-async function openVisitStatsModal() {
-  if (!refs.visitStatsModal) {
-    return;
-  }
-  refs.visitStatsModal.classList.remove("hidden");
-  refs.visitStatsPanel?.focus();
-  setVisitStatsLoading("Chargement des statistiques de visites...");
-
-  try {
-    const [payload, publicCounter] = await Promise.all([
-      apiRequest("/api/editor/visits/daily"),
-      apiRequest("/api/visitors/count", { auth: false }).catch(() => null),
-    ]);
-    const publicVisitCount = Number(publicCounter?.visits);
-    if (Number.isFinite(publicVisitCount) && publicVisitCount >= 0) {
-      const previousTotal = Number(payload?.totalVisits);
-      const cumulativeOffset = Number.isFinite(previousTotal)
-        ? publicVisitCount - previousTotal
-        : 0;
-      payload.totalVisits = publicVisitCount;
-      if (cumulativeOffset && Array.isArray(payload.chartRows)) {
-        payload.chartRows = payload.chartRows.map((row) => ({
-          ...row,
-          cumulativeTotal: Math.max(
-            0,
-            Number(row.cumulativeTotal || 0) + cumulativeOffset,
-          ),
-        }));
-      }
-    }
-    renderVisitStats(payload);
-  } catch (error) {
-    setVisitStatsLoading(`Chargement impossible : ${error.message}`);
-  }
-}
-
 function updateEditorFieldsForStreet(streetName) {
+  if ((dirtyFields.has(refs.streetNameInput) || dirtyFields.has(refs.streetInfoText))
+      && !window.confirm("Changer de fiche et abandonner la saisie non enregistrée ?")) return;
+  dirtyFields.delete(refs.streetNameInput); dirtyFields.delete(refs.streetInfoText);
   if (!refs.streetNameInput || !refs.streetInfoText) {
     return;
   }
@@ -1037,8 +658,8 @@ function renderAllEditors(preferredStreetName = "") {
   }
   renderStats();
   renderListsEditors();
-  renderMonumentsEditor();
-  renderStreetSelect(preferredStreetName);
+  if (![...dirtyFields].some(field => (field === refs.monumentsTableBody || refs.monumentsTableBody?.contains(field)))) renderMonumentsEditor();
+  if (!dirtyFields.has(refs.streetNameInput) && !dirtyFields.has(refs.streetInfoText)) renderStreetSelect(preferredStreetName);
 }
 
 async function ensureEditorAccess() {
@@ -1057,9 +678,13 @@ async function ensureEditorAccess() {
 
 async function loadContent(preferredStreetName = "") {
   setGlobalStatus("Chargement du contenu…", "info");
+  const previousRevision = state.content?.revision;
   const content = await apiRequest("/api/editor/content");
   state.content = content;
+  if (dirtyFields.size && previousRevision !== undefined) state.content.revision = previousRevision;
+  const drafts = [...dirtyFields].filter(element => element.isConnected && "value" in element).map(element => ({ element, value: element.value }));
   renderAllEditors(preferredStreetName);
+  for (const draft of drafts) if (draft.element.isConnected) draft.element.value = draft.value;
   setGlobalStatus("Le contenu est à jour.", "success");
 }
 
@@ -1076,9 +701,7 @@ async function onLoginSubmit(event) {
     refs.loginBtn.disabled = true;
     refs.loginBtn.textContent = "Connexion…";
     setGlobalStatus("Démarrage du service…", "info");
-    await warmApiForLogin(() => {
-      setGlobalStatus("Préparation de la base de données…", "info");
-    });
+    await warmApiForLogin();
     setGlobalStatus("Connexion en cours…", "info");
     const payload = await apiRequest("/api/login", {
       method: "POST",
@@ -1159,6 +782,7 @@ async function onSaveStreetInfo() {
       method: "PUT",
       body: payload,
     });
+    for (const field of [refs.streetNameInput, refs.streetInfoText]) dirtyFields.delete(field);
     await loadContent(streetName);
     if (previousStreetName) {
       setGlobalStatus(`Rue renommée : « ${previousStreetName} » devient « ${streetName} ».`, "success");
@@ -1200,6 +824,7 @@ async function onDeleteStreetInfo() {
     });
     refs.streetNameInput.value = "";
     refs.streetInfoText.value = "";
+    dirtyFields.delete(refs.streetNameInput); dirtyFields.delete(refs.streetInfoText);
     await loadContent();
     setGlobalStatus(`Fiche supprimée : ${streetName}.`, "success");
   } catch (error) {
@@ -1311,6 +936,7 @@ async function onSaveLists() {
       method: "PUT",
       body: payload,
     });
+    dirtyFields.delete(refs.famousListText); dirtyFields.delete(refs.mainListText);
     await loadContent();
     setGlobalStatus("Les deux listes ont été enregistrées.", "success");
   } catch (error) {
@@ -1338,6 +964,7 @@ async function onSaveMonuments() {
       method: "PUT",
       body: { entries },
     });
+    for (const field of [...dirtyFields]) if ((field === refs.monumentsTableBody || refs.monumentsTableBody?.contains(field))) dirtyFields.delete(field);
     await loadContent();
     const isSingular = entries.length === 1;
     setGlobalStatus(
@@ -1362,6 +989,8 @@ function bindEvents() {
     setGlobalStatus("Vous êtes déconnecté.", "info");
   });
   refs.refreshContentBtn.addEventListener("click", async () => {
+    if (dirtyFields.size && !window.confirm("Actualiser et abandonner les saisies non enregistrées ?")) return;
+    dirtyFields.clear();
     try {
       refs.refreshContentBtn.disabled = true;
       refs.refreshContentBtn.textContent = "Actualisation…";
@@ -1396,25 +1025,20 @@ function bindEvents() {
   refs.saveListsBtn?.addEventListener("click", onSaveLists);
   refs.addMonumentRowBtn?.addEventListener("click", () => {
     appendMonumentRow();
+    dirtyFields.add(refs.monumentsTableBody);
   });
   refs.saveMonumentsBtn?.addEventListener("click", onSaveMonuments);
-  if (refs.openVisitStatsBtn) {
-    refs.openVisitStatsBtn.addEventListener("click", openVisitStatsModal);
-  }
-  if (refs.closeVisitStatsBtn) {
-    refs.closeVisitStatsBtn.addEventListener("click", closeVisitStatsModal);
-  }
-  refs.visitStatsModal?.addEventListener("click", (event) => {
-    if (event.target?.hasAttribute("data-close-visit-stats")) {
-      closeVisitStatsModal();
-    }
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !refs.visitStatsModal?.classList.contains("hidden")) {
-      closeVisitStatsModal();
-    }
-  });
+
 }
 
 bindEvents();
 bootstrapSession();
+
+// Keep edited values when another module refreshes; warn before leaving the page.
+document.getElementById("editor-section")?.addEventListener("input", event => {
+  if (event.target.matches("textarea, #street-name-input, .monuments-table input")) dirtyFields.add(event.target);
+});
+window.addEventListener("beforeunload", event => {
+  if (!dirtyFields.size) return;
+  event.preventDefault(); event.returnValue = "";
+});

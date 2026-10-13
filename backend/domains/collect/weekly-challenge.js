@@ -348,7 +348,26 @@ async function ensureCurrentChallenge(pool, at = null) {
           ? metadata.get(normalize(card.name))
           : null),
       }));
-      const objectives = chooseObjectives(dimensions);
+      const planned = (
+        await client.query(
+          "SELECT objectives FROM admin_events WHERE week_start=$1",
+          [week.week_start],
+        )
+      ).rows[0];
+      const objectives = planned
+        ? planned.objectives
+        : chooseObjectives(dimensions);
+      if (
+        planned &&
+        objectives.some(
+          (o) =>
+            new Set(dimensions.map((d) => unitKey(o.kind, d)).filter(Boolean))
+              .size < o.target,
+        )
+      )
+        throw new Error(
+          "Le défi planifié ne correspond plus au catalogue actif",
+        );
       challenge = (
         await client.query(
           `INSERT INTO weekly_challenges(week_start,starts_at,ends_at,category_snapshot)

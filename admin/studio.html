@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <script src="/admin/admin-fetch.js"></script>
+  <script src="/src/public/js/runtime-config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Atelier | Administration Parici</title>
+  <meta name="description" content="Tableau de bord d'administration de Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+</head>
+
+<body>
+  <main class="admin-shell">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/">Parici</a>
+        <a href="/admin/explorer/">Explorer</a>
+        <a href="/admin/collect/">Collect</a>
+        <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a href="/admin/operations.html">Pilotage</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
+    <header class="admin-header"><div><p class="admin-kicker">Pilotage</p><h1>Atelier et pilotage</h1><p class="admin-subtitle">Préparez, vérifiez et publiez les contenus. Suivez les joueurs et les opérations.</p></div><p id="studio-status" class="status" role="status" aria-live="polite">Chargement…</p></header>
+    <div class="studio-layout">
+      <nav id="studio-nav" class="studio-nav" aria-label="Outils de pilotage"></nav>
+      <section class="card studio-content"><div class="studio-heading"><h2 id="studio-title">À traiter</h2><button id="studio-refresh" class="btn" type="button">Actualiser</button></div><div id="studio-body"></div></section>
+    </div>
+  </main>
+  <dialog id="studio-dialog" class="admin-detail-dialog"><button id="studio-close" class="btn" type="button">Fermer</button><div id="studio-detail"></div></dialog>
+  <script type="module" src="/admin/studio.js?v=20261012-studio"></script>
+</body></html>

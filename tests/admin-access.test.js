@@ -9,7 +9,7 @@ const adminHomeJs = fs.readFileSync(path.join(root, "admin/home.js"), "utf8");
 const adminHtml = fs.readFileSync(path.join(root, "admin/index.html"), "utf8");
 const database = fs.readFileSync(path.join(root, "backend/database.js"), "utf8");
 
-test("all editor routes require an authenticated administrator", () => {
+test("all editor routes require authenticated staff and permission checks", () => {
   const editorRoutes = server.match(
     /app\.(?:get|post|put|delete)\('\/api\/editor\/[^;]+/g,
   ) || [];
@@ -17,8 +17,9 @@ test("all editor routes require an authenticated administrator", () => {
   const adminRoutes = editorRoutes.filter((route) => !route.includes("/api/editor/me"));
   assert.equal(protectedRoutes.length, 1);
   assert.ok(adminRoutes.length >= 10);
+  assert.match(server, /adminSecurity\.requireAccess/);
   adminRoutes.forEach((route) => {
-    assert.match(route, /authenticateToken, requireAdminUser/);
+    assert.match(route, /authenticateToken, require(?:AdminUser|ContentEditor)/);
   });
 });
 

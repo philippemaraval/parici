@@ -286,7 +286,7 @@ export function initSiteMenu() {
         return;
       settingsState = state;
       if (accountSettings.isConnected)
-        accountSettings.innerHTML = `<section class="site-settings-section"><h3>Notifications</h3><p class="site-settings-note">Les alertes push sont facultatives sur cet appareil. La cloche reste disponible sans les activer.</p>${switchRow("daily", "Daily", "Un rappel pour le Daily à faire", state.daily && !!sub)}</section>`;
+        accountSettings.innerHTML = `<section class="site-settings-section"><h3>Notifications</h3><p class="site-settings-note">Les alertes push sont facultatives sur cet appareil. La cloche reste disponible sans les activer.</p>${switchRow("announcements", "Actualités de Parici", "Messages de l’équipe dans la cloche du site", state.announcements !== false)}${switchRow("daily", "Daily", "Un rappel pour le Daily à faire", state.daily && !!sub)}</section>`;
     } catch (error) {
       content.querySelector("#site-account-settings").innerHTML =
         `<p>${escapeHtml(error.status === 401 ? "Reconnecte-toi pour retrouver les réglages de ton compte." : error.message)}</p>`;
@@ -349,6 +349,7 @@ export function initSiteMenu() {
     input.disabled = true;
     feedback("");
     try {
+      if(input.name === "announcements") await send("/api/site/settings", {announcements:value}, "PATCH");
       if (value && input.name === "daily") await enablePush("daily");
       if (input.name === "daily") {
         if (!value) {

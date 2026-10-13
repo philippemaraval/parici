@@ -9,7 +9,7 @@ retention_days="${BACKUP_RETENTION_DAYS:-30}"
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$backup_dir"
 
-plain_path="$backup_dir/parici-$timestamp.dump"
+plain_path="$backup_dir/camino-$timestamp.dump"
 encrypted_path="$plain_path.enc"
 
 cleanup() {
@@ -31,5 +31,5 @@ openssl enc -aes-256-cbc -salt -pbkdf2 \
   -out "$encrypted_path"
 shasum -a 256 "$encrypted_path" >"$encrypted_path.sha256"
 
-find "$backup_dir" -type f -name 'parici-*.dump.enc*' -mtime "+$retention_days" -delete
+find "$backup_dir" -type f -name 'camino-*.dump.enc*' -mtime "+$retention_days" -delete
 printf '%s\n' "$encrypted_path"

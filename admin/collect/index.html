@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <script src="/admin/admin-fetch.js"></script>
+  <script src="/src/public/js/runtime-config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Collect | Administration Parici</title>
+  <meta name="description" content="Tableau de bord d'administration de Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio">
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+</head>
+
+<body>
+  <main class="admin-shell">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/">Parici</a>
+        <a href="/admin/explorer/">Explorer</a>
+        <a href="/admin/collect/" aria-current="page">Collect</a>
+        <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a href="/admin/operations.html">Pilotage</a>
+        <a href="/admin/studio.html">Atelier</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
+    <header class="admin-header">
+      <div>
+        <p class="admin-kicker">Mode Collect</p>
+        <h1>Administration de Collect</h1>
+        <p class="admin-subtitle">Gérez les cartes de Collect et leur disponibilité dans le jeu.</p>
+      </div>
+      <p id="global-status" class="status status--info" role="status" aria-live="polite">Connectez-vous avec un compte éditeur.</p>
+    </header>
+
+    <section id="login-section" class="card">
+      <div class="card-header">
+        <div>
+          <p class="card-eyebrow">Accès sécurisé</p>
+          <h2>Se connecter</h2>
+          <p class="muted">Cet espace est réservé aux comptes disposant du rôle éditeur ou administrateur.</p>
+        </div>
+      </div>
+      <form id="login-form" class="form-grid">
+        <label>
+          Pseudo
+          <input id="login-username" type="text" autocomplete="username" spellcheck="false" required>
+        </label>
+        <label>
+          Mot de passe
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-btn" type="submit" class="btn btn-primary">Se connecter</button>
+      </form>
+    </section>
+
+    <section id="dashboard-section" class="hidden">
+      <div class="card toolbar">
+        <div class="session-card">
+          <span class="session-avatar">C</span>
+          <div>
+            <strong id="session-user">-</strong>
+            <span id="session-role" class="role-badge">-</span>
+            <p class="muted">Session active</p>
+          </div>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refresh-session-btn" type="button" class="btn">Vérifier l’accès</button>
+          <button id="logout-btn" type="button" class="btn btn-quiet">Se déconnecter</button>
+        </div>
+      </div>
+
+      <section id="collect-report-admin-card" class="card hidden" aria-labelledby="collect-reports-title">
+        <h2 id="collect-reports-title">Signalements de contenu</h2>
+        <p class="muted">Les signalements indiquent quelle image ou description mérite une vérification. Un joueur ne compte qu’une fois par carte et par type de contenu.</p>
+        <div class="collect-admin-table-wrap"><table class="collect-admin-table collect-report-table"><thead><tr><th>Carte</th><th>Contenu signalé</th><th>Joueurs</th><th>Dernier signalement</th><th>Action</th></tr></thead><tbody id="collect-report-rows"></tbody></table></div>
+        <p id="collect-report-message" role="status" aria-live="polite"></p>
+        <button id="collect-report-refresh" class="btn" type="button">Actualiser les signalements</button>
+      </section>
+      <section id="collect-admin-card" class="card hidden">
+        <h2>Collect · Catalogue des cartes</h2><details><summary>Santé et parcours Collect</summary><button id="collect-health-refresh" type="button" class="btn">Actualiser</button><div id="collect-health" role="status"></div></details>
+        <p class="muted">Archiver une carte arrête son tirage et son attribution. Les exemplaires obtenus restent dans les collections ; les albums ne comptent que les cartes actives.</p>
+        <div class="field-row">
+          <label>Rechercher<input id="collect-admin-search" type="search" placeholder="Nom d’une carte" maxlength="200"></label>
+          <label>Famille<select id="collect-admin-family"><option value="">Toutes</option><option value="street">Rues</option><option value="district">Quartiers</option><option value="monument">Monuments</option><option value="bus">Bus</option></select></label>
+          <label>Qualité<select id="collect-admin-quality"><option value="">Tout le catalogue</option><option value="missing-image">Sans photo</option><option value="reported">Signalées</option><option value="verified">Vérifiées par un admin</option><option value="unverified">Sans vérification admin</option></select></label>
+          <label>Statut<select id="collect-admin-status"><option value="">Tous</option><option value="active">Actives</option><option value="archived">Archivées</option></select></label>
+          <label>Rareté<select id="collect-admin-rarity"><option value="">Toutes</option><option value="1">Commune</option><option value="2">Peu commune</option><option value="3">Rare</option><option value="4">Épique</option><option value="5">Légendaire</option></select></label>
+          <button id="collect-admin-refresh" class="btn" type="button">Rechercher</button>
+        </div>
+        <div class="collect-admin-mobile-sort" aria-label="Tri du catalogue">
+          <label>Trier par<select id="collect-admin-mobile-sort"><option value="number">Numéro</option><option value="name">Carte</option><option value="status">Active</option><option value="copies">Exemplaires</option><option value="rarity">Rareté</option><option value="fragments">Fragments / questions</option></select></label>
+          <label>Ordre<select id="collect-admin-mobile-order"><option value="asc">Croissant</option><option value="desc">Décroissant</option></select></label>
+        </div>
+        <p id="collect-admin-message" role="status" aria-live="polite"></p>
+        <div class="collect-admin-table-wrap"><table class="collect-admin-table"><thead><tr><th><button class="collect-admin-sort" data-sort="number" type="button">Numéro</button></th><th><button class="collect-admin-sort" data-sort="name" type="button">Carte</button></th><th><button class="collect-admin-sort" data-sort="status" type="button">Active</button></th><th><button class="collect-admin-sort" data-sort="copies" type="button">Exemplaires</button></th><th><button class="collect-admin-sort" data-sort="rarity" type="button">Rareté</button></th><th><button class="collect-admin-sort" data-sort="fragments" type="button">Fragments / questions</button></th><th>Action</th></tr></thead><tbody id="collect-admin-rows"></tbody></table></div>
+        <div class="button-row"><button id="collect-admin-prev" class="btn" type="button">Précédent</button><span id="collect-admin-page"></span><button id="collect-admin-next" class="btn" type="button">Suivant</button></div>
+      </section>
+      <section id="collect-content-editor" class="card hidden" aria-labelledby="collect-content-title">
+        <h2 id="collect-content-title">Illustration et description</h2>
+        <form id="collect-content-form">
+          <label>Adresse de l’illustration<input id="collect-content-image" type="text" maxlength="2048" placeholder="https://… ou /data/…"></label>
+          <label>Crédit de l’illustration<input id="collect-content-credit" type="text" maxlength="500" placeholder="Auteur, source et licence"></label>
+          <img id="collect-content-preview" class="collect-content-preview" alt="Aperçu de l’illustration" hidden>
+          <label>Description courte — sur la carte<textarea id="collect-content-description" maxlength="1000" rows="3"></textarea></label>
+          <label>Description détaillée — dans la fiche<textarea id="collect-content-description-full" maxlength="4000" rows="7"></textarea></label>
+          <label>Lieu vérifié<input id="collect-content-verified" type="text" maxlength="200" placeholder="Nom exact du lieu ou de la ligne vérifiée"></label><label>Preuve de correspondance<input id="collect-content-verification-source" type="url" maxlength="2048" placeholder="https://…"></label><label><input id="collect-content-resolve" type="checkbox"> Marquer le signalement corrigé comme traité</label><details><summary>Historique des corrections</summary><div id="collect-content-history"></div></details><p class="muted">Les modifications apparaissent dans les collections, profils et prochaines parties. Vider un champ rétablit son contenu automatique.</p>
+          <div class="button-row"><button type="submit" class="btn btn-primary">Enregistrer le contenu</button><button id="collect-content-reset" type="button" class="btn">Rétablir le contenu automatique</button><button id="collect-content-close" type="button" class="btn">Fermer</button></div>
+          <p id="collect-content-message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section id="collect-fragment-editor" class="card hidden" aria-labelledby="collect-fragment-title">
+        <h2 id="collect-fragment-title">Fragments</h2>
+        <form id="collect-fragment-form">
+          <div class="field-row"><label class="collect-fragment-toggle"><input id="collect-fragment-enabled" type="checkbox"> Activer les fragments</label><label>Fragments requis<select id="collect-fragment-required"><option value="2">Notable · 2 fragments</option><option value="3">Majeure · 3 fragments</option><option value="4">Iconique · 4 fragments</option></select></label></div>
+          <p class="muted">Sans fragments : carte directe (0 fragment). Avec fragments : placement correct → QCM culturel → bonne réponse = +1 fragment ; mauvaise réponse = aucun fragment. Les questions tournent pour éviter les répétitions. Quatre réponses distinctes et une explication sont requises. Une question déjà présentée reste inchangée pour le joueur. Chaque nouvel exemplaire nécessite un nouveau cycle de fragments.</p>
+          <div id="collect-fragment-questions"></div>
+          <div class="button-row"><button id="collect-fragment-add" type="button" class="btn">Ajouter une question</button><button type="submit" class="btn btn-primary">Enregistrer</button><button id="collect-fragment-close" type="button" class="btn">Fermer</button></div>
+          <p id="collect-fragment-message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script src="/admin/collect-admin.js?v=20261007-compact-rarity"></script>
+  <script type="module" src="/admin/home.js?v=20261012-admin-studio"></script>
+</body>
+
+</html>

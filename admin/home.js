@@ -1,14 +1,9 @@
-const API_BASE_CANDIDATES =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.protocol === "file:"
-    ? ["http://localhost:3000"]
-    : ["https://parici.onrender.com"];
+const API_BASE_CANDIDATES = [
+  window.CaminoRuntimeConfig?.apiUrl || "http://localhost:3000",
+];
 
 const API_REQUEST_TIMEOUT_MS = 45000;
 const LOGIN_API_REQUEST_TIMEOUT_MS = 75000;
-const LOGIN_API_READY_ATTEMPT_TIMEOUT_MS = 15000;
-const LOGIN_API_READY_POLL_INTERVAL_MS = 1500;
 const OSM_SYNC_POLL_INTERVAL_MS = 8000;
 const OSM_SYNC_POLL_TIMEOUT_MS = 12 * 60 * 1000;
 const STORAGE_KEY = "camino_paris_editor_user";
@@ -86,6 +81,7 @@ function renderSession() {
 }
 
 function saveSession() {
+  sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.token);
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify({
@@ -93,7 +89,6 @@ function saveSession() {
       role: state.role,
     }),
   );
-  sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.token);
 }
 
 function clearSession() {
@@ -108,15 +103,10 @@ function clearSession() {
 function restoreSession() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    const legacyToken = String(saved?.token || "");
-    state.token = String(sessionStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || legacyToken);
-    if (legacyToken) {
-      delete saved.token;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-      sessionStorage.setItem(SESSION_TOKEN_STORAGE_KEY, legacyToken);
-    }
+    state.token = String(sessionStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || saved?.token || "");
     state.username = String(saved?.username || "");
     state.role = String(saved?.role || "");
+    if (state.token) saveSession();
     return Boolean(state.token);
   } catch (error) {
     clearSession();
@@ -206,7 +196,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = API_REQUEST_TIMEO
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, {
+    return await window.PariciAdminFetch(url, {
       ...options,
       signal: controller.signal,
     });
@@ -307,47 +297,12 @@ async function pollOsmSyncStatus({ since, label }) {
   await pollOnce();
 }
 
-async function warmApiForLogin(onWaitingForDatabase = () => {}) {
-  const deadlineMs = Date.now() + LOGIN_API_REQUEST_TIMEOUT_MS;
-
-  // /api/health wakes Render up, but deliberately responds while PostgreSQL is
-  // still initializing. Do not submit credentials until /api/ready confirms
-  // that database-backed routes can answer.
-  await apiRequest("/api/health", {
-    auth: false,
-    timeoutMs: LOGIN_API_REQUEST_TIMEOUT_MS,
-  });
-
-  while (Date.now() < deadlineMs) {
-    const remainingMs = deadlineMs - Date.now();
-    try {
-      const readiness = await apiRequest("/api/ready", {
-        auth: false,
-        timeoutMs: Math.max(
-          1,
-          Math.min(LOGIN_API_READY_ATTEMPT_TIMEOUT_MS, remainingMs),
-        ),
-      });
-      if (readiness?.database === "ready") {
-        return;
-      }
-    } catch (error) {
-      if (error?.status !== 503) {
-        throw error;
-      }
-    }
-
-    onWaitingForDatabase();
-    const waitMs = Math.min(
-      LOGIN_API_READY_POLL_INTERVAL_MS,
-      Math.max(0, deadlineMs - Date.now()),
-    );
-    if (waitMs > 0) {
-      await delay(waitMs);
-    }
+async function warmApiForLogin() {
+  try {
+    await apiRequest("/api/health", { auth: false, timeoutMs: 15000 });
+  } catch (error) {
+    await delay(1200);
   }
-
-  throw new Error("le service n’est pas encore prêt ; réessayez dans quelques instants");
 }
 
 async function ensureEditorAccess() {
@@ -363,6 +318,15 @@ async function ensureEditorAccess() {
   state.canManageUsers = Boolean(me.canManageUsers);
   saveSession();
   renderSession();
+  const tasks=document.getElementById('admin-task-summary');
+  if(tasks)try{const summary=await apiRequest('/api/editor/studio/tasks');tasks.textContent=`${summary.reports.length} signalements à traiter · ${summary.tasks.length} alertes qualité · ${summary.drafts.filter(d=>d.state==='failed').length} publications en échec.`;}catch{tasks.textContent='Tâches indisponibles : consultez l’atelier pour le diagnostic.';}
+  if (refs.runOsmSyncBtn) refs.runOsmSyncBtn.classList.toggle("hidden", state.role !== "admin");
+  const collectCard = document.getElementById('collect-admin-card');
+  collectCard?.classList.toggle('hidden', state.role !== 'admin');
+  const collectReportsCard = document.getElementById('collect-report-admin-card');
+  collectReportsCard?.classList.toggle('hidden', state.role !== 'admin');
+  if (collectCard && state.role === 'admin') await Promise.all([loadCollectAdmin(), loadCollectReports()]);
+  if (collectCard && state.role !== 'admin') throw new Error("L’administration de Collect est réservée aux administrateurs.");
 }
 
 async function onLoginSubmit(event) {
@@ -378,9 +342,7 @@ async function onLoginSubmit(event) {
     refs.loginBtn.disabled = true;
     refs.loginBtn.textContent = "Connexion…";
     setGlobalStatus("Démarrage du service…", "info");
-    await warmApiForLogin(() => {
-      setGlobalStatus("Préparation de la base de données…", "info");
-    });
+    await warmApiForLogin();
     setGlobalStatus("Connexion en cours…", "info");
     const payload = await apiRequest("/api/login", {
       method: "POST",
@@ -495,7 +457,8 @@ function bindEvents() {
   refs.loginForm.addEventListener("submit", onLoginSubmit);
   refs.refreshSessionBtn.addEventListener("click", refreshSession);
   refs.runOsmSyncBtn?.addEventListener("click", onRunOsmSync);
-  refs.logoutBtn.addEventListener("click", () => {
+  refs.logoutBtn.addEventListener("click", async () => {
+    try { await apiRequest("/api/logout", { method: "POST" }); } catch {}
     stopOsmSyncPolling();
     clearSession();
     setUiAuthenticated(false);
@@ -503,5 +466,6 @@ function bindEvents() {
   });
 }
 
+const { loadCollectAdmin, loadCollectReports } = window.installPariciCollectAdmin?.({ apiRequest }) || {};
 bindEvents();
 bootstrapSession();

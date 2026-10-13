@@ -1,3 +1,4 @@
+const adminContent = require("./domains/admin/content");
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -225,6 +226,7 @@ async function applyPlayerUpgradeSchema(client) {
       FROM jsonb_to_recordset($1::jsonb) AS r(seed_key text,way_id bigint,street_name_clean text,riddle_text text,hint_text text,explanation_text text,image_url text,latitude double precision,longitude double precision,source_url text)
       ON CONFLICT(seed_key) DO NOTHING`, [JSON.stringify(explorerSeed)]);
     await require('./domains/collect/paris-schema').applyParisCollect(client);
+    await require('./domains/admin/schema').applyAdminSchema(client);
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
 }
@@ -756,23 +758,34 @@ async function setUserRole(username, role) {
     throw new Error('Missing role');
   }
 
-  const result = await pool.query(
-    `UPDATE users
-     SET role = $1,
-         session_version = COALESCE(session_version, 1) + 1
-     WHERE username = $2
-     RETURNING id, username, role`,
-    [normalizedRole, normalizedUsername]
-  );
-  return result.rows[0] || null;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query("SELECT pg_advisory_xact_lock(hashtext('admin-membership'))");
+    const target = (await client.query('SELECT role FROM users WHERE username=$1 FOR UPDATE', [normalizedUsername])).rows[0];
+    if (target?.role === 'admin' && normalizedRole !== 'admin') {
+      const count = (await client.query("SELECT COUNT(*)::int AS count FROM users WHERE role='admin'")).rows[0].count;
+      if (count <= 1) throw adminContent.httpError(409, 'Le dernier administrateur ne peut pas perdre son rôle.');
+    }
+    const result = await client.query(
+      `UPDATE users SET role=$1,session_version=COALESCE(session_version,1)+1 WHERE username=$2 RETURNING id,username,role`,
+      [normalizedRole, normalizedUsername],
+    );
+    await client.query('COMMIT');
+    return result.rows[0] || null;
+  } catch (error) { await client.query('ROLLBACK'); throw error; }
+  finally { client.release(); }
 }
 
-async function listUsersForAdmin() {
+async function listUsersForAdmin({ search = "", page = 1, pageSize = 50 } = {}) {
   const result = await pool.query(
-    `WITH score_stats AS (
+    `WITH selected_users AS (
+       SELECT * FROM users WHERE POSITION(LOWER($1) IN LOWER(username)) > 0
+       ORDER BY created_at DESC,id DESC LIMIT $2 OFFSET $3
+     ), score_stats AS (
        SELECT
          user_id,
-         COUNT(*)::int AS games_played,
+         SUM(game_count)::int AS games_played,
          MAX(timestamp) AS last_game_at,
          JSON_AGG(
            JSON_BUILD_OBJECT(
@@ -788,12 +801,13 @@ async function listUsersForAdmin() {
            user_id,
            mode,
            game_type,
+           COUNT(*)::int AS game_count,
            MAX(score) AS high_score,
            MAX(items_correct) AS best_items_correct,
            MAX(items_total) AS best_items_total,
            MAX(timestamp) AS timestamp
          FROM scores
-         WHERE user_id IS NOT NULL
+         WHERE user_id IN (SELECT id FROM selected_users)
          GROUP BY user_id, mode, game_type
        ) grouped_scores
        GROUP BY user_id
@@ -804,7 +818,7 @@ async function listUsersForAdmin() {
          COUNT(DISTINCT date)::int AS days_played,
          COUNT(DISTINCT date) FILTER (WHERE success = TRUE)::int AS successes,
          MAX(last_attempt_at) AS last_daily_at
-       FROM daily_user_attempts
+       FROM daily_user_attempts WHERE user_id IN (SELECT id FROM selected_users)
        GROUP BY user_id
      ),
      reminder_stats AS (
@@ -830,6 +844,11 @@ async function listUsersForAdmin() {
        COALESCE(daily_stats.days_played, 0)::int AS daily_days_played,
        COALESCE(daily_stats.successes, 0)::int AS daily_successes,
        daily_stats.last_daily_at,
+       GREATEST(score_stats.last_game_at,daily_stats.last_daily_at,
+         (SELECT MAX(COALESCE(g.finished_at,g.started_at)) FROM collect_games g WHERE g.user_id=u.id),
+         (SELECT MAX(p.solved_at) FROM explorer_user_progress p WHERE p.user_id=u.id),
+         (SELECT MAX(e.started_at) FROM explorer_step_sessions e WHERE e.user_id=u.id)
+       ) AS last_activity_at,
        COALESCE(reminder_stats.reminder_enabled, FALSE) AS reminder_enabled,
        COALESCE(referral_stats.referral_count, 0)::int AS referral_count,
        GREATEST(
@@ -839,12 +858,12 @@ async function listUsersForAdmin() {
            36500
          )
        )::int AS membership_days
-     FROM users u
+     FROM selected_users u
      LEFT JOIN score_stats ON score_stats.user_id = u.id
      LEFT JOIN daily_stats ON daily_stats.user_id = u.id
      LEFT JOIN reminder_stats ON reminder_stats.user_id = u.id
      LEFT JOIN referral_stats ON referral_stats.user_id = u.id
-     ORDER BY u.created_at ASC, u.username ASC`
+     ORDER BY u.created_at DESC, u.id DESC`, [search, pageSize, (page-1)*pageSize]
   );
   return result.rows;
 }
@@ -874,6 +893,7 @@ async function deleteUserById(userId) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    await client.query("SELECT pg_advisory_xact_lock(hashtext('admin-membership'))");
     const userResult = await client.query(
       'SELECT id, username, role FROM users WHERE id = $1 FOR UPDATE',
       [normalizedUserId]
@@ -882,6 +902,11 @@ async function deleteUserById(userId) {
     if (!user) {
       await client.query('ROLLBACK');
       return null;
+    }
+
+    if (user.role === 'admin') {
+      const admins = await client.query("SELECT COUNT(*)::int AS count FROM users WHERE role='admin'");
+      if (admins.rows[0].count <= 1) throw adminContent.httpError(409, 'Le dernier administrateur ne peut pas être supprimé.');
     }
 
     // These two historical foreign keys were created without ON DELETE CASCADE.
@@ -2994,12 +3019,79 @@ async function getDailyVisitStats() {
   };
 }
 
+async function getHourlyVisitStats() {
+  const result = await pool.query(
+    `WITH hours AS (
+       SELECT generate_series(0, 23) AS hour
+     ),
+     coverage AS (
+       SELECT (MIN(first_seen) AT TIME ZONE 'Europe/Paris')::DATE AS first_day,
+              (MAX(first_seen) AT TIME ZONE 'Europe/Paris')::DATE AS last_day,
+              MIN(first_seen) AS first_seen,
+              MAX(first_seen) AS last_seen
+       FROM visitor_sessions
+     ),
+     days AS (
+       SELECT generate_series(
+         coverage.first_day,
+         coverage.last_day,
+         INTERVAL '1 day'
+       )::DATE AS day
+       FROM coverage
+       WHERE coverage.first_day IS NOT NULL
+     ),
+     daily_hourly_sessions AS (
+       SELECT (first_seen AT TIME ZONE 'Europe/Paris')::DATE AS day,
+              EXTRACT(HOUR FROM first_seen AT TIME ZONE 'Europe/Paris')::INTEGER AS hour,
+              COUNT(*)::BIGINT AS total_visits,
+              COUNT(DISTINCT visitor_hash)::BIGINT AS unique_visitors
+       FROM visitor_sessions
+       GROUP BY 1, 2
+     ),
+     daily_slots AS (
+       SELECT days.day,
+              hours.hour,
+              COALESCE(daily_hourly_sessions.total_visits, 0)::NUMERIC AS total_visits,
+              COALESCE(daily_hourly_sessions.unique_visitors, 0)::NUMERIC AS unique_visitors
+       FROM days
+       CROSS JOIN hours
+       LEFT JOIN daily_hourly_sessions
+         ON daily_hourly_sessions.day = days.day
+        AND daily_hourly_sessions.hour = hours.hour
+     )
+     SELECT hours.hour,
+            COALESCE(AVG(daily_slots.total_visits), 0)::NUMERIC AS average_visits,
+            COALESCE(AVG(daily_slots.unique_visitors), 0)::NUMERIC AS average_unique_visitors,
+            coverage.first_seen,
+            coverage.last_seen,
+            COUNT(DISTINCT daily_slots.day)::INTEGER AS tracked_days
+     FROM hours
+     LEFT JOIN daily_slots ON daily_slots.hour = hours.hour
+     CROSS JOIN coverage
+     GROUP BY hours.hour, coverage.first_seen, coverage.last_seen
+     ORDER BY hours.hour ASC`
+  );
+
+  const firstRow = result.rows[0] || {};
+  return {
+    timeZone: 'Europe/Paris',
+    firstSeenAt: firstRow.first_seen || null,
+    lastSeenAt: firstRow.last_seen || null,
+    dayCount: Number(firstRow.tracked_days || 0),
+    rows: result.rows.map((row) => ({
+      hour: Number(row.hour),
+      averageVisits: Number(row.average_visits || 0),
+      averageUniqueVisitors: Number(row.average_unique_visitors || 0),
+    })),
+  };
+}
+
 async function getAppSetting(key) {
   const normalizedKey = String(key || '').trim();
   if (!normalizedKey) {
     return null;
   }
-  const result = await pool.query(
+  const result = await (adminContent.context.getStore() || pool).query(
     'SELECT value_text FROM app_settings WHERE key = $1',
     [normalizedKey]
   );
@@ -3011,7 +3103,7 @@ async function setAppSetting(key, value) {
   if (!normalizedKey) {
     throw new Error('Invalid app setting key');
   }
-  await pool.query(
+  await (adminContent.context.getStore() || pool).query(
     `INSERT INTO app_settings (key, value_text, updated_at)
      VALUES ($1, $2, NOW())
      ON CONFLICT (key) DO UPDATE SET
@@ -3189,6 +3281,7 @@ module.exports = {
   recordVisitHit,
   getVisitCount,
   getDailyVisitStats,
+  getHourlyVisitStats,
   getAppSetting,
   setAppSetting,
   setAppSettingIfMissing,

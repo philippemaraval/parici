@@ -2,32 +2,38 @@
 <html lang="fr">
 
 <head>
+  <script src="/admin/admin-fetch.js"></script>
   <script src="/src/public/js/runtime-config.js"></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Fiches éditoriales | Administration Parici</title>
   <meta name="description" content="Administration des fiches éditoriales des rues de Parici.">
   <meta name="theme-color" content="#0c1d57">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
-  <link rel="stylesheet" href="/admin/admin.css?v=20260706-admin-polish">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio">
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
 </head>
 
 <body>
   <main class="admin-shell">
     <nav class="admin-topbar" aria-label="Navigation admin">
       <a class="admin-brand" href="/admin/">
-        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png" alt="">
         <span><strong>Parici</strong><small>Administration</small></span>
       </a>
       <div class="admin-nav">
         <a href="/admin/">Accueil</a>
         <a href="/admin/parici/" aria-current="page">Parici</a>
+        <a href="/admin/explorer/">Explorer</a>
+        <a href="/admin/collect/">Collect</a>
         <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a href="/admin/operations.html">Pilotage</a>
+        <a href="/admin/studio.html">Atelier</a>
         <a class="admin-nav-site" href="/">Voir le site</a>
       </div>
     </nav>
@@ -68,7 +74,7 @@
     <section id="editor-section" class="hidden">
       <div class="card toolbar">
         <div class="session-card">
-          <span class="session-avatar">P</span>
+          <span class="session-avatar">C</span>
           <div>
             <strong id="session-user">-</strong>
             <span id="session-role" class="role-badge">-</span>
@@ -136,7 +142,7 @@
     </section>
   </main>
 
-  <script type="module" src="/admin/admin.js?v=20260831-shared-session"></script>
+  <script type="module" src="/admin/admin.js?v=20261012-admin-studio"></script>
 </body>
 
 </html>

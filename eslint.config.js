@@ -55,6 +55,7 @@ module.exports = [
       "src/public/js/site-menu.js",
       "src/public/js/canvas-avatar.js",
       "src/public/js/interface-icons.js",
+      "admin/users.js", "admin/studio.js", "admin/operations.js", "admin/sensitive-actions.js", "admin/visit-stats.js",
       "src/public/js/collect*.js",
       "src/public/js/personal-albums-view.js",
     ],

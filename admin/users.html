@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <script src="/admin/admin-fetch.js"></script>
   <script src="/src/public/js/runtime-config.js"></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Utilisateurs | Administration Parici</title>
   <meta name="description" content="Administration des comptes utilisateurs de Parici.">
   <meta name="theme-color" content="#0c1d57">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" sizes="32x32">
-  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-16x16.png?v=20260703-transparent" sizes="16x16">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260703-transparent">
-  <link rel="stylesheet" href="/admin/admin.css?v=20260722-recovery-email">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio">
   <link rel="stylesheet" href="/src/public/css/camino-art.css">
   <script type="module" src="/src/public/js/interface-icons.js"></script>
-  <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
 </head>
 <body>
   <main class="admin-shell admin-shell--wide">
     <nav class="admin-topbar" aria-label="Navigation admin">
       <a class="admin-brand" href="/admin/">
-        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png?v=20260703-transparent" alt="">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png" alt="">
         <span><strong>Parici</strong><small>Administration</small></span>
       </a>
       <div class="admin-nav">
         <a href="/admin/">Accueil</a>
         <a href="/admin/parici/">Parici</a>
+        <a href="/admin/explorer/">Explorer</a>
+        <a href="/admin/collect/">Collect</a>
         <a href="/admin/users.html" aria-current="page">Utilisateurs</a>
+        <a href="/admin/operations.html">Pilotage</a>
+        <a href="/admin/studio.html">Atelier</a>
         <a class="admin-nav-site" href="/">Voir le site</a>
       </div>
     </nav>
@@ -58,6 +63,7 @@
         <div class="stat-card"><span class="stat-label">Joueurs Daily</span><strong id="users-daily" class="stat-value">0</strong></div>
         <div class="stat-card"><span class="stat-label">Rappels actifs</span><strong id="users-reminders" class="stat-value">0</strong></div>
       </div>
+      <p><button id="open-visit-stats-btn" type="button" class="btn">Voir les statistiques de visites</button></p>
       <div class="users-toolbar">
         <label for="users-search">
           Rechercher un pseudo
@@ -77,7 +83,7 @@
               <th data-sort-key="referralCount"><button type="button" class="table-sort">Parrainages<span aria-hidden="true"></span></button></th>
               <th data-sort-key="rank"><button type="button" class="table-sort">Rang<span aria-hidden="true"></span></button></th>
               <th data-sort-key="dailyDaysPlayed"><button type="button" class="table-sort">Jours Daily<span aria-hidden="true"></span></button></th>
-              <th data-sort-key="dailyFrequency"><button type="button" class="table-sort">Assiduité<span aria-hidden="true"></span></button></th>
+              <th data-sort-key="dailyFrequency"><button type="button" class="table-sort">Assiduité depuis l’inscription<span aria-hidden="true"></span></button></th>
               <th data-sort-key="reminderEnabled"><button type="button" class="table-sort">Rappel<span aria-hidden="true"></span></button></th>
               <th data-sort-key="lastActivityAt"><button type="button" class="table-sort">Dernière activité<span aria-hidden="true"></span></button></th>
               <th data-sort-key="createdAt"><button type="button" class="table-sort">Inscription<span aria-hidden="true"></span></button></th>
@@ -87,8 +93,58 @@
           <tbody id="users-table-body"></tbody>
         </table>
       </div>
+      <div class="button-row"><button id="users-prev" type="button" class="btn">Précédent</button><span id="users-page" role="status"></span><button id="users-next" type="button" class="btn">Suivant</button></div>
     </section>
   </main>
-  <script type="module" src="/admin/users.js?v=20260831-shared-session"></script>
+  <div id="visit-stats-modal" class="modal hidden" role="dialog" aria-modal="true"
+    aria-labelledby="visit-stats-title">
+    <div class="modal-backdrop" data-close-visit-stats></div>
+    <section class="modal-panel" tabindex="-1">
+      <div class="modal-header">
+        <div>
+          <h2 id="visit-stats-title">Statistiques de visites</h2>
+          <p id="visit-stats-summary" class="muted">Chargement…</p>
+        </div>
+        <button id="close-visit-stats-btn" type="button" class="btn" aria-label="Fermer">Fermer</button>
+      </div>
+      <div class="visit-stats-tabs" role="tablist" aria-label="Période des statistiques">
+        <button id="visit-stats-daily-tab" type="button" class="btn is-active" role="tab" aria-selected="true">Par jour</button>
+        <button id="visit-stats-hourly-tab" type="button" class="btn" role="tab" aria-selected="false">Par heure</button>
+      </div>
+      <div id="visit-stats-averages" class="stats-grid visit-stats-averages" aria-label="Moyenne quotidienne des visiteurs uniques">
+        <div class="stat-card">
+          <span class="stat-label">7 derniers jours</span>
+          <strong id="visit-stats-average-7" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">15 derniers jours</span>
+          <strong id="visit-stats-average-15" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">30 derniers jours</span>
+          <strong id="visit-stats-average-30" class="stat-value">—</strong>
+          <small>visiteurs uniques / jour</small>
+        </div>
+      </div>
+      <p id="visit-stats-note" class="visit-stats-note"></p>
+      <div id="visit-stats-chart" class="visit-stats-chart" aria-label="Graphique des visites sur les 30 derniers jours"></div>
+      <div class="visit-stats-table-wrap">
+        <table class="visit-stats-table">
+          <thead>
+            <tr>
+              <th id="visit-stats-period-heading">Date</th>
+              <th id="visit-stats-visits-heading">Visites suivies</th>
+              <th id="visit-stats-unique-heading">Visiteurs uniques</th>
+            </tr>
+          </thead>
+          <tbody id="visit-stats-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/admin/users.js?v=20261012-admin-studio"></script>
 </body>
 </html>

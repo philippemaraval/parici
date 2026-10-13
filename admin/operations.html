@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <script src="/admin/admin-fetch.js"></script>
+  <script src="/src/public/js/runtime-config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Pilotage | Administration Parici</title>
+  <meta name="description" content="Tableau de bord d'administration de Parici.">
+  <meta name="theme-color" content="#0c1d57">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/camino-paris-favicon.ico/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio">
+  <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+</head>
+
+<body>
+  <main class="admin-shell">
+    <nav class="admin-topbar" aria-label="Navigation admin">
+      <a class="admin-brand" href="/admin/">
+        <img class="admin-brand-mark" src="/camino-paris-favicon.ico/icon-32x32.png" alt="">
+        <span><strong>Parici</strong><small>Administration</small></span>
+      </a>
+      <div class="admin-nav">
+        <a href="/admin/">Accueil</a>
+        <a href="/admin/parici/">Parici</a>
+        <a href="/admin/explorer/">Explorer</a>
+        <a href="/admin/collect/">Collect</a>
+        <a id="manage-users-link" class="hidden" href="/admin/users.html">Utilisateurs</a>
+        <a href="/admin/operations.html" aria-current="page">Pilotage</a>
+        <a href="/admin/studio.html">Atelier</a>
+        <a class="admin-nav-site" href="/">Voir le site</a>
+      </div>
+    </nav>
+
+    <header class="admin-header"><div><p class="admin-kicker">Pilotage</p><h1>Suivi de la plateforme</h1><p class="admin-subtitle">Activité, historique du contenu, Daily et exploitation.</p></div><p id="operations-status" class="status" role="status" aria-live="polite">Chargement…</p></header>
+    <section class="card"><div class="field-row"><label>Vue<select id="operations-section"><option value="overview">Vue d’ensemble</option><option value="history">Historique du contenu</option><option value="daily" data-admin-option>Calendrier Daily</option><option value="system" data-admin-option>Exploitation</option></select></label><label id="daily-controls" hidden>Mois<input id="daily-month" type="month"></label><button id="operations-refresh" type="button" class="btn">Actualiser</button></div><div id="operations-body"></div></section>
+  </main>
+  <dialog id="operations-dialog" class="admin-detail-dialog"><button id="operations-close" type="button" class="btn">Fermer</button><div id="operations-detail"></div></dialog>
+  <script type="module" src="/admin/operations.js"></script>
+</body></html>

@@ -1,3 +1,4 @@
+const adminContent = require("./domains/admin/content");
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -541,7 +542,7 @@ app.use(cors({
         }
     },
     credentials: true,
-    allowedHeaders: ['Authorization', 'Content-Type', 'X-Admin-Key', 'X-Request-Id'],
+    allowedHeaders: ['Authorization', 'Content-Type', 'X-Admin-Key', 'X-Admin-MFA', 'X-Request-Id'],
     exposedHeaders: ['Retry-After', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-Request-Id'],
     maxAge: 86400,
 }));
@@ -568,6 +569,7 @@ app.get('/api/health', (req, res) => {
         database: startupState.databaseReady ? 'ready' : 'initializing',
         uptimeSec: Math.round(process.uptime()),
         collectApiVersion: 4,
+        backendCommit: process.env.RENDER_GIT_COMMIT || null,
         domains: Object.keys(domains),
     });
 });
@@ -710,6 +712,9 @@ async function initializeDatabase({ startBackgroundServices = true } = {}) {
 
         if (startBackgroundServices) {
             await initializeBackgroundServices();
+            let adminTickRunning=false;
+            const adminTick=async()=>{if(adminTickRunning)return;adminTickRunning=true;try{await require('./domains/admin/editorial').tick(db.pool,invalidatePublicContentCache);}catch(error){console.error('[Admin] publication:',error.message);}finally{adminTickRunning=false;}};
+            void adminTick();const adminTimer=setInterval(adminTick,30000);adminTimer.unref?.();
             require("./domains/collect/background").start(db,()=>pushRuntime,(...args)=>webPush.sendNotification(...args));
         }
     } catch (error) {
@@ -778,11 +783,23 @@ const authenticateToken = asyncHandler(async (req, res, next) => {
                 code: 'AUTH_SESSION_REVOKED',
             });
         }
+        if (currentUser.suspended_at) return res.status(403).json({error:'Compte suspendu. Contactez l’administration.',code:'ACCOUNT_SUSPENDED'});
+        req.adminToken = token;
         req.user = {
             id: currentUser.id,
             username: String(currentUser.username || ''),
             role: normalizeUserRole(currentUser.role),
         };
+        const adminSecurity = require('./domains/admin/security');
+        const permission=adminSecurity.legacyPermission(req.originalUrl.split('?')[0],req.method);
+        if (permission) {
+          try { await adminSecurity.requireAccess(db.pool,req.user,permission,req.headers['x-admin-mfa']); }
+          catch(error) { return res.status(error.status||403).json({error:error.message,code:error.code}); }
+        }
+        if (['admin','editor'].includes(req.user.role)) {
+          const tokenHash=adminSecurity.hash(token);
+          await db.pool.query(`INSERT INTO admin_sessions(token_hash,user_id,session_version,user_agent,expires_at) VALUES($1,$2,$3,$4,to_timestamp($5)) ON CONFLICT(token_hash) DO UPDATE SET last_seen=NOW() WHERE admin_sessions.last_seen<NOW()-INTERVAL '1 minute'`,[tokenHash,req.user.id,currentUser.session_version,String(req.headers['user-agent']||'').slice(0,300),tokenUser.exp]);
+        }
         return next();
     } catch (err) {
         if (err.name === 'TokenExpiredError') {
@@ -2658,6 +2675,53 @@ app.get('/api/map-sync-meta', asyncHandler(async (req, res) => {
     return res.json(meta);
 }));
 
+app.post('/api/editor/confirm-action', authenticateToken, requireContentEditor,
+    createPersistentRateLimit({ name: 'admin-confirm', windowMs: 10 * 60 * 1000, maxRequests: 10 }),
+    asyncHandler(async (req, res) => {
+        const user = await db.getUserById(req.user.id);
+        const password = String(req.body?.password || '');
+        if (password.length > 200 || !await db.verifyPassword(user, password)) {
+            return res.status(403).json({ error: 'Mot de passe incorrect.' });
+        }
+        await require('./domains/admin/security').requireAccess(db.pool,req.user,'read',req.headers['x-admin-mfa']);
+        const operationPath = String(req.body?.path || '');
+        const method = String(req.body?.method || '');
+        if (!operationPath.startsWith('/api/editor/') || operationPath.length > 200 || !['POST','PUT','PATCH','DELETE'].includes(method)) {
+            return res.status(400).json({ error: 'Action invalide' });
+        }
+        res.setHeader('Cache-Control', 'no-store');
+        return res.json({ confirmationToken: jwt.sign({ purpose: 'admin-confirmation', actorId: user.id,
+            sessionVersion: user.session_version || 1, path: operationPath, method }, EFFECTIVE_JWT_SECRET, { expiresIn: '5m' }) });
+    }));
+
+const requireActionConfirmation = asyncHandler(async (req, res, next) => {
+    try {
+        const proof = jwt.verify(String(req.body?.confirmationToken || ''), EFFECTIVE_JWT_SECRET);
+        const user = await db.getUserById(req.user.id);
+        if (proof.purpose !== 'admin-confirmation' || proof.actorId !== req.user.id
+            || proof.sessionVersion !== (user.session_version || 1)
+            || proof.path !== req.originalUrl || proof.method !== req.method) throw new Error('Invalid confirmation');
+        return next();
+    } catch {
+        return res.status(403).json({ error: 'Confirmez votre identité avant cette action.' });
+    }
+});
+
+require('./domains/admin/security').configure(EFFECTIVE_JWT_SECRET);
+app.use('/api/editor/studio/mfa', createPersistentRateLimit({name:'admin-mfa',windowMs:600_000,maxRequests:15}));
+app.use('/api/editor/studio', createPersistentRateLimit({name:'admin-studio',windowMs:60_000,maxRequests:180}), require('./domains/admin/studio')({
+ db,authenticateToken,requireContentEditor,requireActionConfirmation,invalidateContent:invalidatePublicContentCache,
+ dailyPlan: day => { const entry=getDailyManifestEntryByDate(day); const t=entry && resolveDailyTargetFromManifest(entry); return t ? {date:day,street_name:t.streetName,quartier:t.arrondissement,coordinates_json:JSON.stringify(t.coordinates),image_url:resolveDailyImageUrl(day,t.streetName,entry),source:'manifest'} : null; },
+ deployInfo:()=>({backendCommit:process.env.RENDER_GIT_COMMIT||null,startedAt:new Date(Date.now()-process.uptime()*1000).toISOString(),database:startupState.databaseReady ? "ready" : "initializing",serverTime:new Date().toISOString(),frontendBackend:'Comparez avec le commit du frontend affiché dans cette page.'})
+}));
+
+app.use('/api/editor/operations-tools', require('./domains/admin/router')({
+    db, authenticateToken, requireContentEditor, requireAdminUser, asyncHandler,
+    invalidateContent: invalidatePublicContentCache, requireActionConfirmation,
+    dailyPlans: month => [...loadDailyManifestByDate()].filter(([day])=>day.startsWith(month+'-')).map(([day,entry])=>{const t=resolveDailyTargetFromManifest(entry);return t?{date:day,street_name:t.streetName,quartier:t.arrondissement,coordinates_json:JSON.stringify(t.coordinates)}:null;}).filter(Boolean),
+    dailyPreview: target => target.image_url || resolveDailyImageUrl(target.date, target.street_name, getDailyManifestEntryByDate(target.date)),
+}));
+
 app.get('/api/editor/me', authenticateToken, asyncHandler(async (req, res) => {
     const user = await db.getUserById(req.user.id);
     if (!user) {
@@ -2678,9 +2742,17 @@ app.get('/api/editor/me', authenticateToken, asyncHandler(async (req, res) => {
 }));
 
 app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
-    const users = await db.listUsersForAdmin();
+    const page = Math.max(1, Math.min(100000, Number.parseInt(req.query.page, 10) || 1));
+    const search = String(req.query.search || '').trim().slice(0, 100);
+    const pageSize = 50;
+    const users = await db.listUsersForAdmin({ search, page, pageSize });
+    const totals = (await db.pool.query(`SELECT COUNT(*)::int AS total,
+      COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM daily_user_attempts d WHERE d.user_id=u.id))::int AS daily,
+      COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM push_subscriptions p WHERE p.user_id=u.id AND p.enabled))::int AS reminders
+      FROM users u WHERE POSITION(LOWER($1) IN LOWER(username)) > 0`, [search])).rows[0];
     res.setHeader('Cache-Control', 'no-store');
     return res.json({
+        page, pageSize, total: totals.total, summary: totals,
         users: users.map((user) => ({
             id: user.id,
             username: user.username,
@@ -2698,13 +2770,14 @@ app.get('/api/editor/users', authenticateToken, requireAdminUser, asyncHandler(a
                 Math.round((Number(user.daily_days_played || 0) / Number(user.membership_days || 1)) * 100)
             ),
             lastDailyAt: user.last_daily_at,
+            lastActivityAt: user.last_activity_at,
             reminderEnabled: Boolean(user.reminder_enabled),
             referralCount: Number(user.referral_count || 0),
         })),
     });
 }));
 
-app.post('/api/editor/users/:userId/password-reset-link', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.post('/api/editor/users/:userId/password-reset-link', authenticateToken, requireAdminUser, requireActionConfirmation, asyncHandler(async (req, res) => {
     const target = await db.getUserById(req.params.userId);
     if (!target) {
         return res.status(404).json({ error: 'User not found' });
@@ -2723,7 +2796,7 @@ app.post('/api/editor/users/:userId/password-reset-link', authenticateToken, req
     });
 }));
 
-app.put('/api/editor/users/:userId/recovery-email', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.put('/api/editor/users/:userId/recovery-email', authenticateToken, requireAdminUser, requireActionConfirmation, asyncHandler(async (req, res) => {
     const recoveryEmail = normalizeRecoveryEmail(req.body?.recoveryEmail);
     if (recoveryEmail && !isValidRecoveryEmail(recoveryEmail)) {
         return res.status(400).json({ error: 'Invalid recovery email' });
@@ -2742,7 +2815,7 @@ app.put('/api/editor/users/:userId/recovery-email', authenticateToken, requireAd
     });
 }));
 
-app.delete('/api/editor/users/:userId', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.delete('/api/editor/users/:userId', authenticateToken, requireAdminUser, requireActionConfirmation, asyncHandler(async (req, res) => {
     const targetUserId = Number.parseInt(req.params.userId, 10);
     if (!Number.isInteger(targetUserId) || targetUserId <= 0) {
         return res.status(400).json({ error: 'Invalid user id' });
@@ -2757,18 +2830,41 @@ app.delete('/api/editor/users/:userId', authenticateToken, requireAdminUser, asy
     return res.json({ success: true, username: deletedUser.username });
 }));
 
-app.get('/api/editor/content', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
-    const snapshot = await getEffectiveContentSnapshot();
+function contentEditHandler(operation) {
+    return asyncHandler(async (req, res) => {
+        try {
+            const payload = await adminContent.edit(db.pool, req.body?.expectedRevision,
+                req.user.username, ({ '/api/editor/street-info': req.method === 'DELETE' ? 'Supprimer une fiche' : 'Enregistrer une fiche', '/api/editor/street-infos': 'Enregistrer les fiches', '/api/editor/lists': 'Modifier les listes', '/api/editor/monuments': 'Modifier les monuments' })[req.path] || req.path, () => operation(req));
+            invalidatePublicContentCache();
+            return res.json(payload);
+        } catch (error) {
+            if (error.status) return res.status(error.status).json({ error: error.message });
+            throw error;
+        }
+    });
+}
+
+app.get('/api/editor/content', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+    const snapshot = await adminContent.snapshot(db.pool, getEffectiveContentSnapshot);
     res.setHeader('Cache-Control', 'no-store');
     return res.json(snapshot);
 }));
 
-app.get('/api/editor/visits/daily', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.get('/api/editor/visits/daily', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
     const stats = await db.getDailyVisitStats();
     res.setHeader('Cache-Control', 'no-store');
     return res.json({
         ...stats,
         note: 'Les visiteurs uniques sont retrocalcules depuis first_seen. Les visites totales par jour sont suivies uniquement depuis la mise en place de visitor_daily_stats.',
+    });
+}));
+
+app.get('/api/editor/visits/hourly', authenticateToken, requireContentEditor, asyncHandler(async (req, res) => {
+    const stats = await db.getHourlyVisitStats();
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
+        ...stats,
+        note: 'Moyenne journaliere des sessions par heure de debut, jours sans session inclus. Heures affichees dans le fuseau Europe/Paris.',
     });
 }));
 
@@ -2912,20 +3008,20 @@ app.post('/api/editor/osm-sync', authenticateToken, requireAdminUser, asyncHandl
     }
 }));
 
-app.put('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.put('/api/editor/street-info', authenticateToken, requireContentEditor, contentEditHandler(async (req) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
-        return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
+        throw adminContent.httpError(400, 'Invalid mode. Use "famous" or "main".');
     }
 
     const streetName = normalizeContentName(req.body?.streetName).slice(0, MAX_NAME_LENGTH);
     if (!streetName) {
-        return res.status(400).json({ error: 'Missing streetName' });
+        throw adminContent.httpError(400, 'Missing streetName');
     }
 
     const previousStreetName = normalizeContentName(req.body?.previousStreetName).slice(0, MAX_NAME_LENGTH);
     if (typeof req.body?.infoText !== 'string') {
-        return res.status(400).json({ error: 'Missing infoText' });
+        throw adminContent.httpError(400, 'Missing infoText');
     }
     const infoText = req.body.infoText.trim();
 
@@ -2960,7 +3056,7 @@ app.put('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHan
     }
     invalidatePublicContentCache();
 
-    return res.json({
+    return ({
         success: true,
         streetInfos,
         lists,
@@ -2968,15 +3064,15 @@ app.put('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHan
     });
 }));
 
-app.delete('/api/editor/street-info', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.delete('/api/editor/street-info', authenticateToken, requireContentEditor, contentEditHandler(async (req) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
-        return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
+        throw adminContent.httpError(400, 'Invalid mode. Use "famous" or "main".');
     }
 
     const streetName = normalizeContentName(req.body?.streetName).slice(0, MAX_NAME_LENGTH);
     if (!streetName) {
-        return res.status(400).json({ error: 'Missing streetName' });
+        throw adminContent.httpError(400, 'Missing streetName');
     }
 
     const streetInfos = await getEffectiveStreetInfos();
@@ -2985,20 +3081,20 @@ app.delete('/api/editor/street-info', authenticateToken, requireAdminUser, async
     invalidatePublicContentCache();
 
     const lists = await getEffectiveContentLists();
-    return res.json({
+    return ({
         success: true,
         streetInfos,
         stats: computeContentStats(streetInfos, lists),
     });
 }));
 
-app.put('/api/editor/street-infos', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.put('/api/editor/street-infos', authenticateToken, requireContentEditor, contentEditHandler(async (req) => {
     const mode = normalizeStreetInfoMode(req.body?.mode);
     if (!mode) {
-        return res.status(400).json({ error: 'Invalid mode. Use "famous" or "main".' });
+        throw adminContent.httpError(400, 'Invalid mode. Use "famous" or "main".');
     }
     if (!req.body || typeof req.body.entries !== 'object' || Array.isArray(req.body.entries)) {
-        return res.status(400).json({ error: 'entries must be an object map streetName -> infoText' });
+        throw adminContent.httpError(400, 'entries must be an object map streetName -> infoText');
     }
 
     const streetInfos = await getEffectiveStreetInfos();
@@ -3007,19 +3103,19 @@ app.put('/api/editor/street-infos', authenticateToken, requireAdminUser, asyncHa
     invalidatePublicContentCache();
 
     const lists = await getEffectiveContentLists();
-    return res.json({
+    return ({
         success: true,
         streetInfos,
         stats: computeContentStats(streetInfos, lists),
     });
 }));
 
-app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.put('/api/editor/lists', authenticateToken, requireContentEditor, contentEditHandler(async (req) => {
     const hasFamous = Object.prototype.hasOwnProperty.call(req.body || {}, 'famousStreets');
     const hasMain = Object.prototype.hasOwnProperty.call(req.body || {}, 'mainStreets');
     const hasMonuments = Object.prototype.hasOwnProperty.call(req.body || {}, 'monuments');
     if (!hasFamous || !hasMain || !hasMonuments) {
-        return res.status(400).json({ error: 'Missing lists payload. Provide famousStreets, mainStreets and monuments.' });
+        throw adminContent.httpError(400, 'Missing lists payload. Provide famousStreets, mainStreets and monuments.');
     }
 
     const lists = {
@@ -3070,7 +3166,7 @@ app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(a
     invalidatePublicContentCache();
 
     const streetInfos = await getEffectiveStreetInfos();
-    return res.json({
+    return ({
         success: true,
         lists,
         monuments: serializeMonumentEntries(currentMonuments),
@@ -3078,10 +3174,10 @@ app.put('/api/editor/lists', authenticateToken, requireAdminUser, asyncHandler(a
     });
 }));
 
-app.put('/api/editor/monuments', authenticateToken, requireAdminUser, asyncHandler(async (req, res) => {
+app.put('/api/editor/monuments', authenticateToken, requireContentEditor, contentEditHandler(async (req) => {
     const rawEntries = req.body?.entries;
     if (!Array.isArray(rawEntries)) {
-        return res.status(400).json({ error: 'entries must be an array of {name, longitude, latitude}' });
+        throw adminContent.httpError(400, 'entries must be an array of {name, longitude, latitude}');
     }
 
     const monuments = normalizeMonumentEntries(rawEntries);
@@ -3094,7 +3190,7 @@ app.put('/api/editor/monuments', authenticateToken, requireAdminUser, asyncHandl
     invalidatePublicContentCache();
 
     const streetInfos = await getEffectiveStreetInfos();
-    return res.json({
+    return ({
         success: true,
         monuments: serializedMonuments,
         lists,
@@ -3272,12 +3368,14 @@ app.post('/api/site/notifications/open',authenticateToken,asyncHandler(async(req
     res.setHeader('Cache-Control','private, no-store');
     return res.json(await require('./domains/site-shell/service').opened(db,req.user.id,req.body));
 }));
+app.patch('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{res.setHeader('Cache-Control','private, no-store');return res.json(await require('./domains/site-shell/service').saveSettings(db,req.user.id,req.body));}));
 app.get('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{
     res.setHeader('Cache-Control','private, no-store');
     return res.json(await require('./domains/site-shell/service').settings(db,req.user.id,String(req.query.endpoint||'')));
 }));
 
 app.use('/api/explorer/admin',(_req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
+require('./admin-collect-routes')({app,db,authenticateToken,requireContentEditor,asyncHandler});
 require('./collect-routes')({app,db,authenticateToken,requireAdminUser,asyncHandler,getStreetIndex:()=>streetIndex,getEffectiveContentLists,parseCookieHeader,SESSION_COOKIE_NAME,isValidPushSubscription,ensurePushRuntimeReady,getPushRuntime:()=>pushRuntime});
 app.use('/api/explorer', require('./domains/explorer/routes')({authenticateToken, requireContentEditor, asyncHandler}));
 app.get('/data/explorer_uploads/:filename', asyncHandler(async(req,res)=>{
@@ -4322,6 +4420,8 @@ function dateHash(dateStr) {
 async function ensureDailyTarget() {
     const date = getDailyDateKey();
     let target = await db.getDailyTarget(date);
+    // Editorial publications take precedence over the generated manifest.
+    if (target?.image_url && parseCoordinatesJson(target.coordinates_json)) return date;
     const manifestEntry = getDailyManifestEntryByDate(date);
 
     if (manifestEntry) {
@@ -4512,7 +4612,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
                 resolveStreetIndexEntry(target.street_name, target.arrondissement)?.osmName
                 || target.street_name,
             arrondissement: target.arrondissement,
-            dailyImageUrl: resolveDailyImageUrl(date, target.street_name, manifestEntry),
+            dailyImageUrl: target.image_url || resolveDailyImageUrl(date, target.street_name, manifestEntry),
             targetGeoJson: target.coordinates_json,
             userStatus,
             dailyStreak,

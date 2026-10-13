@@ -1,7 +1,6 @@
-const API_BASE =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:3000"
-    : "https://parici.onrender.com";
+import { setupVisitStats } from "/admin/visit-stats.js";
+import { confirmSensitiveAction } from "/admin/sensitive-actions.js";
+const API_BASE = window.CaminoRuntimeConfig?.apiUrl || "http://localhost:3000";
 const STORAGE_KEY = "camino_paris_editor_user";
 const SESSION_TOKEN_STORAGE_KEY = "camino_paris_editor_token";
 
@@ -9,6 +8,7 @@ const state = {
   token: "",
   currentUserId: null,
   users: [],
+  page: 1, total: 0, summary: {},
   sort: { key: null, direction: null },
 };
 const refs = {
@@ -33,10 +33,10 @@ const parisDayFormatter = new Intl.DateTimeFormat("fr-FR", {
 });
 const rankOrder = new Map([
   ["Touriste", 0],
-  ["Titi Parisien", 1],
-  ["Habitué des Quais", 2],
-  ["Vrai Parigot", 3],
-  ["Préfet de Paris", 4],
+  ["Minot", 1],
+  ["Habitué du Vieux-Port", 2],
+  ["Vrai Marseillais", 3],
+  ["Maire de la Ville", 4],
 ]);
 
 function setStatus(message, type = "info") {
@@ -97,7 +97,7 @@ function getSortValue(user, key) {
   if (key === "reminderEnabled") return user.reminderEnabled ? "Activé" : "Non";
   if (key === "rank") return rankOrder.get(user.rank) ?? -1;
   if (key === "lastActivityAt") {
-    const value = user.lastDailyAt || user.lastGameAt;
+    const value = user.lastActivityAt || user.lastDailyAt || user.lastGameAt;
     return value ? Date.parse(value) : null;
   }
   if (key === "createdAt") return user.createdAt ? Date.parse(user.createdAt) : null;
@@ -157,7 +157,11 @@ function updateSortHeaders() {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  if (options.method && /^\/api\/editor\/users\/\d+(\/(password-reset-link|recovery-email))?$/.test(path)) {
+    options.body = { ...options.body, confirmationToken: await confirmSensitiveAction(API_BASE, state.token, path, options.method) };
+  }
+  const response = await window.PariciAdminFetch(`${API_BASE}${path}`, {
+    signal: AbortSignal.timeout(45000),
     method: options.method || "GET",
     headers: {
       Authorization: `Bearer ${state.token}`,
@@ -185,13 +189,9 @@ function renderUsers() {
   refs.count.textContent = query
     ? `${users.length} résultat${users.length > 1 ? "s" : ""} sur ${totalCount} compte${totalCount > 1 ? "s" : ""}.`
     : `${totalCount} compte${totalCount > 1 ? "s" : ""} affiché${totalCount > 1 ? "s" : ""}.`;
-  refs.total.textContent = String(totalCount);
-  refs.daily.textContent = String(
-    state.users.filter((user) => Number(user.dailyDaysPlayed || 0) > 0).length,
-  );
-  refs.reminders.textContent = String(
-    state.users.filter((user) => Boolean(user.reminderEnabled)).length,
-  );
+  refs.total.textContent = state.summary.total ?? state.total;
+  refs.daily.textContent = state.summary.daily ?? "—";
+  refs.reminders.textContent = state.summary.reminders ?? "—";
   refs.body.innerHTML = users.length
     ? users.map((user) => `
       <tr>
@@ -208,9 +208,9 @@ function renderUsers() {
         <td><strong>${user.dailyDaysPlayed}</strong> jour${user.dailyDaysPlayed === 1 ? "" : "s"} joué${user.dailyDaysPlayed === 1 ? "" : "s"}<br><small>${user.dailySuccesses} réussite${user.dailySuccesses === 1 ? "" : "s"}</small></td>
         <td><strong>${user.dailyFrequency}%</strong></td>
         <td><span class="boolean-badge boolean-badge--${user.reminderEnabled ? "yes" : "no"}">${user.reminderEnabled ? "Activé" : "Non"}</span></td>
-        <td>${renderDateWithAge(user.lastDailyAt || user.lastGameAt)}</td>
+        <td>${renderDateWithAge(user.lastActivityAt || user.lastDailyAt || user.lastGameAt)}</td>
         <td>${renderDateWithAge(user.createdAt)}</td>
-        <td class="user-actions">
+        <td class="user-actions"><button type="button" class="btn" data-detail-id="${user.id}">Voir le profil</button><a class="btn" href="/admin/studio.html#players?id=${user.id}">Assistance</a>
           <button type="button" class="btn" data-reset-id="${user.id}">Générer un lien</button>
           <button type="button" class="btn btn-danger-outline" data-delete-id="${user.id}" ${user.id === state.currentUserId ? "disabled" : ""}>Supprimer</button>
         </td>
@@ -219,12 +219,20 @@ function renderUsers() {
     : '<tr><td colspan="10">Aucun utilisateur trouvé.</td></tr>';
 }
 
+let usersRequestId = 0;
 async function loadUsers() {
+  const requestId = ++usersRequestId;
   refs.refresh.disabled = true;
   setStatus("Chargement des utilisateurs…", "info");
   try {
-    const payload = await apiRequest("/api/editor/users");
+    const payload = await apiRequest(`/api/editor/users?page=${state.page}&search=${encodeURIComponent(refs.search.value.trim())}`);
+    if (requestId !== usersRequestId) return;
     state.users = Array.isArray(payload.users) ? payload.users : [];
+    state.total = payload.total ?? state.users.length;
+    state.summary = payload.summary || {};
+    document.getElementById("users-page").textContent = `Page ${state.page} / ${Math.max(1, Math.ceil(state.total / 50))} · ${state.total} comptes · tri sur cette page`;
+    document.getElementById("users-prev").disabled = state.page <= 1;
+    document.getElementById("users-next").disabled = state.page * 50 >= state.total;
     refs.section.classList.remove("hidden");
     renderUsers();
     setStatus("La liste des utilisateurs est à jour.", "success");
@@ -304,7 +312,10 @@ async function deleteUser(userId, button) {
   }
 }
 
-refs.search.addEventListener("input", renderUsers);
+let searchTimer;
+refs.search.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.page = 1; loadUsers(); }, 300); });
+document.getElementById("users-prev").addEventListener("click", () => { state.page--; loadUsers(); });
+document.getElementById("users-next").addEventListener("click", () => { state.page++; loadUsers(); });
 refs.refresh.addEventListener("click", loadUsers);
 refs.sortHeaders.forEach((header) => {
   header.querySelector(".table-sort")?.addEventListener("click", () => {
@@ -320,6 +331,8 @@ refs.sortHeaders.forEach((header) => {
   });
 });
 refs.body.addEventListener("click", (event) => {
+  const detailButton = event.target.closest("[data-detail-id]");
+  if (detailButton) { showPlayerDetail(Number(detailButton.dataset.detailId)); return; }
   const emailButton = event.target.closest("[data-email-id]");
   if (emailButton) {
     editRecoveryEmail(Number(emailButton.dataset.emailId), emailButton);
@@ -354,7 +367,34 @@ if (!state.token) {
     .then((me) => {
       if (!me.canManageUsers) throw Object.assign(new Error("Accès administrateur requis"), { status: 403 });
       state.currentUserId = Number(me.id);
+      setupVisitStats(apiRequest);
       return loadUsers();
     })
     .catch(() => setStatus("Accès réservé aux administrateurs.", "error"));
+}
+
+async function showPlayerDetail(id) {
+  try {
+    const data = await apiRequest(`/api/editor/operations-tools/players/${id}`);
+    const dialog = document.createElement("dialog"); dialog.className = "admin-detail-dialog";
+    const heading = document.createElement("h2"); heading.textContent = data.user.username;
+    const close = document.createElement("button"); close.className = "btn"; close.textContent = "Fermer"; close.addEventListener("click",()=>dialog.close());
+    dialog.append(close,heading);
+    for (const [title,rows] of [["Daily · 30 dernières journées",data.daily],["Collection · 50 dernières cartes distinctes",data.collect],["Explorer · 50 dernières découvertes",data.explorer],["Parici · 30 derniers scores",data.scores]]) {
+      const section = document.createElement("section");
+      const subheading = document.createElement("h3"); subheading.textContent = title;section.append(subheading);
+      if (!rows.length) { const empty = document.createElement("p");empty.textContent="Aucune activité enregistrée.";section.append(empty); }
+      for (const row of rows) {
+        const line = document.createElement("p");
+        if (row.date) line.textContent = `${row.date} · ${row.success ? "Réussi" : "Non résolu"} · ${row.attempts_count} essais`;
+        else if (row.name) line.textContent = `${row.name} · ${row.copies} exemplaire(s) · ${formatDate(row.last_obtained_at)}`;
+        else if (row.street_name_clean) line.textContent = `${row.street_name_clean} · ${row.points_earned} points · ${formatDate(row.solved_at)}`;
+        else line.textContent = `${row.mode} · ${row.game_type} · ${row.score} points · ${formatDate(row.timestamp)}`;
+        section.append(line);
+      }
+      dialog.append(section);
+    }
+    dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+    document.body.append(dialog);dialog.showModal();
+  } catch (error) { setStatus(`Profil indisponible : ${error.message}`,"error"); }
 }

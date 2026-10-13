@@ -1,3 +1,4 @@
+/* global L */
 (function () {
   "use strict";
 
@@ -203,7 +204,7 @@
     if (!token) {
       throw new Error("connectez-vous depuis le tableau de bord.");
     }
-    const response = await window.fetch(`${API_ORIGIN}/api/editor/me`, {
+    const response = await window.PariciAdminFetch(`${API_ORIGIN}/api/editor/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const payload = await response.json().catch(() => ({}));
@@ -263,7 +264,7 @@
     if (dirty && !window.confirm("Quitter sans enregistrer votre saisie ?"))
       return;
     try {
-      await window.fetch(`${API_ORIGIN}/api/logout`, {
+      await window.PariciAdminFetch(`${API_ORIGIN}/api/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -511,7 +512,7 @@
 
   async function apiFetch(path, options = {}) {
     const token = getAuthToken();
-    const response = await window.fetch(`${API_BASE}${path}`, {
+    const response = await window.PariciAdminFetch(`${API_BASE}${path}`, {
       ...options,
       signal: AbortSignal.timeout(45000),
       credentials: "include",

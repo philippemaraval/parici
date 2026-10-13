@@ -4,7 +4,7 @@ const path = require("node:path");
 const test = require("node:test");
 
 const root = path.resolve(__dirname, "..");
-const { selectPreviousLiveDeploy } = require("../scripts/render_delivery");
+const { selectPreviousLiveDeploy, findCommitDeploy, deployWithRollback } = require("../scripts/render_delivery");
 
 test("le rollback cible le dernier déploiement live précédent", () => {
   const selected = selectPreviousLiveDeploy(
@@ -32,4 +32,22 @@ test("la livraison déploie directement la production après la CI", () => {
   assert.match(workflow, /RENDER_PRODUCTION_SERVICE_ID/);
   assert.match(workflow, /PRODUCTION_HEALTHCHECK_URL/);
   assert.match(workflow, /scripts\/render_delivery\.js/);
+});
+
+
+test("une réponse Render mise en file attend le bon commit sans redéclencher le déploiement",async()=>{
+  const previousFetch=global.fetch;let posts=0,lists=0;
+  global.fetch=async(url,options={})=>{
+    url=String(url);
+    if(url.includes('/api/editor/'))return new Response(null,{status:401});
+    if(options.method==='POST'){posts++;return new Response(null,{status:202});}
+    if(url.endsWith('/deploys?limit=20')){lists++;return Response.json(lists===1?[{deploy:{id:'old',status:'live',commit:{id:'old-sha'}}}]:[{deploy:{id:'queued',status:'build_in_progress',commit:{id:'expected-sha'}}}]);}
+    if(url.includes('/deploys/queued'))return Response.json({id:'queued',status:'live',commit:{id:'expected-sha'}});
+    return Response.json({ok:true,database:'ready'});
+  };
+  try{const result=await deployWithRollback({apiKey:'explicit-test-fixture',commitId:'expected-sha',serviceId:'test-service',healthcheckUrl:'https://example.test/ready'});assert.equal(result.id,'queued');assert.equal(posts,1);assert.equal(lists,2);}
+  finally{global.fetch=previousFetch;}
+});
+test("la file de déploiement ignore les autres commits et les déploiements échoués",()=>{
+ assert.equal(findCommitDeploy([{deploy:{id:'wrong',status:'live',commit:{id:'other'}}},{deploy:{id:'failed',status:'build_failed',commit:{id:'expected'}}}], 'expected'),undefined);
 });

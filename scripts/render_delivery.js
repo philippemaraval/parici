@@ -46,7 +46,45 @@ async function fetchJson(url, { token, ...options } = {}) {
       `Render API ${response.status}: ${payload.message || payload.error || response.statusText}`,
     );
   }
+  if (payload && typeof payload === "object")
+    Object.defineProperty(payload, "httpStatus", {
+      value: response.status,
+      enumerable: false,
+    });
   return payload;
+}
+
+function findCommitDeploy(entries, commitId) {
+  return entries
+    .map(unwrapDeploy)
+    .find(
+      (deploy) =>
+        deploy?.id &&
+        (deploy.commit?.id || deploy.commitId) === commitId &&
+        !FAILURE_STATUSES.has(deploy.status),
+    );
+}
+
+async function waitForQueuedDeploy({
+  apiKey,
+  commitId,
+  serviceId,
+  timeoutMs = 5 * 60 * 1000,
+}) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const entries = await fetchJson(
+      `${API_ORIGIN}/services/${encodeURIComponent(serviceId)}/deploys?limit=20`,
+      { token: apiKey },
+    );
+    const deploy = findCommitDeploy(entries, commitId);
+    if (deploy) return deploy;
+    console.log(`Render request queued; waiting for commit ${commitId}.`);
+    await delay(10_000);
+  }
+  throw new Error(
+    `Queued Render request did not expose a deploy for ${commitId}`,
+  );
 }
 
 async function waitForDeploy({
@@ -78,7 +116,10 @@ async function assertHealthy(healthcheckUrl, attempts = 12) {
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
       const response = await fetch(healthcheckUrl, {
-        headers: { accept: "application/json" },
+        headers: {
+          accept: "application/json",
+          origin: new URL(healthcheckUrl).origin,
+        },
       });
       const payload = await response.json().catch(() => ({}));
       if (
@@ -132,7 +173,7 @@ async function deployWithRollback({
     throw new Error("No previous live deploy is available for rollback");
   }
 
-  const created = unwrapDeploy(
+  let created = unwrapDeploy(
     await fetchJson(
       `${API_ORIGIN}/services/${encodeURIComponent(serviceId)}/deploys`,
       {
@@ -146,16 +187,26 @@ async function deployWithRollback({
     ),
   );
   if (!created?.id) {
-    throw new Error("Render did not return a deploy id");
+    if (![201, 202].includes(created?.httpStatus))
+      throw new Error("Render did not return a deploy id");
+    created = await waitForQueuedDeploy({ apiKey, commitId, serviceId });
   }
 
   try {
-    await waitForDeploy({
+    const live = await waitForDeploy({
       apiKey,
       deployId: created.id,
       serviceId,
     });
+    if (
+      (live.commit?.id || live.commitId) &&
+      (live.commit?.id || live.commitId) !== commitId
+    )
+      throw new Error("Render deployed an unexpected commit");
     await assertHealthy(healthcheckUrl);
+    await require("./check_admin_deployment").checkAdminDeployment(
+      new URL(healthcheckUrl).origin,
+    );
     console.log(`✓ ${serviceId} is live and healthy on ${commitId}.`);
     return created;
   } catch (error) {
@@ -184,6 +235,7 @@ if (require.main === module) {
 
 module.exports = {
   assertHealthy,
+  findCommitDeploy,
   deployWithRollback,
   selectPreviousLiveDeploy,
   unwrapDeploy,

@@ -5,7 +5,7 @@ const test = require("node:test");
 const vm = require("node:vm");
 
 const root = path.resolve(__dirname, "..");
-const adminSource = fs.readFileSync(path.join(root, "admin/admin.js"), "utf8");
+const adminSource = fs.readFileSync(path.join(root, "admin/visit-stats.js"), "utf8");
 const usersSource = fs.readFileSync(path.join(root, "admin/users.js"), "utf8");
 
 test("admin traffic averages use the latest 7, 15 and 30 daily unique counts", () => {
@@ -26,6 +26,21 @@ globalThis.getAverageDailyUniqueVisitors = getAverageDailyUniqueVisitors;`,
   assert.equal(context.getAverageDailyUniqueVisitors(rows, 7), 27);
   assert.equal(context.getAverageDailyUniqueVisitors(rows, 15), 23);
   assert.equal(context.getAverageDailyUniqueVisitors(rows, 30), 15.5);
+});
+
+test("admin hourly traffic formats its coverage date in Europe/Paris", () => {
+  const formatterSource = adminSource.slice(
+    adminSource.indexOf("function formatDateTime"),
+    adminSource.indexOf("function formatDay"),
+  );
+  const context = vm.createContext({ Date, Intl });
+  vm.runInContext(
+    `${formatterSource}
+globalThis.formatDateTime = formatDateTime;`,
+    context,
+  );
+
+  assert.equal(context.formatDateTime("2026-08-31T12:30:00Z"), "31/08/2026 14:30");
 });
 
 test("admin user relative dates count calendar days in Europe/Paris", () => {
