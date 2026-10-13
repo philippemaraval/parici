@@ -4,8 +4,10 @@ export function renderCardArtwork(card, rarityLabels = labels) {
   const rarity = card.fragments_enabled ? 5 : Number(card.current_rarity) || 1;
   const number = `${{ street: "R", district: "Q", monument: "M", bus: "B" }[card.family] || "R"}-${String(card.collection_number).padStart(card.family === "street" ? 4 : 3, "0")}`;
   const image = /^(?:\/(?!\/)|https:\/\/)/.test(card.image_reference || "") ? card.image_reference : "/apple-touch-icon.png";
+  const photographic = card.image_attribution?.source?.startsWith("google") || /\/collect_images\/photo-/.test(image);
+  const photoCredit = photographic ? '<span class="collect-card-photo-credit">Google Street View</span>' : '';
   const daily = card.daily_origin || card.copies?.some(copy => copy.source === "daily");
-  return `<div class="collect-card-art"><img src="${escape(image)}" alt="" loading="lazy"><header><span>${{ street: "Rue", district: "Quartier", monument: "Monument", bus: "Transport" }[card.family] || "Rue"}</span><span>${number}</span></header><div class="collect-card-rarity">${"★".repeat(rarity)} · ${escape(rarityLabels[rarity] || labels[rarity])}</div>${daily ? '<span class="collect-card-daily" title="Carte gagnée au Daily" aria-label="Carte gagnée au Daily">D</span>' : ""}</div>`;
+  return `<div class="collect-card-art${photographic && card.family === "monument" ? " collect-card-art--monument-photo" : ""}"><img src="${escape(image)}" alt="" loading="lazy"><header><span>${{ street: "Rue", district: "Quartier", monument: "Monument", bus: "Transport" }[card.family] || "Rue"}</span><span>${number}</span></header><div class="collect-card-rarity">${"★".repeat(rarity)} · ${escape(rarityLabels[rarity] || labels[rarity])}</div>${photoCredit}${daily ? '<span class="collect-card-daily" title="Carte gagnée au Daily" aria-label="Carte gagnée au Daily">D</span>' : ""}</div>`;
 }
 export function renderDailyCardReward(reward) {
   if (!reward?.card) return "";

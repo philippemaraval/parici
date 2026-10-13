@@ -61,6 +61,39 @@ test(
       assert.equal(r.status, 200, JSON.stringify(r.body));
       return r.body;
     }
+    // The photo upgrade updates old seed references but preserves manual artwork,
+    // owned copies and the launch gate. Repeated startup leaves the result stable.
+    const { photoManifest, applyPhotographs } = require("../../backend/domains/collect/photo-sync");
+    const photoEntries = Object.entries(photoManifest()).slice(0, 2);
+    const photoCards = [];
+    for (const [key, entry] of photoEntries) {
+      const split = key.indexOf(":");
+      const row = (await db.pool.query("SELECT * FROM cards WHERE family=$1 AND source_entity_id=$2", [key.slice(0,split),key.slice(split+1)])).rows[0];
+      assert.equal(row.image_reference, entry.image);
+      photoCards.push(row);
+    }
+    const photoOwner = await register("photo_upgrade_probe");
+    await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[photoOwner.id,photoCards[0].id]);
+    await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=ANY($1::bigint[])",[photoCards.map(c=>c.id)]);
+    await db.pool.query("UPDATE cards SET image_override='/data/manual.jpg',image_credit_override='Crédit manuel' WHERE id=$1",[photoCards[1].id]);
+    await db.pool.query("DELETE FROM app_settings WHERE key='parici_collect_photo_revision'");
+    const photoClient = await db.pool.connect();
+    try {
+      await photoClient.query("BEGIN");
+      await applyPhotographs(photoClient);
+      await applyPhotographs(photoClient);
+      await photoClient.query("COMMIT");
+    } finally { photoClient.release(); }
+    const photoRows=(await db.pool.query("SELECT * FROM cards WHERE id=ANY($1::bigint[]) ORDER BY id",[photoCards.map(c=>c.id)])).rows;
+    const automatic=photoRows.find(c=>c.id===photoCards[0].id), manual=photoRows.find(c=>c.id===photoCards[1].id);
+    assert.equal(automatic.image_reference,photoEntries[0][1].image);
+    assert.equal(manual.image_reference,'/data/collect_images/old-seed.svg');
+    assert.equal(manual.image_override,'/data/manual.jpg');
+    assert.equal(manual.image_credit_override,'Crédit manuel');
+    assert.equal(Number((await db.pool.query("SELECT COUNT(*) FROM card_copies WHERE user_id=$1",[photoOwner.id])).rows[0].count),1);
+    assert.equal((await db.pool.query("SELECT value_text FROM app_settings WHERE key='collect_launch_at'")).rows[0].value_text,'infinity');
+    // Restore the probe artwork for the later catalogue/browser assertions.
+    await db.pool.query("UPDATE cards SET image_reference=$1,image_override=NULL,image_credit_override=NULL WHERE id=$2",[photoEntries[1][1].image,manual.id]);
     const player = await register("collect_player"),
       other = await register("collect_other");
     assert.equal((await request("/api/collect/quota")).status, 401);
@@ -602,6 +635,28 @@ test(
         );
       }, player);
       fs.mkdirSync("/tmp/parici-collect-review", { recursive: true });
+      const photographSamples = ["Rue Foyatier", "Tour Eiffel", "Bonne-Nouvelle"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
+      assert.ok(photographSamples.every(Boolean));
+      for (const card of photographSamples) {
+        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[player.id,card.id]);
+      }
+      await page.goto(base + "/collect.html?panel=collection");
+      for (const width of [390, 1440]) {
+        await page.setViewportSize({width,height:900});
+        for (const card of photographSamples) {
+          await page.locator('#collect-filter-family').selectOption(card.family);
+          await page.locator('#collect-search').fill(card.name);
+          const tile=page.locator(`.collect-card[data-card-id="${card.id}"]`);
+          await tile.waitFor({state:'visible'});
+          const photo=tile.locator('.collect-card-art>img');
+          await photo.evaluate(img=>img.decode());
+          assert.ok((await photo.getAttribute('src')).includes('/photo-'));
+          assert.equal(await tile.locator('.collect-card-photo-credit').innerText(),'Google Street View');
+          if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
+          await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${width}.png`});
+        }
+      }
+      await page.setViewportSize({width:390,height:844});
       await page.goto(base + "/collect.html");
       await page
         .locator("#collect-next")

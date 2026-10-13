@@ -243,3 +243,12 @@
 .collect-card[data-card-id]{cursor:pointer}
 .collect-card[data-card-id]:focus-visible{outline:3px solid var(--collect-red,#bd332a);outline-offset:4px}
 .collect-card-actions:empty{display:none}
+
+.collect-card-photo-credit{position:absolute;right:6px;top:28px;z-index:2;padding:3px 5px;border-radius:4px;background:#fff;color:#333;font:9px Arial,sans-serif}
+
+.collect-card-art--monument-photo{aspect-ratio:4/5}
+.collect-card .collect-card-art--monument-photo>img{object-fit:contain}
+
+.collect-grid .collect-card:has(>.collect-card-art--monument-photo){aspect-ratio:auto}
+.collect-grid .collect-card>.collect-card-art--monument-photo{aspect-ratio:4/5;flex:none}
+@media(max-width:550px){.collect-card-photo-credit{font-size:8px}}

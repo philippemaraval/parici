@@ -57,6 +57,11 @@ const transport = read("data/paris_transit_lines.geojson").features;
 const explorer = read("data/explorer_paris.json");
 const editorial = read("data/collect_paris_editorial.json");
 const fragmentRequirements = read("data/collect_paris_fragments.json");
+const reviewedPhotos = fs.existsSync(
+  path.join(root, "data/collect_photos_paris.json"),
+)
+  ? read("data/collect_photos_paris.json")
+  : {};
 const inRing = (p, ring) => {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -166,10 +171,12 @@ function add(family, id, name, features, point, extra = {}) {
   const historic =
     family === "street" &&
     explorer.find((x) => norm(x.street_name_clean) === norm(name));
+  const reviewedPhoto = reviewedPhotos[family + ":" + id];
   const photo =
-    family === "street"
+    reviewedPhoto?.image ||
+    (family === "street"
       ? historic?.image_url || photoNames.get(slug(name))
-      : null;
+      : null);
   const membership = [
     {
       street: "streets",
@@ -254,6 +261,7 @@ function add(family, id, name, features, point, extra = {}) {
     },
     questions: [],
   };
+  if (reviewedPhoto) record.illustration = { ...reviewedPhoto };
   if (historic && loc) {
     record.questions = [
       question(
@@ -507,7 +515,7 @@ console.log(
     cards: numbers,
     total: records.length,
     fragments: records.filter((r) => r.fragments_required).length,
-    photos: records.filter((r) => r.illustration.source === "parici-photo")
+    photos: records.filter((r) => r.illustration.kind === "photograph")
       .length,
   }),
 );

@@ -579,9 +579,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
 
   function imageCredit(credit) {
     if(!credit)return '';
-    if(credit.source?.startsWith('google'))return credit.caption?`<span class="collect-image-caption">${escapeHtml(credit.caption)}</span>`:'';
     const link=safeImage(credit.sourcePage);
-    const text=credit.source==='wikipedia'?`Wikipédia / Wikimedia${credit.author?' · '+credit.author:''}${credit.license?' · '+credit.license:''}`:credit.source==='custom'?(credit.author||''):credit.source==='bus-bild'?`Bus-bild.de${credit.author?' · '+credit.author:''}`:credit.source==='tourisme-marseille'?'Tourisme-Paris.com · crédits sur la page source':credit.source==='office-tourisme-marseille'?'Office de tourisme de Paris · crédits sur la page source':credit.caption||credit.author||'Parici';
+    const text=credit.source?.startsWith('google')?'Google Street View':credit.source==='wikipedia'?`Wikipédia / Wikimedia${credit.author?' · '+credit.author:''}${credit.license?' · '+credit.license:''}`:credit.source==='custom'?(credit.author||''):credit.source==='bus-bild'?`Bus-bild.de${credit.author?' · '+credit.author:''}`:credit.source==='tourisme-marseille'?'Tourisme-Paris.com · crédits sur la page source':credit.source==='office-tourisme-marseille'?'Office de tourisme de Paris · crédits sur la page source':credit.caption||credit.author||'Parici';
     const attribution=link?`<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(text)}</a>`:escapeHtml(text);
     return (credit.caption?`<span class="collect-image-caption">${escapeHtml(credit.caption)}</span>`:'')+attribution;
   }
