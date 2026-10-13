@@ -24,6 +24,7 @@ const DIST_INCLUDE = [
   "_headers",
   "googlee4a7e2d5ea351f02.html",
   "index.html",
+  "explorer.html",
   "arbre-rangs.html",
   "regles.html",
   "versions.html",
@@ -233,6 +234,46 @@ async function fingerprintProductionAssets() {
     for (const [source, target] of [["/src/public/js/site-navigation.js", navigationUrl], ["/src/public/js/page-gestures.js", gesturesUrl], ["/src/public/js/site-shell.js", siteShellJsUrl], ["/src/public/css/site-shell.css", siteShellCssUrl]]) html = replaceAssetReference(html, source, target);
     fs.writeFileSync(file, html);
   }
+
+  const explorerCssUrl = writeFingerprintedAsset(
+    "explorer",
+    "css",
+    await minifiedSource("src/public/css/explorer.css", "css"),
+    assetManifest,
+  );
+  const explorerJsUrl = writeFingerprintedAsset(
+    "explorer",
+    "js",
+    await minifiedSource("src/public/js/explorer_core.js", "js"),
+    assetManifest,
+  );
+  const explorerSelectionUrl = writeFingerprintedAsset(
+    "explorer-selection",
+    "js",
+    await minifiedSource("src/public/js/explorer-selection.js", "js"),
+    assetManifest,
+  );
+  const explorerPath = path.join(DIST_DIR, "explorer.html");
+  let explorerHtml = fs.readFileSync(explorerPath, "utf8");
+  for (const [source, target] of [
+    ["/src/public/css/explorer.css", explorerCssUrl],
+    ["/src/public/js/explorer_core.js", explorerJsUrl],
+    ["/src/public/js/explorer-selection.js", explorerSelectionUrl],
+  ])
+    explorerHtml = replaceAssetReference(explorerHtml, source, target);
+  fs.writeFileSync(explorerPath, explorerHtml);
+  const explorerAdminPath = path.join(DIST_DIR, "admin/explorer/index.html");
+  let explorerAdminHtml = fs.readFileSync(explorerAdminPath, "utf8");
+  for (const [source, target] of [
+    ["/vendor/leaflet.css", leafletCssUrl],
+    ["/src/public/js/leaflet-runtime.js", leafletRuntimeUrl],
+  ])
+    explorerAdminHtml = replaceAssetReference(
+      explorerAdminHtml,
+      source,
+      target,
+    );
+  fs.writeFileSync(explorerAdminPath, explorerAdminHtml);
 
   const indexPath = path.join(DIST_DIR, "index.html");
   let indexHtml = fs.readFileSync(indexPath, "utf8");

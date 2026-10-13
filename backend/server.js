@@ -3276,6 +3276,15 @@ app.get('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{
     return res.json(await require('./domains/site-shell/service').settings(db,req.user.id,String(req.query.endpoint||'')));
 }));
 
+app.use('/api/explorer/admin',(_req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
+app.use('/api/explorer', require('./domains/explorer/routes')({authenticateToken, requireContentEditor, asyncHandler}));
+app.get('/data/explorer_uploads/:filename', asyncHandler(async(req,res)=>{
+ if(!/^[a-f0-9]{64}\.(png|jpg|webp)$/.test(req.params.filename))return res.sendStatus(404);
+ const image=(await db.pool.query('SELECT mime_type,content FROM explorer_uploaded_images WHERE filename=$1',[req.params.filename])).rows[0];
+ if(!image)return res.sendStatus(404);
+ res.setHeader('Cache-Control','public, max-age=31536000, immutable');
+ res.type(image.mime_type).send(image.content);
+}));
 const verifiedSessions = require('./domains/game-integrity/sessions');
 app.post('/api/game-sessions', authenticateToken, asyncHandler(async(req,res)=>{
     if(!req.body || typeof req.body!=='object' || Array.isArray(req.body))return res.status(400).json({error:'Configuration invalide'});

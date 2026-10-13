@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Explorer | Parici</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Parcourez Paris à pied, résolvez des énigmes parisiennes et photographiez les plaques de rue avec Parici Explorer."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/apple-touch-icon.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/apple-touch-icon.png"
+      sizes="16x16"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#12297a" />
+    <script src="/src/public/js/runtime-config.js"></script>
+    <link
+      rel="stylesheet"
+      href="/src/public/css/explorer.css?v=20260721-daily-reset"
+    />
+    <link
+      rel="stylesheet"
+      href="/src/public/css/site-shell.css?v=20260721-daily-reset"
+    />
+    <script
+      defer
+      src="/src/public/js/site-shell.js?v=20260721-daily-reset"
+    ></script>
+    <script defer src="/src/public/js/explorer-selection.js"></script>
+    <script
+      defer
+      src="/src/public/js/explorer_core.js?v=20260721-daily-reset"
+    ></script>
+    <link rel="stylesheet" href="/src/public/css/camino-art.css" />
+    <script type="module" src="/src/public/js/interface-icons.js"></script>
+    <link rel="stylesheet" href="/src/public/css/fluid-layout.css" />
+    <script defer src="/src/public/js/site-navigation.js"></script>
+    <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+  </head>
+  <body class="explorer-shell site-shell-page">
+    <div class="site-shell-top">
+      <header class="site-header">
+        <div>
+          <h1 class="site-header__title"><a href="/">Parici</a></h1>
+          <p class="site-header__subtitle">
+            Connaissez-vous vraiment votre ville ?
+          </p>
+        </div>
+        <div class="site-header__version">V0.4.1</div>
+        <button
+          id="site-notification-bell"
+          class="site-header__control site-header__control--notifications"
+          type="button"
+          aria-label="Notifications"
+          aria-expanded="false"
+          aria-controls="site-notifications"
+        >
+          <svg
+            class="camino-ui-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2" /></svg
+          ><span
+            id="site-notification-count"
+            class="site-notification-count"
+            hidden
+          ></span>
+        </button>
+      </header>
+
+      <nav
+        class="explorer-mode-nav site-nav"
+        aria-label="Navigation des modes de jeu"
+      >
+        <a href="/">Accueil</a>
+        <a href="/?view=camino">Parici</a>
+        <a href="/?view=daily">Daily</a>
+        <button
+          id="site-menu-toggle"
+          class="site-menu-toggle"
+          type="button"
+          aria-label="Ouvrir le menu"
+          aria-expanded="false"
+          aria-controls="site-menu-drawer"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="5" cy="12" r="2" />
+            <circle cx="12" cy="12" r="2" />
+            <circle cx="19" cy="12" r="2" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+
+    <main class="explorer-app" data-view="loading">
+      <section class="explorer-page-intro site-mode-intro">
+        <p>Mode de jeu</p>
+        <h2>Explorer</h2>
+        <span>Marchez, cherchez, remontez le temps.</span>
+        <div class="site-mode-intro__details">
+          <strong
+            >Suivez les énigmes et les photos indices pour retrouver les rues
+            autour de vous.</strong
+          >
+          <span
+            >Une fois sur place, photographiez la plaque. Parici vérifie son nom
+            et votre position, puis révèle l’histoire du lieu avant l’étape
+            suivante.</span
+          >
+        </div>
+      </section>
+
+      <section
+        id="explorer-mobile-required"
+        class="explorer-panel explorer-mobile-required hidden"
+        role="status"
+      >
+        <p class="explorer-mobile-required__eyebrow">
+          Expérience sur le terrain
+        </p>
+        <h2>Continuez sur votre smartphone</h2>
+        <p>
+          Explorer se joue en marchant dans Paris. La géolocalisation confirme
+          que vous êtes près de la rue recherchée, puis l’appareil photo permet
+          de vérifier sa plaque.
+        </p>
+        <p>
+          Ouvrez <strong>parici.onrender.com/explorer.html</strong> depuis votre
+          smartphone pour commencer le parcours.
+        </p>
+        <a class="explorer-btn explorer-btn-secondary" href="/"
+          >Retour à l’accueil</a
+        >
+      </section>
+
+      <p id="explorer-sync-status" class="explorer-feedback" role="status"></p>
+      <section class="explorer-status" aria-label="Progression Explorer">
+        <div class="explorer-status-summary">
+          <div>
+            <span class="explorer-kpi-label">Score</span>
+            <strong id="explorer-score">0</strong>
+          </div>
+          <div>
+            <span class="explorer-kpi-label">Énigmes</span>
+            <strong
+              ><span id="explorer-solved">0</span> /
+              <span id="explorer-total">0</span></strong
+            >
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="explorer-loading"
+        class="explorer-panel"
+        role="status"
+        aria-live="polite"
+      >
+        <p>Chargement des énigmes…</p>
+      </section>
+
+      <section id="explorer-empty" class="explorer-panel hidden">
+        <h2>Aucune énigme configurée</h2>
+        <p>
+          Le mode Explorer sera disponible dès que le back-office aura publié
+          des énigmes.
+        </p>
+        <a class="explorer-btn explorer-btn-secondary" href="/">Retour</a>
+      </section>
+
+      <section id="explorer-start" class="explorer-panel hidden">
+        <h2>Prêt à explorer le Marais ?</h2>
+        <p>
+          Huit énigmes à découvrir à pied.
+          <a href="/?view=profile#profile">Connectez-vous à votre profil</a>
+          pour conserver votre progression.
+        </p>
+        <p>
+          Le chronomètre démarre avec la première énigme. Chaque rue trouvée
+          rapporte des points selon votre rapidité ; afficher un indice retire
+          15 points. La position et l’appareil photo seront demandés uniquement
+          pour valider une plaque.
+        </p>
+        <button
+          id="explorer-start-btn"
+          class="explorer-btn explorer-btn-primary"
+          type="button"
+        >
+          Commencer la recherche
+        </button>
+      </section>
+
+      <section id="explorer-riddle" class="explorer-panel hidden">
+        <div class="explorer-riddle-media">
+          <picture>
+            <source id="explorer-riddle-image-avif" type="image/avif" />
+            <source id="explorer-riddle-image-webp" type="image/webp" />
+            <img
+              id="explorer-riddle-image"
+              alt="Photo indice de la rue à retrouver"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+            />
+          </picture>
+        </div>
+        <div class="explorer-riddle-body">
+          <p id="explorer-timer" class="explorer-timer">20:00</p>
+          <h2>Enquête en cours</h2>
+          <p id="explorer-riddle-text"></p>
+          <div id="explorer-hint" class="explorer-hint hidden"></div>
+        </div>
+        <div class="explorer-actions">
+          <button
+            id="explorer-hint-btn"
+            class="explorer-btn explorer-btn-secondary"
+            type="button"
+          >
+            Afficher l’indice (−15 points)
+          </button>
+          <label
+            class="explorer-btn explorer-btn-primary"
+            for="explorer-photo-input"
+            >Vérifier la plaque de rue</label
+          >
+          <input
+            id="explorer-photo-input"
+            class="hidden"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+        </div>
+        <p
+          id="explorer-feedback"
+          class="explorer-feedback"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </section>
+
+      <section id="explorer-discovery" class="explorer-panel hidden">
+        <p class="explorer-discovery-eyebrow">Rue trouvée</p>
+        <h2 id="explorer-discovery-title"></h2>
+        <p id="explorer-discovery-text" class="explorer-discovery-text"></p>
+        <a
+          id="explorer-discovery-source"
+          hidden
+          target="_blank"
+          rel="noopener noreferrer"
+          >Lire la source</a
+        >
+        <button
+          id="explorer-continue-btn"
+          class="explorer-btn explorer-btn-primary"
+          type="button"
+        >
+          Continuer l’exploration
+        </button>
+      </section>
+
+      <section id="explorer-complete" class="explorer-panel hidden">
+        <h2>Parcours terminé : vous êtes un Explorateur de Paris&nbsp;!</h2>
+        <div class="explorer-final-stats">
+          <div>
+            <span>Score final</span><strong id="explorer-final-score">0</strong>
+          </div>
+          <div>
+            <span>Temps de marche</span
+            ><strong id="explorer-final-time">0 min</strong>
+          </div>
+        </div>
+        <div class="explorer-album-head">
+          <h3>Album souvenir</h3>
+          <button
+            id="explorer-export-album"
+            class="explorer-btn explorer-btn-secondary"
+            type="button"
+          >
+            Exporter l’album
+          </button>
+        </div>
+        <div id="explorer-album" class="explorer-album"></div>
+      </section>
+
+      <section class="explorer-panel explorer-leaderboard-panel">
+        <h2>Les explorateurs du moment</h2>
+        <div
+          id="explorer-leaderboard"
+          class="explorer-leaderboard"
+          aria-live="polite"
+        >
+          Chargement du classement…
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" aria-label="Réseaux sociaux et crédits">
+      <p class="site-footer__visitors">Visites : —</p>
+      <p class="site-footer__sync">Carte mise à jour : —</p>
+      <p class="site-footer__credit">Créé par Philippe Maraval</p>
+      <div class="site-footer__actions">
+        <div class="site-footer__social">
+          <a
+            href="https://x.com/SunMediaParici"
+            target="_blank"
+            rel="noopener noreferrer"
+            >X</a
+          >
+          <a
+            href="https://www.instagram.com/sunmediaparici?igsh=MWd0eGNnNTZ2a2ZxZw%3D%3D&amp;utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Instagram</a
+          >
+        </div>
+        <div class="site-footer__utility-links"></div>
+      </div>
+    </footer>
+  </body>
+</html>

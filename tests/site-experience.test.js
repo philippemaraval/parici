@@ -40,8 +40,9 @@ test("recovery email collection links to a clear privacy notice", () => {
   assert.match(privacy, /cnil\.fr/);
 });
 
-test("Parici public shell does not expose the Camino Explorer mode", () => {
-  assert.equal(fs.existsSync(path.join(ROOT, "explorer.html")), false);
+test("Parici keeps Explorer accessible only by direct URL", () => {
+  assert.equal(fs.existsSync(path.join(ROOT, "explorer.html")), true);
+  assert.match(read("explorer.html"), /noindex, nofollow/);
 
   for (const page of ["index.html", "regles.html", "arbre-rangs.html", "reset-password.html"]) {
     assert.doesNotMatch(read(page), /explorer\.html|admin\/explorer|Explorer/);
@@ -49,8 +50,7 @@ test("Parici public shell does not expose the Camino Explorer mode", () => {
 
   assert.doesNotMatch(read("style.css"), /explorer-mode-link|mobile-mode-card--explorer/);
   assert.doesNotMatch(read("src/public/css/site-shell.css"), /is-active--explorer/);
-  assert.doesNotMatch(read("sw.js"), /camino-explorer-sync|CAMINO_EXPLORER_SYNC/);
-  assert.doesNotMatch(read("backend/database.js"), /explorer_riddles|explorer_user_progress|explorer_leaderboard/);
+  assert.doesNotMatch(read("src/public/js/site-menu.js"), /explorer\.html|collect\.html/);
 });
 
 test("the game starts with the established satellite background", () => {

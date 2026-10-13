@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Camino Explorer</title>
+  <desc id="desc">Illustration par défaut pour les énigmes du mode Camino Explorer.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fbf8f1"/>
+      <stop offset="1" stop-color="#edf1fb"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" x2="1">
+      <stop offset="0" stop-color="#0c1d57"/>
+      <stop offset="1" stop-color="#12297a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <path d="M0 485 C170 430 315 520 480 455 C645 390 820 468 980 430 C1080 406 1145 422 1200 447 L1200 675 L0 675 Z" fill="url(#sea)"/>
+  <path d="M132 510 L260 318 L385 510 Z" fill="#e3dccf"/>
+  <path d="M252 510 L405 250 L575 510 Z" fill="#f5f1e8" stroke="#12297a" stroke-width="8"/>
+  <path d="M488 510 L630 304 L780 510 Z" fill="#e3dccf"/>
+  <rect x="125" y="492" width="720" height="30" rx="15" fill="#12297a"/>
+  <rect x="795" y="202" width="226" height="154" rx="16" fill="#fff" stroke="#12297a" stroke-width="10"/>
+  <path d="M832 244 H984 M832 282 H984 M832 320 H924" stroke="#12297a" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="908" cy="464" r="78" fill="#f2a900"/>
+  <circle cx="908" cy="464" r="44" fill="#fbf8f1"/>
+  <path d="M908 386 V542 M830 464 H986" stroke="#c96b3b" stroke-width="10" stroke-linecap="round"/>
+  <text x="72" y="116" fill="#0c1d57" font-family="Montserrat, Arial, sans-serif" font-size="58" font-weight="800">Camino Explorer</text>
+  <text x="76" y="166" fill="#64748b" font-family="Nunito, Arial, sans-serif" font-size="28" font-weight="700">Énigme historique à Marseille</text>
+</svg>

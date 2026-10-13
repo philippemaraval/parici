@@ -218,6 +218,12 @@ async function applyPlayerUpgradeSchema(client) {
   try {
     await client.query(fs.readFileSync(path.join(__dirname, '..', 'migrations', '20261013_game_integrity.sql'), 'utf8'));
     await client.query(fs.readFileSync(path.join(__dirname, '..', 'migrations', '20261013_site_shell.sql'), 'utf8'));
+    await client.query(fs.readFileSync(path.join(__dirname, '..', 'migrations', '20261013_explorer.sql'), 'utf8'));
+    const explorerSeed = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'explorer_paris.json'), 'utf8'));
+    await client.query(`INSERT INTO explorer_riddles(seed_key,way_id,street_name_clean,riddle_text,hint_text,explanation_text,image_url,latitude,longitude,source_url)
+      SELECT seed_key,way_id,street_name_clean,riddle_text,hint_text,explanation_text,image_url,latitude,longitude,source_url
+      FROM jsonb_to_recordset($1::jsonb) AS r(seed_key text,way_id bigint,street_name_clean text,riddle_text text,hint_text text,explanation_text text,image_url text,latitude double precision,longitude double precision,source_url text)
+      ON CONFLICT(seed_key) DO NOTHING`, [JSON.stringify(explorerSeed)]);
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
 }

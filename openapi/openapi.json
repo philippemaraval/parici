@@ -33,6 +33,9 @@
     },
     {
       "name": "administration"
+    },
+    {
+      "name": "explorer"
     }
   ],
   "paths": {
@@ -236,6 +239,525 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/explorer/riddles": {
+      "get": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        }
+      }
+    },
+    "/api/explorer/leaderboard": {
+      "get": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        ]
+      },
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/progress": {
+      "get": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        }
+      }
+    },
+    "/api/explorer/progress/sync": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/riddles/{id}/start": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/riddles/{id}/hint": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/admin/riddles": {
+      "get": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "archived",
+            "schema": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        ]
+      },
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/admin/riddles/{id}": {
+      "put": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/admin/riddles/{id}/restore": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/admin/streets": {
+      "get": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        ]
+      }
+    },
+    "/api/explorer/admin/images": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/explorer/admin/simulate": {
+      "post": {
+        "tags": ["explorer"],
+        "responses": {
+          "200": {
+            "description": "Résultat Explorer"
+          },
+          "400": {
+            "description": "Données invalides"
+          },
+          "401": {
+            "description": "Connexion requise"
+          },
+          "403": {
+            "description": "Accès refusé"
+          },
+          "409": {
+            "description": "Conflit de progression ou de révision"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
           }
         }
       }

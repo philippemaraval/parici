@@ -265,3 +265,10 @@ self.addEventListener("notificationclick", (event) => {
     }),
   );
 });
+
+self.addEventListener("sync",event=>{
+ if(event.tag!=="camino-explorer-sync")return;
+ event.waitUntil(clients.matchAll({type:"window",includeUncontrolled:true}).then(windows=>{
+  for(const client of windows)if(new URL(client.url).pathname==='/explorer.html')client.postMessage({type:"CAMINO_EXPLORER_SYNC"});
+ }));
+});

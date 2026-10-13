@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <script src="/src/public/js/runtime-config.js"></script>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Énigmes Explorer | Administration Parici</title>
+    <meta
+      name="description"
+      content="Administration des énigmes du mode Explorer de Parici."
+    />
+    <meta name="theme-color" content="#0c1d57" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&amp;family=Montserrat:wght@600;800&amp;family=Nunito:wght@400;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/apple-touch-icon.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/apple-touch-icon.png"
+      sizes="16x16"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/admin/admin.css?v=20261012-admin-studio" />
+    <link rel="stylesheet" href="/vendor/leaflet.css" />
+    <script defer src="/src/public/js/leaflet-runtime.js"></script>
+    <script
+      defer
+      src="/admin/explorer/explorer-admin.js?v=20261012-admin-studio"
+    ></script>
+    <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
+    <link rel="stylesheet" href="/admin/explorer/explorer-admin.css" />
+  </head>
+  <body>
+    <main class="admin-explorer-shell">
+      <nav class="admin-topbar" aria-label="Navigation admin">
+        <a class="admin-brand" href="/admin/">
+          <img class="admin-brand-mark" src="/apple-touch-icon.png" alt="" />
+          <span><strong>Parici</strong><small>Administration</small></span>
+        </a>
+        <div class="admin-nav">
+          <a href="/admin/">Accueil</a>
+          <a href="/admin/parici/">Parici</a>
+          <span aria-current="page">Explorer</span>
+          <a id="manage-users-link" class="hidden" href="/admin/users.html"
+            >Utilisateurs</a
+          >
+          <a class="admin-nav-site" href="/">Voir le site</a>
+        </div>
+      </nav>
+
+      <header class="admin-header">
+        <div class="page-heading">
+          <div>
+            <p class="admin-kicker">Explorer</p>
+            <h1>Énigmes et voies à découvrir</h1>
+            <p class="admin-subtitle">
+              Créez les énigmes du mode Explorer, associez-les à une voie
+              précise et gérez les contenus déjà publiés.
+            </p>
+          </div>
+          <a class="btn btn-back" href="/admin/">Retour au tableau de bord</a>
+        </div>
+        <p
+          id="explorer-global-status"
+          class="status status--info"
+          role="status"
+          aria-live="polite"
+        >
+          Vérification de votre accès…
+        </p>
+      </header>
+
+      <section id="explorer-auth-required" class="card empty-state hidden">
+        <h2>Connexion requise</h2>
+        <p>
+          Connectez-vous avec un compte éditeur ou administrateur depuis le
+          tableau de bord avant d’ouvrir cet espace.
+        </p>
+        <a class="btn btn-primary" href="/admin/">Accéder à la connexion</a>
+      </section>
+
+      <section id="explorer-admin-content" class="hidden">
+        <div class="card toolbar">
+          <div class="session-card">
+            <span class="session-avatar">C</span>
+            <div>
+              <strong id="explorer-session-user">-</strong>
+              <span id="explorer-session-role" class="role-badge">-</span>
+              <p class="muted">Session active</p>
+            </div>
+          </div>
+          <div class="toolbar-actions">
+            <button id="explorer-refresh" type="button" class="btn">
+              Actualiser les énigmes
+            </button>
+            <button id="explorer-logout" type="button" class="btn btn-quiet">
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-explorer-layout">
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <p class="card-eyebrow">Édition</p>
+                <h2 id="explorer-form-title">Créer une énigme</h2>
+                <p class="muted">
+                  La recherche complète automatiquement l’identifiant OSM, le
+                  nom normalisé et les coordonnées lorsque la voie existe dans
+                  l’index.
+                </p>
+              </div>
+            </div>
+            <form id="explorer-admin-form" class="admin-explorer-form">
+              <input id="explorer-riddle-id" type="hidden" />
+              <label for="explorer-street-search">
+                Voie de Paris
+                <input
+                  id="explorer-street-search"
+                  type="search"
+                  list="explorer-street-options"
+                  autocomplete="off"
+                  placeholder="Commencez à saisir un nom de voie"
+                />
+                <datalist id="explorer-street-options"></datalist>
+                <span class="field-help"
+                  >Sélectionnez une suggestion pour remplir automatiquement les
+                  champs techniques.</span
+                >
+              </label>
+              <div class="explorer-admin-grid">
+                <label for="explorer-way-id"
+                  >Identifiant OSM
+                  <input
+                    id="explorer-way-id"
+                    type="number"
+                    inputmode="numeric"
+                    required
+                /></label>
+                <label for="explorer-street-name"
+                  >Nom normalisé
+                  <input id="explorer-street-name" type="text" required
+                /></label>
+                <label for="explorer-latitude"
+                  >Latitude
+                  <input
+                    id="explorer-latitude"
+                    min="-90"
+                    max="90"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                /></label>
+                <label for="explorer-longitude"
+                  >Longitude
+                  <input
+                    id="explorer-longitude"
+                    min="-180"
+                    max="180"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                /></label>
+              </div>
+              <label for="explorer-riddle-text-admin"
+                >Texte de l’énigme
+                <textarea
+                  id="explorer-riddle-text-admin"
+                  required
+                  rows="5"
+                  placeholder="Rédigez la question présentée au joueur…"
+                ></textarea>
+              </label>
+              <label for="explorer-hint-text-admin"
+                >Indice
+                <textarea
+                  id="explorer-hint-text-admin"
+                  required
+                  rows="3"
+                  placeholder="Donnez un indice utile sans révéler directement la réponse…"
+                ></textarea>
+              </label>
+              <label for="explorer-explanation-text-admin"
+                >Explication affichée après la découverte
+                <textarea
+                  id="explorer-explanation-text-admin"
+                  rows="8"
+                  placeholder="Ajoutez le contexte historique ou culturel de la voie…"
+                ></textarea>
+              </label>
+              <label for="explorer-image-url"
+                >Adresse de l’photo indice
+                <input
+                  id="explorer-image-url"
+                  type="text"
+                  required
+                  placeholder="/data/explorer_images/… ou https://…"
+              /></label>
+              <label for="explorer-image-file"
+                >Importer une image
+                <input
+                  id="explorer-image-file"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                />
+                <span class="field-help"
+                  >Formats acceptés&nbsp;: PNG, JPEG ou WebP. L’import renseigne
+                  automatiquement l’adresse ci-dessus.</span
+                >
+              </label>
+              <div class="explorer-actions">
+                <button class="explorer-btn explorer-btn-primary" type="submit">
+                  Enregistrer l’énigme
+                </button>
+                <button
+                  id="explorer-admin-reset"
+                  class="explorer-btn"
+                  type="button"
+                >
+                  Créer une nouvelle énigme
+                </button>
+              </div>
+            </form>
+            <p
+              id="explorer-admin-feedback"
+              class="explorer-feedback"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </section>
+
+          <section class="card explorer-preview-panel">
+            <h2>Aperçu et simulation</h2>
+            <p>
+              Vérifiez la saisie avant de l’enregistrer. La simulation ne crée
+              ni étape ni score.
+            </p>
+            <div
+              id="explorer-editor-map"
+              aria-label="Carte de simulation"
+              style="height: 300px"
+            ></div>
+            <p class="muted">
+              Cliquez sur la carte pour déplacer la position simulée. Le cercle
+              représente les 100 mètres autour du repère ; la validation utilise
+              toute la géométrie de la rue.
+            </p>
+            <img
+              id="explorer-preview-image"
+              alt="Aperçu de la photo indice"
+              hidden
+              style="max-width: 100%; max-height: 240px"
+            />
+            <p id="explorer-preview-riddle"></p>
+            <details>
+              <summary>Voir l’indice et l’explication</summary>
+              <p id="explorer-preview-hint"></p>
+              <p id="explorer-preview-explanation"></p>
+            </details>
+            <label
+              >Texte reconnu sur la plaque<input
+                id="explorer-simulation-ocr"
+                type="text"
+                maxlength="2000"
+            /></label>
+            <button
+              type="button"
+              id="explorer-simulate"
+              class="explorer-btn explorer-btn-primary"
+            >
+              Tester la plaque et la position
+            </button>
+            <p id="explorer-simulation-result" role="status"></p>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <p class="card-eyebrow">Inventaire</p>
+                <div class="field-heading">
+                  <h2>Énigmes publiées</h2>
+                  <span id="explorer-riddle-count" class="count-pill"
+                    >0 énigme</span
+                  >
+                </div>
+                <p class="muted">
+                  Choisissez «&nbsp;Modifier&nbsp;» pour charger une énigme
+                  existante dans le formulaire.
+                </p>
+              </div>
+            </div>
+            <div class="field-row">
+              <label
+                >Rechercher une énigme<input
+                  id="explorer-filter"
+                  type="search" /></label
+              ><label
+                ><input id="explorer-show-archived" type="checkbox" /> Inclure
+                les archives</label
+              >
+            </div>
+            <div id="explorer-admin-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
