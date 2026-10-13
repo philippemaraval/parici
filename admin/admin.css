@@ -1388,3 +1388,8 @@ button:hover,
 
 #studio-body .users-table-wrap { max-height: 640px; overflow: auto; }
 #studio-body .studio-table thead { position: sticky; top: 0; background: #f8fafc; z-index: 1; }
+
+/* Keep multi-column records readable inside their existing scroll container. */
+#studio-body .studio-table { min-width: 780px; }
+#studio-body .studio-table th { white-space: nowrap; }
+#studio-body .studio-table td { min-width: 100px; overflow-wrap: break-word; }

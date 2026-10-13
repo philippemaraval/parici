@@ -558,6 +558,10 @@ app.use(express.json({ limit: '8mb' }));
 installOpenApi(app);
 
 app.get('/api/health', (req, res) => {
+    if(startupState.databaseReady && req.query?.collect === '1') {
+        void ensurePushRuntimeReady().then(()=>require('./domains/collect/background').wake(db,pushRuntime,(...args)=>webPush.sendNotification(...args)))
+          .catch(error=>console.error('[Collect] Wakeup:',error.message));
+    }
     if (req.query?.prewarm === '1' || req.query?.prewarm === 'true') {
         if (startupState.databaseReady) {
             warmCriticalCachesInBackground();
@@ -673,7 +677,7 @@ app.get('/main.js', (req, res, next) => {
     }
 });
 
-app.get(['/data/collect_paris_catalog.json','/data/collect_question_additions.json','/data/collect_fragment_plan.json'], (_req,res)=>res.sendStatus(404));
+app.get(['/data/collect_paris_catalog.json','/data/collect_question_additions.json','/data/collect_fragment_plan.json','/data/collect_paris_editorial.json','/data/collect_paris_fragments.json'], (_req,res)=>res.sendStatus(404));
 app.use(express.static(frontendRoot));
 
 async function initializeBackgroundServices() {
@@ -3375,7 +3379,7 @@ app.get('/api/site/settings',authenticateToken,asyncHandler(async(req,res)=>{
 }));
 
 app.use('/api/explorer/admin',(_req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
-require('./admin-collect-routes')({app,db,authenticateToken,requireContentEditor,asyncHandler});
+require('./admin-collect-routes')({app,db,authenticateToken,requireContentEditor,asyncHandler,getStreetIndex:()=>streetIndex,getEffectiveContentLists});
 require('./collect-routes')({app,db,authenticateToken,requireAdminUser,asyncHandler,getStreetIndex:()=>streetIndex,getEffectiveContentLists,parseCookieHeader,SESSION_COOKIE_NAME,isValidPushSubscription,ensurePushRuntimeReady,getPushRuntime:()=>pushRuntime});
 app.use('/api/explorer', require('./domains/explorer/routes')({authenticateToken, requireContentEditor, asyncHandler}));
 app.get('/data/explorer_uploads/:filename', asyncHandler(async(req,res)=>{
@@ -4612,7 +4616,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
                 resolveStreetIndexEntry(target.street_name, target.arrondissement)?.osmName
                 || target.street_name,
             arrondissement: target.arrondissement,
-            dailyImageUrl: target.image_url || resolveDailyImageUrl(date, target.street_name, manifestEntry),
+            dailyImageUrl: await require("./domains/collect/daily-image").dailyImageForStreet(db.pool, target.street_name, target.image_url || resolveDailyImageUrl(date, target.street_name, manifestEntry)),
             targetGeoJson: target.coordinates_json,
             userStatus,
             dailyStreak,

@@ -206,6 +206,7 @@ async function deployWithRollback({
     await assertHealthy(healthcheckUrl);
     await require("./check_admin_deployment").checkAdminDeployment(
       new URL(healthcheckUrl).origin,
+      commitId,
     );
     console.log(`✓ ${serviceId} is live and healthy on ${commitId}.`);
     return created;

@@ -5,6 +5,8 @@ module.exports = function ({
   authenticateToken,
   requireContentEditor,
   asyncHandler,
+  getStreetIndex,
+  getEffectiveContentLists,
 }) {
   app.get(
     "/api/editor/collect/cards",
@@ -166,6 +168,16 @@ module.exports = function ({
       const health =
         await require("./domains/collect/content-quality").qualityHealth(db);
 
+      health.distribution =
+        await require("./domains/collect/distribution-health").distributionHealth(
+          db,
+          await getEffectiveContentLists(),
+        );
+      health.geometry =
+        await require("./domains/collect/map-health").geometryHealth(
+          db,
+          getStreetIndex(),
+        );
       return res.json(health);
     }),
   );

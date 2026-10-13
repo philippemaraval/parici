@@ -257,6 +257,14 @@
   }
 
   function restoreCompletedState() {
+    // A previous completion remains a server achievement, but new riddles must
+    // remain playable without deleting any solved steps or earned points.
+    if (state.riddles.some(riddle => !state.solved[String(riddle.id)])) {
+      state.completed = false;
+      localStorage.removeItem(COMPLETED_KEY);
+      saveState();
+      return;
+    }
     if (localStorage.getItem(COMPLETED_KEY) === "1") {
       state.completed = true;
     }

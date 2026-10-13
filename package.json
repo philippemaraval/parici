@@ -21,7 +21,7 @@
     "format:check": "prettier --check package.json README.md backend/domains backend/config openapi src/types scripts/check_dependencies.js scripts/anonymize_staging_database.js scripts/render_delivery.js tests/e2e playwright.config.js",
     "typecheck": "tsc --noEmit",
     "deps:check": "node scripts/check_dependencies.js",
-    "quality": "npm run lint && npm run format:check && npm run typecheck && npm run deps:check && npm run data:check && npm test && npm run build && npm run performance:check",
+    "quality": "npm run lint && npm run format:check && npm run typecheck && npm run deps:check && npm run data:check && npm run content:check && npm test && npm run build && npm run performance:check",
     "pretest": "npm run build --silent",
     "test": "node --test tests/*.test.js",
     "test:integration": "node --test tests/integration/*.test.js",
@@ -30,7 +30,8 @@
     "pretest:visual": "npm run build --silent",
     "test:visual": "playwright test tests/e2e/visual.spec.js",
     "staging:anonymize": "node scripts/anonymize_staging_database.js",
-    "delivery:render": "node scripts/render_delivery.js"
+    "delivery:render": "node scripts/render_delivery.js",
+    "content:check": "node scripts/check_player_content.js"
   },
   "keywords": [],
   "author": "",

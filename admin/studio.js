@@ -337,6 +337,7 @@ async function load() {
       const d = await api("/quality");
       html =
         info(d.coverage) +
+        (d.editorial ? stats([["Photographies",d.editorial.photographs],["Illustrations cartographiques",d.editorial.cartographic],["Descriptions patrimoniales sourcées",d.editorial.heritageDescriptions],["Descriptions corrigées",d.editorial.correctedDescriptions]]) : "") +
         info("Dernière analyse : " + date(d.generatedAt)) +
         table(
           ["Jeu", "Contenu", "Contrôle", "Action"],

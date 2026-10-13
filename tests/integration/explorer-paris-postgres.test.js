@@ -67,7 +67,7 @@ test(
     ]);
     let catalog = await request("/api/explorer/riddles");
     assert.equal(catalog.status, 200);
-    assert.equal(catalog.body.riddles.length, 8);
+    assert.equal(catalog.body.riddles.length, 12);
     const riddles = catalog.body.riddles;
     for (const r of riddles) {
       assert.ok(r.latitude > 48.8 && r.latitude < 48.9);
@@ -86,7 +86,7 @@ test(
     assert.equal(
       (await request("/api/explorer/admin/riddles", null, editor.token)).body
         .riddles.length,
-      8,
+      12,
     );
     const streets = await request(
       "/api/explorer/admin/streets?q=Francs",
@@ -262,7 +262,7 @@ test(
     );
     assert.equal(
       (await request("/api/explorer/riddles")).body.riddles.length,
-      7,
+      11,
     );
     assert.equal(
       (
@@ -289,7 +289,7 @@ test(
     await initializeDatabase({ startBackgroundServices: false });
     assert.equal(
       (await request("/api/explorer/riddles")).body.riddles.length,
-      8,
+      12,
     );
     const simulation = await request(
       "/api/explorer/admin/simulate",
@@ -381,6 +381,7 @@ test(
           });
           localStorage.setItem("camino_paris_user", JSON.stringify(user));
           localStorage.setItem("camino_auth_token", user.token);
+          localStorage.setItem("parici_explorer_completed:"+user.id,"1");
         },
         { user: other },
       );
@@ -417,7 +418,7 @@ test(
       }
       await page.goto(base + "/explorer.html");
       await page.locator("#explorer-start-btn").waitFor({ state: "visible" });
-      assert.equal(await page.locator("#explorer-total").innerText(), "8");
+      assert.equal(await page.locator("#explorer-total").innerText(), "12");
       assert.equal(
         await page
           .locator('a[href*="explorer.html"],a[href*="collect.html"]')

@@ -227,6 +227,7 @@ async function applyPlayerUpgradeSchema(client) {
       ON CONFLICT(seed_key) DO NOTHING`, [JSON.stringify(explorerSeed)]);
     await require('./domains/collect/paris-schema').applyParisCollect(client);
     await require('./domains/admin/schema').applyAdminSchema(client);
+    await require('./domains/collect/catalog-corrections').applyCatalogCorrections(client);
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
 }

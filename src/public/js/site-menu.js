@@ -286,7 +286,9 @@ export function initSiteMenu() {
         return;
       settingsState = state;
       if (accountSettings.isConnected)
-        accountSettings.innerHTML = `<section class="site-settings-section"><h3>Notifications</h3><p class="site-settings-note">Les alertes push sont facultatives sur cet appareil. La cloche reste disponible sans les activer.</p>${switchRow("announcements", "Actualités de Parici", "Messages de l’équipe dans la cloche du site", state.announcements !== false)}${switchRow("daily", "Daily", "Un rappel pour le Daily à faire", state.daily && !!sub)}</section>`;
+        accountSettings.innerHTML = `<section class="site-settings-section"><h3>Notifications</h3><p class="site-settings-note">Les alertes push sont facultatives sur cet appareil. La cloche reste disponible sans les activer.</p>${switchRow("announcements", "Actualités de Parici", "Messages de l’équipe dans la cloche du site", state.announcements !== false)}${switchRow("daily", "Daily", "Un rappel pour le Daily à faire", state.daily && !!sub)}${state.collectPublic ? switchRow("collect","Collect","Quand ton quota de cartes est disponible",state.collect && !!sub)+(state.socialEnabled ? switchRow("social","Amis et échanges","Demandes et suivi des échanges",state.push && !!sub) : "") : ""}</section>${state.collectPublic && state.socialEnabled ? '<section class="site-settings-section"><h3>Confidentialité de Collect</h3><form id="site-privacy-form"><label>Qui voit ma collection ?<select name="visibility"><option value="public">Tout le monde</option><option value="friends">Mes amis</option><option value="private">Moi uniquement</option></select></label><label>Qui peut proposer un échange ?<select name="exchanges"><option value="everyone">Tout le monde</option><option value="friends">Mes amis</option><option value="nobody">Personne</option></select></label><button type="submit" class="site-settings-save">Enregistrer la confidentialité</button></form></section>' : ""}`;
+      const privacy=content.querySelector("#site-privacy-form");
+      if(privacy){privacy.elements.visibility.value=state.visibility;privacy.elements.exchanges.value=state.exchanges;privacy.onsubmit=async event=>{event.preventDefault();const button=privacy.querySelector('button');button.disabled=true;try{const next={visibility:privacy.elements.visibility.value,exchanges:privacy.elements.exchanges.value,push:settingsState.push};await send('/api/collect/v2/settings',next,'PUT');Object.assign(settingsState,next);feedback('Confidentialité enregistrée.');}catch(error){feedback(error.message);}finally{button.disabled=false;}};}
     } catch (error) {
       content.querySelector("#site-account-settings").innerHTML =
         `<p>${escapeHtml(error.status === 401 ? "Reconnecte-toi pour retrouver les réglages de ton compte." : error.message)}</p>`;
@@ -330,7 +332,7 @@ export function initSiteMenu() {
         ),
       });
     }
-    await send("/api/notifications/subscribe", { subscription: sub, channel });
+    await send(channel === "collect" ? "/api/collect/push/subscribe" : "/api/notifications/subscribe", { subscription: sub });
     return sub;
   }
   content.addEventListener("change", async (event) => {
@@ -360,6 +362,14 @@ export function initSiteMenu() {
           if (sub && !result.keepSubscription) await sub.unsubscribe();
         }
         settingsState.daily = value;
+      }
+      if(input.name==='collect'||input.name==='social'){
+        if(value)await enablePush('collect');
+        if(input.name==='collect') {await send('/api/collect/notifications/preference',{enabled:value},'PUT');settingsState.collect=value;}
+        else {const next={visibility:settingsState.visibility,exchanges:settingsState.exchanges,push:value};await send('/api/collect/v2/settings',next,'PUT');settingsState.push=value;}
+        // A social-only subscription must not opt into quota reminders.
+        await send('/api/collect/notifications/preference',{enabled:!!settingsState.collect},'PUT');
+        if(!settingsState.collect&&!settingsState.push){const sub=await subscription();const result=await send('/api/collect/push/unsubscribe',{endpoint:sub?.endpoint||''});if(sub&&!result.keepSubscription)await sub.unsubscribe();}
       }
       feedback(
         value ? "Notifications activées." : "Notifications désactivées.",

@@ -44,12 +44,83 @@ async function inbox(db, user, dailyDate) {
       createdAt: n.delivered_at,
       unread: !n.read_at,
     });
+  let socialThrough = null,
+    socialUnread = 0;
+  const publicCollect = (await require("./public-modes").publicModes(db.pool))
+    .collect;
+  const social = require("../collect-social/service");
+  if (publicCollect) {
+    await db.releaseDueCollectQuotas();
+    const quota = (
+      await db.pool.query(
+        "SELECT cycle_copy_id,released_at,seen_at FROM collect_quota_notifications WHERE user_id=$1 AND released_at IS NOT NULL",
+        [user],
+      )
+    ).rows[0];
+    if (quota)
+      items.push({
+        key: `quota:${quota.cycle_copy_id}`,
+        kind: "collect",
+        title: "De nouvelles cartes Collect sont disponibles",
+        detail: "Ton quota est de nouveau disponible.",
+        url: "/collect.html?panel=play",
+        createdAt: quota.released_at,
+        unread: !quota.seen_at,
+      });
+    if (social.enabled() && social.schemaEnabled()) {
+      const rows = (
+        await db.pool.query(
+          "SELECT id,kind,created_at,read_at FROM collect_social_notifications WHERE user_id=$1 ORDER BY id DESC LIMIT 100",
+          [user],
+        )
+      ).rows;
+      socialThrough = rows[0]?.id || null;
+      socialUnread = Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*)::int AS n FROM collect_social_notifications WHERE user_id=$1 AND read_at IS NULL",
+            [user],
+          )
+        ).rows[0].n,
+      );
+      const labels = {
+        friend_request: "Demande d’ami",
+        friend_accepted: "Demande d’ami acceptée",
+        proposal: "Proposition d’échange",
+        counter: "Contre-proposition",
+        accepted: "Échange accepté",
+        refused: "Proposition refusée",
+        expired: "Offre expirée",
+        reminder: "Une offre expire bientôt",
+      };
+      for (const row of rows)
+        items.push({
+          key: `social:${row.id}`,
+          kind: row.kind.startsWith("friend") ? "friend" : "trade",
+          title: labels[row.kind] || "Notification Collect",
+          detail: "Collect · Amis et échanges",
+          url: `/collect.html?panel=social&tab=${row.kind.startsWith("friend") ? "friends" : "offers"}`,
+          createdAt: row.created_at,
+          unread: !row.read_at,
+        });
+    }
+  }
+  items.sort(
+    (a, b) =>
+      Number(b.unread) - Number(a.unread) ||
+      new Date(b.createdAt) - new Date(a.createdAt),
+  );
   return {
     items,
-    unread: items.filter((item) => item.unread).length,
-    snapshotAt: snapshot,
-    socialThrough: null,
-    keys: items.map((item) => item.key),
+    unread:
+      items.filter((item) => item.unread && !item.key.startsWith("social:"))
+        .length + socialUnread,
+    snapshotAt: (await db.pool.query("SELECT clock_timestamp() AS snapshot"))
+      .rows[0].snapshot,
+    socialThrough,
+    keys: items
+      .filter((item) => !item.key.startsWith("social:"))
+      .map((item) => item.key),
   };
 }
 async function opened(db, user, body) {
@@ -59,10 +130,15 @@ async function opened(db, user, body) {
     body.keys.some(
       (key) =>
         typeof key !== "string" ||
-        !/^(?:daily:\d{4}-\d{2}-\d{2}|announcement:[1-9]\d*:(?:test|live))$/.test(
+        !/^(?:daily:\d{4}-\d{2}-\d{2}|quota:[1-9]\d*|announcement:[1-9]\d*:(?:test|live))$/.test(
           key,
         ),
     )
+  )
+    throw invalid();
+  if (
+    body.socialThrough != null &&
+    !/^[1-9]\d{0,17}$/.test(String(body.socialThrough))
   )
     throw invalid();
   const snapshot = new Date(body.snapshotAt);
@@ -79,6 +155,17 @@ async function opened(db, user, body) {
       [user, id, mode === "test", snapshot],
     );
   }
+  if ((await require("./public-modes").publicModes(db.pool)).collect) {
+    await db.pool.query(
+      "UPDATE collect_quota_notifications SET seen_at=COALESCE(seen_at,NOW()) WHERE user_id=$1 AND ('quota:'||cycle_copy_id::text)=ANY($2::text[]) AND released_at<=$3",
+      [user, body.keys, snapshot],
+    );
+    if (body.socialThrough != null)
+      await db.pool.query(
+        "UPDATE collect_social_notifications SET read_at=COALESCE(read_at,NOW()) WHERE user_id=$1 AND id<=$2 AND created_at<=$3",
+        [user, body.socialThrough, snapshot],
+      );
+  }
   return { unread: 0 };
 }
 async function settings(db, user, endpoint = "") {
@@ -89,9 +176,21 @@ async function settings(db, user, endpoint = "") {
       user,
     ])
   ).rows[0];
+  const publicCollect = (await require("./public-modes").publicModes(db.pool))
+    .collect;
+  const social = require("../collect-social/service");
+  const socialEnabled =
+    publicCollect && social.enabled() && social.schemaEnabled();
+  const preferences = socialEnabled ? await social.settings(db.pool, user) : {};
+  const collect = publicCollect
+    ? await db.getCollectNotificationStatus(user)
+    : null;
   return {
     daily: !!daily?.active,
-    socialEnabled: false,
+    collectPublic: publicCollect,
+    collect: !!collect?.pushEnabled,
+    socialEnabled,
+    ...preferences,
     announcements: row?.admin_announcements !== false,
   };
 }

@@ -5,7 +5,7 @@ Le mode est accessible directement par `/explorer.html`, l’éditeur par
 l’accueil, à la navigation, au menu ou à l’administration existante. La page de jeu
 est exclue de l’indexation ; elle reste accessible pour les essais avant lancement.
 
-Le parcours initial comporte huit énigmes dans le Marais. Les voies et coordonnées
+Le catalogue comporte douze énigmes : huit dans le Marais et quatre sur la rive gauche. Les voies et coordonnées
 proviennent du catalogue OSM parisien réel. Les photos sont des vues parisiennes
 existantes du Daily, reprises avec leur attribution visible ; elles sont présentées
 comme des photos indices, pas comme des archives historiques. Le fichier
@@ -38,5 +38,4 @@ build, lint, types et budgets de performance. Les essais navigateur emploient un
 position simulée et une plaque de test ; ils ne remplacent pas un parcours à pied.
 Chrome a validé la lecture OCR réelle d’une plaque de test, la confirmation
 serveur, la reprise après rechargement et l’éditeur entre 320 et 1440 px.
-Le contrôle global Daily conserve un échec préexistant pour le Tunnel Grand-Maillot
-au 30 janvier 2027, déjà documenté dans le rapport des lots 1 à 12.
+La cible introuvable Tunnel Grand-Maillot du 30 janvier 2027 a été remplacée par la rue de Sablonville et une photo existante correspondante. Les énigmes ajoutées sont documentées par la Ville de Paris et le Centre des monuments nationaux ; elles restent à valider lors d’un parcours à pied.

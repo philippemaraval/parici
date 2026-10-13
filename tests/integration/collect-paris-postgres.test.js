@@ -91,6 +91,99 @@ test(
       ),
       0,
     );
+    // Simulate the old catalog: repair memberships and provisional ratings without
+    // changing copies, manual corrections, observed ratings or the launch gate.
+    const repairPlayer = await register("collect_repair_probe");
+    const targets = (
+      await db.pool.query(
+        "SELECT id FROM cards WHERE family='street' AND base_rarity=4 ORDER BY id LIMIT 3",
+      )
+    ).rows;
+    await db.pool.query(
+      "UPDATE cards SET base_rarity=2,current_rarity=2 WHERE id=ANY($1::bigint[])",
+      [targets.map((c) => c.id)],
+    );
+    await db.pool.query(
+      "UPDATE cards SET base_rarity_override=3,current_rarity=3,image_override='/data/daily_images/2027-05-07__rue-de-sablonville.jpg' WHERE id=$1",
+      [targets[1].id],
+    );
+    await db.pool.query(
+      "UPDATE cards SET rarity_evaluated_at=NOW() WHERE id=$1",
+      [targets[2].id],
+    );
+    await db.pool.query(
+      "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",
+      [repairPlayer.id, targets[0].id],
+    );
+    await db.pool.query(
+      "DELETE FROM album_cards WHERE album_id IN(SELECT id FROM albums WHERE slug IN('famous-streets','main-streets'))",
+    );
+    await db.pool.query(
+      "DELETE FROM app_settings WHERE key='parici_collect_catalog_revision'",
+    );
+    const correctionClient = await db.pool.connect();
+    try {
+      await correctionClient.query("BEGIN");
+      await require("../../backend/domains/collect/catalog-corrections").applyCatalogCorrections(
+        correctionClient,
+      );
+      await correctionClient.query("COMMIT");
+    } finally {
+      correctionClient.release();
+    }
+    const repaired = (
+      await db.pool.query(
+        "SELECT * FROM cards WHERE id=ANY($1::bigint[]) ORDER BY id",
+        [targets.map((c) => c.id)],
+      )
+    ).rows;
+    assert.equal(repaired[0].current_rarity, 4);
+    assert.equal(repaired[1].current_rarity, 3);
+    assert.equal(repaired[1].base_rarity, 3);
+    assert.ok(repaired[1].image_override);
+    assert.equal(repaired[2].current_rarity, 2);
+    assert.equal(
+      Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*) FROM card_copies WHERE user_id=$1",
+            [repairPlayer.id],
+          )
+        ).rows[0].count,
+      ),
+      1,
+    );
+    assert.equal(await db.getAppSetting("collect_launch_at"), "infinity");
+    const categoryCounts = (
+      await db.pool.query(
+        "SELECT a.slug,COUNT(*)::int AS n FROM albums a JOIN album_cards ac ON ac.album_id=a.id WHERE a.slug IN('famous-streets','main-streets') GROUP BY a.slug",
+      )
+    ).rows;
+    assert.equal(
+      categoryCounts.find((a) => a.slug === "famous-streets").n,
+      106,
+    );
+    assert.equal(categoryCounts.find((a) => a.slug === "main-streets").n, 306);
+    const hiddenProfile = (await request("/api/profile", player)).body;
+    assert.equal(hiddenProfile.collect, undefined);
+    assert.equal(hiddenProfile.explorer, undefined);
+    assert.ok(
+      (await request("/api/site/notifications", player)).body.items.every(
+        (i) => !i.key.startsWith("quota:") && !i.key.startsWith("social:"),
+      ),
+    );
+    const healthAdmin = await register("collect_health_admin");
+    await db.pool.query("UPDATE users SET role='admin' WHERE id=$1", [
+      healthAdmin.id,
+    ]);
+    const diagnostics = await request(
+      "/api/editor/collect/health",
+      healthAdmin,
+    );
+    assert.equal(diagnostics.status, 200, JSON.stringify(diagnostics.body));
+    assert.equal(diagnostics.body.geometry.length, 4);
+    assert.ok(diagnostics.body.geometry.every((g) => g.missing === 0));
+    assert.equal(diagnostics.body.distribution.categories.length, 6);
     const cards = (await db.pool.query("SELECT * FROM cards ORDER BY id")).rows;
     assert.equal(cards.length, 5943);
     assert.deepEqual(
@@ -110,10 +203,12 @@ test(
       const image = await fetch(base + card.image_reference);
       assert.equal(image.status, 200, card.image_reference);
     }
-    assert.equal(
-      (await fetch(base + "/data/collect_paris_catalog.json")).status,
-      404,
-    );
+    for (const file of [
+      "collect_paris_catalog.json",
+      "collect_paris_editorial.json",
+      "collect_paris_fragments.json",
+    ])
+      assert.equal((await fetch(base + "/data/" + file)).status, 404);
     const first = await request("/api/collect/games", player, {});
     assert.equal(first.status, 201, JSON.stringify(first.body));
     const resumed = await request("/api/collect/games", player, {});
@@ -197,6 +292,22 @@ test(
     await db.pool.query(
       "UPDATE collect_quota_notifications SET active_until=NULL, due_at=NOW()-INTERVAL '1 minute' WHERE user_id=$1",
       [player.id],
+    );
+    assert.equal((await request("/api/health?collect=1")).status, 200);
+    let released;
+    for (let retry = 0; retry < 30; retry++) {
+      released = (
+        await db.pool.query(
+          "SELECT released_at FROM collect_quota_notifications WHERE user_id=$1",
+          [player.id],
+        )
+      ).rows[0]?.released_at;
+      if (released) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.ok(
+      released,
+      "health collect=1 must process the quota with background services stopped",
     );
     assert.equal(
       (await request("/api/collect/notifications", player)).body.badge,
@@ -335,6 +446,33 @@ test(
     await db.pool.query(
       "UPDATE app_settings SET value_text=NOW()::text WHERE key='collect_launch_at'",
     );
+    assert.ok((await request("/api/profile", player)).body.collect);
+    await db.pool.query(
+      "INSERT INTO collect_social_notifications(user_id,event_key,kind,payload) VALUES($1,'public-shell-test','friend_request','{}'::jsonb)",
+      [player.id],
+    );
+    const publicInbox = (await request("/api/site/notifications", player)).body;
+    assert.ok(publicInbox.items.some((i) => i.key.startsWith("quota:")));
+    assert.ok(publicInbox.items.some((i) => i.key.startsWith("social:")));
+    assert.equal(
+      (
+        await request("/api/site/notifications/open", player, {
+          keys: publicInbox.keys,
+          snapshotAt: publicInbox.snapshotAt,
+          socialThrough: publicInbox.socialThrough,
+        })
+      ).status,
+      200,
+    );
+    assert.ok(
+      (await request("/api/site/notifications", player)).body.items
+        .filter((i) => i.key.startsWith("social:"))
+        .every((i) => !i.unread),
+    );
+    const publicSettings = (await request("/api/site/settings", player)).body;
+    assert.equal(publicSettings.collectPublic, true);
+    assert.equal(publicSettings.socialEnabled, true);
+
     assert.equal(
       await db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999),
       null,

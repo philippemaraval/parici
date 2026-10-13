@@ -32,6 +32,14 @@ function createProfileService({ repository }) {
       });
       payload.referralWarning = "referral_profile_unavailable";
     }
+    if (repository.getModes) {
+      try {
+        Object.assign(payload, await repository.getModes(currentUser.id));
+      } catch (error) {
+        console.error("Profile modes error:", error.message);
+        payload.modeWarning = "mode_stats_unavailable";
+      }
+    }
     return payload;
   }
 

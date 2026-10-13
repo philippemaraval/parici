@@ -38,6 +38,14 @@ async function tick(db, runtime, send) {
     }
   }
 }
+let pendingWake;
+function wake(db, runtime, send) {
+  if (pendingWake) return pendingWake;
+  pendingWake = tick(db, runtime, send).finally(() => {
+    pendingWake = null;
+  });
+  return pendingWake;
+}
 function start(db, runtime, send) {
   if (started) return;
   started = true;
@@ -47,7 +55,7 @@ function start(db, runtime, send) {
     if (running) return;
     running = true;
     try {
-      await tick(db, runtime(), send);
+      await wake(db, runtime(), send);
       await require("./weekly-challenge").ensureCurrentChallenge(db.pool);
       const month = new Intl.DateTimeFormat("fr-CA", {
         timeZone: "Europe/Paris",
@@ -68,4 +76,4 @@ function start(db, runtime, send) {
   const timer = setInterval(run, 30000);
   timer.unref?.();
 }
-module.exports = { start, tick };
+module.exports = { start, tick, wake };

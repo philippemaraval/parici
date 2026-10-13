@@ -12,7 +12,29 @@ const routes = [
   ["/api/editor/operations-tools/audit-log", 401],
 ];
 
-async function checkAdminDeployment(origin) {
+async function checkAdminDeployment(origin, expectedCommit) {
+  const [backend, frontend] = await Promise.all(
+    ["/api/health", "/admin/build-info.json"].map(async (route) => {
+      const response = await fetch(new URL(route, origin), {
+        signal: AbortSignal.timeout(20000),
+        headers: { "Cache-Control": "no-cache" },
+      });
+      if (!response.ok) throw new Error(`${route}: HTTP ${response.status}`);
+      return response.json();
+    }),
+  );
+  const backendCommit = backend.backendCommit || backend.release;
+  if (
+    !backend.ok ||
+    backend.database !== "ready" ||
+    !backendCommit ||
+    !frontend.commit ||
+    backendCommit !== frontend.commit ||
+    (expectedCommit && backendCommit !== expectedCommit)
+  )
+    throw new Error(
+      "Versions frontend/backend incohérentes ou commit attendu non livré",
+    );
   for (const [route, expected] of routes) {
     const response = await fetch(new URL(route, origin), {
       signal: AbortSignal.timeout(20000),
@@ -24,12 +46,16 @@ async function checkAdminDeployment(origin) {
   }
 }
 
-async function waitForAdminDeployment(origin, timeoutMs = 15 * 60 * 1000) {
+async function waitForAdminDeployment(
+  origin,
+  timeoutMs = 15 * 60 * 1000,
+  expectedCommit = process.env.DEPLOY_COMMIT,
+) {
   const deadline = Date.now() + timeoutMs;
   let lastError;
   while (Date.now() < deadline) {
     try {
-      await checkAdminDeployment(origin);
+      await checkAdminDeployment(origin, expectedCommit);
       console.log(
         "Administration déployée : pages disponibles et API protégées.",
       );

@@ -253,8 +253,8 @@ test(
     const future = "2099-01-01",
       daily = await create("daily", future, {
         date: future,
-        street_name: "Rue test studio",
-        quartier: "Quartier Saint-Gervais",
+        street_name: "Rue de Sablonville",
+        quartier: "Quartier des Ternes",
         coordinates: [2.3522, 48.8566],
         image_url: "https://example.test/image.png",
         verified: true,
@@ -268,6 +268,8 @@ test(
       (await db.getDailyTarget(future)).image_url,
       "https://example.test/image.png",
     );
+    assert.equal((await db.pool.query("SELECT image_override FROM cards WHERE source_entity_id='Rue de Sablonville'")).rows[0].image_override,'https://example.test/image.png');
+    assert.equal(await require('../../backend/domains/collect/daily-image').dailyImageForStreet(db.pool,'Rue de Sablonville','/old.jpg'),'https://example.test/image.png');
     const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Europe/Paris",
       year: "numeric",

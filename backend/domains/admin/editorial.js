@@ -52,7 +52,7 @@ function validate(kind, p) {
       p.coordinates[1] > 90
     )
       throw httpError(400, "Coordonnées [longitude, latitude] invalides.");
-    if (!p.verified || !p.image_url)
+    if (!p.verified || !p.image_url || /\.svg(?:[?#]|$)/i.test(p.image_url))
       throw httpError(
         400,
         "Vérifiez la photo et les coordonnées avant de préparer cette cible.",
@@ -271,6 +271,13 @@ async function apply(c, d) {
         JSON.stringify(p.coordinates),
         p.image_url,
       ],
+    );
+  if (d.kind === "daily")
+    await c.query(
+      `UPDATE cards SET image_override=$2,image_credit_override=NULL
+      WHERE family='street' AND status='active' AND catalog_present
+      AND (source_entity_id=$1 OR LOWER(name)=LOWER($1))`,
+      [p.street_name, p.image_url],
     );
   if (d.kind === "card")
     await c.query(

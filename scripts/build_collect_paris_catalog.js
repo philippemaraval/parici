@@ -39,11 +39,24 @@ const streets = read("backend/data/streets_index.json").filter((s) =>
 );
 const entities = buildStreetEntities(streets).entities;
 const roads = read("data/paris_rues_light.geojson").features;
+const preparedRoads =
+  require("../backend/domains/collect/map-data").prepareStreetMap(
+    { type: "FeatureCollection", features: structuredClone(roads) },
+    streets,
+  ).features;
+const entityRoads = new Map();
+for (const f of preparedRoads) {
+  const key = f.properties.collect_entity_id;
+  if (!entityRoads.has(key)) entityRoads.set(key, []);
+  entityRoads.get(key).push(f);
+}
 const districts = read("data/paris_arrondissements.geojson").features;
 const official = read("data/paris_quartiers.geojson").features;
 const monuments = read("data/paris_monuments.geojson").features;
 const transport = read("data/paris_transit_lines.geojson").features;
 const explorer = read("data/explorer_paris.json");
+const editorial = read("data/collect_paris_editorial.json");
+const fragmentRequirements = read("data/collect_paris_fragments.json");
 const inRing = (p, ring) => {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -67,8 +80,8 @@ const at = (p) =>
       (poly) => inRing(p, poly[0]) && !poly.slice(1).some((r) => inRing(p, r)),
     );
   });
-const famous = new Set(FAMOUS_STREET_NAMES),
-  main = new Set(MAIN_STREET_NAMES);
+const famous = new Set([...FAMOUS_STREET_NAMES].map(norm)),
+  main = new Set([...MAIN_STREET_NAMES].map(norm));
 const roadNames = new Map();
 for (const f of roads) {
   const n = norm(f.properties.name);
@@ -148,6 +161,8 @@ function add(family, id, name, features, point, extra = {}) {
     .digest("hex")
     .slice(0, 20);
   const art = "/data/collect_images/" + imageKey + ".svg";
+  const curated =
+    family === "monument" && editorial.find((x) => x.name === name);
   const historic =
     family === "street" &&
     explorer.find((x) => norm(x.street_name_clean) === norm(name));
@@ -176,33 +191,42 @@ function add(family, id, name, features, point, extra = {}) {
   const short =
     extra.short ||
     `${name} : ${family === "street" ? "voie" : family === "district" ? "quartier" : "repère"} du catalogue parisien${quarter ? ", repère situé dans le quartier " + quarter : ""}.`;
+  const geography = point
+    ? ` Son repère est situé ${quarter ? "dans le quartier " + quarter + ", " : ""}${arr ? "dans le " + arr + (arr === 1 ? "er" : "e") + " arrondissement de Paris." : "dans le référentiel francilien."}`
+    : "";
   const detailed =
+    curated?.text ||
     historic?.explanation_text ||
     extra.full ||
-    `${short} ${point ? "Le repère cartographique provient du référentiel utilisé dans le jeu. Les voies peuvent traverser plusieurs quartiers." : ""}`;
+    `${short}${geography} ${family === "street" ? "Les quartiers traversés dans le référentiel sont : " + (extra.districts || []).join(", ") + ". La carte utilise la géométrie de jeu ; une voie peut traverser plusieurs quartiers." : "Le repère provient du référentiel cartographique utilisé dans le jeu."}`;
   const record = {
     family,
     source_entity_id: id,
     name,
     image_reference: photo || art,
-    base_rarity: extra.famous
-      ? 1
-      : extra.main
-        ? 2
-        : family === "monument"
-          ? 2
-          : family === "bus"
-            ? 3
-            : 2,
-    fragments_required: historic
-      ? 2 + (records.filter((r) => r.fragments_required).length % 3)
-      : 0,
+    // Same provisional difficulty scale as Camino; observed performance can revise it.
+    base_rarity:
+      family === "street"
+        ? extra.famous
+          ? 1
+          : extra.main
+            ? 2
+            : 4
+        : family === "district"
+          ? 1
+          : 3,
+    fragments_required: curated
+      ? 3
+      : historic
+        ? fragmentRequirements[family + ":" + id] || 3
+        : 0,
     album_slugs: membership,
     description: short,
     short_description: short,
     detailed_description: detailed,
     description_full: detailed,
     description_source:
+      curated?.source ||
       historic?.source_url ||
       extra.source ||
       "https://www.openstreetmap.org/copyright",
@@ -262,6 +286,37 @@ function add(family, id, name, features, point, extra = {}) {
     ].filter(Boolean);
     if (!record.questions.length) record.fragments_required = 0;
   }
+  if (curated && loc) {
+    record.questions = [
+      question(
+        id + ":patrimoine",
+        "Patrimoine",
+        curated.question,
+        curated.answer,
+        curated.distractors,
+        curated.text,
+        [curated.source],
+      ),
+      question(
+        id + ":quartier",
+        "Géographie",
+        "Dans quel quartier administratif se situe le repère de ce monument ?",
+        quarter,
+        official.map((f) => f.properties.l_qu),
+        `Le repère de ${name} appartient au quartier ${quarter} dans le référentiel de jeu.`,
+        [source],
+      ),
+      question(
+        id + ":arrondissement",
+        "Géographie",
+        "Dans quel arrondissement se situe le repère de ce monument ?",
+        String(arr),
+        Array.from({ length: 20 }, (_, i) => String(i + 1)),
+        `Le repère de ${name} appartient au ${arr}${arr === 1 ? "er" : "e"} arrondissement.`,
+        [source],
+      ),
+    ].filter(Boolean);
+  }
   records.push(record);
   // An isolated observed outline is a visual clue, never a fabricated street photograph.
   const lines = [];
@@ -271,6 +326,25 @@ function add(family, id, name, features, point, extra = {}) {
     else v.forEach(walk);
   }
   for (const f of features) walk(f.geometry.coordinates);
+  const hasOutline = lines.some((line) => line.length > 1);
+  const context =
+    !hasOutline && point
+      ? roads.filter((f) => {
+          const coords =
+            f.geometry.type === "LineString"
+              ? f.geometry.coordinates
+              : f.geometry.coordinates.flat();
+          return coords.some(
+            (p) =>
+              Math.abs(p[0] - point[0]) < 0.003 &&
+              Math.abs(p[1] - point[1]) < 0.002,
+          );
+        })
+      : [];
+  const frame =
+    point && !hasOutline
+      ? [point[0] - 0.003, point[0] + 0.003, point[1] - 0.002, point[1] + 0.002]
+      : null;
   const pts = lines.flat(),
     xs = pts.map((p) => p[0]),
     ys = pts.map((p) => p[1]);
@@ -300,20 +374,69 @@ function add(family, id, name, features, point, extra = {}) {
           '" fill="none" stroke="#23814d" stroke-width="5" stroke-linejoin="round"/>',
       )
       .join("");
-  } else
+  } else if (point) {
+    const project = (p) =>
+      `${(40 + ((p[0] - frame[0]) / (frame[1] - frame[0])) * 360).toFixed(1)},${(75 + ((frame[3] - p[1]) / (frame[3] - frame[2])) * 300).toFixed(1)}`;
     graphic =
-      '<path d="M150 310h140M165 300V180l55-45 55 45v120M180 185h80M190 205v80m30-80v80m30-80v80" fill="none" stroke="#23814d" stroke-width="7"/>';
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="560" viewBox="0 0 440 560"><rect width="440" height="560" rx="24" fill="#f9f5e9"/><text x="220" y="52" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#12297a">PARICI · ${escape({ street: "RUE", district: "QUARTIER", monument: "MONUMENT", bus: "TRANSPORT" }[family])}</text>${graphic}<text x="220" y="455" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#12297a">${escape(name.length > 49 ? name.slice(0, 46) + "…" : name)}</text><text x="220" y="515" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#526485">Illustration cartographique · Paris</text><text x="220" y="537" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#526485">© OpenStreetMap contributors · Parici</text></svg>`;
+      '<g clip-path="url(#map-frame)">' +
+      context
+        .map((f) => {
+          const paths =
+            f.geometry.type === "LineString"
+              ? [f.geometry.coordinates]
+              : f.geometry.coordinates;
+          return paths
+            .map(
+              (line) =>
+                '<polyline points="' +
+                line.map(project).join(" ") +
+                '" fill="none" stroke="#a8b5c8" stroke-width="2"/>',
+            )
+            .join("");
+        })
+        .join("") +
+      '<circle cx="220" cy="225" r="10" fill="#23814d" stroke="white" stroke-width="3"/></g>';
+  }
+  const imageKind = photo
+    ? "photograph"
+    : hasOutline
+      ? "outline"
+      : "reference-point";
+  record.illustration.kind = imageKind;
+  record.illustration.caption = photo
+    ? record.illustration.caption
+    : hasOutline
+      ? "Tracé du référentiel de jeu Paris"
+      : "Repère de jeu et voies voisines · Paris";
+  const caption =
+    imageKind === "reference-point"
+      ? "Repère de jeu · voies voisines"
+      : "Illustration cartographique · Paris";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="560" viewBox="0 0 440 560"><defs><clipPath id="map-frame"><rect x="35" y="70" width="370" height="310" rx="12"/></clipPath></defs><rect width="440" height="560" rx="24" fill="#f9f5e9"/><text x="220" y="52" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#12297a">PARICI · ${escape({ street: "RUE", district: "QUARTIER", monument: "MONUMENT", bus: "TRANSPORT" }[family])}</text>${graphic}<text x="220" y="455" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#12297a">${escape(name.length > 49 ? name.slice(0, 46) + "…" : name)}</text><text x="220" y="515" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#526485">${caption}</text><text x="220" y="537" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#526485">© OpenStreetMap contributors · Parici</text></svg>`;
   fs.writeFileSync(path.join(root, art), svg);
 }
 fs.mkdirSync(path.join(root, "data/collect_images"), { recursive: true });
 for (const e of entities.sort((a, b) => a.id.localeCompare(b.id, "fr"))) {
-  const features = roadNames.get(norm(e.sources[0].osmName || e.name)) || [];
-  add("street", e.id, e.name, features, e.sources[0].centroid, {
-    famous: e.sources.some((s) => famous.has(s.name)),
-    main: e.sources.some((s) => main.has(s.name)),
-    districts: [...new Set(e.sources.map((s) => s.quartier))],
-  });
+  const features =
+    entityRoads.get(e.id) ||
+    roadNames.get(norm(e.sources[0].osmName || e.name)) ||
+    [];
+  add(
+    "street",
+    e.id,
+    e.name,
+    features,
+    computeFeatureCollectionMidpoint(features) || e.sources[0].centroid,
+    {
+      famous: e.sources.some(
+        (s) => famous.has(norm(s.name)) || famous.has(norm(s.osmName)),
+      ),
+      main: e.sources.some(
+        (s) => main.has(norm(s.name)) || main.has(norm(s.osmName)),
+      ),
+      districts: [...new Set(e.sources.map((s) => s.quartier))],
+    },
+  );
 }
 for (const f of districts.sort((a, b) =>
   a.properties.nom_qua.localeCompare(b.properties.nom_qua, "fr"),
@@ -365,7 +488,7 @@ const manifest = Object.fromEntries(
 fs.writeFileSync(
   path.join(root, "data/collect_paris_catalog.json"),
   JSON.stringify({
-    version: 1,
+    version: 2,
     generated_from: "Paris checked-in inventories, October 2026",
     albums,
     records,

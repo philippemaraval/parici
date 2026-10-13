@@ -58,6 +58,15 @@
               "type": "string",
               "pattern": "^[0-9]+$"
             }
+          },
+          {
+            "in": "query",
+            "name": "collect",
+            "description": "Déclenche le traitement des quotas et notifications Collect.",
+            "schema": {
+              "type": "string",
+              "enum": ["0", "1"]
+            }
           }
         ],
         "responses": {

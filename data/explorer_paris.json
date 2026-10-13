@@ -102,5 +102,57 @@
     "longitude": 2.35196,
     "source_url": "https://fr.wikipedia.org/wiki/Rue_du_Clo%C3%AEtre-Saint-Merri",
     "image_origin": "Existing Paris Daily photograph: 2026-10-11__rue-du-cloitre-saint-merri.jpg"
+  },
+  {
+    "seed_key": "paris-rive-gauche-01",
+    "way_id": 36729757,
+    "street_name_clean": "Place du Panthéon",
+    "riddle_text": "Une ancienne église est devenue un lieu d’hommage national. Retrouvez la place qui porte le nom de ce monument sur la montagne Sainte-Geneviève.",
+    "hint_text": "Le monument est le Panthéon.",
+    "explanation_text": "Le Panthéon a d’abord été conçu comme l’église Sainte-Geneviève, avant de devenir un lieu d’hommage national. La place porte le nom du monument.",
+    "image_url": "/data/explorer_images/rive-gauche-01.jpg",
+    "latitude": 48.84642,
+    "longitude": 2.34508,
+    "source_url": "https://www.paris-pantheon.fr/decouvrir/histoire-du-pantheon",
+    "image_origin": "Existing Paris Daily photograph: 2026-11-07__place-du-pantheon.jpg"
+  },
+  {
+    "seed_key": "paris-rive-gauche-02",
+    "way_id": 4217165,
+    "street_name_clean": "Rue des Arènes",
+    "riddle_text": "Un théâtre antique se cache dans le Quartier latin. Retrouvez la rue dont le nom rappelle ce vestige de Lutèce.",
+    "hint_text": "Une entrée du square se trouve au numéro 4.",
+    "explanation_text": "Le square des arènes de Lutèce est accessible au 4, rue des Arènes. Le jardin conserve un théâtre antique au cœur du 5e arrondissement.",
+    "image_url": "/data/explorer_images/rive-gauche-02.jpg",
+    "latitude": 48.84488,
+    "longitude": 2.35384,
+    "source_url": "https://www.paris.fr/lieux/square-des-arenes-de-lutece-et-square-capitan-1760",
+    "image_origin": "Existing Paris Daily photograph: 2026-09-24__rue-des-arenes.jpg"
+  },
+  {
+    "seed_key": "paris-rive-gauche-03",
+    "way_id": 1101486837,
+    "street_name_clean": "Place Juliette Gréco",
+    "riddle_text": "La muse de Saint-Germain-des-Prés a donné son nom à une petite place devant l’église. Retrouvez cet hommage à une grande voix de la chanson française.",
+    "hint_text": "La chanteuse est Juliette Gréco.",
+    "explanation_text": "La place Juliette Gréco a été inaugurée le 23 septembre 2021, à l’angle des rues de l’Abbaye et Bonaparte. Elle rend hommage à la chanteuse associée à Saint-Germain-des-Prés.",
+    "image_url": "/data/explorer_images/rive-gauche-03.jpg",
+    "latitude": 48.85436,
+    "longitude": 2.33376,
+    "source_url": "https://www.paris.fr/pages/juliette-greco-et-paris-une-histoire-d-amour-12206",
+    "image_origin": "Existing Paris Daily photograph: 2027-04-05__place-juliette-greco.jpg"
+  },
+  {
+    "seed_key": "paris-rive-gauche-04",
+    "way_id": 1101486834,
+    "street_name_clean": "Place Saint-Germain des Prés",
+    "riddle_text": "Une ancienne abbaye a donné son nom à tout un quartier de la rive gauche. Retrouvez la place devant son église.",
+    "hint_text": "Cherchez l’église Saint-Germain-des-Prés.",
+    "explanation_text": "L’église Saint-Germain-des-Prés est héritière d’une abbaye fondée au VIe siècle. Le monument se trouve au 3, place Saint-Germain des Prés.",
+    "image_url": "/data/explorer_images/rive-gauche-04.jpg",
+    "latitude": 48.85397,
+    "longitude": 2.33366,
+    "source_url": "https://a06-v7.apps.paris.fr/a06/jsp/site/plugins/odjcp/DoDownload.jsp?id_entite=61222&id_type_entite=6",
+    "image_origin": "Existing Paris Daily photograph: 2026-12-11__place-saint-germain-des-pres.jpg"
   }
 ]

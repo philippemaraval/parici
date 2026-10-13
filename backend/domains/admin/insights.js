@@ -111,7 +111,11 @@ async function quality(pool) {
         issue: "Fichier image local introuvable",
         url: "/admin/explorer/",
       });
+  const editorial =
+    await require("../collect/editorial-health").editorialHealth(pool);
+  tasks.push(...editorial.issues);
   return {
+    editorial,
     tasks: tasks.slice(0, 200),
     totalIssues: tasks.length,
     upcomingDaily: daily.rows,
@@ -119,7 +123,7 @@ async function quality(pool) {
     imagesChecked,
     generatedAt: new Date().toISOString(),
     coverage:
-      "Contrôles des références, champs et fichiers image locaux. Les images externes ne sont pas testées par le serveur ; leur accès reste à vérifier dans l’aperçu.",
+      "Contrôles des références, champs et fichiers image locaux. Les effectifs des albums sont comparés au référentiel. Les images externes et la pertinence visuelle restent à vérifier dans l’aperçu ; les illustrations cartographiques ne sont pas des photos.",
   };
 }
 async function analytics(pool, days = 30) {

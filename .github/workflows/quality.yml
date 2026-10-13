@@ -25,6 +25,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run deps:check
       - run: npm run data:check
+      - run: npm run content:check
       - run: npm run audit:production
       - run: npm test
       - run: npm run build

@@ -40,6 +40,8 @@ test("une réponse Render mise en file attend le bon commit sans redéclencher l
   global.fetch=async(url,options={})=>{
     url=String(url);
     if(url.includes('/api/editor/'))return new Response(null,{status:401});
+    if(url.endsWith('/api/health'))return Response.json({ok:true,database:'ready',backendCommit:'expected-sha'});
+    if(url.endsWith('/admin/build-info.json'))return Response.json({commit:'expected-sha'});
     if(options.method==='POST'){posts++;return new Response(null,{status:202});}
     if(url.endsWith('/deploys?limit=20')){lists++;return Response.json(lists===1?[{deploy:{id:'old',status:'live',commit:{id:'old-sha'}}}]:[{deploy:{id:'queued',status:'build_in_progress',commit:{id:'expected-sha'}}}]);}
     if(url.includes('/deploys/queued'))return Response.json({id:'queued',status:'live',commit:{id:'expected-sha'}});
