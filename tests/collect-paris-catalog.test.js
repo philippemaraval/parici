@@ -16,6 +16,10 @@ test("Paris Collect catalog uses existing identities, complete assets and source
       fs.existsSync(path.join(__dirname, "..", card.image_reference)),
       card.image_reference,
     );
+    if (card.illustration.kind !== "photograph") {
+      assert.equal(card.image_reference, "/apple-touch-icon.png", key);
+      assert.equal(card.illustration.source, "parici-logo", key);
+    }
     assert.ok(card.description_source.startsWith("https://"));
     assert.ok(card.album_slugs.every((slug) => albums.has(slug)));
     if (card.fragments_required) {

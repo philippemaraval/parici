@@ -19,6 +19,7 @@ function photoRevision(manifest = photoManifest()) {
           .map(([key, value]) => [key, value.image]),
       ),
     )
+    .update("parici-logo-fallback-v1")
     .digest("hex");
 }
 async function applyPhotographs(client) {
@@ -41,6 +42,19 @@ async function applyPhotographs(client) {
    WHERE c.family=p.family AND c.source_entity_id=p.source_entity_id
    AND c.image_override IS NULL AND c.image_reference IS DISTINCT FROM p.image`,
     [JSON.stringify(photos)],
+  );
+  const catalog = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "../../../data/collect_paris_catalog.json"), "utf8"),
+  );
+  const withoutPhoto = catalog.records
+    .filter((card) => card.illustration.kind !== "photograph")
+    .map(({ family, source_entity_id }) => ({ family, source_entity_id }));
+  await client.query(
+    `UPDATE cards c SET image_reference='/apple-touch-icon.png'
+   FROM jsonb_to_recordset($1::jsonb) AS p(family text,source_entity_id text)
+   WHERE c.family=p.family AND c.source_entity_id=p.source_entity_id
+   AND c.image_override IS NULL AND c.image_reference IS DISTINCT FROM '/apple-touch-icon.png'`,
+    [JSON.stringify(withoutPhoto)],
   );
   await client.query(
     "INSERT INTO app_settings(key,value_text) VALUES('parici_collect_photo_revision',$1) ON CONFLICT(key) DO UPDATE SET value_text=EXCLUDED.value_text",

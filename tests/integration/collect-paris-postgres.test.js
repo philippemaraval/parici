@@ -73,6 +73,9 @@ test(
       photoCards.push(row);
     }
     const photoOwner = await register("photo_upgrade_probe");
+    const logoCard = (await db.pool.query("SELECT * FROM cards WHERE family='bus' AND image_override IS NULL ORDER BY id LIMIT 1")).rows[0];
+    assert.ok(logoCard);
+    await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=$1", [logoCard.id]);
     await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[photoOwner.id,photoCards[0].id]);
     await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=ANY($1::bigint[])",[photoCards.map(c=>c.id)]);
     await db.pool.query("UPDATE cards SET image_override='/data/manual.jpg',image_credit_override='Crédit manuel' WHERE id=$1",[photoCards[1].id]);
@@ -90,6 +93,7 @@ test(
     assert.equal(manual.image_reference,'/data/collect_images/old-seed.svg');
     assert.equal(manual.image_override,'/data/manual.jpg');
     assert.equal(manual.image_credit_override,'Crédit manuel');
+    assert.equal((await db.pool.query("SELECT image_reference FROM cards WHERE id=$1", [logoCard.id])).rows[0].image_reference, '/apple-touch-icon.png');
     assert.equal(Number((await db.pool.query("SELECT COUNT(*) FROM card_copies WHERE user_id=$1",[photoOwner.id])).rows[0].count),1);
     assert.equal((await db.pool.query("SELECT value_text FROM app_settings WHERE key='collect_launch_at'")).rows[0].value_text,'infinity');
     // Restore the probe artwork for the later catalogue/browser assertions.
@@ -640,6 +644,9 @@ test(
       for (const card of photographSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[player.id,card.id]);
       }
+      const logoSample = cards.find(c => c.family === 'bus' && c.image_reference === '/apple-touch-icon.png');
+      assert.ok(logoSample);
+      await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[player.id,logoSample.id]);
       await page.goto(base + "/collect.html?panel=collection");
       for (const width of [390, 1440]) {
         await page.setViewportSize({width,height:900});
@@ -655,6 +662,15 @@ test(
           if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
           await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${width}.png`});
         }
+        await page.locator('#collect-filter-family').selectOption('bus');
+        await page.locator('#collect-search').fill(logoSample.name);
+        const logoTile = page.locator(`.collect-card[data-card-id="${logoSample.id}"]`);
+        await logoTile.waitFor({state:'visible'});
+        const logoImage = logoTile.locator('.collect-card-art--logo>img');
+        await logoImage.evaluate(img => img.decode());
+        assert.equal(await logoImage.getAttribute('src'), '/apple-touch-icon.png');
+        assert.equal(await logoImage.evaluate(img => getComputedStyle(img).objectFit), 'contain');
+        await logoTile.screenshot({path:`/tmp/parici-collect-review/logo-bus-${width}.png`});
       }
       await page.setViewportSize({width:390,height:844});
       await page.goto(base + "/collect.html");

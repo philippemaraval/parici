@@ -210,7 +210,7 @@ function add(family, id, name, features, point, extra = {}) {
     family,
     source_entity_id: id,
     name,
-    image_reference: photo || art,
+    image_reference: photo || "/apple-touch-icon.png",
     // Same provisional difficulty scale as Camino; observed performance can revise it.
     base_rarity:
       family === "street"
@@ -247,17 +247,17 @@ function add(family, id, name, features, point, extra = {}) {
     centroid: point,
     art_key: imageKey,
     illustration: {
-      source: photo ? "parici-photo" : "parici-cartography",
+      source: photo ? "parici-photo" : "parici-logo",
       caption: photo
         ? "Photographie du référentiel Daily Paris"
-        : "Illustration cartographique du référentiel Paris",
+        : "Logo Parici",
       sourcePage: photo
         ? "https://www.google.com/streetview/"
-        : "https://www.openstreetmap.org/copyright",
-      author: photo ? "Google Street View" : "Parici · données OpenStreetMap",
+        : null,
+      author: photo ? "Google Street View" : "Parici",
       license: photo
         ? "Attribution conservée sur la photographie"
-        : "© OpenStreetMap contributors · ODbL",
+        : "Logo Parici",
     },
     questions: [],
   };
@@ -405,19 +405,13 @@ function add(family, id, name, features, point, extra = {}) {
         .join("") +
       '<circle cx="220" cy="225" r="10" fill="#23814d" stroke="white" stroke-width="3"/></g>';
   }
-  const imageKind = photo
-    ? "photograph"
-    : hasOutline
-      ? "outline"
-      : "reference-point";
+  const imageKind = photo ? "photograph" : "logo";
   record.illustration.kind = imageKind;
   record.illustration.caption = photo
     ? record.illustration.caption
-    : hasOutline
-      ? "Tracé du référentiel de jeu Paris"
-      : "Repère de jeu et voies voisines · Paris";
+    : "Logo Parici";
   const caption =
-    imageKind === "reference-point"
+    !hasOutline
       ? "Repère de jeu · voies voisines"
       : "Illustration cartographique · Paris";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="560" viewBox="0 0 440 560"><defs><clipPath id="map-frame"><rect x="35" y="70" width="370" height="310" rx="12"/></clipPath></defs><rect width="440" height="560" rx="24" fill="#f9f5e9"/><text x="220" y="52" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#12297a">PARICI · ${escape({ street: "RUE", district: "QUARTIER", monument: "MONUMENT", bus: "TRANSPORT" }[family])}</text>${graphic}<text x="220" y="455" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#12297a">${escape(name.length > 49 ? name.slice(0, 46) + "…" : name)}</text><text x="220" y="515" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#526485">${caption}</text><text x="220" y="537" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#526485">© OpenStreetMap contributors · Parici</text></svg>`;

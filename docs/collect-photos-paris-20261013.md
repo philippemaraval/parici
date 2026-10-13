@@ -9,13 +9,15 @@
 | Monuments | 37 | 107 | 34,58 % |
 | Transports | 0 | 45 | 0 % |
 
-Le catalogue précédent contenait 301 photographies, toutes pour des rues (5,27 % des rues). Cette livraison ajoute 4 457 photographies : 4 349 rues, 71 quartiers et 37 monuments. Les 1 061 rues restantes conservent leur illustration cartographique. Le seuil de 80 % porte sur les 5 711 cartes de rues, sans retirer les lieux difficiles du dénominateur.
+Les objectifs ultérieurs de 95 % des voies et 100 % des autres familles ne sont pas atteints. Il manque au minimum 776 photographies de voies, ainsi que 9 de quartiers, 70 de monuments et 45 de transports. Les panoramas déjà écartés ne peuvent pas être comptés comme photos de ces lieux sur la seule base de leur proximité : certains montrent un autre axe, une façade masquée ou une prise de vue sans lien avec la ligne de transport.
+
+Le catalogue précédent contenait 301 photographies, toutes pour des rues (5,27 % des rues). Cette livraison ajoute 4 457 photographies : 4 349 rues, 71 quartiers et 37 monuments. Les 1 185 cartes restantes affichent le logo Parici, dont 1 061 rues. Le seuil de 80 % porte sur les 5 711 cartes de rues, sans retirer les lieux difficiles du dénominateur.
 
 ## Sélection et traçabilité
 
 Les images sont des photographies Street View réelles. Les panoramas sont demandés par coordonnées puis épinglés par identifiant de panorama. Les prises de vue des rues suivent la tangente locale de leur géométrie de jeu, avec deux sens opposés disponibles au contrôle. Le panorama retenu est à 18 mètres au plus de cette géométrie. Les quartiers sont contrôlés dans leur polygone administratif et à 25 mètres au plus d'une voie ; les monuments sont contrôlés à 150 mètres au plus de leur repère.
 
-Le contrôle visuel a porté sur les cadrages des 477 premiers ajouts, puis sur les 4 317 candidates supplémentaires de rues : 3 980 ont été retenues, 337 écartées (murs, intérieurs sans rapport avec le lieu, tunnels parasites, obstacles, flou ou voie insuffisamment visible). Les monuments masqués ou mal cadrés conservent leur illustration cartographique. La présence d'un panorama proche et une réponse HTTP réussie ne valent pas validation du sujet photographié.
+Le contrôle visuel a porté sur les cadrages des 477 premiers ajouts, puis sur les 4 317 candidates supplémentaires de rues : 3 980 ont été retenues, 337 écartées (murs, intérieurs sans rapport avec le lieu, tunnels parasites, obstacles, flou ou voie insuffisamment visible). Les monuments masqués ou mal cadrés affichent le logo Parici jusqu’à l’obtention d’une photographie vérifiée. La présence d'un panorama proche et une réponse HTTP réussie ne valent pas validation du sujet photographié.
 
 `data/collect_photos_paris.json` conserve pour chaque nouvelle photo la source, l'identifiant du panorama, les coordonnées, la distance géométrique, la date de prise de vue, le copyright du fournisseur, l'orientation, la décision visuelle et le SHA-256 du fichier. Les clés d'API et les candidates rejetées ne sont pas livrées. Les photos nouvelles datent de 2016 ou après ; leur disponibilité ne garantit pas un état actuel de la rue.
 
