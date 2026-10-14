@@ -652,12 +652,12 @@ test(
         await (await response).finished();
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       }
-      const photographSamples = ["Place Georges Pompidou", "Rue de la Mire", "Opéra Bastille", "Bonne-Nouvelle"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
+      const photographSamples = ["Rue Pierre Lescot", "Tunnel d'Italie", "Place du Musée du Louvre", "Esplanade Henri de France"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
       assert.ok(photographSamples.every(Boolean));
       for (const card of photographSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const wikimediaSamples = ["Métro 1", "Panthéon", "Colonne Vendôme", "Rue Crémieux"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
+      const wikimediaSamples = ["Métro 1", "Allée Rose Dieng-Kuntz", "Impasse des Arbalétriers", "Rue Éva Kotchever"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
       assert.ok(wikimediaSamples.every(Boolean));
       for (const card of wikimediaSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);

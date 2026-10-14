@@ -1,5 +1,9 @@
 # Collect Paris : enrichissement Google et contrôle des cadrages
 
+Ce rapport décrit le premier lot du 14 octobre. La recherche suivante ajoute
+128 photographies et porte les voies à 95,52 % : voir
+[le bilan complémentaire](collect-photos-paris-expansion-20261014.md).
+
 ## Résultat
 
 Le catalogue conserve ses 5 943 cartes et leurs identités. Par rapport au commit

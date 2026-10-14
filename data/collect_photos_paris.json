@@ -182032,5 +182032,4305 @@
       "sha256": "9fd7927c830f0a9ba04aeb97d485a4b2e17505dd70eef59d4d84e5db6dbe0a1e",
       "evidence": "Vue reconnaissable de la voie ou de son accès, perspective contrôlée visuellement après comparaison des deux sens."
     }
+  },
+  "street:Rue Louis Pergaud": {
+    "image": "/data/collect_images/photo-02d5f11edd06657ebfd3-3b2e19724e47.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=TIdwDcSttHbzYI1lWu9vjw&heading=302.37987040848816",
+    "verifiedEntity": "street:Rue Louis Pergaud",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.348468832683153,
+        48.8168372817455
+      ],
+      "target": [
+        2.3482179274218424,
+        48.81694777705395
+      ],
+      "requestedCoordinate": [
+        2.34842,
+        48.81685
+      ],
+      "distanceMeters": 0.5,
+      "captureDate": "2020-03",
+      "copyright": "© Google",
+      "panoId": "TIdwDcSttHbzYI1lWu9vjw",
+      "heading": 302.37987040848816,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "3b2e19724e475c51b37f846611af5d6f97e5fa2774756ed8b949d119bd9f0608",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Tunnel d'Italie": {
+    "image": "/data/collect_images/photo-031c16cc836ee31ea266-2abdb0d3ab05.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=jhnecF_r4fiiYhAMXqymGA&heading=275.2906299601607",
+    "verifiedEntity": "street:Tunnel d'Italie",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.36120913218219,
+        48.81628716076963
+      ],
+      "target": [
+        2.3582996644413425,
+        48.81604
+      ],
+      "requestedCoordinate": [
+        2.3612,
+        48.81628
+      ],
+      "distanceMeters": 1,
+      "captureDate": "2026-07",
+      "copyright": "© Google",
+      "panoId": "jhnecF_r4fiiYhAMXqymGA",
+      "heading": 275.2906299601607,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "2abdb0d3ab0504716d96cb6d296e8979d48536ea2424a04b63f6c77e52b4f339",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Rudolf Noureev": {
+    "image": "/data/collect_images/photo-09ebb5817fd01dd7e82a-4edb571db1f2.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=ZTyJTsQeCr8mB1gHYfDiOg&heading=46.4509640205772",
+    "verifiedEntity": "street:Rue Rudolf Noureev",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.305785116943728,
+        48.8916989786431
+      ],
+      "target": [
+        2.3058999999999976,
+        48.891819999999996
+      ],
+      "requestedCoordinate": [
+        2.30574,
+        48.89172
+      ],
+      "distanceMeters": 4,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "ZTyJTsQeCr8mB1gHYfDiOg",
+      "heading": 46.4509640205772,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "4edb571db1f29690939016e04e3f9d49f51894f49bd797d1fc363576178ee1df",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Michel-Ange - Quartier Saint-Lambert": {
+    "image": "/data/collect_images/photo-0db3549d3e048199809b-531fc8abf993.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=Eu0jyN2JQZvIKz7AtOBPXg&heading=213.35821370221734",
+    "verifiedEntity": "street:Rue Michel-Ange - Quartier Saint-Lambert",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.292084032990878,
+        48.82711143357849
+      ],
+      "target": [
+        2.2921349999999974,
+        48.827175
+      ],
+      "requestedCoordinate": [
+        2.29213,
+        48.82717
+      ],
+      "distanceMeters": 7.3,
+      "captureDate": "2018-07",
+      "copyright": "© Google",
+      "panoId": "Eu0jyN2JQZvIKz7AtOBPXg",
+      "heading": 213.35821370221734,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "531fc8abf9932318d63586a55a0d3f6f38844a2c501110ed812199d976d0de7b",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée Maryse Bastié": {
+    "image": "/data/collect_images/photo-104d315e13d8b4df8d74-9be9b7382b36.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=JTnWtJ3UEoySdPc4jJLZ5Q&heading=307.2188005123462",
+    "verifiedEntity": "street:Allée Maryse Bastié",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.277681281502876,
+        48.83151068062689
+      ],
+      "target": [
+        2.2777799999999973,
+        48.831485
+      ],
+      "requestedCoordinate": [
+        2.27771,
+        48.83152
+      ],
+      "distanceMeters": 2.3,
+      "captureDate": "2026-05",
+      "copyright": "© Google",
+      "panoId": "JTnWtJ3UEoySdPc4jJLZ5Q",
+      "heading": 307.2188005123462,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "9be9b7382b36d8e9fd8e8b2b43cbef48f42cd80ef0d96c962724266b60bf724b",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Choderlos de Laclos": {
+    "image": "/data/collect_images/photo-13640f168c4d80883146-a970a2bb55cb.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=DnUbKgmHEieG6aFtFOs4vA&heading=318.31711027002086",
+    "verifiedEntity": "street:Rue Choderlos de Laclos",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.378235957588796,
+        48.83269316063966
+      ],
+      "target": [
+        2.378716608244693,
+        48.83235462098455
+      ],
+      "requestedCoordinate": [
+        2.37827,
+        48.8327
+      ],
+      "distanceMeters": 2.6,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "DnUbKgmHEieG6aFtFOs4vA",
+      "heading": 318.31711027002086,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "a970a2bb55cb46253f8a5ba6d28b30e68b2d5ffd9bf00dc48eefcfa4795e1dce",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Square Victorien Sardou": {
+    "image": "/data/collect_images/photo-179e4a29870c0832c71e-efa2d4e14dda.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=S_SHKnqkAnKz8LOqXxqq0Q&heading=31.81962896398079",
+    "verifiedEntity": "street:Square Victorien Sardou",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.267489087686724,
+        48.84311414283796
+      ],
+      "target": [
+        2.2675364658681025,
+        48.84318940652011
+      ],
+      "requestedCoordinate": [
+        2.26747,
+        48.84312
+      ],
+      "distanceMeters": 1.5,
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "panoId": "S_SHKnqkAnKz8LOqXxqq0Q",
+      "heading": 31.81962896398079,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "efa2d4e14dda6d6e8b351a7a313ba1d36fa177a715a221e7b4297dfac7332613",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Pierre Mauroy": {
+    "image": "/data/collect_images/photo-1a8ce3b7521c81e0fa9c-0671990bb852.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=-YCThvlbGDwJo90ANaBS0Q&heading=177.10508577331484",
+    "verifiedEntity": "street:Rue Pierre Mauroy",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.357797145223933,
+        48.89852307756939
+      ],
+      "target": [
+        2.357983608680406,
+        48.89691504375269
+      ],
+      "requestedCoordinate": [
+        2.35785,
+        48.89852
+      ],
+      "distanceMeters": 3.9,
+      "captureDate": "2025-04",
+      "copyright": "© Google",
+      "panoId": "-YCThvlbGDwJo90ANaBS0Q",
+      "heading": 177.10508577331484,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0671990bb85216611cfe58865af69dbfced22eb7a8189c9fe04096d0c83de24a",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Pauline Kergomard": {
+    "image": "/data/collect_images/photo-1dc1dbc3b0fda77d33b6-464fef6d9cef.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=PRp75kzHxPoQMDS7Iwf5Yg&heading=276.19567484020735",
+    "verifiedEntity": "street:Rue Pauline Kergomard",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.407633947398099,
+        48.85497026852
+      ],
+      "target": [
+        2.4068524775075004,
+        48.85534806108109
+      ],
+      "requestedCoordinate": [
+        2.40759,
+        48.85497
+      ],
+      "distanceMeters": 3.2,
+      "captureDate": "2017-12",
+      "copyright": "© Google",
+      "panoId": "PRp75kzHxPoQMDS7Iwf5Yg",
+      "heading": 276.19567484020735,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "464fef6d9cefae101a9c759118b1ee886e37ccef2404b96703ecaf36a6053ec6",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Thomas Sankara": {
+    "image": "/data/collect_images/photo-2bf03dc494cfa2378f56-6a18aff52678.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=SoMqOk1Vp8CmGgBMdHu7BQ&heading=65.27567592734829",
+    "verifiedEntity": "street:Passage Thomas Sankara",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.387698983171094,
+        48.86401989281874
+      ],
+      "target": [
+        2.387908073799338,
+        48.86410602459978
+      ],
+      "requestedCoordinate": [
+        2.38767,
+        48.86403
+      ],
+      "distanceMeters": 2,
+      "captureDate": "2026-08",
+      "copyright": "© Google",
+      "panoId": "SoMqOk1Vp8CmGgBMdHu7BQ",
+      "heading": 65.27567592734829,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "6a18aff52678bfc045eb81ede35e371a4eed2baadb1ec44507a1be690c2155fc",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Impasse Carrière Mainguet": {
+    "image": "/data/collect_images/photo-3125a6baa6fa7d17aa2e-4ffa8032012c.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=dgaSWsZRZ9mb2SW84hHMhA&heading=250.03240956055618",
+    "verifiedEntity": "street:Impasse Carrière Mainguet",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.387985603493876,
+        48.85677507781428
+      ],
+      "target": [
+        2.3882690397811563,
+        48.85683654914187
+      ],
+      "requestedCoordinate": [
+        2.38807,
+        48.85679
+      ],
+      "distanceMeters": 6.4,
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "panoId": "dgaSWsZRZ9mb2SW84hHMhA",
+      "heading": 250.03240956055618,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "4ffa8032012c3b80a84567076a1ce786c203394e4f60ff3a50173464017626b1",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Promenade Plantée - Quartier des Quinze-Vingts": {
+    "image": "/data/collect_images/photo-4692ebd3eb189df75414-943a1591292c.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=XeaB3kRavezT-JlYzgLEiQ&heading=320.5611103502985",
+    "verifiedEntity": "street:Promenade Plantée - Quartier des Quinze-Vingts",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.371166222890463,
+        48.84958493965058
+      ],
+      "target": [
+        2.3711349999999998,
+        48.84961
+      ],
+      "requestedCoordinate": [
+        2.37116,
+        48.84959
+      ],
+      "distanceMeters": 0.7,
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "panoId": "XeaB3kRavezT-JlYzgLEiQ",
+      "heading": 320.5611103502985,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "943a1591292c2caec44a6efb189bd4af2a4c16a744a84b57015ad2661197f61e",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Jacqueline Giraud": {
+    "image": "/data/collect_images/photo-4e5917d387f263fcd206-0d8a16c71146.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=Vn_WJQr4jnR_11Y2S1mq7Q&heading=98.53544798874486",
+    "verifiedEntity": "street:Passage Jacqueline Giraud",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.384082330559165,
+        48.84865194870502
+      ],
+      "target": [
+        2.38441600146419,
+        48.84864812889057
+      ],
+      "requestedCoordinate": [
+        2.38409,
+        48.84868
+      ],
+      "distanceMeters": 3.2,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "Vn_WJQr4jnR_11Y2S1mq7Q",
+      "heading": 98.53544798874486,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0d8a16c7114686866401021f07d751ad539e6d23c8db572ce874ee440e0b756e",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue George Gershwin": {
+    "image": "/data/collect_images/photo-50b157616c4c1e90acf4-9f6ec9b6c39b.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=OL-nvQosBIdT1LNXp-5u3w&heading=227.84620442247004",
+    "verifiedEntity": "street:Rue George Gershwin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.38450290071395,
+        48.8359820032585
+      ],
+      "target": [
+        2.3841176413920406,
+        48.83580301281475
+      ],
+      "requestedCoordinate": [
+        2.38447,
+        48.836
+      ],
+      "distanceMeters": 3.1,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "OL-nvQosBIdT1LNXp-5u3w",
+      "heading": 227.84620442247004,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "9f6ec9b6c39b06df6c4b75d4129723e2a16ab72a70cb68fc0026471065add912",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Place Jean Marais": {
+    "image": "/data/collect_images/photo-536599f254a26027c4b9-f0d59d322084.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=NyfaGlTyO2gUnRN0whdH_w&heading=153.12777717400786",
+    "verifiedEntity": "street:Place Jean Marais",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.341413173249994,
+        48.88656948625435
+      ],
+      "target": [
+        2.341320723400522,
+        48.886689454804944
+      ],
+      "requestedCoordinate": [
+        2.3413673440737997,
+        48.88654710932103
+      ],
+      "distanceMeters": 0,
+      "captureDate": "2025-04",
+      "copyright": "© Google",
+      "panoId": "NyfaGlTyO2gUnRN0whdH_w",
+      "heading": 153.12777717400786,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "f0d59d32208474bef82c31ad7d088276eb82f585426154b9c7c9039000794024",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Place de la Laïcité": {
+    "image": "/data/collect_images/wikimedia-6730e81ad9689993471521f6.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Guilhem Vellut from Paris, France",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Place_de_la_La%C3%AFcit%C3%A9_@_Near_Parc_Andr%C3%A9_Citro%C3%ABn_@_Paris_15_(32996710211).jpg",
+    "verifiedEntity": "street:Place de la Laïcité",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Place de la Laïcité",
+      "articleURL": "https://fr.wikipedia.org/wiki/Place_de_la_La%C3%AFcit%C3%A9",
+      "articleCoordinate": [
+        2.27499712,
+        48.84380129
+      ],
+      "catalogTarget": [
+        2.274981214757486,
+        48.843792522462
+      ],
+      "commonsFile": "Place_de_la_Laïcité_@_Near_Parc_André_Citroën_@_Paris_15_(32996710211).jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Place_de_la_La%C3%AFcit%C3%A9_%40_Near_Parc_Andr%C3%A9_Citro%C3%ABn_%40_Paris_15_%2832996710211%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "d35828fd7c6da6dec00a1fc102110d701a1fb8dc",
+      "licenseURL": "https://creativecommons.org/licenses/by/2.0",
+      "captureDate": "2017-02-25 18:07",
+      "sha256": "6730e81ad9689993471521f693351d38790037c47463f4d35a74a4ea35ea0887",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Promenade Cécile Chaminade": {
+    "image": "/data/collect_images/photo-66c4f942364c08aba97f-e44d9d0bea64.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=Bf034zp-jS9oPiwOZjBfUA&heading=247.00748316187264",
+    "verifiedEntity": "street:Promenade Cécile Chaminade",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.326741358528214,
+        48.8834306980245
+      ],
+      "target": [
+        2.326033442953928,
+        48.88323316513109
+      ],
+      "requestedCoordinate": [
+        2.3266567352128806,
+        48.883414284503274
+      ],
+      "distanceMeters": 6.5,
+      "captureDate": "2023-02",
+      "copyright": "© Google",
+      "panoId": "Bf034zp-jS9oPiwOZjBfUA",
+      "heading": 247.00748316187264,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "e44d9d0bea64b7122501da971eb130292bf172585834bd621c82e8e088cd6cec",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Rue Laurence Savart": {
+    "image": "/data/collect_images/photo-6c8d430618acd569d027-373e18e1de2f.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=TCqh8Dqnudg0UhdJfjU-rw&heading=74.54429346577547",
+    "verifiedEntity": "street:Rue Laurence Savart",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.392492100911694,
+        48.86783927292391
+      ],
+      "target": [
+        2.3935456562365602,
+        48.86812363624516
+      ],
+      "requestedCoordinate": [
+        2.39249,
+        48.86787
+      ],
+      "distanceMeters": 3.4,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "TCqh8Dqnudg0UhdJfjU-rw",
+      "heading": 74.54429346577547,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "373e18e1de2fe79ef15f91da509f45da73af75d0a25e872140aa0a1c2066d901",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Sainte-Anne": {
+    "image": "/data/collect_images/photo-6d91cf9d30ee554e8607-ed3e15ad9eb1.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=T20kJZkDTZXUv57pEjuH1w&heading=287.37939331927197",
+    "verifiedEntity": "street:Passage Sainte-Anne",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.335760494114047,
+        48.86804608330358
+      ],
+      "target": [
+        2.3359,
+        48.868
+      ],
+      "requestedCoordinate": [
+        2.33573,
+        48.868035000000006
+      ],
+      "distanceMeters": 1.8,
+      "captureDate": "2017-11",
+      "copyright": "© Google",
+      "panoId": "T20kJZkDTZXUv57pEjuH1w",
+      "heading": 287.37939331927197,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "ed3e15ad9eb1a888c620c7fa8dafddbe39054b1c0ee8765b6759bcc91edb723e",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Pierre Jean Jouve": {
+    "image": "/data/collect_images/photo-71c3100f41621d7c2b18-09a413bcc916.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=4HYXeNpXJZM37Imt9ETYzA&heading=249.18249503099088",
+    "verifiedEntity": "street:Rue Pierre Jean Jouve",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.385945296809207,
+        48.88878704431261
+      ],
+      "target": [
+        2.38561052560575,
+        48.88871039812032
+      ],
+      "requestedCoordinate": [
+        2.38594,
+        48.88879
+      ],
+      "distanceMeters": 0.5,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "4HYXeNpXJZM37Imt9ETYzA",
+      "heading": 249.18249503099088,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "09a413bcc916a3c436e0e35d481bfce66e6f79428bbd2621ae4bc47cca77c6f6",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Adrien Lesesne": {
+    "image": "/data/collect_images/photo-77cc717bd9d4782cb3de-52d8b9f593a9.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=JJeRhKhdZga7tCiREKmGiA&heading=6.25236491380025",
+    "verifiedEntity": "street:Rue Adrien Lesesne",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.348058984858298,
+        48.90138971886189
+      ],
+      "target": [
+        2.3480550000000004,
+        48.90138
+      ],
+      "requestedCoordinate": [
+        2.34806,
+        48.90141
+      ],
+      "distanceMeters": 0.2,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "JJeRhKhdZga7tCiREKmGiA",
+      "heading": 6.25236491380025,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "52d8b9f593a9eeb48d1d345710d7ba5689c2e24524300ae9e067318e4a1dcc94",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Square Roland Garros": {
+    "image": "/data/collect_images/photo-77fa296f67bb73e1c467-d72df59941ee.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=-ABJlRu2S0ivzo2EebGg7A&heading=313.50373943043087",
+    "verifiedEntity": "street:Square Roland Garros",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.408497591477298,
+        48.86784439097438
+      ],
+      "target": [
+        2.4083239788019646,
+        48.86793976457365
+      ],
+      "requestedCoordinate": [
+        2.40848,
+        48.86784
+      ],
+      "distanceMeters": 1.4,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "-ABJlRu2S0ivzo2EebGg7A",
+      "heading": 313.50373943043087,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "d72df59941ee359e5c45db789002b5906989051296f73b7a9348f60fc60b5bf5",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée Celestino Alfonso": {
+    "image": "/data/collect_images/photo-7c126368c4ef9d48ede5-1dd081c7b18e.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=NcJVa2pi_xd7L4Zwmgf5wg&heading=126.54283443670829",
+    "verifiedEntity": "street:Allée Celestino Alfonso",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.377117066887005,
+        48.82997050175158
+      ],
+      "target": [
+        2.3773815963172917,
+        48.82984144374206
+      ],
+      "requestedCoordinate": [
+        2.37718,
+        48.83001
+      ],
+      "distanceMeters": 5.1,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "NcJVa2pi_xd7L4Zwmgf5wg",
+      "heading": 126.54283443670829,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "1dd081c7b18e1d28cead1b21a9a71c909bd53f242d46f86954f83fd334787079",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Impasse Raymond Queneau": {
+    "image": "/data/collect_images/photo-8cadb408e8aafe1a7a65-748455f925ad.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=XkmV99Ut4l40kD7tXYTzfA&heading=9.333626662786514",
+    "verifiedEntity": "street:Impasse Raymond Queneau",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.361570584044712,
+        48.89539629851186
+      ],
+      "target": [
+        2.361598040822064,
+        48.89543020411032
+      ],
+      "requestedCoordinate": [
+        2.3615980449827396,
+        48.895430224913696
+      ],
+      "distanceMeters": 1.5,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "XkmV99Ut4l40kD7tXYTzfA",
+      "heading": 9.333626662786514,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "748455f925add503b1d7e5e225173bde2987576e260a6c0d5b617250a32c307f",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Dejean": {
+    "image": "/data/collect_images/photo-8cb92dc5f19b3aa55cf6-8ef1085511f6.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=GBISttzGZEIvNbJ-bs_CKg&heading=300.6092393584515",
+    "verifiedEntity": "street:Rue Dejean",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.350981636433769,
+        48.88712006015031
+      ],
+      "target": [
+        2.3504900001644704,
+        48.88734499992924
+      ],
+      "requestedCoordinate": [
+        2.35098,
+        48.88714
+      ],
+      "distanceMeters": 2.2,
+      "captureDate": "2026-06",
+      "copyright": "© Google",
+      "panoId": "GBISttzGZEIvNbJ-bs_CKg",
+      "heading": 300.6092393584515,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "8ef1085511f6c49a6c917e4da673374300413ae88a9a09fe1b6e9299a1e3dff9",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Impasse Mathieu": {
+    "image": "/data/collect_images/wikimedia-d7868bf0ebe616f240229f32.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Mathieu_-_Paris_XV_(FR75)_-_2021-08-09_-_1.jpg",
+    "verifiedEntity": "street:Impasse Mathieu",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Mathieu",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Mathieu",
+      "articleCoordinate": [
+        2.31310778,
+        48.84115756
+      ],
+      "catalogTarget": [
+        2.3132193914024515,
+        48.841084496323674
+      ],
+      "commonsFile": "Impasse_Mathieu_-_Paris_XV_(FR75)_-_2021-08-09_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Impasse_Mathieu_-_Paris_XV_%28FR75%29_-_2021-08-09_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "c43bdac2672e15d075f33dc08c98cd89bf9c25be",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-09 18:02:29",
+      "sha256": "d7868bf0ebe616f240229f32d7ff704d5a844b717b9cf7f81016cc1ff146a1de",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue Pierre Lescot": {
+    "image": "/data/collect_images/photo-907a539186297990336c-270fa0c4f7d5.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=CAoSF0NJSE0wb2dLRUlDQWdJQzNpWkQ0b1FF&heading=18.20774290982564",
+    "verifiedEntity": "street:Rue Pierre Lescot",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.348472638621031,
+        48.86256626409634
+      ],
+      "target": [
+        2.3487232495438004,
+        48.86297598450201
+      ],
+      "requestedCoordinate": [
+        2.3484959912001395,
+        48.86253198240028
+      ],
+      "distanceMeters": 2.8,
+      "captureDate": "2024-11",
+      "copyright": "© Visite virtuelle Google / BYG Communication",
+      "panoId": "CAoSF0NJSE0wb2dLRUlDQWdJQzNpWkQ0b1FF",
+      "heading": 18.20774290982564,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "270fa0c4f7d50412cde8e7fe7268948b7b8a13392f63dc6148a46c2459daa08f",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Esplanade Hubert Beuve-Méry": {
+    "image": "/data/collect_images/photo-91614411382e35411cda-722d13c7b872.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=D54C1GG2cIIFP8LOEbY6Yg&heading=326.7990999649846",
+    "verifiedEntity": "street:Esplanade Hubert Beuve-Méry",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.368518730892163,
+        48.84044889991233
+      ],
+      "target": [
+        2.3679930769677178,
+        48.84097756249825
+      ],
+      "requestedCoordinate": [
+        2.368477705681689,
+        48.84046393977182
+      ],
+      "distanceMeters": 3.1,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "D54C1GG2cIIFP8LOEbY6Yg",
+      "heading": 326.7990999649846,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "722d13c7b8723d000d8cd39f605ab0a9de88a9cd41b12a0d9d31a37ce0bd977b",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Rue Dominique Pado": {
+    "image": "/data/collect_images/photo-99c72d63a42c3abb1f92-a46c9d400aad.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=wBNH2RbTIsgsB7KMqNPj1Q&heading=90.00006319649617",
+    "verifiedEntity": "street:Rue Dominique Pado",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.289583928967564,
+        48.83649326979287
+      ],
+      "target": [
+        2.2897650000000005,
+        48.8365
+      ],
+      "requestedCoordinate": [
+        2.28958,
+        48.8365
+      ],
+      "distanceMeters": 0.7,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "wBNH2RbTIsgsB7KMqNPj1Q",
+      "heading": 90.00006319649617,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "a46c9d400aad698f7fcd17a1953b020f26ecbdedd260a073f3fc7e013a33b6d5",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage de la Cour des Fontaines": {
+    "image": "/data/collect_images/photo-9a7a196d3591ea953f05-fd72ce6ccc18.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=pePuQZ747w0qiNz1nQMYWg&heading=110.80784823080882",
+    "verifiedEntity": "street:Passage de la Cour des Fontaines",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.33785017205757,
+        48.86336521435499
+      ],
+      "target": [
+        2.3376460791400926,
+        48.86338598021498
+      ],
+      "requestedCoordinate": [
+        2.33775,
+        48.86336
+      ],
+      "distanceMeters": 3.2,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "pePuQZ747w0qiNz1nQMYWg",
+      "heading": 110.80784823080882,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "fd72ce6ccc187fa29698ddfe0e415deccbe0883e17c6890fe65a4a0434462f80",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage du Désir": {
+    "image": "/data/collect_images/photo-a1d1618e3a88b4f821c4-2782245bf11f.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=y1gLaCEwRh12MC0jQJsBCQ&heading=105.45250298063286",
+    "verifiedEntity": "street:Passage du Désir",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.35786198894789,
+        48.87298393163516
+      ],
+      "target": [
+        2.35671,
+        48.8733
+      ],
+      "requestedCoordinate": [
+        2.357815265776649,
+        48.87301
+      ],
+      "distanceMeters": 1.9,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "y1gLaCEwRh12MC0jQJsBCQ",
+      "heading": 105.45250298063286,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "2782245bf11f7425c4857a6c2682ee825c3a2741f5600203533970d8ca64ae99",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Impasse Hautefeuille": {
+    "image": "/data/collect_images/wikimedia-685418ff4e1f7111a602b13c.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Thank you to indicate this credit line next to the image in case of reuse: Credit: Polymagou - CC BY-SA I'd appreciate if you could send a message on my user talk page if you use this picture out of the Wikimedia project scope .",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Hautefeuille,_Paris_6e.jpg",
+    "verifiedEntity": "street:Impasse Hautefeuille",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Hautefeuille",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Hautefeuille",
+      "articleCoordinate": [
+        2.343115,
+        48.852456
+      ],
+      "catalogTarget": [
+        2.343135,
+        48.85244
+      ],
+      "commonsFile": "Impasse_Hautefeuille,_Paris_6e.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Impasse_Hautefeuille%2C_Paris_6e.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "e6b28a2b30f01fb1ed44270d77c1cf9f4db250f4",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2020-08-29 15:09:28",
+      "sha256": "685418ff4e1f7111a602b13c4c3d44d10fb1589f41b2cd0f35abe43ff55e8912",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse Saint-Vincent": {
+    "image": "/data/collect_images/wikimedia-692886bf819d8dfa6d9b3905.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Saint_Vincent_-_Paris_XIX_(FR75)_-_2021-07-24_-_1.jpg",
+    "verifiedEntity": "street:Impasse Saint-Vincent",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Saint-Vincent",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Saint-Vincent",
+      "articleCoordinate": [
+        2.385126,
+        48.877921
+      ],
+      "catalogTarget": [
+        2.3851049999999994,
+        48.877849999999995
+      ],
+      "commonsFile": "Impasse_Saint_Vincent_-_Paris_XIX_(FR75)_-_2021-07-24_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Impasse_Saint_Vincent_-_Paris_XIX_%28FR75%29_-_2021-07-24_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "6a94fc4f21f6dcbda353c282519c754aebd007d7",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-07-24 15:32:48",
+      "sha256": "692886bf819d8dfa6d9b3905c7f37784e6d340c649d3737f4fe694f3a3df5bc3",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage Hypatie-d'Alexandrie": {
+    "image": "/data/collect_images/photo-b1e22dffc358387fd561-1d9b99a24849.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=0DgKvrpskxhVUQd0qkEYcg&heading=230.51370630661603",
+    "verifiedEntity": "street:Passage Hypatie-d'Alexandrie",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.402164116333835,
+        48.85719838503042
+      ],
+      "target": [
+        2.4020596355147594,
+        48.85712029953312
+      ],
+      "requestedCoordinate": [
+        2.40217,
+        48.85718
+      ],
+      "distanceMeters": 2.1,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "0DgKvrpskxhVUQd0qkEYcg",
+      "heading": 230.51370630661603,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "1d9b99a248493707039f390cb9fa6124d120691a38cf2bc092c9e1ff4bfe5303",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Tunnel Chaumont Pantin": {
+    "image": "/data/collect_images/photo-b328f32777831c988b13-4ad9554f24ac.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=lzmGPqYAq-RaYGMdp0E7uA&heading=16.483417961054613",
+    "verifiedEntity": "street:Tunnel Chaumont Pantin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.396891355025149,
+        48.88639638403175
+      ],
+      "target": [
+        2.3969954836540697,
+        48.887643291201016
+      ],
+      "requestedCoordinate": [
+        2.39688,
+        48.88638
+      ],
+      "distanceMeters": 0.3,
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "panoId": "lzmGPqYAq-RaYGMdp0E7uA",
+      "heading": 16.483417961054613,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "4ad9554f24aca75a8cd654bda6b0b15ff5be0b8d6a69cdcb0469e82eb1ceeb40",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Quai Transversal": {
+    "image": "/data/collect_images/photo-b4d9682204234db90cc6-296e62d04acd.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=fVUfELCy8mmbRB6RUNDRJg&heading=109.83068829618361",
+    "verifiedEntity": "street:Quai Transversal",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.358254016161055,
+        48.87743764094867
+      ],
+      "target": [
+        2.3594862876389264,
+        48.877074113708325
+      ],
+      "requestedCoordinate": [
+        2.35821,
+        48.8774
+      ],
+      "distanceMeters": 5.1,
+      "captureDate": "2016-04",
+      "copyright": "© Google",
+      "panoId": "fVUfELCy8mmbRB6RUNDRJg",
+      "heading": 109.83068829618361,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "296e62d04acd6da34f1aadd0cc0bc2c5461a7f4170b4218a831ef9d5fc5d0e08",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Trolley de Prévaux": {
+    "image": "/data/collect_images/photo-ba6324b138e2721d440e-f625dc1bdb2d.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=KjAW-QItsMqkDpmZRm4rww&heading=243.55356742779543",
+    "verifiedEntity": "street:Rue Trolley de Prévaux",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.373544065335442,
+        48.82627199410399
+      ],
+      "target": [
+        2.372845520062506,
+        48.826052414562504
+      ],
+      "requestedCoordinate": [
+        2.37355,
+        48.82626
+      ],
+      "distanceMeters": 1.4,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "KjAW-QItsMqkDpmZRm4rww",
+      "heading": 243.55356742779543,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "f625dc1bdb2d78cbe43e78d3b0b9aa3124b64d4a3747cede6a72330a0d331752",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Commun AS/13": {
+    "image": "/data/collect_images/photo-ba66eaaa2c6e436b5d88-0e32e4fa49f9.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=CbJjy8V9c2-w9GdpdOI6HQ&heading=218.06422353251122",
+    "verifiedEntity": "street:Passage Commun AS/13",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.370105147186563,
+        48.83307736924999
+      ],
+      "target": [
+        2.3699578914287773,
+        48.832901102285895
+      ],
+      "requestedCoordinate": [
+        2.37013,
+        48.83305
+      ],
+      "distanceMeters": 3.5,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "CbJjy8V9c2-w9GdpdOI6HQ",
+      "heading": 218.06422353251122,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0e32e4fa49f9b9856ff69bb05738756f88e609f487e27c538111614bb929ce48",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage des Deux Portes": {
+    "image": "/data/collect_images/photo-bedfdfbb4766ec121bb0-c435514f307a.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=VOEHYqiaHbhpbG_OqtenjA&heading=232.765818418325",
+    "verifiedEntity": "street:Passage des Deux Portes",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.405440124738508,
+        48.85924000991164
+      ],
+      "target": [
+        2.405126978322128,
+        48.85911665634387
+      ],
+      "requestedCoordinate": [
+        2.4054,
+        48.85925
+      ],
+      "distanceMeters": 3.1,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "VOEHYqiaHbhpbG_OqtenjA",
+      "heading": 232.765818418325,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "c435514f307a5a639d8e7e7fd8b3ba909cbb16a397e048e5a227ebc618b9ad43",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Avenue de la Porte des Ternes": {
+    "image": "/data/collect_images/photo-c2e6b3be46201049f413-56b071a411c9.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=0xsBT4TecNEQO3TGD2laWw&heading=110.32760601055594",
+    "verifiedEntity": "street:Avenue de la Porte des Ternes",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.281920906461976,
+        48.88148429068345
+      ],
+      "target": [
+        2.2826313835323084,
+        48.88132248569873
+      ],
+      "requestedCoordinate": [
+        2.28189,
+        48.88143
+      ],
+      "distanceMeters": 0.8,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "0xsBT4TecNEQO3TGD2laWw",
+      "heading": 110.32760601055594,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "56b071a411c9d578f356a582237052e295e277b2b0dc9ea4bee3c08b997edd6a",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Joseph et Marie Hackin": {
+    "image": "/data/collect_images/photo-c41151d3db468c4a9864-631d907551aa.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=7EmcWWlxJolEXLjUHk_ELA&heading=206.6109333525782",
+    "verifiedEntity": "street:Rue Joseph et Marie Hackin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.279854449215049,
+        48.87847611250299
+      ],
+      "target": [
+        2.2795595133001405,
+        48.87798183078769
+      ],
+      "requestedCoordinate": [
+        2.27991,
+        48.87845
+      ],
+      "distanceMeters": 4.9,
+      "captureDate": "2026-06",
+      "copyright": "© Google",
+      "panoId": "7EmcWWlxJolEXLjUHk_ELA",
+      "heading": 206.6109333525782,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "631d907551aaf2bc4f79480a37b39182773ac8f3139be3d65b847f2e17f729bd",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Esplanade Pierre Vidal Naquet": {
+    "image": "/data/collect_images/photo-c6ea4ee4ec81ebe0c5ac-0136f74ae7cc.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=2anQikWjYaldvsEuYgqOIA&heading=98.10037367140467",
+    "verifiedEntity": "street:Esplanade Pierre Vidal Naquet",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.380493687100026,
+        48.82958225686982
+      ],
+      "target": [
+        2.3813330271323725,
+        48.82950361217895
+      ],
+      "requestedCoordinate": [
+        2.3806010302112366,
+        48.82956896978877
+      ],
+      "distanceMeters": 7.1,
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "panoId": "2anQikWjYaldvsEuYgqOIA",
+      "heading": 98.10037367140467,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0136f74ae7cc8662f2bdc9d027988fe6e6697da7a5cc9c548c5bc387121f2917",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Rue Georges Dumézil": {
+    "image": "/data/collect_images/photo-cbbd0af08036336e72d9-fb0514cf83f8.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=610thbzcsKuYVcIJK6bD6Q&heading=224.267967025291",
+    "verifiedEntity": "street:Rue Georges Dumézil",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.294911572552854,
+        48.8526964237664
+      ],
+      "target": [
+        2.294752580276233,
+        48.85255655886924
+      ],
+      "requestedCoordinate": [
+        2.29493,
+        48.85268
+      ],
+      "distanceMeters": 2.3,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "610thbzcsKuYVcIJK6bD6Q",
+      "heading": 224.267967025291,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "fb0514cf83f892b00913993c82f1eecb5377fb35ffd0a6c9cb291e185c96b3f0",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée de la Garance": {
+    "image": "/data/collect_images/photo-d978e356dfc68d5f7c0f-1adb06e944ac.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=14uA7pLwzoNbrRVSLAvxaQ&heading=139.0748859286391",
+    "verifiedEntity": "street:Allée de la Garance",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.38914328625497,
+        48.88922230962527
+      ],
+      "target": [
+        2.389691260270307,
+        48.88876578416609
+      ],
+      "requestedCoordinate": [
+        2.38914,
+        48.88922
+      ],
+      "distanceMeters": 0.4,
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "panoId": "14uA7pLwzoNbrRVSLAvxaQ",
+      "heading": 139.0748859286391,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "1adb06e944ac77ea38708e4fb6c67b763cffbbf47bad84e108aa9855bd1ed9b1",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Tunnel Villette Pantin": {
+    "image": "/data/collect_images/photo-df6a4529456a9edd5866-20d7e7a83480.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=S5qv5y8k4bSx4oz_3boh5g&heading=145.23909667218817",
+    "verifiedEntity": "street:Tunnel Villette Pantin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.395269430822619,
+        48.89215489785049
+      ],
+      "target": [
+        2.3959536508103256,
+        48.89013690887801
+      ],
+      "requestedCoordinate": [
+        2.39524,
+        48.89219
+      ],
+      "distanceMeters": 0.5,
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "panoId": "S5qv5y8k4bSx4oz_3boh5g",
+      "heading": 145.23909667218817,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "20d7e7a83480a25c070b066872afc65bcee7c369295584d820d7838bad84850b",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Jean Fautrier": {
+    "image": "/data/collect_images/photo-e1b7df89a4776aa153ed-221e7bc019ea.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=iViMpLibamNCH94TA-l6bg&heading=246.46284052593774",
+    "verifiedEntity": "street:Rue Jean Fautrier",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.371833289426431,
+        48.82581903202172
+      ],
+      "target": [
+        2.370798980622397,
+        48.825469773831564
+      ],
+      "requestedCoordinate": [
+        2.37182,
+        48.8258
+      ],
+      "distanceMeters": 2.3,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "iViMpLibamNCH94TA-l6bg",
+      "heading": 246.46284052593774,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "221e7bc019eafc536be62101cc8a5050e3c37157db16fc0ccff6f48ec79a3ec2",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue André Pascal": {
+    "image": "/data/collect_images/photo-e909c8c6a5e179573d13-a6fe9089b152.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=mdCc83RKFF6zhBy8x6_P8Q&heading=56.91805909550891",
+    "verifiedEntity": "street:Rue André Pascal",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.270534035226306,
+        48.86154802997298
+      ],
+      "target": [
+        2.2704999999926363,
+        48.861479999996845
+      ],
+      "requestedCoordinate": [
+        2.2704999999852715,
+        48.86147999999369
+      ],
+      "distanceMeters": 5,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "mdCc83RKFF6zhBy8x6_P8Q",
+      "heading": 56.91805909550891,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "a6fe9089b1525b8c56f9486f3bb7640c83ce5914d39e63f82ff3044814644730",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Saint-Philippe du Roule": {
+    "image": "/data/collect_images/photo-f01f9eab5392d2b1269c-1cfced3494af.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=8YbEeltMmGj6kbOLrqCrjg&heading=206.98006457506682",
+    "verifiedEntity": "street:Passage Saint-Philippe du Roule",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.310951925448077,
+        48.87359709849581
+      ],
+      "target": [
+        2.310735460278251,
+        48.873245486162915
+      ],
+      "requestedCoordinate": [
+        2.31098,
+        48.87357
+      ],
+      "distanceMeters": 3.6,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "8YbEeltMmGj6kbOLrqCrjg",
+      "heading": 206.98006457506682,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "1cfced3494afc3fd3978f4fe1520c7a50d9528a30c06ca3e382218188645c2f6",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Louis Delgrès": {
+    "image": "/data/collect_images/photo-f4bd328325906a09114a-ec5df4151406.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=YBsrmtTVgDktQI3FbJFJPA&heading=156.98910643893555",
+    "verifiedEntity": "street:Rue Louis Delgrès",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.385761676956351,
+        48.86637758977103
+      ],
+      "target": [
+        2.386148916457179,
+        48.86585999536286
+      ],
+      "requestedCoordinate": [
+        2.38578,
+        48.86637
+      ],
+      "distanceMeters": 1.6,
+      "captureDate": "2026-08",
+      "copyright": "© Google",
+      "panoId": "YBsrmtTVgDktQI3FbJFJPA",
+      "heading": 156.98910643893555,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "ec5df415140623968654dfda77609591ff6ee27d1049af136e8443bd04cdd219",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Cité Germain Pilon": {
+    "image": "/data/collect_images/photo-f6397957f0f1d3ecc255-6a78f72a46f3.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=yK_6Gupl1LtbSMmg76busg&heading=146.67167387581304",
+    "verifiedEntity": "street:Cité Germain Pilon",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.336811013808455,
+        48.88401304172512
+      ],
+      "target": [
+        2.336316956290317,
+        48.88416508287634
+      ],
+      "requestedCoordinate": [
+        2.33673,
+        48.884060000000005
+      ],
+      "distanceMeters": 3.4,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "yK_6Gupl1LtbSMmg76busg",
+      "heading": 146.67167387581304,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "6a78f72a46f3ac46e0623fb64325e9296200c8c94590e916ff5d79aa1e8e0692",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Esplanade Max Guedj": {
+    "image": "/data/collect_images/photo-facfd8ee9488a9583c51-711ace5e6400.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=TLg2RgOukXDdFH-yqe3Qgg&heading=120.21460613507548",
+    "verifiedEntity": "street:Esplanade Max Guedj",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.277948540577858,
+        48.84075818437273
+      ],
+      "target": [
+        2.2783,
+        48.84057
+      ],
+      "requestedCoordinate": [
+        2.27804,
+        48.84075
+      ],
+      "distanceMeters": 6.8,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "TLg2RgOukXDdFH-yqe3Qgg",
+      "heading": 120.21460613507548,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "711ace5e6400897fa609655beed30bc297097abdb0b37b3020c688539935e2d5",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Hélène Jakubowicz": {
+    "image": "/data/collect_images/photo-ff08ee3d44ac1e734d1f-82514498e5bc.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=xPyUP9YPmng0vLhcdbSTXw&heading=320.31942291699545",
+    "verifiedEntity": "street:Rue Hélène Jakubowicz",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.399224472988625,
+        48.86853087184592
+      ],
+      "target": [
+        2.3982633715316823,
+        48.869389942702476
+      ],
+      "requestedCoordinate": [
+        2.39923,
+        48.86853
+      ],
+      "distanceMeters": 0.2,
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "panoId": "xPyUP9YPmng0vLhcdbSTXw",
+      "heading": 320.31942291699545,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "82514498e5bccbec0e7b1cb5e370a9b42739180db169ff86d4eb9535924a638b",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée de la Bertelotte": {
+    "image": "/data/collect_images/wikimedia-c0a0b690576fa7c50d31207f.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_Bertelotte_-_Paris_XV_(FR75)_-_2021-08-10_-_1.jpg",
+    "verifiedEntity": "street:Allée de la Bertelotte",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée de la Bertelotte",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_de_la_Bertelotte",
+      "articleCoordinate": [
+        2.274916,
+        48.829579
+      ],
+      "catalogTarget": [
+        2.274882571968314,
+        48.829848510446325
+      ],
+      "commonsFile": "Allée_Bertelotte_-_Paris_XV_(FR75)_-_2021-08-10_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/7/73/All%C3%A9e_Bertelotte_-_Paris_XV_%28FR75%29_-_2021-08-10_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "06ffa23937c81cd8870cc446cf004f4a3217657c",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-10 18:42:16",
+      "sha256": "c0a0b690576fa7c50d31207f22261edc8687f27d67d8570115d2ce967181e46d",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Allée des Brouillards": {
+    "image": "/data/collect_images/wikimedia-4294f89402d1a54a593a0e8a.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1260926_Paris_XVIII_allee_des_Brouillards_rwk.jpg",
+    "verifiedEntity": "street:Allée des Brouillards",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée des Brouillards",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_des_Brouillards",
+      "articleCoordinate": [
+        2.337561,
+        48.888607
+      ],
+      "catalogTarget": [
+        2.337731626311009,
+        48.88858
+      ],
+      "commonsFile": "P1260926_Paris_XVIII_allee_des_Brouillards_rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/a/a5/P1260926_Paris_XVIII_allee_des_Brouillards_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "53a2618aec305a61b49bd441ca46b4008969ef82",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2014-07-30 14:09:00",
+      "sha256": "4294f89402d1a54a593a0e8ae7d6c517dd7f0c42067278c0c6993d7f2476ad88",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Cité de Magenta": {
+    "image": "/data/collect_images/wikimedia-266d32ff1a81689496cd4094.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1040666_Paris_X_Cit%C3%A9_de_Magenta_rwk.JPG",
+    "verifiedEntity": "street:Cité de Magenta",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Cité de Magenta",
+      "articleURL": "https://fr.wikipedia.org/wiki/Cit%C3%A9_de_Magenta",
+      "articleCoordinate": [
+        2.35922,
+        48.8715
+      ],
+      "catalogTarget": [
+        2.3599559830076333,
+        48.871803839618316
+      ],
+      "commonsFile": "P1040666_Paris_X_Cité_de_Magenta_rwk.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/9/90/P1040666_Paris_X_Cit%C3%A9_de_Magenta_rwk.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "f3d6092ba8e7e0e5b1c15b82803e35840583b907",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2011-08",
+      "sha256": "266d32ff1a81689496cd40942b6d0f435ef0915943897bd9209130dcf86c45cf",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse de Casteggio": {
+    "image": "/data/collect_images/wikimedia-1930d7004725e2a3e2643dae.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Casteggio_-_Paris_XX_(FR75)_-_2021-05-28_-_1.jpg",
+    "verifiedEntity": "street:Impasse de Casteggio",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse de Casteggio",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_de_Casteggio",
+      "articleCoordinate": [
+        2.398651,
+        48.854092
+      ],
+      "catalogTarget": [
+        2.3986935281684314,
+        48.85404460563477
+      ],
+      "commonsFile": "Impasse_Casteggio_-_Paris_XX_(FR75)_-_2021-05-28_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/d/df/Impasse_Casteggio_-_Paris_XX_%28FR75%29_-_2021-05-28_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "686f3aedabd8e7a84aa4849a05fa10c560d840a3",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-05-28 13:18:52",
+      "sha256": "1930d7004725e2a3e2643dae381ccb9dd62d306e05a4219b5298f98e82639b02",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse des Arbalétriers": {
+    "image": "/data/collect_images/wikimedia-a0d1e2344b81f009683d78f4.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Tangopaso",
+    "license": "Public domain",
+    "licenseUrl": null,
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_des_Arbal%C3%A9triers_(looking_North).jpg",
+    "verifiedEntity": "street:Impasse des Arbalétriers",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse des Arbalétriers",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_des_Arbal%C3%A9triers",
+      "articleCoordinate": [
+        2.359515,
+        48.858498
+      ],
+      "catalogTarget": [
+        2.35956,
+        48.858525
+      ],
+      "commonsFile": "Impasse_des_Arbalétriers_(looking_North).jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/4/42/Impasse_des_Arbal%C3%A9triers_%28looking_North%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "9bd0842e10acd1465ce4e8a633fcc96f27d9c060",
+      "licenseURL": null,
+      "captureDate": "2011-07-07",
+      "sha256": "a0d1e2344b81f009683d78f491abbbeeceee1785745d6fdb3af8d16e50216c08",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse Rothschild": {
+    "image": "/data/collect_images/wikimedia-ef720d2a9679e3f3e8a7f962.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Rothschild_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+    "verifiedEntity": "street:Impasse Rothschild",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Rothschild",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Rothschild",
+      "articleCoordinate": [
+        2.326022,
+        48.888304
+      ],
+      "catalogTarget": [
+        2.3260513198343236,
+        48.88828248004734
+      ],
+      "commonsFile": "Impasse_Rothschild_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/5/53/Impasse_Rothschild_-_Paris_XVIII_%28FR75%29_-_2021-08-04_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "9fb03e1d97a536907b4ed5b179dfd6897157e84c",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-04 19:49:28",
+      "sha256": "ef720d2a9679e3f3e8a7f96211ac50f288f1ac3faaa44763486d3941edb948ba",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse Saint-Eustache": {
+    "image": "/data/collect_images/wikimedia-11963f6d43d558e3a164e5d9.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Celette",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse-Saint-Eustache-(Paris)1.jpg",
+    "verifiedEntity": "street:Impasse Saint-Eustache",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Saint-Eustache",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Saint-Eustache",
+      "articleCoordinate": [
+        2.345267,
+        48.863649
+      ],
+      "catalogTarget": [
+        2.34543999995694,
+        48.86374499997847
+      ],
+      "commonsFile": "Impasse-Saint-Eustache-(Paris)1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Impasse-Saint-Eustache-%28Paris%291.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "89ab42e066bd723bf4fa5c50d034a3eb61ddb9be",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2012-07-31",
+      "sha256": "11963f6d43d558e3a164e5d95db57ee63f74326f42cab9da4f0617cd95f78b90",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse Saint-François": {
+    "image": "/data/collect_images/wikimedia-fd568a1811ffe86d6ed53a29.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Saint_Fran%C3%A7ois_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+    "verifiedEntity": "street:Impasse Saint-François",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Saint-François",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Saint-Fran%C3%A7ois",
+      "articleCoordinate": [
+        2.344127,
+        48.896506
+      ],
+      "catalogTarget": [
+        2.344219384122714,
+        48.8964890063138
+      ],
+      "commonsFile": "Impasse_Saint_François_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Impasse_Saint_Fran%C3%A7ois_-_Paris_XVIII_%28FR75%29_-_2021-08-04_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "a9d6b46a9c154778ce2caf51a3417fe23e430ea0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-04 18:36:37",
+      "sha256": "fd568a1811ffe86d6ed53a29c3eb52aa23d61a2894e67670ddd38565e8bd4a97",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Impasse Sainte-Henriette": {
+    "image": "/data/collect_images/wikimedia-3cbc130d4c052cfa053a8a94.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Guilhem Vellut from Paris, France",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Sainte-Henriette_(28057233465).jpg",
+    "verifiedEntity": "street:Impasse Sainte-Henriette",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Sainte-Henriette",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Sainte-Henriette",
+      "articleCoordinate": [
+        2.343366,
+        48.896719
+      ],
+      "catalogTarget": [
+        2.343373522220368,
+        48.89670714605526
+      ],
+      "commonsFile": "Impasse_Sainte-Henriette_(28057233465).jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Impasse_Sainte-Henriette_%2828057233465%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "e0be97fa9f7b964be8f27bac25f1985eb0159b14",
+      "licenseURL": "https://creativecommons.org/licenses/by/2.0",
+      "captureDate": "2016-07-03 07:31",
+      "sha256": "3cbc130d4c052cfa053a8a949ad15156251e14af19bd4f79d79a870bc6bb3820",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage Dauphine": {
+    "image": "/data/collect_images/wikimedia-bcc40a11825a71000c6eedf7.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "LPLT",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passage_Dauphine.JPG",
+    "verifiedEntity": "street:Passage Dauphine",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage Dauphine",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_Dauphine",
+      "articleCoordinate": [
+        2.3386701,
+        48.8548521
+      ],
+      "catalogTarget": [
+        2.3386532225317582,
+        48.85487307000471
+      ],
+      "commonsFile": "Passage_Dauphine.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Passage_Dauphine.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "775616e02ad944c3fae5a51083c4293e1cef58b4",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2010-06-27",
+      "sha256": "bcc40a11825a71000c6eedf78e0b92cbadfa492977e96ec987277dde9ea79f7d",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage de l'Ancre": {
+    "image": "/data/collect_images/wikimedia-d767a6457298197274c0c159.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Ralf.treinen",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Paris_passage_de_l_ancre4.jpg",
+    "verifiedEntity": "street:Passage de l'Ancre",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage de l'Ancre",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_de_l'Ancre",
+      "articleCoordinate": [
+        2.352484,
+        48.86439
+      ],
+      "catalogTarget": [
+        2.3524923207677033,
+        48.86438841398217
+      ],
+      "commonsFile": "Paris_passage_de_l_ancre4.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Paris_passage_de_l_ancre4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "8b0cdbcae85bf68b9a4a58fe36717e378dc638a5",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2010-09-11",
+      "sha256": "d767a6457298197274c0c159cf1a162ececf44a0240cfdee70ab7cc005c5fc5a",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage du Gantelet": {
+    "image": "/data/collect_images/wikimedia-ce67dc14f27bb48c9efd0fb4.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1300701_Paris_IV_passage_du_Gantelet_rwk.jpg",
+    "verifiedEntity": "street:Passage du Gantelet",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage du Gantelet",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_du_Gantelet",
+      "articleCoordinate": [
+        2.35428,
+        48.85545
+      ],
+      "catalogTarget": [
+        2.3546488257412634,
+        48.855288387688965
+      ],
+      "commonsFile": "P1300701_Paris_IV_passage_du_Gantelet_rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/4/4c/P1300701_Paris_IV_passage_du_Gantelet_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "9152c7bcf860003773a4f5c265e3447174a2205f",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2015-01-17 16:01:35",
+      "sha256": "ce67dc14f27bb48c9efd0fb4276e16be4994b3d124c71cdde36b46b87cd418f2",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage du Retrait": {
+    "image": "/data/collect_images/wikimedia-cba618cac3a1ff3cdd570c73.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passage_Retrait_-_Paris_XX_(FR75)_-_2021-06-09_-_2.jpg",
+    "verifiedEntity": "street:Passage du Retrait",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage du Retrait",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_du_Retrait",
+      "articleCoordinate": [
+        2.393902,
+        48.8692
+      ],
+      "catalogTarget": [
+        2.393902398542886,
+        48.86918779234977
+      ],
+      "commonsFile": "Passage_Retrait_-_Paris_XX_(FR75)_-_2021-06-09_-_2.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Passage_Retrait_-_Paris_XX_%28FR75%29_-_2021-06-09_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "6bdb9ea9ff230175b983de8454b0dfebf9573338",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-09 18:56:30",
+      "sha256": "cba618cac3a1ff3cdd570c737b7de368ba448198230f74dd0d3fbff92cff6ac0",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage Dumas": {
+    "image": "/data/collect_images/wikimedia-e54b296621a82d4a9b86fb10.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1180130_Paris_XI_passage_Dumas_rwk.jpg",
+    "verifiedEntity": "street:Passage Dumas",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage Dumas",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_Dumas",
+      "articleCoordinate": [
+        2.391683,
+        48.85239
+      ],
+      "catalogTarget": [
+        2.391365700125235,
+        48.85233144673909
+      ],
+      "commonsFile": "P1180130_Paris_XI_passage_Dumas_rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/0/0a/P1180130_Paris_XI_passage_Dumas_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "0ecf8c899dd72e05a5a7c8e0ed18bc235360cb22",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2013-05-09 14:49:24",
+      "sha256": "e54b296621a82d4a9b86fb1046a07f804d90c69564ddbf5a2507e9bb59dcd2f0",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage Monplaisir": {
+    "image": "/data/collect_images/wikimedia-a1333389932dfb10f403b9ea.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passage_Monplaisir_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+    "verifiedEntity": "street:Passage Monplaisir",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage Monplaisir",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_Monplaisir",
+      "articleCoordinate": [
+        2.385655,
+        48.865568
+      ],
+      "catalogTarget": [
+        2.385545934836078,
+        48.865560165829685
+      ],
+      "commonsFile": "Passage_Monplaisir_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/0/03/Passage_Monplaisir_-_Paris_XX_%28FR75%29_-_2021-06-09_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "3825b49e510a48f7d6af19b368b7a1add6ff0a92",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-09 19:43:29",
+      "sha256": "a1333389932dfb10f403b9eaeb80d18b0bb78478dd5e5b0de4e8b046cd427f17",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passage Potier": {
+    "image": "/data/collect_images/wikimedia-1ee6d7f5593c177583ea1252.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1050189_Paris_Ier_passage_Potier_rwk.JPG",
+    "verifiedEntity": "street:Passage Potier",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage Potier",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_Potier",
+      "articleCoordinate": [
+        2.336719,
+        48.86502
+      ],
+      "catalogTarget": [
+        2.3367470583694776,
+        48.86504226903729
+      ],
+      "commonsFile": "P1050189_Paris_Ier_passage_Potier_rwk.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/8/84/P1050189_Paris_Ier_passage_Potier_rwk.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "073590de06b2366ff64a764abf1fa6ed8c8de488",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2011-09-12",
+      "sha256": "1ee6d7f5593c177583ea125298b30168130cb3b2d0c0d0294c45f69c5ba5595d",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Passerelle Simone de Beauvoir": {
+    "image": "/data/collect_images/wikimedia-b7156928ba2f37edd2a455f9.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "AHert",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passerelle_Simone-de-Beauvoir.jpg",
+    "verifiedEntity": "street:Passerelle Simone de Beauvoir",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passerelle Simone-de-Beauvoir",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passerelle_Simone-de-Beauvoir",
+      "articleCoordinate": [
+        2.378056,
+        48.835278
+      ],
+      "catalogTarget": [
+        2.378041718765725,
+        48.835235013029425
+      ],
+      "commonsFile": "Passerelle_Simone-de-Beauvoir.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Passerelle_Simone-de-Beauvoir.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "77ae2ac5ebfd55f0623bab893706fb4cf4d156b4",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2016-05-14",
+      "sha256": "b7156928ba2f37edd2a455f9d241a27de88d902d88f13c4cae7fac9bf6ddadce",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue de la Concertation": {
+    "image": "/data/collect_images/wikimedia-aa5da1dbb31c69c7d449790b.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Concertation_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+    "verifiedEntity": "street:Rue de la Concertation",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue de la Concertation",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_de_la_Concertation",
+      "articleCoordinate": [
+        2.357943,
+        48.897549
+      ],
+      "catalogTarget": [
+        2.3574499724845865,
+        48.896380570380366
+      ],
+      "commonsFile": "Rue_Concertation_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rue_Concertation_-_Paris_XVIII_%28FR75%29_-_2021-06-02_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "1bede81789e5214f2eac1d9ed1d95b6a4a4cc96a",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-02 18:44:58",
+      "sha256": "aa5da1dbb31c69c7d449790b8db249d9e6d8515a6ddf293fdc477ed59bab6f31",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue de la Petite-Truanderie": {
+    "image": "/data/collect_images/wikimedia-d54ef692bb9485fe118d7747.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Ralf.treinen",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_petite_grande_truanderie.jpg",
+    "verifiedEntity": "street:Rue de la Petite-Truanderie",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue de la Petite-Truanderie",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_de_la_Petite-Truanderie",
+      "articleCoordinate": [
+        2.348258,
+        48.862837
+      ],
+      "catalogTarget": [
+        2.348325009407601,
+        48.862845243672986
+      ],
+      "commonsFile": "Rue_petite_grande_truanderie.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/1/14/Rue_petite_grande_truanderie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "4be6be7898a8948379379b9f6066a836c12b59a3",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2010-08-21",
+      "sha256": "d54ef692bb9485fe118d77476118ee990209263b213a295137ddb5d51d0c7737",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue de Montebello": {
+    "image": "/data/collect_images/wikimedia-5a9242e7093e927dfebb79b4.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1280386_Paris_XV_rue_de_Montebello_rwk.jpg",
+    "verifiedEntity": "street:Rue de Montebello",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue de Montebello",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_de_Montebello",
+      "articleCoordinate": [
+        2.302414,
+        48.82944
+      ],
+      "catalogTarget": [
+        2.302407324573118,
+        48.82936155716398
+      ],
+      "commonsFile": "P1280386_Paris_XV_rue_de_Montebello_rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/3/3f/P1280386_Paris_XV_rue_de_Montebello_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "7ec1170e16bab755c24f7504125370f848c8f97a",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2014-10-03 14:10:36",
+      "sha256": "5a9242e7093e927dfebb79b490a38768a8b6e0c810c485465214dafeb69de7e1",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue de Nevers": {
+    "image": "/data/collect_images/wikimedia-d0ae215868c5913578983702.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1070489_Paris_VI_rue_de_Nevers_rwk.JPG",
+    "verifiedEntity": "street:Rue de Nevers",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue de Nevers",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_de_Nevers",
+      "articleCoordinate": [
+        2.3393302,
+        48.855709
+      ],
+      "catalogTarget": [
+        2.339481606014911,
+        48.85580561682165
+      ],
+      "commonsFile": "P1070489_Paris_VI_rue_de_Nevers_rwk.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/a/a7/P1070489_Paris_VI_rue_de_Nevers_rwk.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "bd127e42b5a611508ee6bd1363771a09eaf545d1",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2012-01-06",
+      "sha256": "d0ae215868c5913578983702337261ffc2973e8bff49b426b466ba50eb358b95",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue de Perceval": {
+    "image": "/data/collect_images/wikimedia-1364d9e5fc9ddbb637b8c1e7.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Perceval_-_Paris_XIV_(FR75)_-_2021-07-30_-_1.jpg",
+    "verifiedEntity": "street:Rue de Perceval",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue de Perceval",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_de_Perceval",
+      "articleCoordinate": [
+        2.321162,
+        48.837238
+      ],
+      "catalogTarget": [
+        2.3208119060254906,
+        48.83741632941773
+      ],
+      "commonsFile": "Rue_Perceval_-_Paris_XIV_(FR75)_-_2021-07-30_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Rue_Perceval_-_Paris_XIV_%28FR75%29_-_2021-07-30_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "ce9463e289025722457f13ecdd2bc3dc79d037f0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-07-30 17:35:42",
+      "sha256": "1364d9e5fc9ddbb637b8c1e77e51181524d89ba1b679232ba9176fb276d25e77",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue des Prêcheurs": {
+    "image": "/data/collect_images/wikimedia-571de31179b79a23f90184c7.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Pr%C3%AAcheurs_-_Paris_I_(FR75)_-_2021-06-12_-_1.jpg",
+    "verifiedEntity": "street:Rue des Prêcheurs",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue des Prêcheurs",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_des_Pr%C3%AAcheurs",
+      "articleCoordinate": [
+        2.3486,
+        48.862
+      ],
+      "catalogTarget": [
+        2.34875,
+        48.86199
+      ],
+      "commonsFile": "Rue_Prêcheurs_-_Paris_I_(FR75)_-_2021-06-12_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/d/db/Rue_Pr%C3%AAcheurs_-_Paris_I_%28FR75%29_-_2021-06-12_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "f18c8a8c162a27ca49b0e10edcbd1aa47414ded6",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-12 17:38:03",
+      "sha256": "571de31179b79a23f90184c79ace65398a64cc4d327b5128848ff66a0402a064",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Rue Sébastien Bottin": {
+    "image": "/data/collect_images/wikimedia-421a5e0469362da755dd8d05.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "LPLT",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_S%C3%A9bastien-Bottin.JPG",
+    "verifiedEntity": "street:Rue Sébastien Bottin",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Sébastien-Bottin",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_S%C3%A9bastien-Bottin",
+      "articleCoordinate": [
+        2.3283532,
+        48.8567511
+      ],
+      "catalogTarget": [
+        2.3284420506968098,
+        48.85680864191427
+      ],
+      "commonsFile": "Rue_Sébastien-Bottin.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/d/db/Rue_S%C3%A9bastien-Bottin.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "c67f8bcfefc81ed7389cad69b3a8296b53048835",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2011-06-15",
+      "sha256": "421a5e0469362da755dd8d05ed59e240a4ca8990c9247f4b51963a65582ec3d0",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Square du Limousin": {
+    "image": "/data/collect_images/wikimedia-2c7cb679a0820670d1c69ff3.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_Limousin_-_Paris_XIII_(FR75)_-_2021-06-06_-_1.jpg",
+    "verifiedEntity": "street:Square du Limousin",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square du Limousin",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_du_Limousin",
+      "articleCoordinate": [
+        2.376455,
+        48.823155
+      ],
+      "catalogTarget": [
+        2.376409363358967,
+        48.82317100468735
+      ],
+      "commonsFile": "Square_Limousin_-_Paris_XIII_(FR75)_-_2021-06-06_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Square_Limousin_-_Paris_XIII_%28FR75%29_-_2021-06-06_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "eeb8afc5b43937fa656d37809ff90063f09932c0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-06 17:41:38",
+      "sha256": "2c7cb679a0820670d1c69ff3b80baa0aa7e533b424d03a7eb07f54a79dbc1802",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Square du Périgord": {
+    "image": "/data/collect_images/wikimedia-a66e9e1a914721a6d44aea20.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_P%C3%A9rigord_-_Paris_XX_(FR75)_-_2022-11-26_-_1.jpg",
+    "verifiedEntity": "street:Square du Périgord",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square du Périgord",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_du_P%C3%A9rigord",
+      "articleCoordinate": [
+        2.411216,
+        48.854706
+      ],
+      "catalogTarget": [
+        2.4112549999999997,
+        48.85456
+      ],
+      "commonsFile": "Square_Périgord_-_Paris_XX_(FR75)_-_2022-11-26_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Square_P%C3%A9rigord_-_Paris_XX_%28FR75%29_-_2022-11-26_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "1c6a8d1a36a26f6fd3c418e83c0ccb9cfa49fcb0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2022-11-26 15:16:48",
+      "sha256": "a66e9e1a914721a6d44aea20b4efbee164e061244939e9903103458032526762",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Square du Vexin": {
+    "image": "/data/collect_images/wikimedia-82b777032eb4b680fecf3e25.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_Vexin_-_Paris_XIX_(FR75)_-_2021-07-22_-_1.jpg",
+    "verifiedEntity": "street:Square du Vexin",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square du Vexin",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_du_Vexin",
+      "articleCoordinate": [
+        2.3968077,
+        48.8817682
+      ],
+      "catalogTarget": [
+        2.3970358613241185,
+        48.88146023112647
+      ],
+      "commonsFile": "Square_Vexin_-_Paris_XIX_(FR75)_-_2021-07-22_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Square_Vexin_-_Paris_XIX_%28FR75%29_-_2021-07-22_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "c6c0cac0f94f6171a78ba72df0624d84ea5d3a5b",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-07-22 19:29:30",
+      "sha256": "82b777032eb4b680fecf3e257cc0be72a76128c381e8f87c00e6e896271c59ec",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Square Dunois": {
+    "image": "/data/collect_images/wikimedia-4f5ff25ea162574fa3fc0086.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_Dunois_-_Paris_XIII_(FR75)_-_2021-06-30_-_1.jpg",
+    "verifiedEntity": "street:Square Dunois",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square Dunois",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_Dunois",
+      "articleCoordinate": [
+        2.366509,
+        48.833677
+      ],
+      "catalogTarget": [
+        2.366382399834583,
+        48.83362625871649
+      ],
+      "commonsFile": "Square_Dunois_-_Paris_XIII_(FR75)_-_2021-06-30_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Square_Dunois_-_Paris_XIII_%28FR75%29_-_2021-06-30_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "6c602f226baa5e01e21efa7e3d590d6bd03bac4f",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-30 11:39:25",
+      "sha256": "4f5ff25ea162574fa3fc00868499c57318ee1624ac269dec80149f13f2fda00e",
+      "evidence": "Photographie réelle de la voie dans sa longueur ou de son accès caractéristique, repères et perspective contrôlés visuellement ; article parisien et coordonnées de la carte concordants."
+    }
+  },
+  "street:Cité Georges Ambroise Boisselat et Blanche": {
+    "image": "/data/collect_images/photo-02bf82b4affe0156a67d-f19c50e1bd35.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=DrngTXXzmLELU_kil1rOxQ&heading=250.3796130893022",
+    "verifiedEntity": "street:Cité Georges Ambroise Boisselat et Blanche",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.409385210696349,
+        48.85394463846161
+      ],
+      "target": [
+        2.4089409874429455,
+        48.85364189160435
+      ],
+      "requestedCoordinate": [
+        2.40938,
+        48.85394
+      ],
+      "distanceMeters": 0.6,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "DrngTXXzmLELU_kil1rOxQ",
+      "heading": 250.3796130893022,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "f19c50e1bd3502c26505a5e1b6a359e3cf244927998b3238529543a0c7f86b0a",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Promenade plantée Pierre Mauroy": {
+    "image": "/data/collect_images/photo-0392eea90c56cf83a936-b50b17a42f71.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=W0E00V8Btn8MhborZJK6ng&heading=356.6556308771634",
+    "verifiedEntity": "street:Promenade plantée Pierre Mauroy",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.358258370438375,
+        48.89709397856416
+      ],
+      "target": [
+        2.358080927198549,
+        48.89769784682685
+      ],
+      "requestedCoordinate": [
+        2.35809,
+        48.89708
+      ],
+      "distanceMeters": 12.4,
+      "captureDate": "2020-07",
+      "copyright": "© Google",
+      "panoId": "W0E00V8Btn8MhborZJK6ng",
+      "heading": 356.6556308771634,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "b50b17a42f7179aee97e523044054a4640eee674cd511ef6395f6e7d4ae646d3",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Danton - Quartier de la Plaine-de-Monceau": {
+    "image": "/data/collect_images/photo-0fd722a203766bb3f179-422a7e646539.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=2WVd_ZhmWoA5G0AMEkXwpw&heading=326.6734017647603",
+    "verifiedEntity": "street:Rue Danton - Quartier de la Plaine-de-Monceau",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.287097259832869,
+        48.8872989258802
+      ],
+      "target": [
+        2.2871100000013573,
+        48.88727999999864
+      ],
+      "requestedCoordinate": [
+        2.287110000002714,
+        48.88727999999728
+      ],
+      "distanceMeters": 0.4,
+      "captureDate": "2008-05",
+      "copyright": "© Google",
+      "panoId": "2WVd_ZhmWoA5G0AMEkXwpw",
+      "heading": 326.6734017647603,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "422a7e6465398fe3dbd81334ab957e973e95111f72b37ad53a1646cd703fdd21",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Marie Rogissart": {
+    "image": "/data/collect_images/photo-166be6fcf549aa763f4e-facbcb15c840.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=c7t2IbZB2dF1rQG9IJ7oLQ&heading=166.76687861029848",
+    "verifiedEntity": "street:Passage Marie Rogissart",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.385581569630874,
+        48.84721738189425
+      ],
+      "target": [
+        2.385482296722658,
+        48.84742705914032
+      ],
+      "requestedCoordinate": [
+        2.38554,
+        48.84729
+      ],
+      "distanceMeters": 8.6,
+      "captureDate": "2026-07",
+      "copyright": "© Google",
+      "panoId": "c7t2IbZB2dF1rQG9IJ7oLQ",
+      "heading": 166.76687861029848,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "facbcb15c840ae8e5c0d029673fa2408f549f82b7aca7998ef916308e1fef285",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Cours Paul-Ricard": {
+    "image": "/data/collect_images/photo-6a34d3e8ed414f735c92-2bc70f553717.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=TddFHT67YxyUk07RvIg7TQ&heading=313.4937024828962",
+    "verifiedEntity": "street:Cours Paul-Ricard",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.326799910313269,
+        48.87715675432199
+      ],
+      "target": [
+        2.3263748170984355,
+        48.877473950946396
+      ],
+      "requestedCoordinate": [
+        2.3267,
+        48.8772
+      ],
+      "distanceMeters": 8.7,
+      "captureDate": "2016-04",
+      "copyright": "© Google",
+      "panoId": "TddFHT67YxyUk07RvIg7TQ",
+      "heading": 313.4937024828962,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "2bc70f553717d2f0c8c8876b0b3e2ae07a406f4e4197c0a22bd46985a5c41bd1",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Chemin Fondary": {
+    "image": "/data/collect_images/photo-6ad9c443c0a19c36e183-d6898b3f982b.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=3whOsyZ1p3xezJ7oAreUxA&heading=211.5611916649755",
+    "verifiedEntity": "street:Chemin Fondary",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.279098008374319,
+        48.8411718559224
+      ],
+      "target": [
+        2.2793451983964754,
+        48.84145804809582
+      ],
+      "requestedCoordinate": [
+        2.27919,
+        48.84129
+      ],
+      "distanceMeters": 14.8,
+      "captureDate": "2015-09",
+      "copyright": "© Google",
+      "panoId": "3whOsyZ1p3xezJ7oAreUxA",
+      "heading": 211.5611916649755,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "d6898b3f982b58a523bca29737177996870fe9437398f5ad297d4229b7fdea64",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Chemin de la Conservation - Quartier de Javel": {
+    "image": "/data/collect_images/photo-704becc8f908ae200561-bcc084763dab.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=QLJiU-HQqfjAMzNl-GH7ZA&heading=298.60946094140945",
+    "verifiedEntity": "street:Chemin de la Conservation - Quartier de Javel",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.279660329796997,
+        48.84096142063065
+      ],
+      "target": [
+        2.279559209927369,
+        48.84114310412863
+      ],
+      "requestedCoordinate": [
+        2.279815924139943,
+        48.841050950308734
+      ],
+      "distanceMeters": 14.2,
+      "captureDate": "2015-09",
+      "copyright": "© Google",
+      "panoId": "QLJiU-HQqfjAMzNl-GH7ZA",
+      "heading": 298.60946094140945,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "bcc084763dabe7298e3de61d2e26676a36ba0631aed70dfdefb32dc87e76c38e",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Moulin": {
+    "image": "/data/collect_images/photo-7d75aafbbc244f53e1bc-a2c02f0c00b6.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=VRQgI7Ucaq7v3DNm99QcRQ&heading=219.441528361959",
+    "verifiedEntity": "street:Passage Moulin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.375991610183882,
+        48.84516671061287
+      ],
+      "target": [
+        2.3758299999999997,
+        48.84501
+      ],
+      "requestedCoordinate": [
+        2.37588,
+        48.84505
+      ],
+      "distanceMeters": 15.3,
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "panoId": "VRQgI7Ucaq7v3DNm99QcRQ",
+      "heading": 219.441528361959,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "a2c02f0c00b6b61958b22497d7c28fbc0ca884190d616c727e42ecde607108ce",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Jean Anouilh": {
+    "image": "/data/collect_images/photo-7f35ee5ec1bf3e9caa27-e61ad36973a3.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=QTrW5qME75HLTEeHpq2G0w&heading=323.02286890801633",
+    "verifiedEntity": "street:Rue Jean Anouilh",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.378144274907322,
+        48.83146213514483
+      ],
+      "target": [
+        2.3777419038539747,
+        48.831825587235926
+      ],
+      "requestedCoordinate": [
+        2.37817,
+        48.83146
+      ],
+      "distanceMeters": 1.2,
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "panoId": "QTrW5qME75HLTEeHpq2G0w",
+      "heading": 323.02286890801633,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "e61ad36973a3c747dfafb7e5ba5504d06342e19e802ed56fa32390f6c9471704",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage Olivier de Serres": {
+    "image": "/data/collect_images/photo-9772f278accb033e15d8-181e69350ab4.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=PDviQxySxt3ObvcYEfGeDw&heading=313.64989318239515",
+    "verifiedEntity": "street:Passage Olivier de Serres",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.296801181044681,
+        48.83566984287862
+      ],
+      "target": [
+        2.296525,
+        48.835865
+      ],
+      "requestedCoordinate": [
+        2.29674,
+        48.83573
+      ],
+      "distanceMeters": 8,
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "panoId": "PDviQxySxt3ObvcYEfGeDw",
+      "heading": 313.64989318239515,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "181e69350ab4d764a26e1eeac5ff5c7e0a0d4ff957fd11786ec6bd854f60f282",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Rue Chauvelot - Quartier de Plaisance": {
+    "image": "/data/collect_images/photo-97ae3b84345be365cac7-d2ba27f3cdc5.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=dTByn5eaq0zS20AkYGUYgA&heading=193.86859414241715",
+    "verifiedEntity": "street:Rue Chauvelot - Quartier de Plaisance",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.309069828822182,
+        48.82343350772723
+      ],
+      "target": [
+        2.309072947035749,
+        48.82343020975008
+      ],
+      "requestedCoordinate": [
+        2.30909,
+        48.82347
+      ],
+      "distanceMeters": 0.3,
+      "captureDate": "2014-06",
+      "copyright": "© Google",
+      "panoId": "dTByn5eaq0zS20AkYGUYgA",
+      "heading": 193.86859414241715,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "d2ba27f3cdc5851caba94015b3acf26d43839f77068861fb2094cba5f7d719cc",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage X/Y": {
+    "image": "/data/collect_images/photo-adc54d2a482f6b4cfe4e-5e4e6c5a8ce6.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=Vuy38C_G0g-H5EO-dhzyFA&heading=48.31057653820062",
+    "verifiedEntity": "street:Passage X/Y",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.379621144442243,
+        48.86988603354578
+      ],
+      "target": [
+        2.379759596973647,
+        48.86990479848682
+      ],
+      "requestedCoordinate": [
+        2.3797327566385085,
+        48.86989137831925
+      ],
+      "distanceMeters": 5.2,
+      "captureDate": "2024-06",
+      "copyright": "© Google",
+      "panoId": "Vuy38C_G0g-H5EO-dhzyFA",
+      "heading": 48.31057653820062,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "5e4e6c5a8ce6f173820141d7db9ebf26050a10430cd0784468f71640b044a455",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée Jean-François Divry": {
+    "image": "/data/collect_images/photo-d3a32909df0582f7c172-5c8b9bdae8b8.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=KX1O4Q2Knp_8mDXRmE7bNQ&heading=230.03471302400715",
+    "verifiedEntity": "street:Allée Jean-François Divry",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.310422999678684,
+        48.89147262437753
+      ],
+      "target": [
+        2.310065,
+        48.891325
+      ],
+      "requestedCoordinate": [
+        2.31031,
+        48.89146
+      ],
+      "distanceMeters": 8.4,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "KX1O4Q2Knp_8mDXRmE7bNQ",
+      "heading": 230.03471302400715,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "5c8b9bdae8b8f883602a278ec6e7cb9a766e4ac673f80d575f19bce1de8775d7",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Allée Pilâtre de Rosier": {
+    "image": "/data/collect_images/photo-de4c197c60c46cfec62a-d1960c499176.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=75kSesjHLOuzcX5T5T5mQQ&heading=318.924314324029",
+    "verifiedEntity": "street:Allée Pilâtre de Rosier",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.27145191604909,
+        48.85832495808761
+      ],
+      "target": [
+        2.269688146563399,
+        48.860012780154904
+      ],
+      "requestedCoordinate": [
+        2.2715,
+        48.8584
+      ],
+      "distanceMeters": 9.1,
+      "captureDate": "2024-06",
+      "copyright": "© Google",
+      "panoId": "75kSesjHLOuzcX5T5T5mQQ",
+      "heading": 318.924314324029,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "d1960c4991763737ec228a56cf029d078cd0dd82c505604f04c9339e2a8e29c9",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Passage C/18": {
+    "image": "/data/collect_images/photo-e21c30584ea5fe07d584-09b5f5f1d833.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=4U1UHTFzaPHoxXBaWzpgiQ&heading=170.66493716365267",
+    "verifiedEntity": "street:Passage C/18",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.346012953916158,
+        48.88743264516814
+      ],
+      "target": [
+        2.345965000000001,
+        48.88766
+      ],
+      "requestedCoordinate": [
+        2.34599,
+        48.88756
+      ],
+      "distanceMeters": 14.3,
+      "captureDate": "2014-05",
+      "copyright": "© Google",
+      "panoId": "4U1UHTFzaPHoxXBaWzpgiQ",
+      "heading": 170.66493716365267,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "09b5f5f1d8330739bc2e7277efe9ee17c2442730a0573edfcd18e7e8fd1158c0",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Impasse du Petit Modèle": {
+    "image": "/data/collect_images/photo-f01a4ce8f953a8f649a7-7d6866b428b6.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=eGaT2U9AP_ICsSC3riN84A&heading=114.66854873271518",
+    "verifiedEntity": "street:Impasse du Petit Modèle",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.35927275995956,
+        48.832712902743
+      ],
+      "target": [
+        2.3593819021736913,
+        48.83285105283121
+      ],
+      "requestedCoordinate": [
+        2.3594712213097475,
+        48.83282404937147
+      ],
+      "distanceMeters": 17.3,
+      "captureDate": "2021-05",
+      "copyright": "© Google",
+      "panoId": "eGaT2U9AP_ICsSC3riN84A",
+      "heading": 114.66854873271518,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "7d6866b428b6d85af53c326d0b22e8422f4be1c5ba9db83242feb1f0f558b7f5",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Place Joachim du Bellay": {
+    "image": "/data/collect_images/photo-f131cac3081903b344d0-50732046c338.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=szSHq4kwvmsRPRuqQC_iVw&heading=165.0251885719813",
+    "verifiedEntity": "street:Place Joachim du Bellay",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.347530626918086,
+        48.86103541174272
+      ],
+      "target": [
+        2.3478949694067466,
+        48.86070634839905
+      ],
+      "requestedCoordinate": [
+        2.34754858297109,
+        48.86099047234297
+      ],
+      "distanceMeters": 3.5,
+      "captureDate": "2009-08",
+      "copyright": "© Google",
+      "panoId": "szSHq4kwvmsRPRuqQC_iVw",
+      "heading": 165.0251885719813,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "50732046c338b957370868e5a1475bb215064dae6a313a95c0b25c0113096ff5",
+      "evidence": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées."
+    }
+  },
+  "street:Place du Musée du Louvre": {
+    "image": "/data/collect_images/photo-f744ae97d20da826eb10-3624bc0094e2.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=hTBMV5o1V5DmHXCIoov3rg&heading=63.971740495607094",
+    "verifiedEntity": "street:Place du Musée du Louvre",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.333617640371448,
+        48.86033616912852
+      ],
+      "target": [
+        2.335696228095823,
+        48.86100394908451
+      ],
+      "requestedCoordinate": [
+        2.33364,
+        48.86034
+      ],
+      "distanceMeters": 1.7,
+      "captureDate": "2014-05",
+      "copyright": "© Google",
+      "panoId": "hTBMV5o1V5DmHXCIoov3rg",
+      "heading": 63.971740495607094,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "3624bc0094e2226dd020eb63a16304a3adb6132ad381c957b55e0154ac45c4bc",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Place Jules Rimet": {
+    "image": "/data/collect_images/photo-f9d55135a0ea8cb9cbd5-f49d4510ea7a.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=g51_XO31eIazpSlecIlq4A&heading=122.25449257292985",
+    "verifiedEntity": "street:Place Jules Rimet",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.254517443800413,
+        48.84040607388594
+      ],
+      "target": [
+        2.254144971392991,
+        48.84056077525766
+      ],
+      "requestedCoordinate": [
+        2.2543941550794946,
+        48.840382246523845
+      ],
+      "distanceMeters": 7.2,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "g51_XO31eIazpSlecIlq4A",
+      "heading": 122.25449257292985,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "f49d4510ea7a9c65f8f1e5ab60f86c939170e5ebd427fdc11af608c550a7765f",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Esplanade Henri de France": {
+    "image": "/data/collect_images/photo-77872c7012a804137d37-bb0d4a2d9bbc.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=9h1HlJ_ENgNgcAECU0zDew&heading=170.31502217048546",
+    "verifiedEntity": "street:Esplanade Henri de France",
+    "verification": {
+      "method": "geometry-surface-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.27045640733526,
+        48.83950417438921
+      ],
+      "target": [
+        2.2705646228720084,
+        48.83908683286851
+      ],
+      "requestedCoordinate": [
+        2.2709406514365633,
+        48.839272012431046
+      ],
+      "distanceMeters": 17,
+      "captureDate": "2025-06",
+      "copyright": "© Google",
+      "panoId": "9h1HlJ_ENgNgcAECU0zDew",
+      "heading": 170.31502217048546,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "bb0d4a2d9bbc6f32d9d64f6755931bc30f8817e4b47a79fb210731479de15f81",
+      "evidence": "Espace public identifiable et cadrage vérifié visuellement dans les deux orientations."
+    }
+  },
+  "street:Allée Léon Bronchart": {
+    "image": "/data/collect_images/wikimedia-1f01ce3b6309b4fe8fb6a26a.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_L%C3%A9on_Bronchart_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+    "verifiedEntity": "street:Allée Léon Bronchart",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée Léon-Bronchart",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_L%C3%A9on-Bronchart",
+      "articleCoordinate": [
+        2.357943,
+        48.897549
+      ],
+      "catalogTarget": [
+        2.357344978042536,
+        48.896775419245486
+      ],
+      "commonsFile": "Allée_Léon_Bronchart_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/e/e6/All%C3%A9e_L%C3%A9on_Bronchart_-_Paris_XVIII_%28FR75%29_-_2021-06-02_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "19a69fab630dd69f4af0674562ddd98e36ab949e",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-02 18:39:44",
+      "sha256": "1f01ce3b6309b4fe8fb6a26ab63ea4a792bb9c9f7025b660d94188ccbc8c2cec",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Allée Isadora Duncan": {
+    "image": "/data/collect_images/wikimedia-b19907d2a22f39754d652e93.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_Isadora_Duncan_-_Paris_XV_(FR75)_-_2021-08-10_-_1.jpg",
+    "verifiedEntity": "street:Allée Isadora Duncan",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée Isadora-Duncan",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_Isadora-Duncan",
+      "articleCoordinate": [
+        2.283883,
+        48.842683
+      ],
+      "catalogTarget": [
+        2.2835808812357423,
+        48.84234293998479
+      ],
+      "commonsFile": "Allée_Isadora_Duncan_-_Paris_XV_(FR75)_-_2021-08-10_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/5/5a/All%C3%A9e_Isadora_Duncan_-_Paris_XV_%28FR75%29_-_2021-08-10_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "77976b191e5a94acc57d0fae6090aad3f997d10d",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-10 20:09:18",
+      "sha256": "b19907d2a22f39754d652e9383c29594d690de2774a99dd5fb825d0c0c8dae58",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Allée Lydia Becker": {
+    "image": "/data/collect_images/wikimedia-f16f8d9b0a6eb22bdc11ed74.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_Lydia_Becker_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+    "verifiedEntity": "street:Allée Lydia Becker",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée Lydia-Becker",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_Lydia-Becker",
+      "articleCoordinate": [
+        2.357943,
+        48.897549
+      ],
+      "catalogTarget": [
+        2.3572709100991096,
+        48.89711033569535
+      ],
+      "commonsFile": "Allée_Lydia_Becker_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/4/43/All%C3%A9e_Lydia_Becker_-_Paris_XVIII_%28FR75%29_-_2021-06-02_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "5e74a5024626bb113a5aaf845459bf70d5382231",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-02 18:44:03",
+      "sha256": "f16f8d9b0a6eb22bdc11ed74a58dbd33c0e492ceadc118192804b39be52a4b50",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Allée Rose Dieng-Kuntz": {
+    "image": "/data/collect_images/wikimedia-83b9e106dfc1dd94ee8d1b61.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_Rose_Dieng_Kuntz_-_Paris_XIX_(FR75)_-_2023-05-29_-_2.jpg",
+    "verifiedEntity": "street:Allée Rose Dieng-Kuntz",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée Rose-Dieng-Kuntz",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_Rose-Dieng-Kuntz",
+      "articleCoordinate": [
+        2.37225,
+        48.89663
+      ],
+      "catalogTarget": [
+        2.372761924031927,
+        48.896734501869204
+      ],
+      "commonsFile": "Allée_Rose_Dieng_Kuntz_-_Paris_XIX_(FR75)_-_2023-05-29_-_2.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/a/a3/All%C3%A9e_Rose_Dieng_Kuntz_-_Paris_XIX_%28FR75%29_-_2023-05-29_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "247104214526afae3664a26f582a30a2f78f1f64",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2023-05-29 20:30:29",
+      "sha256": "83b9e106dfc1dd94ee8d1b61a2c25777208730b32a57cb872baee728820fd0ce",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Allée Shamaï Haber": {
+    "image": "/data/collect_images/wikimedia-861eb9349108a1294982514a.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_Shama%C3%AF_Haber_-_Paris_XIV_(FR75)_-_2024-10-24_-_2.jpg",
+    "verifiedEntity": "street:Allée Shamaï Haber",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Allée Shamaï-Haber",
+      "articleURL": "https://fr.wikipedia.org/wiki/All%C3%A9e_Shama%C3%AF-Haber",
+      "articleCoordinate": [
+        2.318437,
+        48.83701
+      ],
+      "catalogTarget": [
+        2.318440667690432,
+        48.83700515611662
+      ],
+      "commonsFile": "Allée_Shamaï_Haber_-_Paris_XIV_(FR75)_-_2024-10-24_-_2.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/8/8c/All%C3%A9e_Shama%C3%AF_Haber_-_Paris_XIV_%28FR75%29_-_2024-10-24_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "f768d49d347f7fe87e4e9ab1325fd41234d55332",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2024-10-24 18:38:18",
+      "sha256": "861eb9349108a1294982514a4cd6273b74c28dc0793c1e873d814b9ffa158a3a",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Esplanade Claude Luter": {
+    "image": "/data/collect_images/wikimedia-a62f9084b2ad0f0fc54afd61.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Esplanade_Claude_Luter_-_Paris_XX_(FR75)_-_2021-06-02_-_1.jpg",
+    "verifiedEntity": "street:Esplanade Claude Luter",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Esplanade Claude-Luter",
+      "articleURL": "https://fr.wikipedia.org/wiki/Esplanade_Claude-Luter",
+      "articleCoordinate": [
+        2.4088331,
+        48.8778543
+      ],
+      "catalogTarget": [
+        2.409120827407382,
+        48.87734883747184
+      ],
+      "commonsFile": "Esplanade_Claude_Luter_-_Paris_XX_(FR75)_-_2021-06-02_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Esplanade_Claude_Luter_-_Paris_XX_%28FR75%29_-_2021-06-02_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "76d0a91149f1e21c7cd35187e94e8b6b972a8446",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-02 16:30:36",
+      "sha256": "a62f9084b2ad0f0fc54afd61742259a17e1ce3e60ae08f98c1c197258b2eebc5",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Impasse Basilide Fossard": {
+    "image": "/data/collect_images/wikimedia-f9dd0300c846f5351d3b23b1.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Basilide_Fossard_-_Paris_XX_(FR75)_-_2021-06-10_-_1.jpg",
+    "verifiedEntity": "street:Impasse Basilide Fossard",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Basilide-Fossard",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Basilide-Fossard",
+      "articleCoordinate": [
+        2.403285,
+        48.869981
+      ],
+      "catalogTarget": [
+        2.4032595243703385,
+        48.87002639375666
+      ],
+      "commonsFile": "Impasse_Basilide_Fossard_-_Paris_XX_(FR75)_-_2021-06-10_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Impasse_Basilide_Fossard_-_Paris_XX_%28FR75%29_-_2021-06-10_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "35a12a47fc294892e07d54427ca37863ed7b6465",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-10 18:09:23",
+      "sha256": "f9dd0300c846f5351d3b23b169aee29ea9d7c1e7944a8379f81860c462f7cf35",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Impasse Cordon Boussard": {
+    "image": "/data/collect_images/wikimedia-fb278aad3115f9f9da73bf6e.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Cordon_Boussard_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+    "verifiedEntity": "street:Impasse Cordon Boussard",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Cordon-Boussard",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_Cordon-Boussard",
+      "articleCoordinate": [
+        2.397592,
+        48.865736
+      ],
+      "catalogTarget": [
+        2.397533514898993,
+        48.8657017574495
+      ],
+      "commonsFile": "Impasse_Cordon_Boussard_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Impasse_Cordon_Boussard_-_Paris_XX_%28FR75%29_-_2021-06-09_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "ed9aac1d564a07be29ace41434736a9922cd7553",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-09 18:48:39",
+      "sha256": "fb278aad3115f9f9da73bf6e3f62ab39877883e6dea868c30c11904943a0c39f",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Impasse des Belles Feuilles": {
+    "image": "/data/collect_images/wikimedia-d9317ab3568579a513ce83e0.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_Belles_Feuilles_-_Paris_XVI_(FR75)_-_2021-08-17_-_1.jpg",
+    "verifiedEntity": "street:Impasse des Belles Feuilles",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse des Belles-Feuilles",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_des_Belles-Feuilles",
+      "articleCoordinate": [
+        2.2805598,
+        48.8687218
+      ],
+      "catalogTarget": [
+        2.2805072739917747,
+        48.86873240693779
+      ],
+      "commonsFile": "Impasse_Belles_Feuilles_-_Paris_XVI_(FR75)_-_2021-08-17_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/1/19/Impasse_Belles_Feuilles_-_Paris_XVI_%28FR75%29_-_2021-08-17_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "6c011d47c922841c8e8bb1c418484b45ae85dc17",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-17 19:29:41",
+      "sha256": "d9317ab3568579a513ce83e08504c71a5e6178e05576f0f9c2d4380079e8be41",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Impasse des Deux Nèthes": {
+    "image": "/data/collect_images/wikimedia-aaf7b8b03607104eaca0b347.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Milliped",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_des_Deux-N%C3%A9thes,_Paris_2011.jpg",
+    "verifiedEntity": "street:Impasse des Deux Nèthes",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse des Deux-Néthes",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_des_Deux-N%C3%A9thes",
+      "articleCoordinate": [
+        2.327207,
+        48.885744
+      ],
+      "catalogTarget": [
+        2.3272360109324173,
+        48.885769260907914
+      ],
+      "commonsFile": "Impasse_des_Deux-Néthes,_Paris_2011.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Impasse_des_Deux-N%C3%A9thes%2C_Paris_2011.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "4116d4c2421a257a816858cc7538e83149cbb6f1",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2011-01-24",
+      "sha256": "aaf7b8b03607104eaca0b34752a80b587f79cadb0fc3e447b70bf0edb821adb6",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Impasse Eveillard": {
+    "image": "/data/collect_images/wikimedia-b6f972204b8a810fe4456f83.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Impasse_%C3%89veillard_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+    "verifiedEntity": "street:Impasse Eveillard",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Impasse Éveillard",
+      "articleURL": "https://fr.wikipedia.org/wiki/Impasse_%C3%89veillard",
+      "articleCoordinate": [
+        2.403423,
+        48.864589
+      ],
+      "catalogTarget": [
+        2.4033692269504336,
+        48.86455268912536
+      ],
+      "commonsFile": "Impasse_Éveillard_-_Paris_XX_(FR75)_-_2021-06-09_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Impasse_%C3%89veillard_-_Paris_XX_%28FR75%29_-_2021-06-09_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "b6199e957361af97c1acacdbad45b6c705adcacc",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-09 18:09:46",
+      "sha256": "b6f972204b8a810fe4456f835f189c725768be9d04e1143ae0142d4d41dd5a61",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Passage des Deux Sœurs": {
+    "image": "/data/collect_images/wikimedia-ad18c02b26216efec7d747c8.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1080567_Paris_IX_passage_des_Deux-Soeurs_rwk.JPG",
+    "verifiedEntity": "street:Passage des Deux Sœurs",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage des Deux-Sœurs",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_des_Deux-S%C5%93urs",
+      "articleCoordinate": [
+        2.342067,
+        48.875008
+      ],
+      "catalogTarget": [
+        2.342125604231768,
+        48.8750699351371
+      ],
+      "commonsFile": "P1080567_Paris_IX_passage_des_Deux-Soeurs_rwk.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/3/30/P1080567_Paris_IX_passage_des_Deux-Soeurs_rwk.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "969fe291dcb74b321df22e1c224db88bd918fe20",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2012-02-20",
+      "sha256": "ad18c02b26216efec7d747c81a2b2b1327f48f075326f5d8501525c7090120af",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Passage Madeleine Pelletier": {
+    "image": "/data/collect_images/wikimedia-7216acad645a549605a02ca7.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passage_Madeleine_Pelletier_-_Paris_XIII_(FR75)_-_2021-02-21_-_1.jpg",
+    "verifiedEntity": "street:Passage Madeleine Pelletier",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage Madeleine-Pelletier",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_Madeleine-Pelletier",
+      "articleCoordinate": [
+        2.385017,
+        48.826719
+      ],
+      "catalogTarget": [
+        2.3855843881169028,
+        48.82652467226399
+      ],
+      "commonsFile": "Passage_Madeleine_Pelletier_-_Paris_XIII_(FR75)_-_2021-02-21_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Passage_Madeleine_Pelletier_-_Paris_XIII_%28FR75%29_-_2021-02-21_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "8f8ed6f8c680b2f9dda454e1b0d8d4597ed57adc",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-02-21 12:48:58",
+      "sha256": "7216acad645a549605a02ca779fccfd79d2983775b7834654ef512bdf3276381",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Place Albert Memmi": {
+    "image": "/data/collect_images/wikimedia-c533f04336920b437fcd2d59.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Place_Albert_Memmi_-_Paris_IV_(FR75)_-_2022-05-20_-_2.jpg",
+    "verifiedEntity": "street:Place Albert Memmi",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Place Albert-Memmi",
+      "articleURL": "https://fr.wikipedia.org/wiki/Place_Albert-Memmi",
+      "articleCoordinate": [
+        2.353,
+        48.85796
+      ],
+      "catalogTarget": [
+        2.3533202304564953,
+        48.85828531370569
+      ],
+      "commonsFile": "Place_Albert_Memmi_-_Paris_IV_(FR75)_-_2022-05-20_-_2.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Place_Albert_Memmi_-_Paris_IV_%28FR75%29_-_2022-05-20_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "a6a2017268a0172ee5d760d0f4e711cc16fe66f2",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2022-05-20 20:48:35",
+      "sha256": "c533f04336920b437fcd2d599229175286a613d383ec2dc8ccf5f8c5dccb8b09",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Passerelle Michèle Morgan": {
+    "image": "/data/collect_images/wikimedia-10815e41b491fcdbca402e7a.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passerelle_Bichat_-_Paris_X_(FR75)_-_2022-07-30_-_1.jpg",
+    "verifiedEntity": "street:Passerelle Michèle Morgan",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passerelle Michèle-Morgan",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passerelle_Mich%C3%A8le-Morgan",
+      "articleCoordinate": [
+        2.363306,
+        48.873895
+      ],
+      "catalogTarget": [
+        2.3633010842366073,
+        48.873923694745535
+      ],
+      "commonsFile": "Passerelle_Bichat_-_Paris_X_(FR75)_-_2022-07-30_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Passerelle_Bichat_-_Paris_X_%28FR75%29_-_2022-07-30_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "3cfc16a97ccff4cfc80d61438e1ec0449b30d45d",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2022-07-30 12:03:52",
+      "sha256": "10815e41b491fcdbca402e7ab2005030876fca6d3029a3c038f6f61ebb65daa4",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Place Pierre Vaudrey": {
+    "image": "/data/collect_images/wikimedia-25cd9bf9a1cd040e995f9452.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Guilhem Vellut from Paris, France",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Place_Pierre-Vaudrey_(32583824203).jpg",
+    "verifiedEntity": "street:Place Pierre Vaudrey",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Place Pierre-Vaudrey",
+      "articleURL": "https://fr.wikipedia.org/wiki/Place_Pierre-Vaudrey",
+      "articleCoordinate": [
+        2.406564,
+        48.861097
+      ],
+      "catalogTarget": [
+        2.405967044909072,
+        48.86105362272054
+      ],
+      "commonsFile": "Place_Pierre-Vaudrey_(32583824203).jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/8/89/Place_Pierre-Vaudrey_%2832583824203%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "6c03035c5f0524e5c9d613cb523ba00f0e4f7d8a",
+      "licenseURL": "https://creativecommons.org/licenses/by/2.0",
+      "captureDate": "2017-03-11 12:00",
+      "sha256": "25cd9bf9a1cd040e995f9452af8a6be6aef0c62ce13ea7b499748bf5dfc06aa5",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Aubry le Boucher": {
+    "image": "/data/collect_images/wikimedia-4af3bb6d26208385a025ab42.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Aubry_Boucher_-_Paris_IV_(FR75)_-_2021-05-19_-_1.jpg",
+    "verifiedEntity": "street:Rue Aubry le Boucher",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Aubry-le-Boucher",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Aubry-le-Boucher",
+      "articleCoordinate": [
+        2.349991,
+        48.860399
+      ],
+      "catalogTarget": [
+        2.3502039446938006,
+        48.86034889055487
+      ],
+      "commonsFile": "Rue_Aubry_Boucher_-_Paris_IV_(FR75)_-_2021-05-19_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Rue_Aubry_Boucher_-_Paris_IV_%28FR75%29_-_2021-05-19_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "2512464746de0e60696d6291f191411e52a9a8d2",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-05-19 17:34:38",
+      "sha256": "4af3bb6d26208385a025ab42a813f2c2a8da32e28b018d96b50ac24f235e5b90",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue André Gill": {
+    "image": "/data/collect_images/wikimedia-5056fcdf133ba65853229003.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Andr%C3%A9_Gill_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+    "verifiedEntity": "street:Rue André Gill",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue André-Gill",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Andr%C3%A9-Gill",
+      "articleCoordinate": [
+        2.339812,
+        48.882841
+      ],
+      "catalogTarget": [
+        2.340005009271725,
+        48.882845430874625
+      ],
+      "commonsFile": "Rue_André_Gill_-_Paris_XVIII_(FR75)_-_2021-08-04_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Rue_Andr%C3%A9_Gill_-_Paris_XVIII_%28FR75%29_-_2021-08-04_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "5c761d007f2d45bc0929d5a0971cfd356463c3ca",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-04 20:36:17",
+      "sha256": "5056fcdf133ba65853229003de2108a24229352a6aedab23f9fa044571d6a624",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Camille Bombois": {
+    "image": "/data/collect_images/wikimedia-96e8677d92475737cafa5d71.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Bombois_Paris_2.jpg",
+    "verifiedEntity": "street:Rue Camille Bombois",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Camille-Bombois",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Camille-Bombois",
+      "articleCoordinate": [
+        2.408313,
+        48.866119
+      ],
+      "catalogTarget": [
+        2.408315,
+        48.866125
+      ],
+      "commonsFile": "Rue_Bombois_Paris_2.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/0/08/Rue_Bombois_Paris_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "2cfed6033a3bc1a94054dc2ede11579b3e713323",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2017-02-05 15:23:42",
+      "sha256": "96e8677d92475737cafa5d7185c52c42ad411aa33857dcbc65ed160e17b944d6",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Eugène Atget": {
+    "image": "/data/collect_images/wikimedia-4e637b1dadd4d461a11152a4.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1320199_Paris_XIII_rue_Eugene_Atget_rwk.jpg",
+    "verifiedEntity": "street:Rue Eugène Atget",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Eugène-Atget",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Eug%C3%A8ne-Atget",
+      "articleCoordinate": [
+        2.350042,
+        48.828919
+      ],
+      "catalogTarget": [
+        2.349785947094999,
+        48.82896324515833
+      ],
+      "commonsFile": "P1320199_Paris_XIII_rue_Eugene_Atget_rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/8/8e/P1320199_Paris_XIII_rue_Eugene_Atget_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "4ee42c0aaef8cb371ec489a2414e49b11e8c70a0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2015-04-14",
+      "sha256": "4e637b1dadd4d461a11152a47a3fe4251f57cb23e1c40cb5758aed20f1ee886f",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Éva Kotchever": {
+    "image": "/data/collect_images/wikimedia-98f6d875f439d690d03188dc.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Eva_Kotchever_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+    "verifiedEntity": "street:Rue Éva Kotchever",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Eva-Kotchever",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Eva-Kotchever",
+      "articleCoordinate": [
+        2.357943,
+        48.897549
+      ],
+      "catalogTarget": [
+        2.357179984906374,
+        48.897505351581216
+      ],
+      "commonsFile": "Rue_Eva_Kotchever_-_Paris_XVIII_(FR75)_-_2021-06-02_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/8/88/Rue_Eva_Kotchever_-_Paris_XVIII_%28FR75%29_-_2021-06-02_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "0250fd28bbba1c7b4e908cca43077e4dc7981cf5",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-06-02 18:43:01",
+      "sha256": "98f6d875f439d690d03188dcca315ac1b1c51485d929a6fcf5556721b61554a6",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Jean Nohain": {
+    "image": "/data/collect_images/wikimedia-d2b7186da4cbe0b294bebe05.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Jean_Nohain_-_Paris_XIX_(FR75)_-_2021-07-25_-_1.jpg",
+    "verifiedEntity": "street:Rue Jean Nohain",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Jean-Nohain",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Jean-Nohain",
+      "articleCoordinate": [
+        2.373575,
+        48.882677
+      ],
+      "catalogTarget": [
+        2.373597167622607,
+        48.88269201733583
+      ],
+      "commonsFile": "Rue_Jean_Nohain_-_Paris_XIX_(FR75)_-_2021-07-25_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Rue_Jean_Nohain_-_Paris_XIX_%28FR75%29_-_2021-07-25_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "4a36d2545f2d6c64baaf11f7f995e297a5f26b68",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-07-25 17:00:43",
+      "sha256": "d2b7186da4cbe0b294bebe05626555c552018750731780bb09292253b415d27a",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Rue Mado Maurin": {
+    "image": "/data/collect_images/wikimedia-0fed7b8a51ce6bbc6e587785.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rue_Mado_Maurin_-_Paris_XVII_(FR75)_-_2022-10-06_-_1.jpg",
+    "verifiedEntity": "street:Rue Mado Maurin",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Rue Mado-Maurin",
+      "articleURL": "https://fr.wikipedia.org/wiki/Rue_Mado-Maurin",
+      "articleCoordinate": [
+        2.357943,
+        48.897549
+      ],
+      "catalogTarget": [
+        2.357618643214959,
+        48.89565032875217
+      ],
+      "commonsFile": "Rue_Mado_Maurin_-_Paris_XVII_(FR75)_-_2022-10-06_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Rue_Mado_Maurin_-_Paris_XVII_%28FR75%29_-_2022-10-06_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "0871de0cb3dab740aca9de2d587296e440670058",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2022-10-06 18:40:17",
+      "sha256": "0fed7b8a51ce6bbc6e587785749fd331d2c1de3f0c4be2f0009046184fbd05df",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Square André Dreyer": {
+    "image": "/data/collect_images/wikimedia-0928a22c579771a4d7036462.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Vanbasten 23",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_Andr%C3%A9-Dreyer.jpg",
+    "verifiedEntity": "street:Square André Dreyer",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square André-Dreyer",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_Andr%C3%A9-Dreyer",
+      "articleCoordinate": [
+        2.343714,
+        48.826856
+      ],
+      "catalogTarget": [
+        2.3444008615098575,
+        48.8266758887662
+      ],
+      "commonsFile": "Square_André-Dreyer.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Square_Andr%C3%A9-Dreyer.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "3243c35c55789c2fc39cf22f76befb725b55f14f",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2018-08-23",
+      "sha256": "0928a22c579771a4d7036462d040c20c3768c937394362df381ab1d11efb44c8",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Square Gaston Bertandeau": {
+    "image": "/data/collect_images/wikimedia-ea7e1f8f622f78189dc8e348.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Chabe01",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Square_Gaston_Bertandeau_-_Paris_XVII_(FR75)_-_2021-08-22_-_1.jpg",
+    "verifiedEntity": "street:Square Gaston Bertandeau",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Square Gaston-Bertandeau",
+      "articleURL": "https://fr.wikipedia.org/wiki/Square_Gaston-Bertandeau",
+      "articleCoordinate": [
+        2.288099,
+        48.879084
+      ],
+      "catalogTarget": [
+        2.288099065989202,
+        48.87908468318981
+      ],
+      "commonsFile": "Square_Gaston_Bertandeau_-_Paris_XVII_(FR75)_-_2021-08-22_-_1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/2/26/Square_Gaston_Bertandeau_-_Paris_XVII_%28FR75%29_-_2021-08-22_-_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "43eda10b59561ebe7a2fafa3b032750ba1ab7749",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0",
+      "captureDate": "2021-08-22 15:39:23",
+      "sha256": "ea7e1f8f622f78189dc8e348d9a99e50b5333c47b16e310d6a37c2b2a01c7e70",
+      "evidence": "Photographie de la voie dans sa longueur ou de son accès caractéristique, repères et cadrage contrôlés visuellement ; article parisien et coordonnées concordants."
+    }
+  },
+  "street:Avenue du Maine": {
+    "image": "/data/collect_images/wikimedia-7876382ff1f2feae4741f0b9.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:P1030346_Paris_XIV_avenue_du_Maine_rwk.JPG",
+    "verifiedEntity": "street:Avenue du Maine",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Avenue du Maine",
+      "articleURL": "https://fr.wikipedia.org/wiki/Avenue_du_Maine",
+      "articleCoordinate": [
+        2.3235,
+        48.836167
+      ],
+      "catalogTarget": [
+        2.3227028868683868,
+        48.83796303458638
+      ],
+      "commonsFile": "P1030346 Paris XIV avenue du Maine rwk.JPG",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/6/62/P1030346_Paris_XIV_avenue_du_Maine_rwk.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "3e36e77e62c841c412f2227392729e3ef9a5029c",
+      "licenseURL": "https://creativecommons.org/licenses/by/3.0",
+      "captureDate": "2011-07",
+      "sha256": "7876382ff1f2feae4741f0b96a1c754262bd86626e91ca553785c40fc5c0368d",
+      "evidence": "Vue axiale de l’avenue, de la cour ou de l’escalier du passage, contrôlée visuellement ; identité de l’article et coordonnées concordantes."
+    }
+  },
+  "street:Cité Montmartre": {
+    "image": "/data/collect_images/wikimedia-5eefe369585ce964a2dc7561.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Mbzt",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:CF6221_Paris_2e_citee_Montmartre_impasse_rwk.jpg",
+    "verifiedEntity": "street:Cité Montmartre",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Cité Montmartre",
+      "articleURL": "https://fr.wikipedia.org/wiki/Cit%C3%A9_Montmartre",
+      "articleCoordinate": [
+        2.344312,
+        48.865908
+      ],
+      "catalogTarget": [
+        2.3442856106090866,
+        48.865919395917
+      ],
+      "commonsFile": "CF6221 Paris 2e citee Montmartre impasse rwk.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/b/b1/CF6221_Paris_2e_citee_Montmartre_impasse_rwk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "9e910d5f12de515b3d9242014cd68f63bc92d28a",
+      "licenseURL": "https://creativecommons.org/licenses/by/4.0",
+      "captureDate": "2026-02-04 17:59:01",
+      "sha256": "5eefe369585ce964a2dc7561d752fb97805b78fdd9b2cac73db603e63857e465",
+      "evidence": "Vue axiale de l’avenue, de la cour ou de l’escalier du passage, contrôlée visuellement ; identité de l’article et coordonnées concordantes."
+    }
+  },
+  "street:Passage des Deux Pavillons": {
+    "image": "/data/collect_images/wikimedia-5ff1fe692aefb622cdae1830.jpg",
+    "source": "wikipedia",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Wikimedia Commons / Mu",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Passage_des_Deux-Pavillons,_Paris_1.jpg",
+    "verifiedEntity": "street:Passage des Deux Pavillons",
+    "verification": {
+      "method": "article-identity-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "articleTitle": "Passage des Deux-Pavillons",
+      "articleURL": "https://fr.wikipedia.org/wiki/Passage_des_Deux-Pavillons",
+      "articleCoordinate": [
+        2.338972,
+        48.866109
+      ],
+      "catalogTarget": [
+        2.339074805142841,
+        48.86612954043956
+      ],
+      "commonsFile": "Passage des Deux-Pavillons, Paris 1.jpg",
+      "originalURL": "https://upload.wikimedia.org/wikipedia/commons/1/19/Passage_des_Deux-Pavillons%2C_Paris_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "originalSHA1": "b4a9d2b9fbbdf7aef8af2b40a1e8ba464beb27df",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0",
+      "captureDate": "2010-06-02",
+      "sha256": "5ff1fe692aefb622cdae1830d456354a5946f27effefe9e3d35133172fe03bbc",
+      "evidence": "Vue axiale de l’avenue, de la cour ou de l’escalier du passage, contrôlée visuellement ; identité de l’article et coordonnées concordantes."
+    }
   }
 }

@@ -86,6 +86,26 @@ test("extended photo sampling visits disconnected street segments", () => {
   assert.equal(photoLocations(features, [2.3, 48.85]).length, 3);
 });
 
+test("exhaustive photo sampling keeps entrances and every disconnected portion", () => {
+  const { photoLocations } = require("../scripts/enrich_collect_paris_photos");
+  const { distance } = require("../scripts/lib/collect-street-view");
+  const features = Array.from({ length: 6 }, (_, i) =>
+    feature([
+      [2.3 + i * 0.01, 48.85],
+      [2.302 + i * 0.01, 48.85],
+    ]),
+  );
+  const samples = photoLocations(features, [2.3, 48.85], true, true);
+  for (const f of features) {
+    const [start, end] = f.geometry.coordinates;
+    const portion = samples.filter((p) => p[0] >= start[0] && p[0] <= end[0]);
+    assert.deepEqual(portion[0], start);
+    assert.deepEqual(portion.at(-1), end);
+    for (let i = 1; i < portion.length; i++)
+      assert.ok(distance(portion[i - 1], portion[i]) <= 15.01);
+  }
+});
+
 test("square photographs aim into the surface and retain actual boundary distance", () => {
   const {
     photoLocations,

@@ -15,7 +15,7 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   assert.ok(Object.keys(manifest).length >= 477);
   const streets = catalog.records.filter(c => c.family === 'street');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
-  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.93), 'Street photo coverage must remain at least 93%');
+  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.95), 'Street photo coverage must remain at least 95%');
   assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length > 0);
   for (const card of catalog.records.filter(c => c.family !== 'street')) {
     assert.equal(card.illustration.kind, 'photograph', card.name);

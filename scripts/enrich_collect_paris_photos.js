@@ -88,11 +88,27 @@ function areaBoundaries(features) {
     }));
   });
 }
-function photoLocations(features, target, extended = false) {
+function photoLocations(
+  features,
+  target,
+  extended = false,
+  exhaustive = false,
+) {
   const segments = lines(features)
     .filter((line) => length(line) > 1)
     .sort((a, b) => length(b) - length(a));
   if (segments.length) {
+    if (exhaustive) {
+      // Keep short/disconnected portions and both entrances: the longest
+      // portion is not necessarily the one covered by a Google camera.
+      return segments.flatMap((line) => {
+        const metres = length(line);
+        const count = Math.max(2, Math.ceil(metres / 15));
+        return Array.from({ length: count + 1 }, (_, i) =>
+          at(line, (metres * i) / count),
+        );
+      });
+    }
     if (!extended) return candidateLocations(features);
     return segments
       .slice(0, 4)
@@ -106,7 +122,10 @@ function photoLocations(features, target, extended = false) {
   return [
     contains(target, features) ? target : null,
     ...rings.flatMap((f) =>
-      [0.125, 0.375, 0.625, 0.875, 0, 0.25, 0.5, 0.75].map((fraction) =>
+      (exhaustive
+        ? Array.from({ length: 32 }, (_, i) => i / 32)
+        : [0.125, 0.375, 0.625, 0.875, 0, 0.25, 0.5, 0.75]
+      ).map((fraction) =>
         at(f.geometry.coordinates, length(f.geometry.coordinates) * fraction),
       ),
     ),
@@ -129,6 +148,7 @@ function plan({
   allStreets = false,
   extended = false,
   includePhotographed = false,
+  exhaustive = false,
 } = {}) {
   const catalog = read(path.join(root, "data/collect_paris_catalog.json"));
   const index = read(path.join(root, "backend/data/streets_index.json"));
@@ -176,7 +196,7 @@ function plan({
     const projected = match?.coordinate;
     const locations =
       c.family === "street"
-        ? photoLocations(features, c.centroid, extended)
+        ? photoLocations(features, c.centroid, extended, exhaustive)
         : [
             projected,
             ...(match
@@ -212,6 +232,9 @@ async function generate(
     extended = false,
     excludedPanoramas = {},
     includePhotographed = false,
+    exhaustive = false,
+    searchRadius = 35,
+    oldestYear = new Date().getUTCFullYear() - 10,
   } = {},
 ) {
   fs.mkdirSync(directory, { recursive: true });
@@ -221,7 +244,15 @@ async function generate(
   if (!secret) throw Error("Street View API key unavailable");
   if (includePhotographed && !only?.length)
     throw Error("Photo repairs require an explicit card list");
-  let jobs = plan({ allStreets, extended, includePhotographed });
+  if (!Number.isFinite(searchRadius) || searchRadius < 1 || searchRadius > 35)
+    throw Error("Street search radius must be between 1 and 35 metres");
+  if (
+    !Number.isInteger(oldestYear) ||
+    oldestYear < 2007 ||
+    oldestYear > new Date().getUTCFullYear()
+  )
+    throw Error("Invalid oldest panorama year");
+  let jobs = plan({ allStreets, extended, includePhotographed, exhaustive });
   if (only) jobs = jobs.filter((j) => only.includes(j.key));
   if (limit) jobs = jobs.slice(0, limit);
   let cursor = 0,
@@ -248,11 +279,11 @@ async function generate(
     for (const requested of (refresh
       ? [...job.locations.slice(1), job.locations[0]]
       : job.locations
-    ).slice(0, extended ? 28 : 3)) {
+    ).slice(0, exhaustive ? Infinity : extended ? 28 : 3)) {
       const q = new URLSearchParams({
         key: secret,
         location: `${requested[1]},${requested[0]}`,
-        radius: job.family === "monument" ? "80" : "35",
+        radius: job.family === "monument" ? "80" : String(searchRadius),
         source: "outdoor",
       });
       const response = await fetch(
@@ -276,10 +307,7 @@ async function generate(
         lastReason = "Unverified panorama copyright";
         continue;
       }
-      if (
-        !metadata.date ||
-        Number(metadata.date.slice(0, 4)) < new Date().getUTCFullYear() - 10
-      ) {
+      if (!metadata.date || Number(metadata.date.slice(0, 4)) < oldestYear) {
         lastReason = "Panorama too old";
         continue;
       }
@@ -508,6 +536,9 @@ async function main() {
     only: get("--only") ? read(get("--only")) : undefined,
     refresh: args.includes("--refresh"),
     extended: args.includes("--extended"),
+    exhaustive: args.includes("--exhaustive"),
+    searchRadius: get("--search-radius") ? Number(get("--search-radius")) : 35,
+    oldestYear: get("--oldest-year") ? Number(get("--oldest-year")) : undefined,
     includePhotographed: args.includes("--include-photographed"),
     excludedPanoramas: get("--exclude-panoramas")
       ? read(get("--exclude-panoramas"))
