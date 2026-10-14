@@ -44,7 +44,10 @@ async function applyPhotographs(client) {
     [JSON.stringify(photos)],
   );
   const catalog = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../../data/collect_paris_catalog.json"), "utf8"),
+    fs.readFileSync(
+      path.resolve(__dirname, "../../../data/collect_paris_catalog.json"),
+      "utf8",
+    ),
   );
   const withoutPhoto = catalog.records
     .filter((card) => card.illustration.kind !== "photograph")

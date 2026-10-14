@@ -249,6 +249,7 @@
 
 .collect-card-art--monument-photo{aspect-ratio:4/5}
 .collect-card .collect-card-art--monument-photo>img{object-fit:contain}
+.collect-card .collect-card-art--transport-photo>img{object-fit:contain}
 
 .collect-grid .collect-card:has(>.collect-card-art--monument-photo){aspect-ratio:auto}
 .collect-grid .collect-card>.collect-card-art--monument-photo{aspect-ratio:4/5;flex:none}

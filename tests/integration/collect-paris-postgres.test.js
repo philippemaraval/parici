@@ -73,7 +73,7 @@ test(
       photoCards.push(row);
     }
     const photoOwner = await register("photo_upgrade_probe");
-    const logoCard = (await db.pool.query("SELECT * FROM cards WHERE family='bus' AND image_override IS NULL ORDER BY id LIMIT 1")).rows[0];
+    const logoCard = (await db.pool.query("SELECT * FROM cards WHERE image_reference='/apple-touch-icon.png' AND image_override IS NULL ORDER BY id LIMIT 1")).rows[0];
     assert.ok(logoCard);
     await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=$1", [logoCard.id]);
     await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[photoOwner.id,photoCards[0].id]);
@@ -642,11 +642,16 @@ test(
       const photographSamples = ["Rue Foyatier", "Tour Eiffel", "Bonne-Nouvelle"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
       assert.ok(photographSamples.every(Boolean));
       for (const card of photographSamples) {
-        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[player.id,card.id]);
+        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const logoSample = cards.find(c => c.family === 'bus' && c.image_reference === '/apple-touch-icon.png');
+      const wikimediaSamples = ["Métro 1", "Arc de Triomphe", "Rue Crémieux"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
+      assert.ok(wikimediaSamples.every(Boolean));
+      for (const card of wikimediaSamples) {
+        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
+      }
+      const logoSample = cards.find(c => c.image_reference === '/apple-touch-icon.png');
       assert.ok(logoSample);
-      await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[player.id,logoSample.id]);
+      await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,logoSample.id]);
       await page.goto(base + "/collect.html?panel=collection");
       for (const width of [390, 1440]) {
         await page.setViewportSize({width,height:900});
@@ -662,7 +667,19 @@ test(
           if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
           await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${width}.png`});
         }
-        await page.locator('#collect-filter-family').selectOption('bus');
+        for (const card of wikimediaSamples) {
+          await page.locator('#collect-filter-family').selectOption(card.family);
+          await page.locator('#collect-search').fill(card.name);
+          const tile = page.locator(`.collect-card[data-card-id="${card.id}"]`);
+          await tile.waitFor({state:'visible'});
+          const photo = tile.locator('.collect-card-art>img');
+          await photo.evaluate(img => img.decode());
+          assert.ok((await photo.getAttribute('src')).includes('/wikimedia-'));
+          assert.match(await tile.locator('.collect-card-photo-credit').innerText(), /Wikimedia/);
+          if (card.family !== 'street') assert.equal(await photo.evaluate(img => getComputedStyle(img).objectFit), 'contain');
+          await tile.screenshot({path:`/tmp/parici-collect-review/wikimedia-${card.family}-${width}.png`});
+        }
+        await page.locator('#collect-filter-family').selectOption(logoSample.family);
         await page.locator('#collect-search').fill(logoSample.name);
         const logoTile = page.locator(`.collect-card[data-card-id="${logoSample.id}"]`);
         await logoTile.waitFor({state:'visible'});
@@ -670,7 +687,7 @@ test(
         await logoImage.evaluate(img => img.decode());
         assert.equal(await logoImage.getAttribute('src'), '/apple-touch-icon.png');
         assert.equal(await logoImage.evaluate(img => getComputedStyle(img).objectFit), 'contain');
-        await logoTile.screenshot({path:`/tmp/parici-collect-review/logo-bus-${width}.png`});
+        await logoTile.screenshot({path:`/tmp/parici-collect-review/logo-${logoSample.family}-${width}.png`});
       }
       await page.setViewportSize({width:390,height:844});
       await page.goto(base + "/collect.html");

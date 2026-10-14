@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { contains } = require('../scripts/enrich_collect_paris_photos');
+const { distance } = require('../scripts/lib/collect-street-view');
 const { photoManifest, photoRevision, applyPhotographs } = require('../backend/domains/collect/photo-sync');
 
 test('reviewed Paris photographs retain source, location and unchanged image evidence', () => {
@@ -14,8 +15,11 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   assert.ok(Object.keys(manifest).length >= 477);
   const streets = catalog.records.filter(c => c.family === 'street');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
-  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.8), 'Street photo coverage must remain at least 80%');
+  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.88), 'Street photo coverage must remain at least 88%');
   assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length >= 160);
+  for (const card of catalog.records.filter(c => c.family !== 'street')) {
+    assert.equal(card.illustration.kind, 'photograph', card.name);
+  }
   for (const [key, entry] of Object.entries(manifest)) {
     const card = cards.get(key), v = entry.verification;
     assert.ok(card, key);
@@ -23,11 +27,23 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
     assert.equal(illustrations[key].image, entry.image);
     assert.equal(entry.verifiedEntity, key);
     assert.equal(entry.kind, 'photograph');
-    assert.ok(v.evidence && v.reviewedAt && v.captureDate);
-    assert.ok(v.coordinate.every(Number.isFinite));
-    assert.ok(v.distanceMeters <= (card.family === 'street' ? 18 : card.family === 'district' ? 25 : 150));
+    assert.ok(v.evidence && v.reviewedAt);
+    if (entry.source !== 'wikipedia') {
+      assert.ok(v.captureDate);
+      assert.ok(v.coordinate.every(Number.isFinite));
+      assert.ok(v.distanceMeters <= (card.family === 'street' ? 18 : card.family === 'district' ? 25 : 150));
+    }
     const source = new URL(entry.sourcePage);
-    if (entry.source === 'panoramax') {
+    if (entry.source === 'wikipedia') {
+      assert.ok(entry.author && entry.license);
+      assert.match(entry.license, /^(CC BY|CC0|Public domain)/);
+      assert.ok(['commons.wikimedia.org', 'fr.wikipedia.org'].includes(source.hostname));
+      assert.equal(v.method, 'article-identity-and-visual-review');
+      assert.ok(v.articleTitle && v.articleURL && v.commonsFile);
+      assert.equal(new URL(v.originalURL).hostname, 'upload.wikimedia.org');
+      if (card.family === 'bus') assert.equal(entry.caption, 'Matériel roulant de la ligne');
+      if (card.family === 'street') assert.ok(distance(v.articleCoordinate, card.centroid) <= 350, key);
+    } else if (entry.source === 'panoramax') {
       assert.ok(entry.author);
       assert.equal(entry.license, 'CC-BY-SA-4.0');
       assert.equal(source.hostname, 'api.panoramax.xyz');
@@ -43,9 +59,17 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
       assert.equal(source.searchParams.get('pano'), v.panoId);
     }
     const bytes = fs.readFileSync(path.join(__dirname, '..', entry.image));
-    assert.equal(bytes.readUInt16BE(0), 0xffd8);
+    assert.ok(bytes.readUInt16BE(0) === 0xffd8 || bytes.subarray(0,8).toString('hex') === '89504e470d0a1a0a');
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), v.sha256, key);
   }
+});
+
+test('Wikimedia rolling stock retains its author credit and an uncropped artwork frame', async () => {
+  const { renderCardArtwork } = await import('../src/public/js/collect-card-art.js');
+  const html = renderCardArtwork({family:'bus',collection_number:1,current_rarity:1,image_reference:'/data/collect_images/wikimedia-probe.jpg',image_attribution:{source:'wikipedia',author:'Alice & Bob'}});
+  assert.match(html, /collect-card-art--transport-photo/);
+  assert.match(html, /Wikimedia · Alice &amp; Bob/);
+  assert.doesNotMatch(html, /Google Street View/);
 });
 
 test('photo revision is independent of manifest order and skips an already applied upgrade', async () => {
