@@ -704,7 +704,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const image=imageCredit(card.image_attribution);
     const source=safeImage(card.description_source);
     const sourceHost=source?new URL(source).hostname:'';
-    const sourceLabel=sourceHost.endsWith('.wikipedia.org')?'Wikipédia · CC BY-SA':sourceHost==='www.openstreetmap.org'?'OpenStreetMap · ODbL':'Source documentaire';
+    const sourceLabel=sourceHost.endsWith('.wikipedia.org')?'Wikipédia · CC BY-SA':sourceHost==='opendata.paris.fr'?'Ville de Paris · ODbL':sourceHost==='www.paris.fr'?'Ville de Paris':sourceHost==='www.openstreetmap.org'?'OpenStreetMap · ODbL':'Source documentaire';
     const description=source?`<a href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceLabel)}</a>`:'';
     return image||description?`<details class="collect-card-sources"><summary>Sources</summary>${image?`<p>${image}</p>`:''}${description?`<p>${description}</p>`:''}</details>`:'';
   }

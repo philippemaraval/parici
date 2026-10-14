@@ -1036,6 +1036,103 @@ test(
           path: `/tmp/parici-collect-review/logo-${logoSample.family}-${width}.png`,
         });
       }
+      const heritage = require("../../data/collect_descriptions.json");
+      const heritageSamples = [
+        ["street", "Rue Cler"],
+        ["monument", "Tour Eiffel"],
+        ["district", "Quartier de Croulebarbe"],
+        ["bus", "Tramway T14"],
+      ];
+      for (const [family, name] of heritageSamples) {
+        const card = cards.find(
+          (candidate) => candidate.family === family && candidate.name === name,
+        );
+        assert.ok(card, name);
+        await db.pool.query(
+          "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",
+          [player.id, card.id],
+        );
+        const content = (await request(`/api/collect/cards/${card.id}`, player))
+          .body;
+        const expected = heritage[family + ":" + card.source_entity_id];
+        assert.equal(content.description_full, expected.text);
+        assert.equal(content.description_source, expected.source);
+        if (family === "street") {
+          await db.pool.query(
+            "UPDATE cards SET description_override=$2,description_full_override=$3 WHERE id=$1",
+            [
+              card.id,
+              "Résumé corrigé manuellement",
+              "Notice corrigée manuellement",
+            ],
+          );
+          const manual = (
+            await request(`/api/collect/cards/${card.id}`, player)
+          ).body;
+          assert.equal(manual.short_description, "Résumé corrigé manuellement");
+          assert.equal(manual.description_full, "Notice corrigée manuellement");
+          assert.equal(manual.description_source, null);
+          await db.pool.query(
+            "UPDATE cards SET description_override=$2,description_full_override=$3 WHERE id=$1",
+            [
+              card.id,
+              card.description_override,
+              card.description_full_override,
+            ],
+          );
+        }
+        for (const width of [390, 1440]) {
+          await page.setViewportSize({ width, height: 900 });
+          await selectArtwork(card);
+          await page
+            .locator(`.collect-card[data-card-id="${card.id}"]`)
+            .click();
+          const dialog = page.locator("dialog.collect-card-dialog[open]");
+          await dialog
+            .locator(".collect-card-description--full")
+            .waitFor({ state: "visible" });
+          assert.ok((await dialog.innerText()).includes(expected.text));
+          assert.equal(
+            await dialog
+              .locator(`.collect-card-sources a[href="${expected.source}"]`)
+              .count(),
+            1,
+          );
+          await dialog
+            .locator("#collect-detail-map.leaflet-container")
+            .waitFor({ state: "visible" });
+          await dialog.evaluate((element) => {
+            element.scrollTop = 0;
+          });
+          await dialog.screenshot({
+            path: `/tmp/parici-collect-review/heritage-text-${family}-${width}.png`,
+          });
+          const textFits = await dialog
+            .locator(".collect-card-description--full")
+            .evaluate(
+              (element) => element.scrollWidth <= element.clientWidth + 1,
+            );
+          assert.equal(textFits, true, `${name}: notice overflow at ${width}`);
+          const bounds = await dialog.evaluate((element) => ({
+            width: element.getBoundingClientRect().width,
+            scrollWidth: element.scrollWidth,
+          }));
+          // Native dialog scroll metrics can include its border; measure the complete visible box.
+          assert.ok(
+            bounds.scrollWidth <= Math.ceil(bounds.width) + 1,
+            `${name}: dialog overflow at ${width}`,
+          );
+          await dialog.locator(".collect-card-sources summary").click();
+          await dialog.screenshot({
+            path: `/tmp/parici-collect-review/heritage-${family}-${width}.png`,
+          });
+          await dialog.locator(".collect-detail-close").click();
+        }
+      }
+      assert.equal(
+        (await fetch(base + "/data/collect_descriptions.json")).status,
+        404,
+      );
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto(base + "/collect.html");
       await page

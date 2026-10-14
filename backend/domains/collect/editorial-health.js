@@ -39,9 +39,11 @@ async function editorialHealth(pool) {
     referencePoints: catalog.records.filter(
       (c) => c.illustration.kind === "reference-point",
     ).length,
-    heritageDescriptions:
-      require("../../../data/explorer_paris.json").length +
-      require("../../../data/collect_paris_editorial.json").length,
+    heritageDescriptions: catalog.records.filter(
+      (card) =>
+        card.description_source &&
+        card.description_source !== "https://www.openstreetmap.org/copyright",
+    ).length,
     correctedDescriptions: corrected,
   };
 }

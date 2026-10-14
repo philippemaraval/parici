@@ -56,6 +56,7 @@ const monuments = read("data/paris_monuments.geojson").features;
 const transport = read("data/paris_transit_lines.geojson").features;
 const explorer = read("data/explorer_paris.json");
 const editorial = read("data/collect_paris_editorial.json");
+const descriptions = read("data/collect_descriptions.json");
 const fragmentRequirements = read("data/collect_paris_fragments.json");
 const photoExclusions = fs.existsSync(
   path.join(root, "data/collect_photo_exclusions_paris.json"),
@@ -162,6 +163,7 @@ function question(
   };
 }
 function add(family, id, name, features, point, extra = {}) {
+  const heritage = descriptions[family + ":" + id];
   const loc = point && at(point),
     quarter = loc?.properties.l_qu,
     arr = loc?.properties.c_ar;
@@ -206,12 +208,14 @@ function add(family, id, name, features, point, extra = {}) {
     ? `${quarter} · ${arr}${arr === 1 ? "er" : "e"} arrondissement`
     : "Paris et Île-de-France";
   const short =
+    heritage?.short ||
     extra.short ||
     `${name} : ${family === "street" ? "voie" : family === "district" ? "quartier" : "repère"} du catalogue parisien${quarter ? ", repère situé dans le quartier " + quarter : ""}.`;
   const geography = point
     ? ` Son repère est situé ${quarter ? "dans le quartier " + quarter + ", " : ""}${arr ? "dans le " + arr + (arr === 1 ? "er" : "e") + " arrondissement de Paris." : "dans le référentiel francilien."}`
     : "";
   const detailed =
+    heritage?.text ||
     curated?.text ||
     historic?.explanation_text ||
     extra.full ||
@@ -243,6 +247,7 @@ function add(family, id, name, features, point, extra = {}) {
     detailed_description: detailed,
     description_full: detailed,
     description_source:
+      heritage?.source ||
       curated?.source ||
       historic?.source_url ||
       extra.source ||

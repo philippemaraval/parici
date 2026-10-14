@@ -73,6 +73,58 @@ function validateCatalog(catalog, index) {
   }
   return errors;
 }
+function validateHeritageDescriptions(catalog, descriptions) {
+  const errors = [];
+  for (const card of catalog.records) {
+    const targeted =
+      card.family !== "street" ||
+      card.album_slugs.some((slug) =>
+        ["famous-streets", "main-streets"].includes(slug),
+      );
+    if (!targeted) continue;
+    const key = card.family + ":" + card.source_entity_id;
+    const entry = descriptions[key];
+    if (!entry) {
+      errors.push(`${key}: fiche patrimoniale absente`);
+      continue;
+    }
+    if (
+      typeof entry.short !== "string" ||
+      entry.short.length < 12 ||
+      entry.short.length > 220 ||
+      typeof entry.text !== "string" ||
+      entry.text.length < 100 ||
+      entry.text.length > 850 ||
+      /catalogue parisien|référentiel|à compléter|peut désigner/i.test(
+        entry.text,
+      )
+    )
+      errors.push(`${key}: fiche patrimoniale incomplète`);
+    const sources = [...new Set([entry.source, ...(entry.sources || [])])];
+    if (
+      !entry.source_title ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewed_at || "") ||
+      sources.some((source) => {
+        try {
+          return (
+            new URL(source).protocol !== "https:" ||
+            source.includes("openstreetmap.org")
+          );
+        } catch {
+          return true;
+        }
+      })
+    )
+      errors.push(`${key}: source historique manquante ou invalide`);
+    if (
+      card.description_full !== entry.text ||
+      card.short_description !== entry.short ||
+      card.description_source !== entry.source
+    )
+      errors.push(`${key}: catalogue non régénéré après la fiche patrimoniale`);
+  }
+  return errors;
+}
 function validatePlayerContent(root = path.resolve(__dirname, "..")) {
   const read = (f) => JSON.parse(fs.readFileSync(path.join(root, f), "utf8"));
   const index = read("backend/data/streets_index.json").filter((s) =>
@@ -80,6 +132,12 @@ function validatePlayerContent(root = path.resolve(__dirname, "..")) {
   );
   const catalog = read("data/collect_paris_catalog.json"),
     errors = validateCatalog(catalog, index);
+  errors.push(
+    ...validateHeritageDescriptions(
+      catalog,
+      read("data/collect_descriptions.json"),
+    ),
+  );
   const key = (s) =>
     String(s || "")
       .normalize("NFD")
@@ -126,6 +184,10 @@ function validatePlayerContent(root = path.resolve(__dirname, "..")) {
   if (errors.length) throw new Error(errors.join("\n"));
   return {
     cards: catalog.records.length,
+    heritageDescriptions: catalog.records.filter(
+      (card) =>
+        card.description_source !== "https://www.openstreetmap.org/copyright",
+    ).length,
     dailyTargets: rows.length,
     famous: catalog.records.filter((c) =>
       c.album_slugs.includes("famous-streets"),
@@ -142,4 +204,9 @@ if (require.main === module) {
     process.exitCode = 1;
   }
 }
-module.exports = { validatePlayerContent, validateCatalog, parseCsv };
+module.exports = {
+  validatePlayerContent,
+  validateCatalog,
+  validateHeritageDescriptions,
+  parseCsv,
+};
