@@ -16,7 +16,7 @@ test("all famous and main streets, monuments, districts and transport lines have
     bus: 45,
     district: 80,
     monument: 107,
-    street: 420,
+    street: 1420,
   });
   assert.deepEqual(validateHeritageDescriptions(catalog, descriptions), []);
   for (const [key, entry] of Object.entries(descriptions)) {
@@ -30,7 +30,7 @@ test("all famous and main streets, monuments, districts and transport lines have
 
   assert.equal(
     new Set(Object.values(descriptions).map((entry) => entry.text)).size,
-    652,
+    1652,
   );
 });
 
@@ -110,5 +110,38 @@ test("every common, uncommon, rare and legendary card has a complete heritage sh
         (error) => error.includes("fiche patrimoniale absente"),
       ),
     );
+  }
+});
+
+test("the new epic batch contains exactly 1000 distinct, sourced epic cards", () => {
+  const batch = require("./fixtures/collect-heritage-epic-20261015.json");
+  assert.equal(batch.length, 1000);
+  assert.equal(new Set(batch).size, 1000);
+  assert.equal(
+    new Set(batch.map((key) => descriptions[key].source_record_id)).size,
+    1000,
+  );
+  const cards = new Map(
+    catalog.records.map((card) => [
+      card.family + ":" + card.source_entity_id,
+      card,
+    ]),
+  );
+  for (const key of batch) {
+    const card = cards.get(key);
+    assert.ok(card, key);
+    assert.equal(card.base_rarity, 4, key);
+    assert.equal(card.fragments_required, 0, key);
+    const entry = descriptions[key];
+    assert.ok(entry, key);
+    assert.match(
+      entry.source,
+      /^https:\/\/opendata\.paris\.fr\/.*refine\.id=\d+$/,
+      key,
+    );
+    assert.ok(entry.source_record_id, key);
+    assert.equal(entry.reviewed_at, "2026-10-15", key);
+    assert.match(entry.text, /rend hommage (?:à|au) /, key);
+    assert.equal(card.description_full, entry.text, key);
   }
 });

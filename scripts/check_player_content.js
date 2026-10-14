@@ -77,6 +77,7 @@ function validateHeritageDescriptions(catalog, descriptions) {
   const errors = [];
   for (const card of catalog.records) {
     const targeted =
+      Boolean(descriptions[card.family + ":" + card.source_entity_id]) ||
       [1, 2, 3, 5].includes(
         card.fragments_required > 0 ? 5 : card.base_rarity,
       ) ||
