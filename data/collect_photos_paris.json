@@ -171249,5 +171249,1075 @@
       "sha256": "0df1bf7d962da66c39330b7a3bfd98ad1d7e99c8c6242a2e8a5ba0cd68cd7259",
       "evidence": "Axe de la voie ou espace de la place visible, identité de l'article et localisation parisienne contrôlées."
     }
+  },
+  "street:Place de la République - Quartier de la Folie-Méricourt": {
+    "image": "/data/collect_images/panoramax-7842e3f3-261d-4ea2-8b27-48b1442e234b.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Nzau",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=7842e3f3-261d-4ea2-8b27-48b1442e234b",
+    "verifiedEntity": "street:Place de la République - Quartier de la Folie-Méricourt",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.363776446,
+        48.868099615
+      ],
+      "target": [
+        2.363977151664661,
+        48.86753170629329
+      ],
+      "distanceMeters": 0.7,
+      "captureDate": "2024-06-27T16:33:52.480000+00:00",
+      "pictureId": "7842e3f3-261d-4ea2-8b27-48b1442e234b",
+      "azimuth": 133,
+      "streetHeading": 311.74292727631916,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/b1018c8f-cdfd-4491-aec5-4f9c11c0dd04/items/7842e3f3-261d-4ea2-8b27-48b1442e234b",
+      "sha256": "7712938101dd3cadce37aa1ecaf6ebac8e98e1f1934b867360625dc7cfa5131e",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Allée de Rivoli": {
+    "image": "/data/collect_images/panoramax-353dca62-0ae3-4cbf-8b44-4b341c967cbb.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "motocultrice",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=353dca62-0ae3-4cbf-8b44-4b341c967cbb",
+    "verifiedEntity": "street:Allée de Rivoli",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.334814343,
+        48.862062547
+      ],
+      "target": [
+        2.334422343326209,
+        48.861911189830415
+      ],
+      "distanceMeters": 16.2,
+      "captureDate": "2021-01-15T13:52:42.704000+00:00",
+      "pictureId": "353dca62-0ae3-4cbf-8b44-4b341c967cbb",
+      "azimuth": 359,
+      "streetHeading": 40.457401554351065,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/26317b99-ce17-4444-86f7-13d01859efc2/items/353dca62-0ae3-4cbf-8b44-4b341c967cbb",
+      "sha256": "1af7db6d1b11aa696d6a8a8b032c28df473e36220783464da3406dc66bb57ce3",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Allée Louis de Funès": {
+    "image": "/data/collect_images/panoramax-83b50830-ee3c-4f5c-a06e-bd6b8b17b7c5.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=83b50830-ee3c-4f5c-a06e-bd6b8b17b7c5",
+    "verifiedEntity": "street:Allée Louis de Funès",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.305776972,
+        48.875936
+      ],
+      "target": [
+        2.3061233888665083,
+        48.876181043315874
+      ],
+      "distanceMeters": 1.7,
+      "captureDate": "2025-02-02T15:43:47.865501+00:00",
+      "pictureId": "83b50830-ee3c-4f5c-a06e-bd6b8b17b7c5",
+      "azimuth": 20,
+      "streetHeading": 41.448502097927076,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/f3f2b605-7908-4725-89e5-f565dfae37ae/items/83b50830-ee3c-4f5c-a06e-bd6b8b17b7c5",
+      "sha256": "99fa3f2066504de7e83412261c7ad3e89eda8bde73ea30bb31a08a3438afef6a",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Avenue de Montmorency": {
+    "image": "/data/collect_images/panoramax-91afe325-5853-494c-bff8-56f5f78fd568.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=91afe325-5853-494c-bff8-56f5f78fd568",
+    "verifiedEntity": "street:Avenue de Montmorency",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.329378972,
+        48.887487
+      ],
+      "target": [
+        2.3295050539859723,
+        48.88750336932398
+      ],
+      "distanceMeters": 5.2,
+      "captureDate": "2024-01-07T15:46:23.788600+00:00",
+      "pictureId": "91afe325-5853-494c-bff8-56f5f78fd568",
+      "azimuth": 18,
+      "streetHeading": 49.008029897470294,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/29aa3956-ac01-4b32-a638-ecf43d35eccc/items/91afe325-5853-494c-bff8-56f5f78fd568",
+      "sha256": "4decbe284f464ef7d9d1e54f8426925898d9808f691e80ef52cdf61f94fdc1e4",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Avenue du Boulevard - Quartier du Montparnasse": {
+    "image": "/data/collect_images/panoramax-7dd78a9f-3724-4c1a-b9ae-d7058fffdfa0.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=7dd78a9f-3724-4c1a-b9ae-d7058fffdfa0",
+    "verifiedEntity": "street:Avenue du Boulevard - Quartier du Montparnasse",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.327138,
+        48.839995972
+      ],
+      "target": [
+        2.3281263492026745,
+        48.839694550265776
+      ],
+      "distanceMeters": 2.8,
+      "captureDate": "2024-09-12T07:23:06.428181+00:00",
+      "pictureId": "7dd78a9f-3724-4c1a-b9ae-d7058fffdfa0",
+      "azimuth": 265,
+      "streetHeading": 116.8602596246302,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/b109b64f-b7e7-4a44-b907-f578b2cf15b4/items/7dd78a9f-3724-4c1a-b9ae-d7058fffdfa0",
+      "sha256": "4c785063c3dc99e876d43c57327a07b40b4af36f3c809b919ad450c9f28992a6",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Avenue Saint-Charles - Quartier de Javel": {
+    "image": "/data/collect_images/panoramax-df4f81aa-49b6-455b-a4e6-650c0bfc35ce.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Cyril5C",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=df4f81aa-49b6-455b-a4e6-650c0bfc35ce",
+    "verifiedEntity": "street:Avenue Saint-Charles - Quartier de Javel",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.28053,
+        48.84127
+      ],
+      "target": [
+        2.2803775760865994,
+        48.84109087160284
+      ],
+      "distanceMeters": 1.3,
+      "captureDate": "2024-09-20T10:53:14+00:00",
+      "pictureId": "df4f81aa-49b6-455b-a4e6-650c0bfc35ce",
+      "azimuth": 36,
+      "streetHeading": 208.99656334344152,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/5eb53234-a678-40fc-8d95-222ab0826ba1/items/df4f81aa-49b6-455b-a4e6-650c0bfc35ce",
+      "sha256": "fc730978731e2f7d137a0dab025b38b8f8b877927050bbe767165891b6ef3f89",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Chemin Chenier": {
+    "image": "/data/collect_images/panoramax-e0327db5-6f72-4434-9309-ec6fea622e33.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "tykayn",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=e0327db5-6f72-4434-9309-ec6fea622e33",
+    "verifiedEntity": "street:Chemin Chenier",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.391904331,
+        48.859482003
+      ],
+      "target": [
+        2.392046344928295,
+        48.859743484739624
+      ],
+      "distanceMeters": 16.1,
+      "captureDate": "2024-10-29T13:18:49.679000+00:00",
+      "pictureId": "e0327db5-6f72-4434-9309-ec6fea622e33",
+      "azimuth": 253,
+      "streetHeading": 238.4382265458106,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/9080b6c5-49c0-464c-8615-271029995714/items/e0327db5-6f72-4434-9309-ec6fea622e33",
+      "sha256": "d4cb25ba2b84b2d82e439a2238d1b5ed6aeff1962708c4cf8e50e4e534435df6",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Chemin du Père Éternel": {
+    "image": "/data/collect_images/panoramax-bb2c90f9-6320-4c0d-be5e-dd7d57c6315f.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "tykayn",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=bb2c90f9-6320-4c0d-be5e-dd7d57c6315f",
+    "verifiedEntity": "street:Chemin du Père Éternel",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.391954222,
+        48.860037761
+      ],
+      "target": [
+        2.3917142502699047,
+        48.86027459978408
+      ],
+      "distanceMeters": 4.8,
+      "captureDate": "2024-10-29T12:55:39.074000+00:00",
+      "pictureId": "bb2c90f9-6320-4c0d-be5e-dd7d57c6315f",
+      "azimuth": 141,
+      "streetHeading": 138.74273814910327,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/fba804b1-3421-4f69-b611-5b1546ff9608/items/bb2c90f9-6320-4c0d-be5e-dd7d57c6315f",
+      "sha256": "606110e2a5d31580b137cb49c816b798dce81ff70762aa16d1da3130863c09ef",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Chemin Hautoy": {
+    "image": "/data/collect_images/panoramax-efd3d1d3-1ff1-45ad-8307-4ff736bf5b1c.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "jerome92370",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=efd3d1d3-1ff1-45ad-8307-4ff736bf5b1c",
+    "verifiedEntity": "street:Chemin Hautoy",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.3905,
+        48.861466667
+      ],
+      "target": [
+        2.3908617095471056,
+        48.86160694875611
+      ],
+      "distanceMeters": 4.7,
+      "captureDate": "2025-10-05T09:49:49.580000+00:00",
+      "pictureId": "efd3d1d3-1ff1-45ad-8307-4ff736bf5b1c",
+      "azimuth": 251,
+      "streetHeading": 67.89236767450836,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/860a6fef-7737-4c67-bc7c-25611a21541a/items/efd3d1d3-1ff1-45ad-8307-4ff736bf5b1c",
+      "sha256": "6266e281517fc0b104437698080f1c9646e680212082ceae1bb402158bd53106",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Rue Jean Calvin": {
+    "image": "/data/collect_images/panoramax-f6d597f0-d412-4286-a5f7-cf4c65cfd7ab.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "jerome92370",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=f6d597f0-d412-4286-a5f7-cf4c65cfd7ab",
+    "verifiedEntity": "street:Rue Jean Calvin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.349302015,
+        48.841446936
+      ],
+      "target": [
+        2.348915179329295,
+        48.8415076048637
+      ],
+      "distanceMeters": 0.4,
+      "captureDate": "2024-04-19T08:05:50.473000+00:00",
+      "pictureId": "f6d597f0-d412-4286-a5f7-cf4c65cfd7ab",
+      "azimuth": 93,
+      "streetHeading": 94.77338803120722,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/94e8d3cd-af4e-497e-88cf-914b722a3f5d/items/f6d597f0-d412-4286-a5f7-cf4c65cfd7ab",
+      "sha256": "df161abb0e6f1eeb1a8eb7dffcb8591ad16802558cb9738aeac8552858484e57",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Impasse Marie de Régnier": {
+    "image": "/data/collect_images/photo-040b87ca19cb576e2361-95e70e1c3855.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=17K5K943tEddZrQcScmzpQ&heading=52.76732587936311",
+    "verifiedEntity": "street:Impasse Marie de Régnier",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.283970028698983,
+        48.85659564623984
+      ],
+      "target": [
+        2.2840875552252924,
+        48.856672018284584
+      ],
+      "requestedCoordinate": [
+        2.2840239999999996,
+        48.856627
+      ],
+      "distanceMeters": 0.1,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "17K5K943tEddZrQcScmzpQ",
+      "heading": 52.76732587936311,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "95e70e1c3855aeb11872bd6bb8a6b231b09c459fe08b27872d203da4129d0b0d",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Rue Mouton Duvernet": {
+    "image": "/data/collect_images/photo-0b1e0492161fcbd4ee99-0de76d2e152c.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=nS_C71kLj-6U5RueNqJk-Q&heading=111.43412093253892",
+    "verifiedEntity": "street:Rue Mouton Duvernet",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.327714792444355,
+        48.83195742326768
+      ],
+      "target": [
+        2.32771360094998,
+        48.83194738402416
+      ],
+      "requestedCoordinate": [
+        2.327676855665659,
+        48.83195687999652
+      ],
+      "distanceMeters": 1.1,
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "panoId": "nS_C71kLj-6U5RueNqJk-Q",
+      "heading": 111.43412093253892,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0de76d2e152c8276cfa6dad66173d62f4440db6680c628a4680af512f0e32290",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Square Théodore Judlin": {
+    "image": "/data/collect_images/photo-1b77c52472004bd659f4-c626f14ebc51.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=0iUNxtep1eDbVochAqrHHQ&heading=260.895156374863",
+    "verifiedEntity": "street:Square Théodore Judlin",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.301354264378427,
+        48.8489469022582
+      ],
+      "target": [
+        2.300969921240562,
+        48.84894677868219
+      ],
+      "requestedCoordinate": [
+        2.3011841600077694,
+        48.84891493538521
+      ],
+      "distanceMeters": 3.1,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "0iUNxtep1eDbVochAqrHHQ",
+      "heading": 260.895156374863,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "c626f14ebc51b5976d77d22078052b7dc774f3005a0f60c8be436d192039f8e3",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Avenue Albert 1er de Monaco": {
+    "image": "/data/collect_images/photo-2ed3218e29fa779f2c2f-cfdd0589f388.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=9pFCszywLpcUYxgvJZcTIA&heading=135.37943588387844",
+    "verifiedEntity": "street:Avenue Albert 1er de Monaco",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.290554687603971,
+        48.86039143428598
+      ],
+      "target": [
+        2.290395,
+        48.86042
+      ],
+      "requestedCoordinate": [
+        2.290527,
+        48.860332
+      ],
+      "distanceMeters": 6.1,
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "panoId": "9pFCszywLpcUYxgvJZcTIA",
+      "heading": 135.37943588387844,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "cfdd0589f388df760c7e7315ae936d8f614c1d5d370dbb09dbc0b97d9e2825ad",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Place Suzanne Valadon": {
+    "image": "/data/collect_images/photo-351ff3cfc3363e7be73b-39ac93eeabba.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=4x0MuBdMQE9kg7i63cZ7Sw&heading=355.4146563997686",
+    "verifiedEntity": "street:Place Suzanne Valadon",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.342497127016076,
+        48.88435456104971
+      ],
+      "target": [
+        2.3425793594349273,
+        48.88453641214611
+      ],
+      "requestedCoordinate": [
+        2.342528643993293,
+        48.88433406802012
+      ],
+      "distanceMeters": 1.8,
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "panoId": "4x0MuBdMQE9kg7i63cZ7Sw",
+      "heading": 355.4146563997686,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "39ac93eeabba046a5891723754311248cf0cc8b2d3055de410eee19939d7abe5",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Square de la Limagne": {
+    "image": "/data/collect_images/photo-36e369e1f36610d8e5af-cffc60810c72.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=WmZ13D-CcrFJclXOS95B1w&heading=115.51179557697515",
+    "verifiedEntity": "street:Square de la Limagne",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.377214720313273,
+        48.82267881085702
+      ],
+      "target": [
+        2.3768029909581583,
+        48.82317329733951
+      ],
+      "requestedCoordinate": [
+        2.3770788488009886,
+        48.822811422069364
+      ],
+      "distanceMeters": 10.1,
+      "captureDate": "2025-07",
+      "copyright": "© Google",
+      "panoId": "WmZ13D-CcrFJclXOS95B1w",
+      "heading": 115.51179557697515,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "cffc60810c721f63cd5ebd2b8e66853b68cf4fc460c63d1859ed0a990c6df614",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Chemin Lavalée": {
+    "image": "/data/collect_images/photo-3bb050acddd4746e7e6b-41ec9a3561d1.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=hdauv-awSkZDP3NWeZFB5A&heading=135.70366636710418",
+    "verifiedEntity": "street:Chemin Lavalée",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.327685740981707,
+        48.88813717270589
+      ],
+      "target": [
+        2.328498631823383,
+        48.88777595772363
+      ],
+      "requestedCoordinate": [
+        2.3279175134511916,
+        48.888196482172525
+      ],
+      "distanceMeters": 17,
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "panoId": "hdauv-awSkZDP3NWeZFB5A",
+      "heading": 135.70366636710418,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "41ec9a3561d1031dbef0242aa87e568327c03c9bcc926a43213a817140e5dc23",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Quai de l'Ourcq": {
+    "image": "/data/collect_images/photo-3fbd8a0acaf29260d637-8c61e76ffbb2.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=8M1V57oMG5JeRMiymWqVZA&heading=275.1377741353852",
+    "verifiedEntity": "street:Quai de l'Ourcq",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.396577928015683,
+        48.89623182577915
+      ],
+      "target": [
+        2.3977025685336297,
+        48.89629520455496
+      ],
+      "requestedCoordinate": [
+        2.3966763117288887,
+        48.89624298268173
+      ],
+      "distanceMeters": 1.8,
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "panoId": "8M1V57oMG5JeRMiymWqVZA",
+      "heading": 275.1377741353852,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "8c61e76ffbb2c035622cfab4398e4aa2e2094b086f28868f759f752d7bffe01d",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Passerelle Maria Schneider": {
+    "image": "/data/collect_images/photo-42c43e1ba3140c091d4c-d6f2262e4409.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=2RWHL75A-_o6Phrw5r4otw&heading=63.1253701713473",
+    "verifiedEntity": "street:Passerelle Maria Schneider",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.365540906455448,
+        48.87077718923146
+      ],
+      "target": [
+        2.3657099999999978,
+        48.87083
+      ],
+      "requestedCoordinate": [
+        2.36559,
+        48.87079
+      ],
+      "distanceMeters": 1.4,
+      "captureDate": "2021-05",
+      "copyright": "© Google",
+      "panoId": "2RWHL75A-_o6Phrw5r4otw",
+      "heading": 63.1253701713473,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "d6f2262e44099dfb2cb7f8dba68ddb646a41a3bac4ee1edd6d6bbe374a1d6a75",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Rue Henri Verneuil": {
+    "image": "/data/collect_images/photo-4bc1a57cf137d178183b-910f54dd0714.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=xOAQPhGbmkU22ITcU7rMEA&heading=307.2540628121934",
+    "verifiedEntity": "street:Rue Henri Verneuil",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.375025572711829,
+        48.89539084290053
+      ],
+      "target": [
+        2.3744700002397328,
+        48.89566499988013
+      ],
+      "requestedCoordinate": [
+        2.374910000258539,
+        48.895444999870726
+      ],
+      "distanceMeters": 0.4,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "xOAQPhGbmkU22ITcU7rMEA",
+      "heading": 307.2540628121934,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "910f54dd0714b64a11c28276e304ecfe636d7fc8d2110c994214a886569186b5",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Square Albert Bartholomé": {
+    "image": "/data/collect_images/photo-5ac2b18f1a8a10237ea1-1a3bc4ee0fe5.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=s0p7LGVBio_F10LpbPGQwQ&heading=188.5460580884119",
+    "verifiedEntity": "street:Square Albert Bartholomé",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.29471723743272,
+        48.8288517512393
+      ],
+      "target": [
+        2.2946437965978492,
+        48.8285651863914
+      ],
+      "requestedCoordinate": [
+        2.294706840715796,
+        48.82880078322108
+      ],
+      "distanceMeters": 0.1,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "s0p7LGVBio_F10LpbPGQwQ",
+      "heading": 188.5460580884119,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "1a3bc4ee0fe5bacf7adbedf71bed2e79522b60e7eb79d0721bea40bd87a4e2e6",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Avenue Rachel - Quartier du Père-Lachaise": {
+    "image": "/data/collect_images/photo-740fa9b2e407aad6398b-5b42ff0bc754.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=SrwezEYJzY36PaziPihBfw&heading=160.4640820706477",
+    "verifiedEntity": "street:Avenue Rachel - Quartier du Père-Lachaise",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.390846714271259,
+        48.85969655617892
+      ],
+      "target": [
+        2.3912599999999986,
+        48.859385
+      ],
+      "requestedCoordinate": [
+        2.391068,
+        48.859741
+      ],
+      "distanceMeters": 16.9,
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "panoId": "SrwezEYJzY36PaziPihBfw",
+      "heading": 160.4640820706477,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "5b42ff0bc7541c44bdb1e69af9a3e2adc47df818102161cb7023e2dd6f946f96",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Square Émile Zola": {
+    "image": "/data/collect_images/photo-75e49f73a3bdc1600c62-16a8f92c7e85.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=cN_lM7pfz2zE8PnO0UhadA&heading=355.1744398348755",
+    "verifiedEntity": "street:Square Émile Zola",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.287947952249767,
+        48.84665587718136
+      ],
+      "target": [
+        2.2878102001357514,
+        48.84687019454323
+      ],
+      "requestedCoordinate": [
+        2.287913286210179,
+        48.84669699652874
+      ],
+      "distanceMeters": 2.1,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "cN_lM7pfz2zE8PnO0UhadA",
+      "heading": 355.1744398348755,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "16a8f92c7e8549fc562fe008e821703abaa23d6b24303fe829f29d00d54f59ba",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Rue Louis Vierne": {
+    "image": "/data/collect_images/photo-7e61c5025c1f1c9a5f8f-e120a80a6b74.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=S-LF8q1K16GiUXYjkdQeTg&heading=146.6739369018576",
+    "verifiedEntity": "street:Rue Louis Vierne",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.289641446330082,
+        48.88847226694768
+      ],
+      "target": [
+        2.289929937810292,
+        48.88830667012165
+      ],
+      "requestedCoordinate": [
+        2.289755858819142,
+        48.888424141180856
+      ],
+      "distanceMeters": 6.9,
+      "captureDate": "2023-04",
+      "copyright": "© Google",
+      "panoId": "S-LF8q1K16GiUXYjkdQeTg",
+      "heading": 146.6739369018576,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "e120a80a6b7411ea652f6c827cba971ce2de2a2a59e39c9ecf8ee2464ad2247d",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Allée du Nord": {
+    "image": "/data/collect_images/photo-8b4d554f6cc8db6d05ac-41bb7ed1a3f2.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=PdJfFUsifRqhj7qiHewbZQ&heading=83.80849239943831",
+    "verifiedEntity": "street:Allée du Nord",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.350546869559659,
+        48.81986177752826
+      ],
+      "target": [
+        2.35108450375475,
+        48.81976485536197
+      ],
+      "requestedCoordinate": [
+        2.350600693069141,
+        48.819738620933514
+      ],
+      "distanceMeters": 14,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "PdJfFUsifRqhj7qiHewbZQ",
+      "heading": 83.80849239943831,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "41bb7ed1a3f20a502a74817b203d6133a50b34b17ae60135ab92522ee0646110",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Rue Michel Tagrine": {
+    "image": "/data/collect_images/photo-9eb52f23b1c748bbb018-61fcc6f6a26b.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=HZoN9Ek2WNMeSn-h2a47jw&heading=333.38553371313617",
+    "verifiedEntity": "street:Rue Michel Tagrine",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.375350626932002,
+        48.87809359318009
+      ],
+      "target": [
+        2.37549856626561,
+        48.87784813177639
+      ],
+      "requestedCoordinate": [
+        2.375389619304937,
+        48.87799112466227
+      ],
+      "distanceMeters": 7.1,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "HZoN9Ek2WNMeSn-h2a47jw",
+      "heading": 333.38553371313617,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "61fcc6f6a26bd5f60e3892c384ee296fe2b21ac6dc3f58938010f59d21448c8b",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Avenue Gustave V de Suède": {
+    "image": "/data/collect_images/photo-b42da99e612c8bd80279-6cfeab4f1b41.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=oYXnLx4L9DYUIdNEKJY08w&heading=133.08799143946794",
+    "verifiedEntity": "street:Avenue Gustave V de Suède",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.29117705944339,
+        48.86086624036886
+      ],
+      "target": [
+        2.2910700000000026,
+        48.860929999999996
+      ],
+      "requestedCoordinate": [
+        2.291174,
+        48.860866
+      ],
+      "distanceMeters": 0.2,
+      "captureDate": "2019-07",
+      "copyright": "© Google",
+      "panoId": "oYXnLx4L9DYUIdNEKJY08w",
+      "heading": 133.08799143946794,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "6cfeab4f1b41f2754a804b2bd7f3decb2ea10a0b723ddfc826bfd6b856e9ef44",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Quai Marcel Boyer": {
+    "image": "/data/collect_images/photo-b4700479840d08305450-f44e616a3018.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=Pz_O0p6GRyaHuFNjiEuDGw&heading=136.81619241909004",
+    "verifiedEntity": "street:Quai Marcel Boyer",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.389128577719824,
+        48.82492958497552
+      ],
+      "target": [
+        2.390483522212913,
+        48.82398028210012
+      ],
+      "requestedCoordinate": [
+        2.3891615798607275,
+        48.82490059286375
+      ],
+      "distanceMeters": 0.4,
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "panoId": "Pz_O0p6GRyaHuFNjiEuDGw",
+      "heading": 136.81619241909004,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "f44e616a3018ef3391e440ac37f18bd77c51184bbafbd3acbfa5df7c3e2069eb",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Promenade Édouard Glissant": {
+    "image": "/data/collect_images/photo-d4ad45615f78a1bccbf3-42059a060cb5.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=ahKrdspUMMV8p9QIcHTCkA&heading=303.07079849587757",
+    "verifiedEntity": "street:Promenade Édouard Glissant",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.327324458084613,
+        48.8604029872714
+      ],
+      "target": [
+        2.32370127518821,
+        48.86145624303305
+      ],
+      "requestedCoordinate": [
+        2.327309307149495,
+        48.86040026394305
+      ],
+      "distanceMeters": 0.9,
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "panoId": "ahKrdspUMMV8p9QIcHTCkA",
+      "heading": 303.07079849587757,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "42059a060cb53271a1ba3e08a4ccc288837517036af3ff094bf67ce554ce84dd",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Avenue Principale - Quartier d'Amérique": {
+    "image": "/data/collect_images/photo-d9b5f6d471ba1205c6f8-75d1e021be17.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=lvutfSH12zNa36sq9QWvDQ&heading=79.23697292040288",
+    "verifiedEntity": "street:Avenue Principale - Quartier d'Amérique",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.387412875112661,
+        48.88443942757793
+      ],
+      "target": [
+        2.388705214209921,
+        48.884578317064545
+      ],
+      "requestedCoordinate": [
+        2.387741112090905,
+        48.884468581864006
+      ],
+      "distanceMeters": 1,
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "panoId": "lvutfSH12zNa36sq9QWvDQ",
+      "heading": 79.23697292040288,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "75d1e021be17919bb4e3c807b2e3a24bece994303b517f4045ec5b68167a73f5",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Passage Nafissa Sid Cara": {
+    "image": "/data/collect_images/photo-f090fad1d1711930d582-8b6fe4182a22.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=z9v4IgxX8SEiZ__5NHqxwQ&heading=245.50620650761903",
+    "verifiedEntity": "street:Passage Nafissa Sid Cara",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.409973906817992,
+        48.87935996059858
+      ],
+      "target": [
+        2.4094149836258385,
+        48.87917999510657
+      ],
+      "requestedCoordinate": [
+        2.4098430487741487,
+        48.879307922622154
+      ],
+      "distanceMeters": 2.8,
+      "captureDate": "2022-07",
+      "copyright": "© Google",
+      "panoId": "z9v4IgxX8SEiZ__5NHqxwQ",
+      "heading": 245.50620650761903,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "8b6fe4182a2231b14476893dc47ffc15686c021a7ae2ed44c52e1dbdc988b272",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
+  },
+  "street:Avenue du Nouveau Conservatoire": {
+    "image": "/data/collect_images/photo-f0fae7309cb447e5897b-0d293bc3429b.jpg",
+    "source": "google-street-view",
+    "kind": "photograph",
+    "caption": "Photographie du lieu",
+    "author": "Google Street View",
+    "license": "Attribution Google conservée sur la photographie",
+    "sourcePage": "https://www.google.com/maps/@?api=1&map_action=pano&pano=rQe50YnhJ25aPrln-atQ4w&heading=143.68843767450176",
+    "verifiedEntity": "street:Avenue du Nouveau Conservatoire",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-14",
+      "coordinate": [
+        2.390499039131044,
+        48.88831992855744
+      ],
+      "target": [
+        2.3899665266285908,
+        48.88890837091126
+      ],
+      "requestedCoordinate": [
+        2.3903853047146133,
+        48.88853367472903
+      ],
+      "distanceMeters": 13.4,
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "panoId": "rQe50YnhJ25aPrln-atQ4w",
+      "heading": 143.68843767450176,
+      "pitch": 0,
+      "fov": 85,
+      "sha256": "0d293bc3429b758b2e6134397fdb39bbeec200e9425f66acfc776f2cb6d807a5",
+      "evidence": "Vue reconnaissable de la voie, perspective dans son axe ou accès caractéristique, contrôlée visuellement dans les deux sens."
+    }
   }
 }

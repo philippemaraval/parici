@@ -32,3 +32,28 @@ La synchronisation existante met à jour les références d'images et préserve 
 ## Validation de la livraison
 
 Les 188 tests unitaires passent. L'intégration PostgreSQL isolée valide la synchronisation des images et les protections des collections et corrections manuelles. Le parcours Chrome complet passe, avec des cartes Wikimedia de rue, monument et transport, ainsi qu'un logo de repli, aux largeurs 390 et 1 440 pixels. Les contrôles de contenu, types, format et budgets de performance passent également. Le contrôle Git confirme que seuls les champs d'image et d'illustration des 355 cartes changent ; les autres champs du catalogue sont conservés. La validation locale et le push ne constituent pas une preuve du déploiement public.
+
+## Complément : cadrage des voies
+
+32 voies supplémentaires disposent d'une photographie : 22 Google Street View et
+10 Panoramax (CC-BY-SA-4.0). La recherche Street View a interrogé d'autres positions
+sur 260 voies encore sans photo (10 %, 90 % et 35 % de leur segment principal),
+avec les mêmes contrôles de provenance, date, distance à la géométrie (18 m maximum)
+et orientation sur la tangente locale. 60 panoramas candidats ont été examinés dans
+les deux sens. 201 autres prises de vue Panoramax ont été examinées pour 46 voies.
+
+La sélection privilégie la perspective dans la longueur, une voie reconnaissable
+ou son accès caractéristique. Les façades seules, les rues parallèles, les obstacles
+et les vues trop déformées ont été écartés. Le contrôle dans Chrome à 390 et 1440 px
+sur les cartes réelles a notamment éliminé deux panoramas trop déformés. Les fichiers
+retenus conservent leurs crédits et leurs justificatifs géographiques dans le manifeste.
+
+État après ce complément :
+
+- Voies : **5 076 / 5 711 (88,88 %)** ; **635** restent au logo.
+- Quartiers : **80 / 80** ; monuments : **107 / 107** ; transports : **45 / 45**.
+- Ensemble : **5 308 / 5 943** cartes photographiées.
+- Il manque **350** voies photographiées pour atteindre 95 %.
+
+Collect reste sans bouton d'accès public. Les illustrations des autres cartes restent
+le logo Parici et les dérogations manuelles existantes restent prioritaires.
