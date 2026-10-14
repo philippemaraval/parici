@@ -5791,8 +5791,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Cité Falguière": {
-    "short": "Une voie dédiée à Voisinage de la rue Falguière. Jean Joseph Alexandre Falguière, sculpteur français.",
-    "text": "La cité Falguière rend hommage à Voisinage de la rue Falguière. Jean Joseph Alexandre Falguière (1831-1900), sculpteur français. Cette voie se situe dans le 15e arrondissement de Paris.",
+    "short": "Une voie dédiée à Jean Joseph Alexandre Falguière, sculpteur français.",
+    "text": "La cité Falguière rend hommage à Jean Joseph Alexandre Falguière (1831-1900), sculpteur français. Cette voie se situe dans le 15e arrondissement de Paris.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10638",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",
@@ -5804,8 +5804,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Cité Germain Pilon": {
-    "short": "Une voie dédiée à Voisinage de la rue Germain Pilon. Germain Pilon, sculpteur français.",
-    "text": "La cité Germain Pilon rend hommage à Voisinage de la rue Germain Pilon. Germain Pilon (1537-1590), sculpteur français. Cette voie se situe dans le 18e arrondissement de Paris.",
+    "short": "Une voie dédiée à Germain Pilon, sculpteur français.",
+    "text": "La cité Germain Pilon rend hommage à Germain Pilon (1537-1590), sculpteur français. Cette voie se situe dans le 18e arrondissement de Paris.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11041",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",
@@ -9215,8 +9215,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Rue Bessières": {
-    "short": "Une voie dédiée à Voisinage du boulevard Bessières. Jean-Baptiste Bessières, duc d'Istrie, maréchal de France.",
-    "text": "La rue Bessières rend hommage à Voisinage du boulevard Bessières. Jean-Baptiste Bessières (1768-1813), duc d'Istrie, maréchal de France. Cette voie se situe dans le 17e arrondissement de Paris.",
+    "short": "Une voie dédiée à Jean-Baptiste Bessières, duc d'Istrie, maréchal de France.",
+    "text": "La rue Bessières rend hommage à Jean-Baptiste Bessières (1768-1813), duc d'Istrie, maréchal de France. Cette voie se situe dans le 17e arrondissement de Paris.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9324",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",
@@ -17731,8 +17731,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Rue Séguier": {
-    "short": "Une voie dédiée à Famille de magistrats parisiens. Pierre Séguier, chancelier de France.",
-    "text": "La rue Séguier rend hommage à Famille de magistrats parisiens. Pierre Séguier (1588-1672), chancelier de France. Cette voie se situe dans le 6e arrondissement de Paris. Son nom lui est attribué par un décret du 24 août 1864.",
+    "short": "Une voie dédiée à Pierre Séguier, chancelier de France.",
+    "text": "La rue Séguier rend hommage à Pierre Séguier (1588-1672), chancelier de France. Cette voie se situe dans le 6e arrondissement de Paris. Son nom lui est attribué par un décret du 24 août 1864.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13420",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",
@@ -20520,8 +20520,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Square Bolivar": {
-    "short": "Une voie dédiée à Voisinage de l'avenue Simon Bolivar. Simon Bolivar y Ponte, libérateur de l'Amérique du Sud.",
-    "text": "Le square Bolivar rend hommage à Voisinage de l'avenue Simon Bolivar. Simon Bolivar y Ponte (1783-1830), libérateur de l'Amérique du Sud. Cette voie se situe dans le 19e arrondissement de Paris.",
+    "short": "Une voie dédiée à Simon Bolivar y Ponte, libérateur de l'Amérique du Sud.",
+    "text": "Le square Bolivar rend hommage à Simon Bolivar y Ponte (1783-1830), libérateur de l'Amérique du Sud. Cette voie se situe dans le 19e arrondissement de Paris.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9383",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",
@@ -20559,8 +20559,8 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Square Moncey": {
-    "short": "Une voie dédiée à Voisinage de la rue Moncey. Bon Adrien Jeannot de Moncey, duc de Conegliano, maréchal de France.",
-    "text": "Le square Moncey rend hommage à Voisinage de la rue Moncey. Bon Adrien Jeannot de Moncey (1754-1842), duc de Conegliano, maréchal de France. Cette voie se situe dans le 9e arrondissement de Paris.",
+    "short": "Une voie dédiée à Bon Adrien Jeannot de Moncey, duc de Conegliano, maréchal de France.",
+    "text": "Le square Moncey rend hommage à Bon Adrien Jeannot de Moncey (1754-1842), duc de Conegliano, maréchal de France. Cette voie se situe dans le 9e arrondissement de Paris.",
     "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12289",
     "source_title": "Ville de Paris — Nomenclature officielle des voies",
     "license": "ODbL 1.0",

@@ -142,6 +142,11 @@ test("the new epic batch contains exactly 1000 distinct, sourced epic cards", ()
     assert.ok(entry.source_record_id, key);
     assert.equal(entry.reviewed_at, "2026-10-15", key);
     assert.match(entry.text, /rend hommage (?:à|au) /, key);
+    assert.doesNotMatch(
+      entry.text,
+      /rend hommage (?:à|au) (?:Voisinage|Famille de)/,
+      key,
+    );
     assert.equal(card.description_full, entry.text, key);
   }
 });
