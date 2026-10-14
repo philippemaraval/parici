@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { contains } = require('../scripts/enrich_collect_paris_photos');
+const { contains, plan, streetPhotoView } = require('../scripts/enrich_collect_paris_photos');
 const { distance } = require('../scripts/lib/collect-street-view');
 const { photoManifest, photoRevision, applyPhotographs } = require('../backend/domains/collect/photo-sync');
 
@@ -15,7 +15,8 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   assert.ok(Object.keys(manifest).length >= 477);
   const streets = catalog.records.filter(c => c.family === 'street');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
-  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.95), 'Street photo coverage must remain at least 95%');
+  const jobs = new Map(plan({allStreets:true,includePhotographed:true}).map(job => [job.key,job]));
+  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.98), 'Street photo coverage must remain at least 98%');
   assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length > 0);
   for (const card of catalog.records.filter(c => c.family !== 'street')) {
     assert.equal(card.illustration.kind, 'photograph', card.name);
@@ -38,11 +39,16 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
       assert.ok(entry.author && entry.license);
       assert.match(entry.license, /^(CC BY|CC0|Public domain)/);
       assert.ok(['commons.wikimedia.org', 'fr.wikipedia.org'].includes(source.hostname));
-      assert.equal(v.method, 'article-identity-and-visual-review');
+      assert.ok(['article-identity-and-visual-review','commons-file-coordinate-and-visual-review'].includes(v.method));
       assert.ok(v.articleTitle && v.articleURL && v.commonsFile);
       assert.equal(new URL(v.originalURL).hostname, 'upload.wikimedia.org');
       if (card.family === 'bus') assert.equal(entry.caption, 'Matériel roulant de la ligne');
-      if (card.family === 'street') assert.ok(distance(v.articleCoordinate, card.centroid) <= 350, key);
+      if (card.family === 'street' && v.method === 'commons-file-coordinate-and-visual-review') {
+        assert.equal(new URL(v.articleURL).hostname, 'commons.wikimedia.org');
+        assert.equal(v.articleTitle, 'File:' + v.commonsFile);
+        assert.ok(streetPhotoView(v.fileCoordinate,jobs.get(key)).distanceMeters <= 18,key);
+        assert.ok(v.distanceMeters <= 18);
+      } else if (card.family === 'street') assert.ok(distance(v.articleCoordinate, card.centroid) <= 350, key);
     } else if (entry.source === 'panoramax') {
       assert.ok(entry.author);
       assert.equal(entry.license, 'CC-BY-SA-4.0');
@@ -51,8 +57,14 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
       assert.ok(v.metadataPage.includes(v.pictureId));
       if (v.azimuth != null) assert.ok(v.azimuth >= 0 && v.azimuth < 360);
     } else {
-      assert.equal(entry.author, 'Google Street View');
-      assert.match(v.copyright, /Google/);
+      if (v.contributorPanorama) {
+        assert.equal(v.provider, 'google-street-view-static-api');
+        assert.equal(entry.author, v.copyright.replace(/^©\s*/, '').trim());
+        assert.ok(entry.author);
+      } else {
+        assert.equal(entry.author, 'Google Street View');
+        assert.match(v.copyright, /Google/);
+      }
       assert.ok(v.panoId);
       assert.ok(v.heading >= 0 && v.heading < 360);
       assert.equal(source.hostname, 'www.google.com');
@@ -70,6 +82,13 @@ test('Wikimedia rolling stock retains its author credit and an uncropped artwork
   assert.match(html, /collect-card-art--transport-photo/);
   assert.match(html, /Wikimedia · Alice &amp; Bob/);
   assert.doesNotMatch(html, /Google Street View/);
+});
+
+test('Google contributor photographs retain the actual escaped author credit', async () => {
+  const { renderCardArtwork } = await import('../src/public/js/collect-card-art.js');
+  const html = renderCardArtwork({family:'street',collection_number:1,current_rarity:1,image_reference:'/data/collect_images/photo-probe.jpg',image_attribution:{source:'google-street-view',author:'Alice & Bob <photographes>'}});
+  assert.match(html, /Google Street View · Alice &amp; Bob &lt;photographes&gt;/);
+  assert.doesNotMatch(html, /<photographes>/);
 });
 
 test('photo revision is independent of manifest order and skips an already applied upgrade', async () => {

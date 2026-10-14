@@ -652,17 +652,17 @@ test(
         await (await response).finished();
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       }
-      const photographSamples = ["Rue Pierre Lescot", "Tunnel d'Italie", "Place du Musée du Louvre", "Esplanade Henri de France"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
+      const photographSamples = ["Chemin des Gardes", "Chemin du Dragon", "Avenue Pacthod", "Rue des Étoffes"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
       assert.ok(photographSamples.every(Boolean));
       for (const card of photographSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const wikimediaSamples = ["Métro 1", "Allée Rose Dieng-Kuntz", "Impasse des Arbalétriers", "Rue Éva Kotchever"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
+      const wikimediaSamples = ["Métro 1", "Allée 39/45", "Allée du Carrousel", "Allée Georges Besse"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
       assert.ok(wikimediaSamples.every(Boolean));
       for (const card of wikimediaSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const logoSample = cards.find(c => c.name === 'Allée 39/45' && c.image_reference === '/apple-touch-icon.png');
+      const logoSample = cards.find(c => c.name === 'Passage Commun P/12' && c.image_reference === '/apple-touch-icon.png');
       assert.ok(logoSample);
       await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,logoSample.id]);
       await page.goto(base + "/collect.html?panel=collection", {waitUntil: "domcontentloaded"});
@@ -676,7 +676,9 @@ test(
           const photo=tile.locator('.collect-card-art>img');
           await photo.evaluate(img=>{img.loading="eager";return img.decode();});
           assert.ok((await photo.getAttribute('src')).includes('/photo-'));
-          assert.equal(await tile.locator('.collect-card-photo-credit').innerText(),'Google Street View');
+          const author = photoManifest()[card.family + ':' + card.source_entity_id]?.author;
+          const expectedCredit = author && author !== 'Google Street View' ? 'Google Street View · ' + author : 'Google Street View';
+          assert.equal(await tile.locator('.collect-card-photo-credit').innerText(),expectedCredit);
           if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
           await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${card.id}-${width}.png`});
         }

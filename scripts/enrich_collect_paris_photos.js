@@ -93,6 +93,7 @@ function photoLocations(
   target,
   extended = false,
   exhaustive = false,
+  sampleSpacing = 15,
 ) {
   const segments = lines(features)
     .filter((line) => length(line) > 1)
@@ -103,7 +104,7 @@ function photoLocations(
       // portion is not necessarily the one covered by a Google camera.
       return segments.flatMap((line) => {
         const metres = length(line);
-        const count = Math.max(2, Math.ceil(metres / 15));
+        const count = Math.max(2, Math.ceil(metres / sampleSpacing));
         return Array.from({ length: count + 1 }, (_, i) =>
           at(line, (metres * i) / count),
         );
@@ -149,6 +150,7 @@ function plan({
   extended = false,
   includePhotographed = false,
   exhaustive = false,
+  sampleSpacing = 15,
 } = {}) {
   const catalog = read(path.join(root, "data/collect_paris_catalog.json"));
   const index = read(path.join(root, "backend/data/streets_index.json"));
@@ -196,7 +198,13 @@ function plan({
     const projected = match?.coordinate;
     const locations =
       c.family === "street"
-        ? photoLocations(features, c.centroid, extended, exhaustive)
+        ? photoLocations(
+            features,
+            c.centroid,
+            extended,
+            exhaustive,
+            sampleSpacing,
+          )
         : [
             projected,
             ...(match
@@ -235,6 +243,9 @@ async function generate(
     exhaustive = false,
     searchRadius = 35,
     oldestYear = new Date().getUTCFullYear() - 10,
+    includeContributors = false,
+    panoramaSource = "outdoor",
+    sampleSpacing = 15,
   } = {},
 ) {
   fs.mkdirSync(directory, { recursive: true });
@@ -252,7 +263,21 @@ async function generate(
     oldestYear > new Date().getUTCFullYear()
   )
     throw Error("Invalid oldest panorama year");
-  let jobs = plan({ allStreets, extended, includePhotographed, exhaustive });
+  if (!["outdoor", "default"].includes(panoramaSource))
+    throw Error("Invalid panorama source");
+  if (
+    !Number.isFinite(sampleSpacing) ||
+    sampleSpacing < 3 ||
+    sampleSpacing > 50
+  )
+    throw Error("Sample spacing must be between 3 and 50 metres");
+  let jobs = plan({
+    allStreets,
+    extended,
+    includePhotographed,
+    exhaustive,
+    sampleSpacing,
+  });
   if (only) jobs = jobs.filter((j) => only.includes(j.key));
   if (limit) jobs = jobs.slice(0, limit);
   let cursor = 0,
@@ -268,6 +293,7 @@ async function generate(
       if (
         existing.status === "OK" &&
         existing.providerVerified &&
+        (includeContributors || !existing.contributorPanorama) &&
         !(excludedPanoramas[job.key] || []).includes(existing.panoId) &&
         existing.candidates.every((c) =>
           fs.existsSync(path.join(directory, c.file)),
@@ -284,7 +310,7 @@ async function generate(
         key: secret,
         location: `${requested[1]},${requested[0]}`,
         radius: job.family === "monument" ? "80" : String(searchRadius),
-        source: "outdoor",
+        source: panoramaSource,
       });
       const response = await fetch(
         "https://maps.googleapis.com/maps/api/streetview/metadata?" + q,
@@ -303,7 +329,11 @@ async function generate(
       }
       if ((excludedPanoramas[job.key] || []).includes(metadata.pano_id))
         continue;
-      if (!/Google/i.test(metadata.copyright || "")) {
+      const contributorPanorama = !/Google/i.test(metadata.copyright || "");
+      if (
+        !metadata.copyright?.trim() ||
+        (contributorPanorama && !includeContributors)
+      ) {
         lastReason = "Unverified panorama copyright";
         continue;
       }
@@ -395,6 +425,7 @@ async function generate(
         panoId: metadata.pano_id,
         copyright: metadata.copyright,
         providerVerified: true,
+        contributorPanorama,
         surface: Boolean(along?.surface),
         candidates,
       };
@@ -471,7 +502,9 @@ function apply(directory, reviewFile) {
     if (
       receipt.status !== "OK" ||
       !receipt.providerVerified ||
-      !/Google/i.test(receipt.copyright || "") ||
+      (!/Google/i.test(receipt.copyright || "") &&
+        !receipt.contributorPanorama) ||
+      !receipt.copyright?.trim() ||
       receipt.key !== decision.key ||
       !candidate
     )
@@ -492,7 +525,9 @@ function apply(directory, reviewFile) {
         receipt.family === "district"
           ? "Vue photographique du quartier"
           : "Photographie du lieu",
-      author: "Google Street View",
+      author: receipt.contributorPanorama
+        ? receipt.copyright.replace(/^©\s*/, "").trim()
+        : "Google Street View",
       license: "Attribution Google conservée sur la photographie",
       sourcePage: `https://www.google.com/maps/@?api=1&map_action=pano&pano=${encodeURIComponent(receipt.panoId)}&heading=${candidate.heading}`,
       verifiedEntity: decision.key,
@@ -510,6 +545,8 @@ function apply(directory, reviewFile) {
         distanceMeters: receipt.distanceMeters,
         captureDate: receipt.captureDate,
         copyright: receipt.copyright,
+        provider: "google-street-view-static-api",
+        contributorPanorama: Boolean(receipt.contributorPanorama),
         panoId: receipt.panoId,
         heading: candidate.heading,
         pitch: candidate.pitch,
@@ -539,6 +576,11 @@ async function main() {
     exhaustive: args.includes("--exhaustive"),
     searchRadius: get("--search-radius") ? Number(get("--search-radius")) : 35,
     oldestYear: get("--oldest-year") ? Number(get("--oldest-year")) : undefined,
+    includeContributors: args.includes("--include-contributors"),
+    panoramaSource: get("--panorama-source") || "outdoor",
+    sampleSpacing: get("--sample-spacing")
+      ? Number(get("--sample-spacing"))
+      : 15,
     includePhotographed: args.includes("--include-photographed"),
     excludedPanoramas: get("--exclude-panoramas")
       ? read(get("--exclude-panoramas"))

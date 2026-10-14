@@ -1,5 +1,8 @@
 # Collect Paris : recherche approfondie des voies encore sans photographie
 
+La reprise suivante ajoute 150 photographies et porte les voies à 98,14 % : voir
+[le bilan des panoramas de contributeurs et fichiers Commons](collect-photos-paris-contributors-20261014.md).
+
 ## Résultat
 
 Par rapport à `b5b6ec65`, 128 cartes de voies supplémentaires disposent d'une

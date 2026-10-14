@@ -5,6 +5,7 @@ const fs = require("node:fs"),
   crypto = require("node:crypto");
 const root = path.resolve(__dirname, "..");
 const { distance } = require("./lib/collect-street-view");
+const { plan, streetPhotoView } = require("./enrich_collect_paris_photos");
 const [approvedFile, imageDirectory] = process.argv.slice(2);
 if (!approvedFile || !imageDirectory)
   throw Error(
@@ -19,6 +20,9 @@ const catalog = new Map(
 );
 const manifestFile = path.join(root, "data/collect_photos_paris.json");
 const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+const streetJobs = new Map(
+  plan({ allStreets: true, includePhotographed: true }).map((job) => [job.key, job]),
+);
 function plain(value) {
   return String(value || "")
     .replace(/<[^>]*>/g, " ")
@@ -43,6 +47,20 @@ function plain(value) {
     .replace(/\s+/g, " ")
     .trim();
 }
+function identity(value) {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .split(/\s+/)
+    .filter(
+      (word) =>
+        word &&
+        !["de", "la", "du", "des", "le", "les", "l", "d"].includes(word),
+    )
+    .join("");
+}
 const prepared = approvals.map((decision) => {
   const card = catalog.get(decision.key),
     info = decision.commons,
@@ -58,8 +76,30 @@ const prepared = approvals.map((decision) => {
   )
     throw Error("Unknown or already photographed card: " + decision.key);
   const articleLocation = decision.page.coordinates?.[0];
+  const commonsFile = decision.articleDomain === "commons.wikimedia.org";
+  const fileView =
+    commonsFile && articleLocation && streetJobs.has(decision.key)
+      ? streetPhotoView(
+          [articleLocation.lon, articleLocation.lat],
+          streetJobs.get(decision.key),
+        )
+      : null;
+  if (
+    commonsFile &&
+    (card.family !== "street" ||
+      !identity(decision.page.pageimage).includes(
+        identity(card.name.replace(/ - .*/, "")),
+      ) ||
+      decision.page.title !== "File:" + decision.page.pageimage ||
+      decodeURIComponent(new URL(info.descriptionurl).pathname) !==
+        "/wiki/" + decision.page.title.replaceAll(" ", "_") ||
+      !fileView ||
+      fileView.distanceMeters > 18)
+  )
+    throw Error("Commons file does not match street geometry: " + decision.key);
   if (
     card.family === "street" &&
+    !commonsFile &&
     (!articleLocation ||
       !card.centroid ||
       distance([articleLocation.lon, articleLocation.lat], card.centroid) > 350)
@@ -111,13 +151,21 @@ const prepared = approvals.map((decision) => {
       sourcePage: info.descriptionurl,
       verifiedEntity: decision.key,
       verification: {
-        method: "article-identity-and-visual-review",
+        method: commonsFile
+          ? "commons-file-coordinate-and-visual-review"
+          : "article-identity-and-visual-review",
         reviewedAt: new Date().toISOString().slice(0, 10),
         articleTitle: decision.page.title,
         articleURL: `https://${decision.articleDomain || "fr.wikipedia.org"}/wiki/${encodeURIComponent(decision.page.title.replaceAll(" ", "_"))}`,
         articleCoordinate: articleLocation
           ? [articleLocation.lon, articleLocation.lat]
           : null,
+        ...(commonsFile
+          ? {
+              fileCoordinate: [articleLocation.lon, articleLocation.lat],
+              distanceMeters: Math.round(fileView.distanceMeters * 10) / 10,
+            }
+          : {}),
         catalogTarget: card.centroid,
         commonsFile: decision.page.pageimage,
         originalURL: info.url,
