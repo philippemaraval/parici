@@ -16,7 +16,7 @@ test("all famous and main streets, monuments, districts and transport lines have
     bus: 45,
     district: 80,
     monument: 107,
-    street: 412,
+    street: 420,
   });
   assert.deepEqual(validateHeritageDescriptions(catalog, descriptions), []);
   for (const [key, entry] of Object.entries(descriptions)) {
@@ -30,7 +30,7 @@ test("all famous and main streets, monuments, districts and transport lines have
 
   assert.equal(
     new Set(Object.values(descriptions).map((entry) => entry.text)).size,
-    644,
+    652,
   );
 });
 
@@ -85,4 +85,30 @@ test("Paris-specific identities avoid homonym pages and known historical mistake
     /Christophe-Philippe/,
   );
   assert.match(descriptions["bus:Tramway T14"].text, /22 mars 2025/);
+});
+
+test("every common, uncommon, rare and legendary card has a complete heritage sheet", () => {
+  const counts = {};
+  for (const card of catalog.records) {
+    const rarity = card.fragments_required > 0 ? 5 : card.base_rarity;
+    if (![1, 2, 3, 5].includes(rarity)) continue;
+    counts[rarity] = (counts[rarity] || 0) + 1;
+    assert.ok(descriptions[card.family + ":" + card.source_entity_id]);
+  }
+  assert.deepEqual(counts, { 1: 182, 2: 306, 3: 146, 5: 18 });
+  const unlisted = catalog.records.find(
+    (card) => !descriptions[card.family + ":" + card.source_entity_id],
+  );
+  for (const rarity of [1, 2, 3, 5]) {
+    const card = {
+      ...unlisted,
+      base_rarity: rarity,
+      fragments_required: rarity === 5 ? 3 : 0,
+    };
+    assert.ok(
+      validateHeritageDescriptions({ records: [card] }, descriptions).some(
+        (error) => error.includes("fiche patrimoniale absente"),
+      ),
+    );
+  }
 });

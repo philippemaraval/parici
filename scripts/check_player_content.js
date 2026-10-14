@@ -77,6 +77,9 @@ function validateHeritageDescriptions(catalog, descriptions) {
   const errors = [];
   for (const card of catalog.records) {
     const targeted =
+      [1, 2, 3, 5].includes(
+        card.fragments_required > 0 ? 5 : card.base_rarity,
+      ) ||
       card.family !== "street" ||
       card.album_slugs.some((slug) =>
         ["famous-streets", "main-streets"].includes(slug),

@@ -4516,6 +4516,19 @@
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
   },
+  "street:Place Juliette Gréco": {
+    "short": "Une place dédiée en 2021 à une voix de Saint-Germain-des-Prés.",
+    "text": "La place Juliette Gréco honore l’artiste-interprète et comédienne née en 1927 et morte en 2020. Dénommée par une délibération de juin 2021, elle se situe devant le square Laurent-Prache, sur la place Saint-Germain-des-Prés.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=15390",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "15390",
+    "source_name": "place Juliette Gréco",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
+  },
   "street:Place Pigalle": {
     "short": "Le nom rappelle la proximité de la rue Jean-Baptiste Pigalle.",
     "text": "La place Pigalle se situe dans le 9e arrondissement de Paris. Le nom rappelle la proximité de la rue Jean-Baptiste Pigalle. Jean-Baptiste Pigalle (Paris, 1714-Paris, 1785), sculpteur français qui avait son atelier dans cette rue. La voie était auparavant appelée « place de la Barrière Montmartre ».",
@@ -4528,6 +4541,19 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
+  },
+  "street:Place Saint-Germain des Prés": {
+    "short": "Une place agrandie en 1977 par le rattachement d’une partie de la rue de Rennes.",
+    "text": "La place Saint-Germain-des-Prés se situe entre le boulevard Saint-Germain et les rues de l’Abbaye et Guillaume-Apollinaire. En janvier 1977, les emplacements des nos 44 et 46 de la rue de Rennes, au nord du boulevard, lui sont rattachés.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13598",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "13598",
+    "source_name": "place Saint-Germain des Prés",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Place Saint-Michel": {
     "short": "Le nom rappelle la proximité du pont Saint-Michel.",
@@ -6695,6 +6721,19 @@
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
   },
+  "street:Rue de Picardie": {
+    "short": "Le souvenir de la place de France imaginée sous Henri IV.",
+    "text": "La rue de Picardie porte le nom d’une province française, en lien avec le projet de place de France d’Henri IV. Une partie est ouverte en 1626 sur la culture du Temple ; elle a porté les noms de rue de Beaujolais puis de rue des Alpes entre 1798 et 1814.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12820",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "12820",
+    "source_name": "rue de Picardie",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
+  },
   "street:Rue de Picpus": {
     "short": "Le nom garde la mémoire d’un ancien lieu-dit et a connu plusieurs graphies, dont Picquepusse.",
     "text": "La rue de Picpus se situe dans le 12e arrondissement de Paris. Le nom garde la mémoire d’un ancien lieu-dit et a connu plusieurs graphies, dont Picquepusse. La voie figure déjà sur un plan de 1672.",
@@ -7085,6 +7124,32 @@
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
   },
+  "street:Rue des Arènes": {
+    "short": "Une rue ouverte en 1888 au voisinage des arènes de Lutèce.",
+    "text": "La rue des Arènes est ouverte en 1888 dans le 5e arrondissement. Son nom, attribué en avril 1890, rappelle les anciennes arènes de Lutèce voisines. Elle relie la rue Linné à la place Émile-Mâle.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9037",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "9037",
+    "source_name": "rue des Arènes",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
+  },
+  "street:Rue des Coutures Saint-Gervais": {
+    "short": "Une rue ouverte en 1620 sur les anciennes cultures de Saint-Gervais.",
+    "text": "Ouverte en 1620, la rue des Coutures Saint-Gervais garde la mémoire de terres cultivées : « couture » est ici une ancienne forme de « culture ». Elle a aussi porté les noms de rue de l’Hôpital-Saint-Gervais et de rue de la Culture-Saint-Gervais.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10076",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "10076",
+    "source_name": "rue des Coutures Saint-Gervais",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
+  },
   "street:Rue des Entrepreneurs": {
     "short": "Le nom a été choisi par les entrepreneurs à l’origine de l’aménagement du quartier de Grenelle.",
     "text": "La rue des Entrepreneurs se situe dans le 15e arrondissement de Paris. Le nom a été choisi par les entrepreneurs à l’origine de l’aménagement du quartier de Grenelle.",
@@ -7215,6 +7280,19 @@
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
   },
+  "street:Rue du Bourg Tibourg": {
+    "short": "Une rue médiévale qui conserve le nom de l’ancien bourg Thibault.",
+    "text": "La rue du Bourg Tibourg était la principale voie de l’ancien bourg Tibout ou Thibault. Attestée au milieu du XIIe siècle, elle a connu de nombreuses variantes de nom. Sa partie sud reprend une portion de l’ancienne place du Marché-Saint-Jean.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9448",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "9448",
+    "source_name": "rue du Bourg Tibourg",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
+  },
   "street:Rue du Cardinal Lemoine": {
     "short": "Son nom rappelle Jean Lemoine (1250-1313), cardinal français.",
     "text": "La rue du Cardinal Lemoine se situe dans le 5e arrondissement de Paris. Son nom rappelle Jean Lemoine (1250-1313), cardinal français. Voie percée sur l'enclos du collège qu'il fonda.",
@@ -7266,6 +7344,19 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
+  },
+  "street:Rue du Cloître Saint-Merri": {
+    "short": "Une voie citée vers 1300, qui traversait le cloître de Saint-Merri.",
+    "text": "La rue du Cloître Saint-Merri traversait autrefois le cloître de l’église du même nom. Elle figure dans le Dit des rues de Paris de Guillot, vers 1300. Un ancien tronçon en coude, qui rejoignait la rue de la Verrerie, correspond à l’actuelle rue des Juges-Consuls.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9929",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "9929",
+    "source_name": "rue du Cloître Saint-Merri",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Rue du Faubourg Montmartre": {
     "short": "Elle était la principale rue du faubourg situé entre Paris et l'abbaye de Montmartre.",
@@ -7370,6 +7461,19 @@
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
     "source_updated_at": "2026-10-08",
     "source_publisher": "Direction de l’Urbanisme — Ville de Paris"
+  },
+  "street:Rue du Grand Veneur": {
+    "short": "Une voie du Marais dénommée en février 1987.",
+    "text": "La rue du Grand Veneur reçoit son nom par une décision municipale du 23 février 1987, après avoir été désignée provisoirement E/3. Dans le quartier des Archives, elle part de la rue des Arquebusiers pour rejoindre l’hôtel du Grand Veneur.",
+    "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11106",
+    "source_title": "Ville de Paris — Nomenclature officielle des voies",
+    "license": "ODbL 1.0",
+    "reviewed_at": "2026-10-15",
+    "source_record_id": "11106",
+    "source_name": "rue du Grand Veneur",
+    "source_publisher": "Direction de l’Urbanisme — Ville de Paris",
+    "source_updated_at": "2026-10-08",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/"
   },
   "street:Rue du Louvre": {
     "short": "Le nom rappelle la proximité du Palais du Louvre.",
