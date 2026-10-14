@@ -1,4 +1,4 @@
-import { mountProfileHeatmap } from "./profile-heatmap.js";
+
 import { avatarMarkup, iconMarkup } from "./public/js/camino-art.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
 import { fetchWithStartupRetry } from "./api-client.js";
@@ -768,7 +768,7 @@ export function loadProfileRuntime({
         html += buildReferralPanelHtml(profile);
 
         profileContent.innerHTML = html;
-        mountProfileHeatmap(profileContent, profile.arrondissement_stats || []);
+        import("./profile-heatmap.js").then(({mountProfileHeatmap})=>mountProfileHeatmap(profileContent,profile.arrondissement_stats||[])).catch(()=>{const root=profileContent.querySelector("[data-profile-heatmap]");if(root)root.textContent="Carte temporairement indisponible.";});
         initAvatarSelector(profile.avatar || "👤", globalRankMeta.level, profile);
         bindSingleOpenAccordion(profileContent);
         bindReferralCopyButton(profileContent);

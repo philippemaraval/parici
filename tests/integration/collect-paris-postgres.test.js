@@ -32,7 +32,7 @@ test(
     await initializeDatabase({ startBackgroundServices: false });
     await new Promise((resolve) =>
       server.listen(
-        process.env.PARICI_COLLECT_BROWSER === "1" ? 4173 : 0,
+        process.env.CAMINO_REAL_BROWSER === "1" ? 4173 : 0,
         "127.0.0.1",
         resolve,
       ),
@@ -63,43 +63,294 @@ test(
     }
     // The photo upgrade updates old seed references but preserves manual artwork,
     // owned copies and the launch gate. Repeated startup leaves the result stable.
-    const { photoManifest, applyPhotographs } = require("../../backend/domains/collect/photo-sync");
+    const {
+      photoManifest,
+      applyPhotographs,
+    } = require("../../backend/domains/collect/photo-sync");
     const photoEntries = Object.entries(photoManifest()).slice(0, 2);
     const photoCards = [];
     for (const [key, entry] of photoEntries) {
       const split = key.indexOf(":");
-      const row = (await db.pool.query("SELECT * FROM cards WHERE family=$1 AND source_entity_id=$2", [key.slice(0,split),key.slice(split+1)])).rows[0];
+      const row = (
+        await db.pool.query(
+          "SELECT * FROM cards WHERE family=$1 AND source_entity_id=$2",
+          [key.slice(0, split), key.slice(split + 1)],
+        )
+      ).rows[0];
       assert.equal(row.image_reference, entry.image);
       photoCards.push(row);
     }
     const photoOwner = await register("photo_upgrade_probe");
-    const logoCard = (await db.pool.query("SELECT * FROM cards WHERE image_reference='/apple-touch-icon.png' AND image_override IS NULL ORDER BY id LIMIT 1")).rows[0];
+    const logoCard = (
+      await db.pool.query(
+        "SELECT * FROM cards WHERE image_reference='/apple-touch-icon.png' AND image_override IS NULL ORDER BY id LIMIT 1",
+      )
+    ).rows[0];
     assert.ok(logoCard);
-    await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=$1", [logoCard.id]);
-    await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",[photoOwner.id,photoCards[0].id]);
-    await db.pool.query("UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=ANY($1::bigint[])",[photoCards.map(c=>c.id)]);
-    await db.pool.query("UPDATE cards SET image_override='/data/manual.jpg',image_credit_override='Crédit manuel' WHERE id=$1",[photoCards[1].id]);
-    await db.pool.query("DELETE FROM app_settings WHERE key='parici_collect_photo_revision'");
+    await db.pool.query(
+      "UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=$1",
+      [logoCard.id],
+    );
+    await db.pool.query(
+      "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'collect')",
+      [photoOwner.id, photoCards[0].id],
+    );
+    await db.pool.query(
+      "UPDATE cards SET image_reference='/data/collect_images/old-seed.svg' WHERE id=ANY($1::bigint[])",
+      [photoCards.map((c) => c.id)],
+    );
+    await db.pool.query(
+      "UPDATE cards SET image_override='/data/manual.jpg',image_credit_override='Crédit manuel' WHERE id=$1",
+      [photoCards[1].id],
+    );
+    await db.pool.query(
+      "DELETE FROM app_settings WHERE key='parici_collect_photo_revision'",
+    );
     const photoClient = await db.pool.connect();
     try {
       await photoClient.query("BEGIN");
       await applyPhotographs(photoClient);
       await applyPhotographs(photoClient);
       await photoClient.query("COMMIT");
-    } finally { photoClient.release(); }
-    const photoRows=(await db.pool.query("SELECT * FROM cards WHERE id=ANY($1::bigint[]) ORDER BY id",[photoCards.map(c=>c.id)])).rows;
-    const automatic=photoRows.find(c=>c.id===photoCards[0].id), manual=photoRows.find(c=>c.id===photoCards[1].id);
-    assert.equal(automatic.image_reference,photoEntries[0][1].image);
-    assert.equal(manual.image_reference,'/data/collect_images/old-seed.svg');
-    assert.equal(manual.image_override,'/data/manual.jpg');
-    assert.equal(manual.image_credit_override,'Crédit manuel');
-    assert.equal((await db.pool.query("SELECT image_reference FROM cards WHERE id=$1", [logoCard.id])).rows[0].image_reference, '/apple-touch-icon.png');
-    assert.equal(Number((await db.pool.query("SELECT COUNT(*) FROM card_copies WHERE user_id=$1",[photoOwner.id])).rows[0].count),1);
-    assert.equal((await db.pool.query("SELECT value_text FROM app_settings WHERE key='collect_launch_at'")).rows[0].value_text,'infinity');
+    } finally {
+      photoClient.release();
+    }
+    const photoRows = (
+      await db.pool.query(
+        "SELECT * FROM cards WHERE id=ANY($1::bigint[]) ORDER BY id",
+        [photoCards.map((c) => c.id)],
+      )
+    ).rows;
+    const automatic = photoRows.find((c) => c.id === photoCards[0].id),
+      manual = photoRows.find((c) => c.id === photoCards[1].id);
+    assert.equal(automatic.image_reference, photoEntries[0][1].image);
+    assert.equal(manual.image_reference, "/data/collect_images/old-seed.svg");
+    assert.equal(manual.image_override, "/data/manual.jpg");
+    assert.equal(manual.image_credit_override, "Crédit manuel");
+    assert.equal(
+      (
+        await db.pool.query("SELECT image_reference FROM cards WHERE id=$1", [
+          logoCard.id,
+        ])
+      ).rows[0].image_reference,
+      "/apple-touch-icon.png",
+    );
+    assert.equal(
+      Number(
+        (
+          await db.pool.query(
+            "SELECT COUNT(*) FROM card_copies WHERE user_id=$1",
+            [photoOwner.id],
+          )
+        ).rows[0].count,
+      ),
+      1,
+    );
+    assert.equal(
+      (
+        await db.pool.query(
+          "SELECT value_text FROM app_settings WHERE key='collect_launch_at'",
+        )
+      ).rows[0].value_text,
+      "infinity",
+    );
     // Restore the probe artwork for the later catalogue/browser assertions.
-    await db.pool.query("UPDATE cards SET image_reference=$1,image_override=NULL,image_credit_override=NULL WHERE id=$2",[photoEntries[1][1].image,manual.id]);
+    await db.pool.query(
+      "UPDATE cards SET image_reference=$1,image_override=NULL,image_credit_override=NULL WHERE id=$2",
+      [photoEntries[1][1].image, manual.id],
+    );
+    await t.test(
+      "OSM catalog synchronization preserves copies, manual content, numbering and albums",
+      async () => {
+        const client = await db.pool.connect();
+        const {
+          syncCatalog,
+        } = require("../../backend/domains/collect/catalog-sync");
+        const catalog = structuredClone(
+          require("../../data/collect_paris_catalog.json"),
+        );
+        const card = photoCards[0];
+        try {
+          await client.query("BEGIN");
+          await client.query(
+            "UPDATE cards SET base_rarity_override=3,current_rarity=3,image_override='/data/manual-kept.jpg' WHERE id=$1",
+            [card.id],
+          );
+          await client.query(
+            "INSERT INTO albums(slug,name) VALUES('manual-probe','Manuel') RETURNING id",
+          );
+          await client.query(
+            "INSERT INTO album_cards(album_id,card_id) SELECT id,$1 FROM albums WHERE slug='manual-probe'",
+            [card.id],
+          );
+          const changed = structuredClone(catalog);
+          changed.records = changed.records.filter(
+            (r) =>
+              r.family + ":" + r.source_entity_id !==
+              card.family + ":" + card.source_entity_id,
+          );
+          const maximum = Math.max(
+            ...catalog.records
+              .filter((r) => r.family === "street")
+              .map((r) => r.collection_number),
+          );
+          changed.records.push({
+            ...catalog.records.find((r) => r.family === "street"),
+            source_entity_id: "Local OSM synchronization probe",
+            name: "Local OSM synchronization probe",
+            collection_number: maximum + 1,
+            questions: [],
+            fragments_required: 0,
+          });
+          await syncCatalog(client, changed);
+          await syncCatalog(client, changed);
+          let saved = (
+            await client.query("SELECT * FROM cards WHERE id=$1", [card.id])
+          ).rows[0];
+          assert.equal(saved.catalog_present, false);
+          assert.equal(saved.current_rarity, 3);
+          assert.equal(saved.image_override, "/data/manual-kept.jpg");
+          assert.equal(saved.collection_number, card.collection_number);
+          assert.equal(
+            Number(
+              (
+                await client.query(
+                  "SELECT COUNT(*) FROM card_copies WHERE user_id=$1 AND card_id=$2",
+                  [photoOwner.id, card.id],
+                )
+              ).rows[0].count,
+            ),
+            1,
+          );
+          assert.equal(
+            Number(
+              (
+                await client.query(
+                  "SELECT COUNT(*) FROM album_cards ac JOIN albums a ON a.id=ac.album_id WHERE a.slug='manual-probe' AND ac.card_id=$1",
+                  [card.id],
+                )
+              ).rows[0].count,
+            ),
+            1,
+          );
+          await syncCatalog(client, catalog);
+          saved = (
+            await client.query("SELECT * FROM cards WHERE id=$1", [card.id])
+          ).rows[0];
+          assert.equal(saved.catalog_present, true);
+          assert.equal(saved.current_rarity, 3);
+          assert.equal(
+            (
+              await client.query(
+                "SELECT catalog_present FROM cards WHERE source_entity_id='Local OSM synchronization probe'",
+              )
+            ).rows[0].catalog_present,
+            false,
+          );
+          assert.equal(
+            (
+              await client.query(
+                "SELECT value_text FROM app_settings WHERE key='collect_launch_at'",
+              )
+            ).rows[0].value_text,
+            "infinity",
+          );
+        } finally {
+          await client.query("ROLLBACK");
+          client.release();
+        }
+      },
+    );
+    await t.test(
+      "Daily geographic repairs preserve attempts, editorial targets and manual images",
+      async () => {
+        const client = await db.pool.connect();
+        const {
+          applyDailyGeographyRepairs,
+        } = require("../../backend/domains/game-integrity/daily-geography");
+        const repairs =
+          require("../../data/daily_target_repairs_paris.json").slice(0, 4);
+        try {
+          await client.query("BEGIN");
+          await client.query(
+            "DELETE FROM app_settings WHERE key='parici_daily_geography_revision'",
+          );
+          for (const r of repairs)
+            await client.query(
+              `INSERT INTO daily_targets(date,street_name,arrondissement,coordinates_json) VALUES($1,$2,$3,'[2.3,48.8]')
+          ON CONFLICT(date) DO UPDATE SET street_name=EXCLUDED.street_name,arrondissement=EXCLUDED.arrondissement,coordinates_json=EXCLUDED.coordinates_json,image_url=NULL`,
+              [r.date, r.previousNames[0], r.previousArrondissement],
+            );
+          await client.query(
+            "INSERT INTO daily_user_attempts(user_id,date,attempts_count,success) VALUES($1,$2,1,FALSE)",
+            [photoOwner.id, repairs[1].date],
+          );
+          await client.query(
+            "UPDATE daily_targets SET image_url='/editorial.jpg' WHERE date=$1",
+            [repairs[2].date],
+          );
+          await client.query(
+            "INSERT INTO admin_entity_revisions(domain,entity_key,actor,reason) VALUES('daily',$1,'local-editor','Édition manuelle protégée')",
+            [repairs[3].date],
+          );
+          await applyDailyGeographyRepairs(client);
+          await applyDailyGeographyRepairs(client);
+          const rows = (
+            await client.query(
+              "SELECT date,street_name,image_url FROM daily_targets WHERE date=ANY($1::text[]) ORDER BY date",
+              [repairs.map((r) => r.date)],
+            )
+          ).rows;
+          assert.equal(
+            rows.find((r) => r.date === repairs[0].date).street_name,
+            repairs[0].streetName,
+          );
+          for (const r of repairs.slice(1))
+            assert.equal(
+              rows.find((row) => row.date === r.date).street_name,
+              r.previousNames[0],
+            );
+          assert.equal(
+            rows.find((r) => r.date === repairs[2].date).image_url,
+            "/editorial.jpg",
+          );
+          assert.equal(
+            (
+              await client.query(
+                "SELECT attempts_count FROM daily_user_attempts WHERE user_id=$1 AND date=$2",
+                [photoOwner.id, repairs[1].date],
+              )
+            ).rows[0].attempts_count,
+            1,
+          );
+        } finally {
+          await client.query("ROLLBACK");
+          client.release();
+        }
+      },
+    );
     const player = await register("collect_player"),
       other = await register("collect_other");
+    const missingCard = (
+      await db.pool.query(
+        "SELECT id,name FROM cards WHERE family='street' AND status='active' ORDER BY id DESC LIMIT 1",
+      )
+    ).rows[0];
+    const missingSearch = await request(
+      "/api/collect/collection/page?ownership=missing&search=" +
+        encodeURIComponent(missingCard.name),
+      player,
+    );
+    assert.equal(missingSearch.status, 200);
+    for (const c of missingSearch.body.cards)
+      assert.equal("questions" in c, false);
+    assert.ok(
+      missingSearch.body.cards.some(
+        (c) =>
+          Number(c.id) === Number(missingCard.id) &&
+          c.name === missingCard.name,
+      ),
+    );
     assert.equal((await request("/api/collect/quota")).status, 401);
     assert.equal((await request("/api/collect/v2/config")).body.enabled, true);
     const privateDailyPlayer = await register("collect_private_daily");
@@ -598,9 +849,12 @@ test(
       (await db.getPushSubscriptionStatusForUser(player.id)).enabled,
       true,
     );
-    if (process.env.PARICI_COLLECT_BROWSER === "1") {
+    if (process.env.CAMINO_REAL_BROWSER === "1") {
       const { chromium } = require("@playwright/test");
-      browser = await chromium.launch({ channel: "chrome", headless: true });
+      browser = await chromium.launch({
+        ...(process.env.CI ? {} : { channel: "chrome" }),
+        headless: true,
+      });
       const context = await browser.newContext({
         viewport: { width: 390, height: 844 },
         isMobile: true,
@@ -643,68 +897,146 @@ test(
       async function selectArtwork(card) {
         const response = page.waitForResponse((r) => {
           const url = new URL(r.url());
-          return url.pathname === '/api/collect/collection/page' &&
-            url.searchParams.get('family') === card.family &&
-            url.searchParams.get('search') === card.name;
+          return (
+            url.pathname === "/api/collect/collection/page" &&
+            url.searchParams.get("family") === card.family &&
+            url.searchParams.get("search") === card.name
+          );
         });
-        await page.locator('#collect-filter-family').selectOption(card.family);
-        await page.locator('#collect-search').fill(card.name);
+        await page.locator("#collect-filter-family").selectOption(card.family);
+        await page.locator("#collect-search").fill(card.name);
         await (await response).finished();
-        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        await page.evaluate(
+          () =>
+            new Promise((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(resolve)),
+            ),
+        );
       }
-      const photographSamples = ["Chemin des Gardes", "Chemin du Dragon", "Avenue Pacthod", "Rue des Étoffes"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
+      const photographSamples = [
+        "Chemin des Gardes",
+        "Chemin du Dragon",
+        "Avenue Pacthod",
+        "Rue des Étoffes",
+      ].map((name) =>
+        cards.find(
+          (c) => c.name === name && c.image_reference.includes("/photo-"),
+        ),
+      );
       assert.ok(photographSamples.every(Boolean));
       for (const card of photographSamples) {
-        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
+        await db.pool.query(
+          "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",
+          [player.id, card.id],
+        );
       }
-      const wikimediaSamples = ["Métro 1", "Allée 39/45", "Allée du Carrousel", "Allée Georges Besse"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
+      const wikimediaSamples = [
+        "Métro 1",
+        "Allée 39/45",
+        "Allée du Carrousel",
+        "Allée Georges Besse",
+      ].map((name) =>
+        cards.find(
+          (c) => c.name === name && c.image_reference.includes("/wikimedia-"),
+        ),
+      );
       assert.ok(wikimediaSamples.every(Boolean));
       for (const card of wikimediaSamples) {
-        await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
+        await db.pool.query(
+          "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",
+          [player.id, card.id],
+        );
       }
-      const logoSample = cards.find(c => c.name === 'Passage Commun P/12' && c.image_reference === '/apple-touch-icon.png');
+      const logoSample = cards.find(
+        (c) =>
+          c.name === "Passage Commun P/12" &&
+          c.image_reference === "/apple-touch-icon.png",
+      );
       assert.ok(logoSample);
-      await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,logoSample.id]);
-      await page.goto(base + "/collect.html?panel=collection", {waitUntil: "domcontentloaded"});
+      await db.pool.query(
+        "INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",
+        [player.id, logoSample.id],
+      );
+      await page.goto(base + "/collect.html?panel=collection", {
+        waitUntil: "domcontentloaded",
+      });
       for (const width of [390, 1440]) {
-        await page.setViewportSize({width,height:900});
+        await page.setViewportSize({ width, height: 900 });
         for (const card of photographSamples) {
           await selectArtwork(card);
-          const tile=page.locator(`.collect-card[data-card-id="${card.id}"]`);
-          await tile.waitFor({state:'visible'});
+          const tile = page.locator(`.collect-card[data-card-id="${card.id}"]`);
+          await tile.waitFor({ state: "visible" });
           await tile.scrollIntoViewIfNeeded();
-          const photo=tile.locator('.collect-card-art>img');
-          await photo.evaluate(img=>{img.loading="eager";return img.decode();});
-          assert.ok((await photo.getAttribute('src')).includes('/photo-'));
-          const author = photoManifest()[card.family + ':' + card.source_entity_id]?.author;
-          const expectedCredit = author && author !== 'Google Street View' ? 'Google Street View · ' + author : 'Google Street View';
-          assert.equal(await tile.locator('.collect-card-photo-credit').innerText(),expectedCredit);
-          if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
-          await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${card.id}-${width}.png`});
+          const photo = tile.locator(".collect-card-art>img");
+          await photo.evaluate((img) => {
+            img.loading = "eager";
+            return img.decode();
+          });
+          assert.ok((await photo.getAttribute("src")).includes("/photo-"));
+          const author =
+            photoManifest()[card.family + ":" + card.source_entity_id]?.author;
+          const expectedCredit =
+            author && author !== "Google Street View"
+              ? "Google Street View · " + author
+              : "Google Street View";
+          assert.equal(
+            await tile.locator(".collect-card-photo-credit").innerText(),
+            expectedCredit,
+          );
+          if (card.family === "monument")
+            assert.equal(
+              await photo.evaluate((img) => getComputedStyle(img).objectFit),
+              "contain",
+            );
+          await tile.screenshot({
+            path: `/tmp/parici-collect-review/photo-${card.family}-${card.id}-${width}.png`,
+          });
         }
         for (const card of wikimediaSamples) {
           await selectArtwork(card);
           const tile = page.locator(`.collect-card[data-card-id="${card.id}"]`);
-          await tile.waitFor({state:'visible'});
+          await tile.waitFor({ state: "visible" });
           await tile.scrollIntoViewIfNeeded();
-          const photo = tile.locator('.collect-card-art>img');
-          await photo.evaluate(img => {img.loading="eager";return img.decode();});
-          assert.ok((await photo.getAttribute('src')).includes('/wikimedia-'));
-          assert.match(await tile.locator('.collect-card-photo-credit').innerText(), /Wikimedia/);
-          if (card.family !== 'street') assert.equal(await photo.evaluate(img => getComputedStyle(img).objectFit), 'contain');
-          await tile.screenshot({path:`/tmp/parici-collect-review/wikimedia-${card.family}-${card.id}-${width}.png`});
+          const photo = tile.locator(".collect-card-art>img");
+          await photo.evaluate((img) => {
+            img.loading = "eager";
+            return img.decode();
+          });
+          assert.ok((await photo.getAttribute("src")).includes("/wikimedia-"));
+          assert.match(
+            await tile.locator(".collect-card-photo-credit").innerText(),
+            /Wikimedia/,
+          );
+          if (card.family !== "street")
+            assert.equal(
+              await photo.evaluate((img) => getComputedStyle(img).objectFit),
+              "contain",
+            );
+          await tile.screenshot({
+            path: `/tmp/parici-collect-review/wikimedia-${card.family}-${card.id}-${width}.png`,
+          });
         }
         await selectArtwork(logoSample);
-        const logoTile = page.locator(`.collect-card[data-card-id="${logoSample.id}"]`);
-        await logoTile.waitFor({state:'visible'});
+        const logoTile = page.locator(
+          `.collect-card[data-card-id="${logoSample.id}"]`,
+        );
+        await logoTile.waitFor({ state: "visible" });
         await logoTile.scrollIntoViewIfNeeded();
-        const logoImage = logoTile.locator('.collect-card-art--logo>img');
-        await logoImage.evaluate(img => img.decode());
-        assert.equal(await logoImage.getAttribute('src'), '/apple-touch-icon.png');
-        assert.equal(await logoImage.evaluate(img => getComputedStyle(img).objectFit), 'contain');
-        await logoTile.screenshot({path:`/tmp/parici-collect-review/logo-${logoSample.family}-${width}.png`});
+        const logoImage = logoTile.locator(".collect-card-art--logo>img");
+        await logoImage.evaluate((img) => img.decode());
+        assert.equal(
+          await logoImage.getAttribute("src"),
+          "/apple-touch-icon.png",
+        );
+        assert.equal(
+          await logoImage.evaluate((img) => getComputedStyle(img).objectFit),
+          "contain",
+        );
+        await logoTile.screenshot({
+          path: `/tmp/parici-collect-review/logo-${logoSample.family}-${width}.png`,
+        });
       }
-      await page.setViewportSize({width:390,height:844});
+      await page.setViewportSize({ width: 390, height: 844 });
       await page.goto(base + "/collect.html");
       await page
         .locator("#collect-next")

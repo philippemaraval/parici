@@ -72,3 +72,16 @@ test("delivery rejects successful HTTP responses serving the wrong frontend comm
     /Versions/,
   );
 });
+
+test("delivery compares the actual separate Pages frontend, not Render's own static copy",async(t)=>{
+  const previous=global.fetch;t.after(()=>{global.fetch=previous;});
+  const hosts=[];
+  global.fetch=async url=>{
+    hosts.push(url.host);
+    if(url.pathname==="/api/health")return Response.json({ok:true,database:"ready",backendCommit:"new"});
+    if(url.pathname==="/admin/build-info.json")return Response.json({commit:url.host==="pages.example.test"?"old":"new"});
+    return new Response(null,{status:url.pathname.startsWith("/api/")?401:200});
+  };
+  await assert.rejects(checkAdminDeployment("https://api.example.test","new","https://pages.example.test"),/Versions/);
+  assert.ok(hosts.includes("pages.example.test"));
+});

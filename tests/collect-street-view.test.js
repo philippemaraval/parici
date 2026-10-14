@@ -160,3 +160,11 @@ test("square photographs aim into the surface and retain actual boundary distanc
     null,
   );
 });
+
+test("district-labelled Paris streets give two attempts without changing other street names",()=>{
+ const {placementAttemptLimit}=require("../backend/domains/collect/game-hints");
+ assert.equal(placementAttemptLimit("street",3,"Rue Béranger - Quartier des Enfants-Rouges"),2);
+ assert.equal(placementAttemptLimit("street",3,"Rue Saint-André des Arts"),3);
+ assert.equal(placementAttemptLimit("street",2,"Rue Béranger - Quartier des Enfants-Rouges"),2);
+ assert.equal(placementAttemptLimit("monument",3,"Tour Eiffel"),2);
+});

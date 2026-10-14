@@ -106,6 +106,10 @@ async function checkDailyHealth() {
 async function main() {
   const latencyMs = await checkHealth();
   const daily = await checkDailyHealth();
+  if(process.env.PRODUCTION_FRONTEND_URL) {
+    const apiOrigin=new URL(healthUrl).origin;
+    await require("./check_admin_deployment").checkAdminDeployment(apiOrigin,undefined,process.env.PRODUCTION_FRONTEND_URL);
+  }
   const metrics = await checkMetrics();
   process.stdout.write(
     `${JSON.stringify({

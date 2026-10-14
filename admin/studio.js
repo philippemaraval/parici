@@ -611,7 +611,7 @@ function drawMap(rows) {
       "Carte indisponible. La liste des énigmes reste accessible.";
     return;
   }
-  map = window.L.map("studio-map").setView([48.8566, 2.3522], 12);
+  map = window.L.map("studio-map",{zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false}).setView([48.8566, 2.3522], 12);
   window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap",
   }).addTo(map);
@@ -628,7 +628,7 @@ function drawMap(rows) {
       .addTo(map)
       .bindPopup(document.createTextNode(r.street_name_clean));
   }
-  if (bounds.length) map.fitBounds(bounds, { padding: [20, 20], maxZoom: 15 });
+  if (bounds.length) map.fitBounds(bounds, { padding: [20, 20], maxZoom: 15,animate:false });
 }
 async function chooseDraft() {
   show(

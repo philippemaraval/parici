@@ -7,15 +7,124 @@ const {
   toSafeInteger,
 } = require("./validation");
 
+function solution(riddle) {
+  return {
+    street_name_clean: riddle.street_name_clean,
+    explanation_text: riddle.explanation_text,
+    source_url: riddle.source_url,
+  };
+}
 async function listRiddles(req, res) {
+  res.setHeader("Cache-Control", "no-store");
   const result = await db.pool.query(
-    `SELECT id, way_id, street_name_clean, riddle_text, hint_text, explanation_text, image_url,
-            latitude, longitude, created_at, revision, source_url
-     FROM explorer_riddles
-     WHERE archived_at IS NULL
-     ORDER BY id ASC`,
+    `SELECT id,riddle_text,image_url,revision FROM explorer_riddles WHERE archived_at IS NULL ORDER BY id ASC`,
   );
-  res.json({ riddles: result.rows });
+  res.json({
+    riddles: result.rows.map((r) => ({
+      ...r,
+      image_url: `/api/explorer/riddles/${r.id}/image`,
+    })),
+  });
+}
+async function nextRiddle(req, res) {
+  const body = req.body || {},
+    point = [Number(body.longitude), Number(body.latitude)];
+  if (
+    body.latitude == null ||
+    body.longitude == null ||
+    !point.every(Number.isFinite) ||
+    Math.abs(point[0]) > 180 ||
+    Math.abs(point[1]) > 90
+  )
+    return res.status(400).json({ error: "Position requise" });
+  const rows = (
+    await db.pool.query(
+      `SELECT r.* FROM explorer_riddles r WHERE r.archived_at IS NULL
+    AND NOT EXISTS(SELECT 1 FROM explorer_user_progress p WHERE p.user_id=$1 AND p.riddle_id=r.id)`,
+      [req.user.id],
+    )
+  ).rows;
+  const integrity = require("../game-integrity/explorer");
+  const ranked = rows
+    .map((riddle) => ({
+      riddle,
+      distance: integrity.distanceToRiddle(point, riddle),
+    }))
+    .sort((a, b) => a.distance - b.distance);
+  const solved = Number(
+    (
+      await db.pool.query(
+        "SELECT COUNT(*)::int AS count FROM explorer_user_progress WHERE user_id=$1",
+        [req.user.id],
+      )
+    ).rows[0].count,
+  );
+  const pool = ranked.slice(0, solved ? Math.min(5, ranked.length) : 1);
+  res.setHeader("Cache-Control", "private, no-store");
+  res.json({
+    riddleId: pool.length
+      ? pool[require("node:crypto").randomInt(pool.length)].riddle.id
+      : null,
+  });
+}
+
+async function riddleImage(req, res) {
+  const id = toPositiveInteger(req.params.id);
+  if (!id) return res.sendStatus(404);
+  const row = (
+    await db.pool.query("SELECT image_url FROM explorer_riddles WHERE id=$1", [
+      id,
+    ])
+  ).rows[0];
+  if (!row) return res.sendStatus(404);
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  if (row.image_url.startsWith("/data/explorer_uploads/")) {
+    const name = require("node:path").basename(row.image_url);
+    const image = (
+      await db.pool.query(
+        "SELECT mime_type,content FROM explorer_uploaded_images WHERE filename=$1",
+        [name],
+      )
+    ).rows[0];
+    return image
+      ? res.type(image.mime_type).send(image.content)
+      : res.sendStatus(404);
+  }
+  if (/^https?:/.test(row.image_url)) {
+    // Editorial external URLs are proxied only through an allowlist of public image hosts.
+    const url = new URL(row.image_url);
+    if (
+      url.protocol !== "https:" ||
+      !["upload.wikimedia.org", "images.paris.fr"].includes(url.hostname) ||
+      url.username ||
+      url.password
+    )
+      return res.sendStatus(422);
+    const response = await fetch(url, {
+      redirect: "error",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (
+      !response.ok ||
+      !/^image\/(jpeg|png|webp)/.test(
+        response.headers.get("content-type") || "",
+      )
+    )
+      return res.sendStatus(502);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (bytes.length > 5 * 1024 * 1024) return res.sendStatus(413);
+    return res.type(response.headers.get("content-type")).send(bytes);
+  }
+  const path = require("node:path"),
+    root = path.resolve(__dirname, "../../.."),
+    file = path.resolve(root, "." + row.image_url);
+  if (
+    !file.startsWith(path.join(root, "data") + path.sep) ||
+    !/[.]?(?:jpg|jpeg|png|webp)$/i.test(file)
+  )
+    return res.sendStatus(404);
+  return res.sendFile(file);
 }
 
 async function listAdminRiddles(req, res) {
@@ -127,21 +236,42 @@ async function startStep(req, res) {
   const id = toPositiveInteger(req.params.id);
   if (!id) return res.status(400).json({ error: "Énigme invalide" });
   const existing = await db.pool.query(
-    "SELECT started_at,hint_used FROM explorer_step_sessions WHERE user_id=$1 AND riddle_id=$2",
+    "SELECT started_at,hint_used,riddle_snapshot FROM explorer_step_sessions WHERE user_id=$1 AND riddle_id=$2",
     [req.user.id, id],
   );
-  if (existing.rows.length) return res.json(existing.rows[0]);
+  if (existing.rows.length) {
+    const step = existing.rows[0];
+    return res.json({
+      started_at: step.started_at,
+      hint_used: step.hint_used,
+      riddle: {
+        id,
+        riddle_text: step.riddle_snapshot?.riddle_text,
+        image_url: `/api/explorer/riddles/${id}/image`,
+      },
+      ...(step.hint_used ? { hint_text: step.riddle_snapshot?.hint_text } : {}),
+    });
+  }
   const result = await db.pool.query(
-    "INSERT INTO explorer_step_sessions(user_id,riddle_id,riddle_snapshot) SELECT $1,id,to_jsonb(explorer_riddles) FROM explorer_riddles WHERE id=$2 AND archived_at IS NULL ON CONFLICT(user_id,riddle_id) DO UPDATE SET riddle_id=EXCLUDED.riddle_id RETURNING started_at,hint_used",
+    "INSERT INTO explorer_step_sessions(user_id,riddle_id,riddle_snapshot) SELECT $1,id,to_jsonb(explorer_riddles) FROM explorer_riddles WHERE id=$2 AND archived_at IS NULL ON CONFLICT(user_id,riddle_id) DO UPDATE SET riddle_id=EXCLUDED.riddle_id RETURNING started_at,hint_used,riddle_snapshot",
     [req.user.id, id],
   );
   if (!result.rows.length)
     return res.status(404).json({ error: "Énigme introuvable" });
-  return res.json(result.rows[0]);
+  const step = result.rows[0];
+  return res.json({
+    started_at: step.started_at,
+    hint_used: step.hint_used,
+    riddle: {
+      id,
+      riddle_text: step.riddle_snapshot?.riddle_text,
+      image_url: `/api/explorer/riddles/${id}/image`,
+    },
+  });
 }
 async function useHint(req, res) {
   const result = await db.pool.query(
-    "UPDATE explorer_step_sessions SET hint_used=TRUE WHERE user_id=$1 AND riddle_id=$2 RETURNING hint_used",
+    "UPDATE explorer_step_sessions SET hint_used=TRUE WHERE user_id=$1 AND riddle_id=$2 RETURNING hint_used,riddle_snapshot->>'hint_text' AS hint_text",
     [req.user.id, toPositiveInteger(req.params.id)],
   );
   return result.rows.length
@@ -215,7 +345,22 @@ async function syncProgress(req, res) {
         [req.user.id],
       )
     ).rows[0];
+    const discovered = (
+      await client.query(
+        `SELECT p.riddle_id,COALESCE(s.riddle_snapshot,to_jsonb(r)) AS snapshot
+      FROM explorer_user_progress p JOIN explorer_riddles r ON r.id=p.riddle_id
+      LEFT JOIN explorer_step_sessions s ON s.user_id=p.user_id AND s.riddle_id=p.riddle_id
+      WHERE p.user_id=$1 AND p.riddle_id=ANY($2::bigint[])`,
+        [req.user.id, saved.map((row) => row.riddle_id)],
+      )
+    ).rows;
+    for (const row of saved)
+      row.solution = solution(
+        discovered.find((r) => Number(r.riddle_id) === Number(row.riddle_id))
+          .snapshot,
+      );
     await client.query("COMMIT");
+    res.setHeader("Cache-Control", "private, no-store");
     return res.json({ success: true, saved, leaderboard });
   } catch (error) {
     await client.query("ROLLBACK");
@@ -316,7 +461,12 @@ async function getProgress(req, res) {
   res.setHeader("Cache-Control", "private, no-store");
   const progress = (
     await db.pool.query(
-      "SELECT riddle_id,started_at,solved_at,hints_used,points_earned,walking_time_seconds FROM explorer_user_progress WHERE user_id=$1",
+      `SELECT p.riddle_id,p.started_at,p.solved_at,p.hints_used,p.points_earned,p.walking_time_seconds,
+      jsonb_build_object('street_name_clean',COALESCE(s.riddle_snapshot->>'street_name_clean',r.street_name_clean),
+      'explanation_text',COALESCE(s.riddle_snapshot->>'explanation_text',r.explanation_text),
+      'source_url',COALESCE(s.riddle_snapshot->>'source_url',r.source_url)) AS solution
+      FROM explorer_user_progress p JOIN explorer_riddles r ON r.id=p.riddle_id
+      LEFT JOIN explorer_step_sessions s ON s.user_id=p.user_id AND s.riddle_id=p.riddle_id WHERE p.user_id=$1`,
       [req.user.id],
     )
   ).rows;
@@ -361,6 +511,8 @@ module.exports = {
   getProgress,
   simulateStep,
   listRiddles,
+  nextRiddle,
+  riddleImage,
   listAdminRiddles,
   createAdminRiddle,
   updateAdminRiddle,

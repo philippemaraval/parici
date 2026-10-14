@@ -36,14 +36,16 @@ const scope = [
   "#explorer-leaderboard tbody td:first-child", ".rank-node", ".overview-label", "#global-progress-line",
   "[data-camino-icons]",
 ].join(",");
-const excluded = "script, style, textarea, input, select, option, pre, code, svg, .profile-name, .user-sticker-name, [contenteditable], [data-camino-user-content]";
+const excluded = ".leaflet-container, script, style, textarea, input, select, option, pre, code, svg, .profile-name, .user-sticker-name, [contenteditable], [data-camino-user-content]";
 
 export function decorateInterface(root = document.body) {
   if (!root) return;
   const replaceText = node => {
+    const text = node.nodeValue;
+    if(!text?.trim())return;
+    pattern.lastIndex=0;const hasSymbol=pattern.test(text);pattern.lastIndex=0;if(!hasSymbol)return;
     const parent = node.parentElement;
     if (!parent || parent.closest(excluded) || !parent.closest(scope)) return;
-    const text = node.nodeValue;
     const matches = [...text.matchAll(pattern)];
     if (!matches.length) return;
     const fragment = document.createDocumentFragment();
@@ -67,7 +69,7 @@ export function decorateInterface(root = document.body) {
     node.replaceWith(fragment);
   };
   if (root.nodeType === Node.TEXT_NODE) { replaceText(root); return; }
-  if (root.nodeType !== Node.ELEMENT_NODE || root.matches(excluded)) return;
+  if (root.nodeType !== Node.ELEMENT_NODE || root.closest(excluded)) return;
   if (!root.closest(scope) && !root.querySelector(scope)) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const texts = [];
@@ -88,13 +90,24 @@ export function decorateInterface(root = document.body) {
 
 if (typeof document !== "undefined") {
   decorateInterface();
+  const pending=new Set();let scheduled=false;
   const observer = new MutationObserver(records => {
-    const changed = new Set();
-    for (const record of records) {
-      if (record.type === "childList") record.addedNodes.forEach(node => changed.add(node));
-      else changed.add(record.target);
+    for(const record of records) {
+      const element=record.target.nodeType===Node.ELEMENT_NODE?record.target:record.target.parentElement;
+      if(element?.closest(excluded))continue;
+      if(record.type==="childList")record.addedNodes.forEach(node=>pending.add(node));else pending.add(record.target);
     }
-    for (const node of changed) if (node.isConnected) decorateInterface(node);
+    if(!pending.size||scheduled)return;
+    scheduled=true;requestAnimationFrame(()=>{
+      scheduled=false;const changed=[...pending];pending.clear();
+      const roots = new Set(changed);
+      for (const node of changed) {
+        if (!node.isConnected) continue;
+        let parent = node.parentNode;
+        while (parent && !roots.has(parent)) parent = parent.parentNode;
+        if (!parent) decorateInterface(node);
+      }
+    });
   });
   observer.observe(document.body, { subtree: true, childList: true, characterData: true,
     attributes: true, attributeFilter: ["title", "aria-label"] });

@@ -1,0 +1,200 @@
+[
+  {
+    "date": "2026-11-27",
+    "previousNames": [
+      "Rue Béranger",
+      "Rue Béranger - Quartier des Enfants-Rouges"
+    ],
+    "previousArrondissement": "Quartier des Enfants-Rouges",
+    "streetName": "Rue Béranger - Quartier des Enfants-Rouges",
+    "arrondissement": "Quartier des Enfants-Rouges",
+    "coordinates": [
+      2.363805796182925,
+      48.86593129873439
+    ],
+    "reason": "Identité homonyme précisée dans le même quartier"
+  },
+  {
+    "date": "2026-12-04",
+    "previousNames": [
+      "Impasse T/16"
+    ],
+    "previousArrondissement": "Quartier de la Muette",
+    "streetName": "Rue Francisque Sarcey",
+    "arrondissement": "16e arrondissement",
+    "coordinates": [
+      2.2817794286143513,
+      48.8594303025572
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-02-11",
+    "previousNames": [
+      "Impasse T/16"
+    ],
+    "previousArrondissement": "Quartier de la Muette",
+    "streetName": "Rue Francisque Sarcey",
+    "arrondissement": "16e arrondissement",
+    "coordinates": [
+      2.2817794286143513,
+      48.8594303025572
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-02-26",
+    "previousNames": [
+      "Rue de La Bruyère"
+    ],
+    "previousArrondissement": "Quartier Saint-Georges",
+    "streetName": "Rue Notre-Dame-de-Lorette",
+    "arrondissement": "9e arrondissement",
+    "coordinates": [
+      2.3372285113213627,
+      48.87866693712888
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-02-27",
+    "previousNames": [
+      "Passage Communal F/11"
+    ],
+    "previousArrondissement": "Quartier de la Folie-Méricourt",
+    "streetName": "Rue Auguste Barbier",
+    "arrondissement": "11e arrondissement",
+    "coordinates": [
+      2.3713573971291093,
+      48.8686510146128
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-03-03",
+    "previousNames": [
+      "Chemin du Puisard"
+    ],
+    "previousArrondissement": "Quartier du Père-Lachaise",
+    "streetName": "Chemin du Chevet",
+    "arrondissement": "20e arrondissement",
+    "coordinates": [
+      2.3932025208037526,
+      48.86136085543044
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-03-07",
+    "previousNames": [
+      "Rue de La Bruyère"
+    ],
+    "previousArrondissement": "Quartier Saint-Georges",
+    "streetName": "Rue Notre-Dame-de-Lorette",
+    "arrondissement": "9e arrondissement",
+    "coordinates": [
+      2.3372285113213627,
+      48.87866693712888
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-03-08",
+    "previousNames": [
+      "Passage Marignan"
+    ],
+    "previousArrondissement": "Quartier des Champs-Élysées",
+    "streetName": "Promenade des Champs-Élysées",
+    "arrondissement": "8e arrondissement",
+    "coordinates": [
+      2.30666,
+      48.86989
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-03-31",
+    "previousNames": [
+      "Promenade Georges Ulmer"
+    ],
+    "previousArrondissement": "Quartier des Grandes-Carrières",
+    "streetName": "Rue Duperré",
+    "arrondissement": "9e arrondissement",
+    "coordinates": [
+      2.3356949136705047,
+      48.88205145473627
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-06-05",
+    "previousNames": [
+      "Avenue Alphand",
+      "Avenue Alphand - Chaillot"
+    ],
+    "previousArrondissement": "Chaillot",
+    "streetName": "Avenue Alphand - Chaillot",
+    "arrondissement": "Chaillot",
+    "coordinates": [
+      2.285068594184002,
+      48.87502805175559
+    ],
+    "reason": "Identité homonyme précisée dans le même quartier"
+  },
+  {
+    "date": "2027-06-13",
+    "previousNames": [
+      "Passage de Richelieu"
+    ],
+    "previousArrondissement": "Quartier du Palais Royal",
+    "streetName": "Place du Musée du Louvre",
+    "arrondissement": "1e arrondissement",
+    "coordinates": [
+      2.335696228095823,
+      48.86100394908451
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-06-15",
+    "previousNames": [
+      "Avenue des Plantations"
+    ],
+    "previousArrondissement": "Quartier des Épinettes",
+    "streetName": "Rue Fanny",
+    "arrondissement": "17e arrondissement",
+    "coordinates": [
+      2.31643,
+      48.89878
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-06-20",
+    "previousNames": [
+      "Pont Hélène Duc"
+    ],
+    "previousArrondissement": "10e arrondissement",
+    "streetName": "Rue Jean Poulmarch",
+    "arrondissement": "10e arrondissement",
+    "coordinates": [
+      2.3635535722572683,
+      48.872403213871365
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  },
+  {
+    "date": "2027-06-24",
+    "previousNames": [
+      "Place Tina Turner"
+    ],
+    "previousArrondissement": "13e arrondissement",
+    "streetName": "Rue Fernand Braudel",
+    "arrondissement": "13e arrondissement",
+    "coordinates": [
+      2.372929460505202,
+      48.83567153071817
+    ],
+    "reason": "Vue longitudinale fiable indisponible"
+  }
+]

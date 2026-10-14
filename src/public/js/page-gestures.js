@@ -28,8 +28,9 @@
   const style = document.createElement("style");
   style.textContent = ".clue-photo-viewport{overflow:hidden;touch-action:pan-y}.clue-photo-viewport img{transform-origin:center;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}";
   document.head.append(style);
-  function prepare() {
-    document.querySelectorAll(selector).forEach(image => {
+  function prepare(root = document) {
+    const images = root.matches?.(selector) ? [root] : root.querySelectorAll(selector);
+    images.forEach(image => {
       if (prepared.has(image)) return;
       prepared.add(image);
       const viewport = document.createElement("div");
@@ -82,6 +83,11 @@
       image.addEventListener("load", () => { scale = 1; x = y = 0; render(); });
     });
   }
-  new MutationObserver(prepare).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(records => {
+    for (const record of records) {
+      if (record.target instanceof Element && record.target.closest(".leaflet-container")) continue;
+      for (const node of record.addedNodes) if (node instanceof Element && !node.closest(".leaflet-container")) prepare(node);
+    }
+  }).observe(document.body, { childList: true, subtree: true });
   prepare();
 })();

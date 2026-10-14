@@ -26,6 +26,7 @@ jobs:
       - run: npm run deps:check
       - run: npm run data:check
       - run: npm run content:check
+      - run: npm run daily:geography
       - run: npm run audit:production
       - run: npm test
       - run: npm run build
@@ -59,9 +60,17 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
+      - name: Installer le client PostgreSQL pour tester la restauration
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install --yes postgresql-client-17
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
       - run: npm run test:integration
         env:
           CAMINO_REAL_BROWSER: "1"
+          TEST_BACKUP_TOOLS: "1"
 
   e2e:
     runs-on: ubuntu-latest

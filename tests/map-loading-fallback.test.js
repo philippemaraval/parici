@@ -45,7 +45,7 @@ for (const broken of [
     const { loadStreetsRuntime } = await runtime;
     const result = await loadStreetsRuntime({
       map: {},
-      L: { geoJSON: () => ({ addTo: () => ({}) }) },
+      L: { geoJSON: () => ({ addTo() {return this;}, addData(data) {assert.equal(data.type,"FeatureCollection");assert.equal(data.features[0].properties.name,"Rue du Test");} }) },
       normalizeName: (x) => x,
     });
     assert.equal(result.allStreetFeatures.length, 1);

@@ -3713,7 +3713,7 @@ async function prepareAndStartNewSession() {
   startNewSession();
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function initializeApplication() {
   warmBackendConnection();
   const needsMap = window.CaminoNeedsMapRuntime !== false;
   let mapRuntimeReady = false;
@@ -3751,7 +3751,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   scheduleAfterStartup(() => {
     loadAllLeaderboards();
   }, 1200);
-});
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApplication, { once: true });
+} else {
+  queueMicrotask(initializeApplication);
+}
 const infoEl = document.getElementById("street-info");
 function startTimersLoop() {
   requestAnimationFrame(function e() {

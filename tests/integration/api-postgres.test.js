@@ -8,8 +8,8 @@ test(
   "API complète sur une base PostgreSQL éphémère",
   { skip: !databaseUrl, timeout: 90_000 },
   async (context) => {
-    const { createTestDatabase } = require('./test-database');
-    const isolated = await createTestDatabase(databaseUrl, 'parici_api');
+    const { createTestDatabase } = require("./test-database");
+    const isolated = await createTestDatabase(databaseUrl, "parici_api");
     process.env.DATABASE_URL = isolated.url;
     process.env.NODE_ENV = "test";
     process.env.SECRET_KEY =

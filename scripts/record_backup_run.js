@@ -2,7 +2,12 @@
 const fs = require("node:fs");
 const { Pool } = require("pg");
 async function main() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  if (!process.env.DATABASE_URL)
+    throw new Error("PRODUCTION_DATABASE_URL absent");
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 10000,
+  });
   try {
     const file = process.env.BACKUP_PATH || "",
       success =

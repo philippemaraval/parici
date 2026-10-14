@@ -6,7 +6,7 @@ const test = require("node:test");
 const ROOT = path.resolve(__dirname, "..");
 
 test("daily share image centres the visual hint without emoji font metrics", () => {
-  const source = fs.readFileSync(path.join(ROOT, "src/daily-runtime.js"), "utf8");
+  const source = fs.readFileSync(path.join(ROOT, "src/daily-share-image.js"), "utf8");
 
   assert.match(source, /const visualHintLabel = "Indice visuel"/);
   assert.match(source, /ctx\.measureText\(visualHintLabel\)\.width/);

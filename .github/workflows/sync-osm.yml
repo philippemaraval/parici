@@ -30,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install dependencies
@@ -39,8 +39,11 @@ jobs:
       - name: Run OSM sync
         run: node scripts/sync_osm.js
 
+      - name: Rebuild Collect from the updated inventory
+        run: node scripts/build_collect_paris_catalog.js
+
       - name: Validate generated files
-        run: npm run validate:osm
+        run: npm run validate:osm && npm run content:check && npm run daily:geography
 
       - name: Check for changes
         id: check
@@ -65,13 +68,17 @@ jobs:
             data/paris_arrondissements.geojson \
             data/paris_monuments.geojson \
             data/map_sync_meta.json \
+            data/collect_paris_catalog.json \
+            data/collect_numbering_paris.json \
+            data/collect_images/manifest.json \
+            data/collect_quartier_arrondissement.json \
             backend/data/paris_rues_light.geojson \
             backend/data/paris_arrondissements.geojson \
             backend/data/paris_monuments.geojson \
             backend/data/streets_index.json
           git commit -m "sync: update Paris street data from OSM"
           git pull --rebase origin main
-          git push origin "HEAD:main"
+          git push origin main
 
       - name: Trigger Render deploy
         if: steps.check.outputs.changed == 'true'

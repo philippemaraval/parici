@@ -671,13 +671,13 @@ app.get('/main.js', (req, res, next) => {
             return next();
         }
         res.setHeader('Cache-Control', 'no-store');
-        return res.sendFile(path.join(frontendRoot, mainAssetUrl.slice(1)));
+        return res.type('application/javascript').send(`import(${JSON.stringify(mainAssetUrl)});`);
     } catch (error) {
         return next(error);
     }
 });
 
-app.get(['/data/collect_paris_catalog.json','/data/collect_question_additions.json','/data/collect_fragment_plan.json','/data/collect_paris_editorial.json','/data/collect_paris_fragments.json'], (_req,res)=>res.sendStatus(404));
+app.get(['/data/collect_paris_catalog.json','/data/collect_question_additions.json','/data/collect_fragment_plan.json','/data/collect_paris_editorial.json','/data/collect_paris_fragments.json','/data/explorer_paris.json'], (_req,res)=>res.sendStatus(404));
 app.use(express.static(frontendRoot));
 
 async function initializeBackgroundServices() {

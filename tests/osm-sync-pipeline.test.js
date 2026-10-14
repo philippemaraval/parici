@@ -28,7 +28,7 @@ test("scheduled and admin OSM paths share the validated sync script", () => {
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /npm run validate:osm/);
   assert.match(workflow, /git pull --rebase origin main/);
-  assert.match(workflow, /git push origin "HEAD:main"/);
+  assert.match(workflow, /git push origin main/);
   assert.doesNotMatch(workflow, /create-pull-request/);
   assert.match(backend, /actions\/workflows\/\$\{encodedWorkflowId\}\/dispatches/);
   assert.match(backend, /inputs:\s*\{\s*source: requestedBy/);

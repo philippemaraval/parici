@@ -12,13 +12,20 @@ const routes = [
   ["/api/editor/operations-tools/audit-log", 401],
 ];
 
-async function checkAdminDeployment(origin, expectedCommit) {
+async function checkAdminDeployment(
+  origin,
+  expectedCommit,
+  frontendOrigin = origin,
+) {
   const [backend, frontend] = await Promise.all(
     ["/api/health", "/admin/build-info.json"].map(async (route) => {
-      const response = await fetch(new URL(route, origin), {
-        signal: AbortSignal.timeout(20000),
-        headers: { "Cache-Control": "no-cache" },
-      });
+      const response = await fetch(
+        new URL(route, route.startsWith("/api/") ? origin : frontendOrigin),
+        {
+          signal: AbortSignal.timeout(20000),
+          headers: { "Cache-Control": "no-cache" },
+        },
+      );
       if (!response.ok) throw new Error(`${route}: HTTP ${response.status}`);
       return response.json();
     }),
@@ -36,10 +43,13 @@ async function checkAdminDeployment(origin, expectedCommit) {
       "Versions frontend/backend incohérentes ou commit attendu non livré",
     );
   for (const [route, expected] of routes) {
-    const response = await fetch(new URL(route, origin), {
-      signal: AbortSignal.timeout(20000),
-      headers: { "Cache-Control": "no-cache" },
-    });
+    const response = await fetch(
+      new URL(route, route.startsWith("/api/") ? origin : frontendOrigin),
+      {
+        signal: AbortSignal.timeout(20000),
+        headers: { "Cache-Control": "no-cache" },
+      },
+    );
     await response.body?.cancel();
     if (response.status !== expected)
       throw new Error(`${route}: HTTP ${response.status}, attendu ${expected}`);
@@ -50,12 +60,13 @@ async function waitForAdminDeployment(
   origin,
   timeoutMs = 15 * 60 * 1000,
   expectedCommit = process.env.DEPLOY_COMMIT,
+  frontendOrigin = process.env.PRODUCTION_FRONTEND_URL || origin,
 ) {
   const deadline = Date.now() + timeoutMs;
   let lastError;
   while (Date.now() < deadline) {
     try {
-      await checkAdminDeployment(origin, expectedCommit);
+      await checkAdminDeployment(origin, expectedCommit, frontendOrigin);
       console.log(
         "Administration déployée : pages disponibles et API protégées.",
       );

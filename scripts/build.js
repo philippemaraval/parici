@@ -67,7 +67,7 @@ function generateDistFolder() {
   fs.mkdirSync(DIST_DIR, { recursive: true });
 
   DIST_INCLUDE.forEach(copyItemToDist);
-  for(const privateFile of ["collect_paris_catalog.json","collect_question_additions.json","collect_fragment_plan.json","collect_paris_editorial.json","collect_paris_fragments.json"])fs.rmSync(path.join(DIST_DIR,"data",privateFile),{force:true});
+  for(const privateFile of ["collect_paris_catalog.json","collect_question_additions.json","collect_fragment_plan.json","collect_paris_editorial.json","collect_paris_fragments.json","explorer_paris.json"])fs.rmSync(path.join(DIST_DIR,"data",privateFile),{force:true});
 
   const backendDataInDist = path.join(DIST_DIR, "backend", "data");
   if (fs.existsSync(backendDataInDist)) {
@@ -117,7 +117,11 @@ async function fingerprintProductionAssets() {
   const mainBundle = await esbuild.build({
     entryPoints: [FRONTEND_ENTRY],
     bundle: true,
-    format: "iife",
+    format: "esm",
+    splitting: true,
+    outdir:path.join(DIST_DIR,"assets"),
+    chunkNames:"chunks/[name]-[hash]",
+    metafile:true,
     target: ["es2019"],
     minify: true,
     sourcemap: false,
@@ -125,12 +129,14 @@ async function fingerprintProductionAssets() {
     logLevel: "silent",
     legalComments: "none",
   });
+  for(const output of mainBundle.outputFiles.filter(file=>path.basename(file.path)!=="app.js")){fs.mkdirSync(path.dirname(output.path),{recursive:true});fs.writeFileSync(output.path,output.contents);}
   const mainUrl = writeFingerprintedAsset(
     "main",
     "js",
-    mainBundle.outputFiles[0].contents,
+    mainBundle.outputFiles.find(file=>path.basename(file.path)==="app.js").contents,
     assetManifest,
   );
+  fs.writeFileSync(path.join(DIST_DIR,"main.js"),`import(${JSON.stringify(mainUrl)});`);
   const dataRulesUrl = writeFingerprintedAsset(
     "data-rules",
     "js",
@@ -263,7 +269,7 @@ async function fingerprintProductionAssets() {
   for (const [source, label, type] of [
     ["src/public/js/collect.js", "collect", "js"],
     ["src/public/js/collect-notifications.js", "collect-notifications", "js"],
-    ...["collect", "collect-details", "collect-sections", "collect-reveal", "collect-theme", "collect-cards"]
+    ...["collect", "collect-details", "collect-sections", "collect-reveal", "collect-theme", "collect-cards", "collect-social"]
       .map(name => [`src/public/css/${name}.css`, name, "css"]),
   ]) {
     const content = ["collect","collect-notifications"].includes(label) && type === "js"
@@ -321,6 +327,7 @@ async function fingerprintProductionAssets() {
   indexHtml = replaceAssetReference(indexHtml, "/src/public/js/map-dependencies.js", mapDependenciesUrl);
   indexHtml = replaceAssetReference(indexHtml, "data_rules.js", dataRulesUrl);
   indexHtml = replaceAssetReference(indexHtml, "main.js", mainUrl);
+  indexHtml=indexHtml.replace(`<script defer src="${mainUrl}"`,`<script type="module" src="${mainUrl}"`);
   fs.writeFileSync(indexPath, indexHtml);
 
   const rulesPath = path.join(DIST_DIR, "regles.html");
@@ -357,6 +364,11 @@ async function fingerprintProductionAssets() {
     .replace(/\s*"\/data\/paris_monuments\.geojson",?\n/, "\n")
     .replace(/\s*"\/data\/paris_transit_lines\.geojson\?[^"]+",?\n/, "\n")
     .replace(/\s*"\/data\/street_infos\.json",?\n/, "\n");
+  const entries=Object.entries(mainBundle.metafile.outputs);
+  const initial=new Set(entries.filter(([,meta])=>meta.entryPoint?.endsWith("src/app.js")).map(([name])=>name));
+  for(const key of initial)for(const item of mainBundle.metafile.outputs[key]?.imports||[])if(item.kind==="import-statement")initial.add(item.path);
+  const staticChunks=[...initial].filter(key=>!mainBundle.metafile.outputs[key]?.entryPoint).map(key=>"/assets/"+path.relative(path.join(DIST_DIR,"assets"),path.resolve(ROOT,key)));
+  serviceWorker=serviceWorker.replace('const CORE_PRECACHE_URLS = [','const CORE_PRECACHE_URLS = ['+staticChunks.map(url=>JSON.stringify(url)+',').join(''));
   fs.writeFileSync(serviceWorkerPath, serviceWorker);
   const minifiedServiceWorker = await esbuild.transform(serviceWorker, {
     loader: "js",
@@ -394,6 +406,7 @@ async function fingerprintProductionAssets() {
 async function build() {
   console.log("Building Parici...\n");
 
+  execSync("node scripts/build_collect_paris_catalog.js",{cwd:ROOT,stdio:"inherit"});
   runPerformanceAssetPipelines();
   generateDistFolder();
   await fingerprintProductionAssets();

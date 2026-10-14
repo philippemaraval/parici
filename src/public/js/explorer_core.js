@@ -10,7 +10,6 @@
   const API_BASE = `${API_ORIGIN}/api/explorer`;
   const STARTING_RULE_VERSION = "nearest-street-v1";
   const RIDDLE_TIME_LIMIT_SECONDS = 20 * 60;
-  const STREET_PROXIMITY_RADIUS_METERS = 100;
   const EXPLORER_IMAGE_MANIFEST_URL = "/data/explorer_images/manifest.json";
   const EXPLORER_DEFAULT_IMAGE_URL = "/src/public/img/explorer-default.svg";
   const TESSERACT_SCRIPT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
@@ -35,13 +34,11 @@
     "MONTEE",
   ]);
   const AMBIGUOUS_SINGLE_NAME_TOKENS = new Set(["GRAND", "GRANDE", "SAINT", "SAINTE"]);
-  const STREET_GEOMETRY_ALIASES = new Map();
 
   const els = {};
   let state = loadState();
   let tickInterval = null;
   let leaderboardInterval = null;
-  let streetGeometryIndexPromise = null;
   let ocrWorkerPromise = null;
   let tesseractScriptPromise = null;
   let explorerImageManifest = [];
@@ -208,9 +205,9 @@
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
-      const active = state.started && !state.solved[String(state.currentRiddleId)] ? state.riddles.find(r=>String(r.id)===String(state.currentRiddleId)) : null;
+      let active = state.started && !state.solved[String(state.currentRiddleId)] ? state.riddles.find(r=>String(r.id)===String(state.currentRiddleId)) : null;
       state.riddles = Array.isArray(payload.riddles) ? payload.riddles : [];
-      if(active) {const index=state.riddles.findIndex(r=>String(r.id)===String(active.id));if(index<0)state.riddles.push(active);else state.riddles[index]=active;}
+      if(active) {const {id,riddle_text,image_url,revision}=active;active={id,riddle_text,image_url,revision};const index=state.riddles.findIndex(r=>String(r.id)===String(active.id));if(index<0)state.riddles.push(active);else state.riddles[index]=active;}
       saveState();
     } catch (error) {
       state.riddles = Array.isArray(state.riddles) ? state.riddles : [];
@@ -321,133 +318,51 @@
     return !Object.keys(state.solved || {}).length;
   }
 
-  async function pickClosestRiddle(remaining) {
-    const position = await getCurrentPositionSafe();
-    if (!position) return remaining[Math.floor(Math.random() * remaining.length)];
-
-    const sorted = await rankRiddlesByDistance(position, remaining);
-    return window.CaminoExplorerSelection.choose(sorted, true) || remaining[0];
-  }
-
-  async function pickNearbyRandomRiddle(remaining) {
-    const position = await getCurrentPositionSafe();
-    if (!position) return remaining[Math.floor(Math.random() * remaining.length)];
-
-    const sorted = await rankRiddlesByDistance(position, remaining);
-    return window.CaminoExplorerSelection.choose(sorted, false) || sorted[0].riddle;
-  }
-
-  async function rankRiddlesByDistance(position, riddles) {
-    const ranked = await Promise.all(riddles.map(async (riddle) => ({
-      riddle,
-      distance: await getRiddleDistanceFromPosition(position, riddle),
-    })));
-    ranked.sort((a, b) => a.distance - b.distance);
-    return ranked;
+  async function pickClosestRiddle(remaining) { return pickServerRiddle(remaining); }
+  async function pickNearbyRandomRiddle(remaining) { return pickServerRiddle(remaining); }
+  async function pickServerRiddle(remaining) {
+    const position=await getCurrentPositionSafe();
+    if(!position||!navigator.onLine)return remaining[Math.floor(Math.random()*remaining.length)];
+    const response=await fetchWithTimeout(`${API_BASE}/riddles/next`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${getAuthToken()}`},body:JSON.stringify({latitude:position.latitude,longitude:position.longitude})});
+    if(!response.ok)throw new Error("La prochaine étape est indisponible");
+    const result=await response.json();
+    return remaining.find(r=>String(r.id)===String(result.riddleId))||remaining[0];
   }
 
   function showHint() {
-    const riddle = getCurrentRiddle();
-    if (!riddle) return;
-    if (state.currentHintsUsed > 0) return;
-    if (!window.confirm("Afficher l’indice retirera 15 points à cette étape.")) return;
-    enqueueStep("hint", riddle.id);
-    state.currentHintsUsed = 1;
-    saveState();
-    render();
+    const riddle=getCurrentRiddle();if(!riddle||state.currentHintsUsed>0)return;
+    if(!window.confirm("Afficher l’indice retirera 15 points à cette étape."))return;
+    enqueueStep("hint",riddle.id);
+    setFeedback("Chargement de l’indice ; une connexion est nécessaire.","info");
   }
 
   async function handlePhotoSubmit(event) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-
-    const riddle = getCurrentRiddle();
-    if (!riddle) return;
-
-    event.target.disabled = true;
-    els["explorer-riddle"]?.setAttribute("aria-busy", "true");
-    setFeedback("Photo reçue. Analyse de la plaque en cours…", "info");
-    let dataUrl;
-    let recognition;
+    const file=event.target.files?.[0];event.target.value="";
+    const riddle=getCurrentRiddle();if(!file||!riddle)return;
+    event.target.disabled=true;els["explorer-riddle"]?.setAttribute("aria-busy","true");
     try {
-      dataUrl = await readFileAsDataUrl(file);
-      recognition = await recognizeStreetFromPhoto(dataUrl, riddle.street_name_clean);
-    } catch (error) {
-      console.warn("Explorer OCR failed:", error?.message || error);
-      setFeedback("Analyse impossible. Reprenez une photo nette, de face et rapprochée de la plaque.", "error");
-      event.target.disabled = false;
-      els["explorer-riddle"]?.removeAttribute("aria-busy");
-      return;
-    }
-
-    const { match, ocrText } = recognition;
-    if (match.ok) {
-      setFeedback("Plaque reconnue. Vérification de votre position en cours…", "info");
-      const proximity = await getRiddleProximity(riddle);
-      if (!proximity.ok) {
-        setFeedback(`Plaque reconnue, mais ${lowercaseFirst(proximity.message)}`, "error");
-        event.target.disabled = false;
-        els["explorer-riddle"]?.removeAttribute("aria-busy");
-        return;
-      }
-
-      setFeedback("Plaque et position reconnues. Rue validée.", "success");
-      solveCurrentRiddle({
-        photoDataUrl: "",
-        ocrText,
-        normalizedOcr: match.normalizedOcr,
-        distance: match.distance,
-        locationDistanceMeters: proximity.distanceMeters,
-        locationAccuracyMeters: proximity.accuracyMeters,
-        latitude: proximity.latitude, longitude: proximity.longitude,
-      });
-      storeSolvedPhoto(riddle.id, dataUrl);
-      event.target.disabled = false;
-      els["explorer-riddle"]?.removeAttribute("aria-busy");
-      return;
-    }
-
-    setFeedback("Plaque non reconnue. Cadrez uniquement la plaque, de face, avec le nom bien lisible.", "error");
-    event.target.disabled = false;
-    els["explorer-riddle"]?.removeAttribute("aria-busy");
+      setFeedback("Photo reçue. Analyse de la plaque en cours…","info");
+      const dataUrl=await readFileAsDataUrl(file);
+      const {ocrText}=await recognizeStreetFromPhoto(dataUrl);
+      if(!ocrText.trim())throw new Error("Plaque non reconnue. Reprenez une photo nette et rapprochée.");
+      const position=await getCurrentPositionSafe();
+      if(!position)throw new Error("Autorisez la localisation pour vérifier votre position.");
+      storeSolvedPhoto(riddle.id,dataUrl);
+      enqueueSync({riddle_id:riddle.id,ocr_text:ocrText.slice(0,2000),latitude:position.latitude,longitude:position.longitude});
+      setFeedback(navigator.onLine?"Vérification de la plaque et de votre position…":"Photo analysée. Validation en attente de connexion.","info");
+    } catch(error) {setFeedback(error.message||"Analyse impossible. Réessayez avec une photo nette.","error");}
+    finally {event.target.disabled=false;els["explorer-riddle"]?.removeAttribute("aria-busy");}
   }
 
-  function solveCurrentRiddle(details) {
-    const riddle = getCurrentRiddle();
-    const now = new Date();
-    const elapsedSeconds = Math.min(
-      RIDDLE_TIME_LIMIT_SECONDS,
-      Math.max(0, Math.round((now - new Date(state.currentStartedAt)) / 1000)),
-    );
-    const pointsEarned = computeStepPoints(elapsedSeconds, state.currentHintsUsed);
-    const progress = {
-      riddle_id: riddle.id,
-      started_at: state.currentStartedAt,
-      solved_at: now.toISOString(),
-      hints_used: state.currentHintsUsed,
-      points_earned: pointsEarned,
-      walking_time_seconds: elapsedSeconds,
-      ocr_text: details.ocrText,
-      normalized_ocr_text: details.normalizedOcr,
-      levenshtein_distance: details.distance,
-      location_distance_meters: details.locationDistanceMeters,
-      location_accuracy_meters: details.locationAccuracyMeters,
-      latitude: details.latitude, longitude: details.longitude,
-      client_validated: true,
-    };
-
-    state.solved[String(riddle.id)] = progress;
-    if (details.photoDataUrl) state.photos[String(riddle.id)] = details.photoDataUrl;
-    state.currentRiddleId = null;
-    state.currentStartedAt = null;
-    state.currentHintsUsed = 0;
-    state.pendingExplanationRiddleId = riddle.id;
-    saveState();
-    clearInterval(tickInterval);
-    tickInterval = null;
-    render();
-    enqueueSync(progress);
+  function confirmSolvedStep(row) {
+    state.solved[String(row.riddle_id)]={...row,server_verified:true};
+    if(String(state.currentRiddleId)===String(row.riddle_id)) {
+      state.currentRiddleId=null;state.currentStartedAt=null;state.currentHintsUsed=0;
+      state.pendingExplanationRiddleId=row.riddle_id;
+      clearInterval(tickInterval);tickInterval=null;
+      setFeedback("Plaque et position reconnues. Rue validée.","success");
+    }
+    saveState();render();
   }
 
   function continueAfterExplanation() {
@@ -468,12 +383,6 @@
     saveState();
     enqueueFinalScore();
     render();
-  }
-
-  function computeStepPoints(elapsedSeconds, hintsUsed) {
-    const elapsedMinutes = Math.ceil(elapsedSeconds / 60);
-    const base = 50 + Math.max(0, 20 - elapsedMinutes);
-    return Math.max(0, base - (hintsUsed ? 15 : 0));
   }
 
   function render() {
@@ -524,7 +433,7 @@
     if (!riddle) return;
     const image = els["explorer-riddle-image"];
     if (!image) return;
-    const localImage = findExplorerImage(riddle.street_name_clean);
+    const localImage = null;
     const avifSource = els["explorer-riddle-image-avif"];
     const webpSource = els["explorer-riddle-image-webp"];
     if (avifSource) avifSource.srcset = buildResponsiveSrcset(localImage?.sources?.avif);
@@ -533,11 +442,11 @@
       image.onerror = null;
       if (avifSource) avifSource.srcset = "";
       if (webpSource) webpSource.srcset = "";
-      image.src = riddle.image_url || EXPLORER_DEFAULT_IMAGE_URL;
+      image.src = riddle.image_url ? new URL(riddle.image_url,API_ORIGIN).href : EXPLORER_DEFAULT_IMAGE_URL;
     };
-    image.src = localImage?.url || riddle.image_url || EXPLORER_DEFAULT_IMAGE_URL;
+    image.src = riddle.image_url ? new URL(riddle.image_url,API_ORIGIN).href : EXPLORER_DEFAULT_IMAGE_URL;
     image.sizes = "(max-width: 700px) 100vw, 700px";
-    image.alt = `Image historique : ${riddle.street_name_clean}`;
+    image.alt = "Photo indice de l’énigme";
   }
 
   function buildResponsiveSrcset(variants) {
@@ -546,40 +455,6 @@
       .filter((variant) => variant?.src && Number(variant.width) > 0)
       .map((variant) => `${variant.src} ${variant.width}w`)
       .join(", ");
-  }
-
-  function findExplorerImage(streetName) {
-    const target = normalizeExplorerImageName(streetName);
-    if (!target) return null;
-
-    const exact = explorerImageManifest.find((item) => normalizeExplorerImageName(item.name) === target);
-    if (exact?.url) return exact;
-
-    const targetWords = new Set(target.split(" "));
-    const candidates = explorerImageManifest
-      .map((item) => {
-        const normalized = normalizeExplorerImageName(item.name);
-        const words = normalized.split(" ");
-        const shared = words.filter((word) => targetWords.has(word)).length;
-        const coverage = shared / Math.max(targetWords.size, words.length);
-        return { item, coverage };
-      })
-      .filter(({ coverage }) => coverage >= 0.75)
-      .sort((a, b) => b.coverage - a.coverage);
-
-    return candidates[0]?.item || null;
-  }
-
-  function normalizeExplorerImageName(value) {
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toUpperCase()
-      .replace(/[^A-Z0-9]+/g, " ")
-      .trim()
-      .split(/\s+/)
-      .filter((word) => !["LA", "LE", "LES", "DE", "DES", "DU", "D", "L"].includes(word))
-      .join(" ");
   }
 
   function renderExplanation() {
@@ -594,10 +469,11 @@
       selectNextRiddle();
       return;
     }
-    els["explorer-discovery-title"].textContent = riddle.street_name_clean;
-    els["explorer-discovery-text"].textContent = riddle.explanation_text || riddle.riddle_text;
+    const discovered=state.solved[String(riddle.id)]?.solution || {};
+    els["explorer-discovery-title"].textContent = discovered.street_name_clean || "Lieu découvert";
+    els["explorer-discovery-text"].textContent = discovered.explanation_text || "Votre découverte est enregistrée.";
     const source=document.getElementById("explorer-discovery-source");
-    if(source){source.hidden=!/^https?:\/\//.test(riddle.source_url||'');if(!source.hidden)source.href=riddle.source_url;}
+    if(source){source.hidden=!/^https?:\/\//.test(discovered.source_url||'');if(!source.hidden)source.href=discovered.source_url;}
 
   }
 
@@ -681,17 +557,27 @@
           },
           body: JSON.stringify(item.payload),
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        if(item.type === "progress") {
-          const confirmed=await response.json();
-          for(const row of confirmed.saved || []) {
-            const local=state.solved[String(row.riddle_id)];
-            if(local)Object.assign(local,{points_earned:row.points_earned,walking_time_seconds:row.walking_time_seconds,hints_used:row.hints_used,server_verified:true});
+        const confirmed=await response.json().catch(()=>({}));
+        if(!response.ok) {
+          if(response.status>=400&&response.status<500&&![401,408,429].includes(response.status)) {
+            setFeedback(confirmed.error||"La plaque ou la position ne correspond pas. Réessayez.","error");
+            continue;
           }
-          saveState();
+          throw new Error(confirmed.error||`HTTP ${response.status}`);
         }
+        if(item.type==="progress")for(const row of confirmed.saved||[])confirmSolvedStep(row);
+        if(item.type==="start"&&String(state.currentRiddleId)===String(item.payload.riddle_id)) {
+          state.currentStartedAt=confirmed.started_at;
+          if(confirmed.riddle)Object.assign(getCurrentRiddle()||{},confirmed.riddle);
+          if(confirmed.hint_used){state.currentHintsUsed=1;getCurrentRiddle().hint_text=confirmed.hint_text;}
+        }
+        if(item.type==="hint"&&String(state.currentRiddleId)===String(item.payload.riddle_id)) {
+          state.currentHintsUsed=1;getCurrentRiddle().hint_text=confirmed.hint_text;
+        }
+        saveState();
       } catch (error) {
-        remaining.push(item);
+        remaining.push(...queue.slice(queue.indexOf(item)));
+        break;
       }
     }
     const additions=readJson(QUEUE_KEY,[]).slice(queue.length);
@@ -737,7 +623,7 @@
     }
     if (!window.Tesseract?.recognize && !window.Tesseract?.createWorker) {
       const ocrText = window.prompt("Reconnaissance indisponible. Saisissez le texte lu sur la plaque :") || "";
-      return { ocrText, match: matchStreetInOcr(ocrText, streetName) };
+      return { ocrText };
     }
 
     const variants = await createOcrImageVariants(dataUrl);
@@ -757,6 +643,7 @@
       }
       if (text) texts.push(text);
       const combinedText = texts.join("\n");
+      if(!streetName && combinedText.replace(/[^a-zà-ÿ]/gi, "").length>=5)return {ocrText:combinedText};
       const match = matchStreetInOcr(combinedText, streetName);
       if (match.distance < bestMatch.distance) bestMatch = match;
       if (match.ok) return { ocrText: combinedText, match };
@@ -992,237 +879,6 @@
       ok: bestDistance <= tolerance,
       distance: bestDistance,
     };
-  }
-
-  function lowercaseFirst(value) {
-    const text = String(value || "");
-    return text ? `${text[0].toLowerCase()}${text.slice(1)}` : text;
-  }
-
-  function levenshteinDistance(a, b) {
-    const left = String(a || "");
-    const right = String(b || "");
-    const matrix = Array.from({ length: left.length + 1 }, (_, index) => [index]);
-    for (let j = 1; j <= right.length; j += 1) matrix[0][j] = j;
-    for (let i = 1; i <= left.length; i += 1) {
-      for (let j = 1; j <= right.length; j += 1) {
-        const cost = left[i - 1] === right[j - 1] ? 0 : 1;
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j - 1] + cost,
-        );
-      }
-    }
-    return matrix[left.length][right.length];
-  }
-
-  function haversineDistanceMeters(lat1, lon1, lat2, lon2) {
-    const earthRadius = 6371000;
-    const toRad = (value) => (value * Math.PI) / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) ** 2
-      + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  async function getRiddleDistanceFromPosition(position, riddle) {
-    try { return window.CaminoExplorerSelection.distance(position,riddle,await loadStreetGeometryIndex()); }
-    catch { const latitude=Number(riddle.latitude),longitude=Number(riddle.longitude);return Number.isFinite(latitude)&&Number.isFinite(longitude)?haversineDistanceMeters(position.latitude,position.longitude,latitude,longitude):Infinity; }
-  }
-
-  async function getRiddleProximity(riddle) {
-    const position = await getCurrentPositionSafe();
-    if (!position) {
-      return {
-        ok: false,
-        message: "Position indisponible. Activez la géolocalisation pour valider la plaque.",
-      };
-    }
-
-    const features = await getStreetFeaturesForRiddle(riddle);
-    if (!features.length) {
-      return {
-        ok: false,
-        message: "Géométrie de rue indisponible. Impossible de vérifier la position.",
-      };
-    }
-
-    const distanceMeters = getMinimumDistanceToFeaturesMeters(position, features);
-    if (!Number.isFinite(distanceMeters)) {
-      return {
-        ok: false,
-        message: "Géométrie de rue indisponible. Impossible de vérifier la position.",
-      };
-    }
-
-    if (distanceMeters > STREET_PROXIMITY_RADIUS_METERS) {
-      return {
-        ok: false,
-        distanceMeters,
-        accuracyMeters: position.accuracy,
-        message: `Vous êtes à ${Math.round(distanceMeters)} m de la rue. Approchez-vous à moins de ${STREET_PROXIMITY_RADIUS_METERS} m pour valider.`,
-      };
-    }
-
-    return {
-      ok: true,
-      distanceMeters,
-      accuracyMeters: position.accuracy,
-      latitude: position.latitude, longitude: position.longitude,
-    };
-  }
-
-  async function getStreetFeaturesForRiddle(riddle) {
-    try {
-      const index = await loadStreetGeometryIndex();
-      const rawTarget = normalizeStreetText(riddle.street_name_clean);
-      const normalizedTarget = STREET_GEOMETRY_ALIASES.get(rawTarget) || rawTarget;
-      if (!normalizedTarget) return [];
-
-      const exactMatches = index.byName.get(normalizedTarget) || [];
-      if (exactMatches.length) return exactMatches;
-
-      return index.entries
-        .filter((entry) => (
-          entry.normalizedName.includes(normalizedTarget)
-          || normalizedTarget.includes(entry.normalizedName)
-        ))
-        .flatMap((entry) => entry.features);
-    } catch (error) {
-      console.warn("Explorer street geometry unavailable:", error?.message || error);
-      return [];
-    }
-  }
-
-  async function loadStreetGeometryIndex() {
-    if (!streetGeometryIndexPromise) {
-      streetGeometryIndexPromise = fetch(`${API_ORIGIN}/api/streets-light`, {
-        cache: "force-cache",
-        credentials: "include",
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return response.json();
-        })
-        .then((payload) => {
-          const byName = new Map();
-          const features = Array.isArray(payload.features) ? payload.features : [];
-          for (const feature of features) {
-            const normalizedName = normalizeStreetText(feature?.properties?.name);
-            if (!normalizedName || !feature?.geometry) continue;
-            if (!byName.has(normalizedName)) byName.set(normalizedName, []);
-            byName.get(normalizedName).push(feature);
-          }
-          return {
-            byName,
-            entries: Array.from(byName, ([normalizedName, entryFeatures]) => ({
-              normalizedName,
-              features: entryFeatures,
-            })),
-          };
-        });
-    }
-    return streetGeometryIndexPromise;
-  }
-
-  function getMinimumDistanceToFeaturesMeters(position, features) {
-    return features.reduce((minDistance, feature) => {
-      const distance = getDistanceToGeometryMeters(position, feature.geometry);
-      return Math.min(minDistance, distance);
-    }, Number.POSITIVE_INFINITY);
-  }
-
-  function getDistanceToGeometryMeters(position, geometry) {
-    if (!geometry || !geometry.coordinates) return Number.POSITIVE_INFINITY;
-    const paths = getGeometryPaths(geometry);
-    if (!paths.length) return Number.POSITIVE_INFINITY;
-
-    const point = projectLngLatToMeters(
-      [position.longitude, position.latitude],
-      position.latitude,
-      position.longitude,
-    );
-    let minDistance = Number.POSITIVE_INFINITY;
-
-    for (const path of paths) {
-      if (path.length === 1) {
-        minDistance = Math.min(
-          minDistance,
-          haversineDistanceMeters(position.latitude, position.longitude, path[0][1], path[0][0]),
-        );
-        continue;
-      }
-
-      if ((geometry.type === "Polygon" || geometry.type === "MultiPolygon") && isPointInRing([position.longitude, position.latitude], path)) {
-        return 0;
-      }
-
-      for (let index = 1; index < path.length; index += 1) {
-        const start = projectLngLatToMeters(path[index - 1], position.latitude, position.longitude);
-        const end = projectLngLatToMeters(path[index], position.latitude, position.longitude);
-        minDistance = Math.min(minDistance, getPointToSegmentDistanceMeters(point, start, end));
-      }
-    }
-
-    return minDistance;
-  }
-
-  function getGeometryPaths(geometry) {
-    switch (geometry.type) {
-      case "Point":
-        return [[geometry.coordinates]];
-      case "MultiPoint":
-      case "LineString":
-        return [geometry.coordinates];
-      case "MultiLineString":
-      case "Polygon":
-        return geometry.coordinates;
-      case "MultiPolygon":
-        return geometry.coordinates.flatMap((polygon) => polygon);
-      case "GeometryCollection":
-        return (geometry.geometries || []).flatMap(getGeometryPaths);
-      default:
-        return [];
-    }
-  }
-
-  function projectLngLatToMeters(coord, originLat, originLng) {
-    const lng = Number(coord[0]);
-    const lat = Number(coord[1]);
-    return {
-      x: (lng - originLng) * 111320 * Math.cos((originLat * Math.PI) / 180),
-      y: (lat - originLat) * 110540,
-    };
-  }
-
-  function getPointToSegmentDistanceMeters(point, start, end) {
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const lengthSquared = dx * dx + dy * dy;
-    if (lengthSquared === 0) return Math.hypot(point.x - start.x, point.y - start.y);
-
-    const t = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
-    return Math.hypot(point.x - (start.x + t * dx), point.y - (start.y + t * dy));
-  }
-
-  function isPointInRing(point, ring) {
-    let inside = false;
-    const x = point[0];
-    const y = point[1];
-
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
-      const xi = ring[i][0];
-      const yi = ring[i][1];
-      const xj = ring[j][0];
-      const yj = ring[j][1];
-      const intersects = ((yi > y) !== (yj > y))
-        && (x < ((xj - xi) * (y - yi)) / (yj - yi || Number.EPSILON) + xi);
-      if (intersects) inside = !inside;
-    }
-
-    return inside;
   }
 
   function getCurrentPositionSafe() {

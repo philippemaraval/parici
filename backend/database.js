@@ -228,7 +228,9 @@ async function applyPlayerUpgradeSchema(client) {
     await require('./domains/collect/paris-schema').applyParisCollect(client);
     await require('./domains/admin/schema').applyAdminSchema(client);
     await require('./domains/collect/catalog-corrections').applyCatalogCorrections(client);
+    await require('./domains/collect/catalog-sync').syncCatalog(client);
     await require('./domains/collect/photo-sync').applyPhotographs(client);
+    await require('./domains/game-integrity/daily-geography').applyDailyGeographyRepairs(client);
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
 }

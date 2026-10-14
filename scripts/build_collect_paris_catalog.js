@@ -481,9 +481,32 @@ for (const f of transport.sort((a, b) =>
       source: "https://www.openstreetmap.org/copyright",
     },
   );
+const previousCatalog = fs.existsSync(
+  path.join(root, "data/collect_paris_catalog.json"),
+)
+  ? read("data/collect_paris_catalog.json")
+  : { records: [] };
+const numberingPath = path.join(root, "data/collect_numbering_paris.json");
+const numbering = fs.existsSync(numberingPath)
+  ? read("data/collect_numbering_paris.json")
+  : {};
+for (const r of previousCatalog.records)
+  numbering[r.family + ":" + r.source_entity_id] ??= r.collection_number;
+const previousNumbers = new Map(Object.entries(numbering));
+const maximumNumbers = {};
+for (const [key, number] of previousNumbers) {
+  const family = key.slice(0, key.indexOf(":"));
+  maximumNumbers[family] = Math.max(maximumNumbers[family] || 0, number);
+}
 const numbers = {};
-for (const r of records)
-  r.collection_number = numbers[r.family] = (numbers[r.family] || 0) + 1;
+for (const r of records) {
+  r.collection_number =
+    previousNumbers.get(r.family + ":" + r.source_entity_id) ||
+    (maximumNumbers[r.family] = (maximumNumbers[r.family] || 0) + 1);
+  numbering[r.family + ":" + r.source_entity_id] = r.collection_number;
+  numbers[r.family] = (numbers[r.family] || 0) + 1;
+}
+fs.writeFileSync(numberingPath, JSON.stringify(numbering));
 const manifest = Object.fromEntries(
   records.map((r) => [
     r.family + ":" + r.source_entity_id,

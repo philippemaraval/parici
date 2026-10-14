@@ -54,7 +54,7 @@ export async function initSocial({ request, refresh }) {
   const status = document.createElement("p");
   status.className = "collect-social-status";
   status.setAttribute("role", "status");
-  panel.innerHTML = `<h3>Amis et échanges</h3><p>Compose tes échanges librement, sans prix ni messagerie.</p><nav class="collect-social-tabs" aria-label="Amis et échanges">${[
+  panel.innerHTML = `<h3>Amis et échanges</h3><p>Choisis un ami, sélectionne les cartes, puis envoie ta proposition.</p><nav class="collect-social-tabs" aria-label="Amis et échanges">${[
     ["friends", "Amis"],
     ["offers", "Propositions"],
     ["market", "Marché"],
@@ -91,6 +91,7 @@ export async function initSocial({ request, refresh }) {
     dialog.innerHTML = `<button class="btn-secondary" type="button" data-social-close>Fermer</button><div role="status" class="collect-modal-status"></div>${html}`;
     dialog.querySelector("[data-social-close]").onclick = () => dialog.close();
     if (!dialog.open) dialog.showModal();
+    dialog.scrollTop = 0;
   }
   function modalAction(fn) {
     return async (event) => {
@@ -118,7 +119,7 @@ export async function initSocial({ request, refresh }) {
       api("/activity"),
       api("/blocks"),
     ]);
-    content.innerHTML = `<form id="social-find"><label>Rechercher un joueur<input name="search" type="search" minlength="2" maxlength="100" required></label><button class="btn-primary">Rechercher</button></form><div id="social-results"></div><h3>Mes amis et demandes</h3><div class="collect-social-list">${friends.map((p) => `<article>${profileLink(p)}<p>${p.state === "accepted" ? "Amis" : p.outgoing ? "Demande envoyée" : "Demande reçue"}</p><div class="collect-social-actions">${p.state === "pending" && !p.outgoing ? `<button data-friend-accept="${p.id}" class="btn-primary">Accepter</button>` : ""}${p.state === "accepted" && p.visible ? `<button data-person="${p.id}" data-person-name="${esc(p.username)}" class="btn-secondary">Collection et correspondances</button>` : ""}<button data-friend-remove="${p.id}" class="btn-tertiary">${p.state === "accepted" ? "Retirer des amis" : p.outgoing ? "Annuler" : "Refuser"}</button><button data-block="${p.id}" class="btn-tertiary">Bloquer</button></div></article>`).join("") || "<p>Aucun ami pour le moment.</p>"}</div><h3>Activité des amis</h3><ul class="collect-social-activity">${activity.map((a) => `<li><a href="/collect.html?profile=${encodeURIComponent(a.username)}${a.kind === "legendary" ? "&card=" + encodeURIComponent(a.payload.cardId) : a.kind === "album" ? "&album=" + encodeURIComponent(a.albumSlug || "") : ""}">${esc(a.username)} · ${a.kind === "legendary" ? "Carte légendaire : " + esc(a.label) : a.kind === "album" ? "Album complété : " + esc(a.label) : a.kind === "badge" ? "Badge : " + esc(a.label) : a.payload.count + " cartes uniques"}</a><small>${date(a.created_at)}</small></li>`).join("") || "<li>Aucune nouvelle activité.</li>"}</ul>${blocks.length ? `<details><summary>Joueurs bloqués · ${blocks.length}</summary>${blocks.map((p) => `<p>${esc(p.username)} <button class="btn-tertiary" data-unblock="${p.id}">Débloquer</button></p>`).join("")}</details>` : ""}`;
+    content.innerHTML = `<form id="social-find"><label>Rechercher un joueur<input name="search" type="search" minlength="2" maxlength="100" required></label><button class="btn-primary">Rechercher</button></form><div id="social-results"></div><h3>Mes amis et demandes</h3><div class="collect-social-list">${friends.map((p) => `<article>${profileLink(p)}<p>${p.state === "accepted" ? "Amis" : p.outgoing ? "Demande envoyée" : "Demande reçue"}</p><div class="collect-social-actions">${p.state === "pending" && !p.outgoing ? `<button data-friend-accept="${p.id}" class="btn-primary">Accepter</button>` : ""}${p.state === "accepted" && p.visible ? `<button data-compose-person="${p.id}" data-person-name="${esc(p.username)}" class="btn-primary">Échanger</button><button data-person="${p.id}" data-person-name="${esc(p.username)}" class="btn-secondary">Collection</button>` : ""}<button data-friend-remove="${p.id}" class="btn-tertiary">${p.state === "accepted" ? "Retirer des amis" : p.outgoing ? "Annuler" : "Refuser"}</button><button data-block="${p.id}" class="btn-tertiary">Bloquer</button></div></article>`).join("") || "<p>Aucun ami pour le moment.</p>"}</div><h3>Activité des amis</h3><ul class="collect-social-activity">${activity.map((a) => `<li><a href="/collect.html?profile=${encodeURIComponent(a.username)}${a.kind === "legendary" ? "&card=" + encodeURIComponent(a.payload.cardId) : a.kind === "album" ? "&album=" + encodeURIComponent(a.albumSlug || "") : ""}">${esc(a.username)} · ${a.kind === "legendary" ? "Carte légendaire : " + esc(a.label) : a.kind === "album" ? "Album complété : " + esc(a.label) : a.kind === "badge" ? "Badge : " + esc(a.label) : a.payload.count + " cartes uniques"}</a><small>${date(a.created_at)}</small></li>`).join("") || "<li>Aucune nouvelle activité.</li>"}</ul>${blocks.length ? `<details><summary>Joueurs bloqués · ${blocks.length}</summary>${blocks.map((p) => `<p>${esc(p.username)} <button class="btn-tertiary" data-unblock="${p.id}">Débloquer</button></p>`).join("")}</details>` : ""}`;
     content.querySelector("#social-find").onsubmit = action(async (event) => {
       const q = new FormData(event.target).get("search");
       const results = await api("/users?search=" + encodeURIComponent(q));
@@ -288,7 +289,7 @@ export async function initSocial({ request, refresh }) {
       wanted = new Map(),
       requestId = crypto.randomUUID();
     showModal(
-      `<h2>${market ? "Créer une annonce" : parent ? "Composer une réponse" : "Proposer un échange à " + esc(name)}</h2><p>Choisis toi-même chaque exemplaire. L’origine Daily reste attachée à l’exemplaire après l’échange.</p>${parent?.wanted_cards?.length ? `<p>${exact ? "Offre précise : respecte les cartes et quantités recherchées." : "Contre-proposition : les quantités sont libres."}</p>` : ""}<div class="collect-match">${[
+      `<h2>${market ? "Créer une annonce" : parent ? "Composer une réponse" : "Proposer un échange à " + esc(name)}</h2><p>1. Choisis les cartes de chaque côté. 2. Vérifie le récapitulatif. 3. Envoie la proposition.</p>${parent?.wanted_cards?.length ? `<p>${exact ? "Offre précise : respecte les cartes et quantités recherchées." : "Contre-proposition : les quantités sont libres."}</p>` : ""}<nav class="collect-composer-sides" aria-label="Étapes de l’échange"><button type="button" class="btn-secondary" data-compose-side="give" aria-pressed="true">1 · Je donne</button><button type="button" class="btn-secondary" data-compose-side="receive" aria-pressed="false">2 · ${market?"Je recherche":"Je reçois"}</button></nav><div class="collect-match collect-composer" data-side="give">${[
         ["give", "Tu proposes"],
         [
           "receive",
@@ -297,12 +298,18 @@ export async function initSocial({ request, refresh }) {
       ]
         .map(
           ([side, title]) =>
-            `<section><h3>${title}</h3><form data-picker-search="${side}"><label>Rechercher une carte<input name="search" type="search" maxlength="100"></label><button class="btn-secondary">Rechercher</button></form><div data-picker-list="${side}"></div><div class="collect-social-actions"><button class="btn-secondary" data-picker-prev="${side}">Précédent</button><span data-picker-page="${side}"></span><button class="btn-secondary" data-picker-next="${side}">Suivant</button></div></section>`,
+            `<section data-compose-section="${side}"><h3>${title}</h3><form data-picker-search="${side}"><label>Rechercher une carte<input name="search" type="search" maxlength="100"></label><button class="btn-secondary">Rechercher</button></form><div data-picker-list="${side}"></div><div class="collect-social-actions"><button class="btn-secondary" data-picker-prev="${side}">Précédent</button><span data-picker-page="${side}"></span><button class="btn-secondary" data-picker-next="${side}">Suivant</button></div></section>`,
         )
         .join(
           "",
-        )}</div><div id="social-composer-summary" aria-live="polite"></div><button class="btn-primary" id="social-send-offer">Examiner la proposition</button><div id="social-offer-review"></div>`,
+        )}</div><div class="collect-composer-footer"><div id="social-composer-summary" aria-live="polite"></div><button class="btn-primary" id="social-send-offer">Examiner la proposition</button></div><div id="social-offer-review"></div>`,
     );
+    dialog.querySelectorAll('[data-compose-side]').forEach(button => {
+      button.onclick = () => {
+        dialog.querySelector('.collect-composer').dataset.side = button.dataset.composeSide;
+        dialog.querySelectorAll('[data-compose-side]').forEach(tab => tab.setAttribute('aria-pressed', String(tab === button)));
+      };
+    });
     async function picker(side) {
       const owner = side === "give" || market ? user : target;
       const form = dialog.querySelector(`[data-picker-search="${side}"]`),
@@ -317,7 +324,7 @@ export async function initSocial({ request, refresh }) {
           .filter((c) => (market && side === "receive") || c.count > 0)
           .map(
             (c) =>
-              `<fieldset class="collect-copy-picker"><legend>${esc(label(c))} · ${rarity[c.rarity]}${c.status === "archived" ? " · Archivée" : ""}</legend>${market && side === "receive" ? `<label>Quantité souhaitée<input type="number" min="0" max="10000" value="${wanted.get(String(c.id))?.quantity || 0}" data-wanted-card="${c.id}" data-wanted-name="${esc(label(c))}"></label>` : c.copies.map((copy) => `<label><input type="checkbox" data-pick-side="${side}" data-copy="${copy.id}" ${selected[side].has(String(copy.id)) ? "checked" : ""} ${copy.locked || c.locked ? "disabled" : ""}><span>${esc(origin(copy))}${copy.locked || c.locked ? " · Verrouillé" : ""}</span></label>`).join("")}</fieldset>`,
+              `<fieldset class="collect-copy-picker"><legend>${esc(label(c))} · ${rarity[c.rarity]}${c.status === "archived" ? " · Archivée" : ""}</legend>${market && side === "receive" ? `<label>Quantité souhaitée<input type="number" min="0" max="10000" value="${wanted.get(String(c.id))?.quantity || 0}" data-wanted-card="${c.id}" data-wanted-name="${esc(label(c))}"></label>` : `<label class="collect-pick-quantity">Quantité à échanger<input type="number" min="0" max="${c.copies.filter(cp=>!cp.locked && !c.locked).length}" value="${c.copies.filter(cp=>selected[side].has(String(cp.id))).length}" data-pick-card="${c.id}" aria-label="Quantité : ${esc(label(c))}"></label><details><summary>Choisir les exemplaires précis</summary>${c.copies.map((copy) => `<label><input type="checkbox" data-pick-side="${side}" data-copy="${copy.id}" ${selected[side].has(String(copy.id)) ? "checked" : ""} ${copy.locked || c.locked ? "disabled" : ""}><span>${esc(origin(copy))}${copy.locked || c.locked ? " · Verrouillé" : ""}</span></label>`).join("")}</details>`}</fieldset>`,
           )
           .join("") || "<p>Aucun exemplaire sur cette page.</p>";
       node._cards = payload.cards;
@@ -328,9 +335,17 @@ export async function initSocial({ request, refresh }) {
       dialog.querySelector(`[data-picker-next="${side}"]`).disabled =
         pages[side] * 50 >= payload.total;
     }
+    function selectionLabel(items) {
+      const counts = new Map();
+      for (const c of items.values()) counts.set(c.name, (counts.get(c.name) || 0) + 1);
+      const names = [...counts].slice(0, 4).map(([name, count]) => `${name} ×${count}`);
+      if (counts.size > 4) names.push(`et ${counts.size - 4} autres cartes`);
+      return names.join(", ") || "aucune carte";
+    }
     function summary() {
+      dialog.querySelector("#social-send-offer").disabled = !selected.give.size || (!market && !selected.receive.size);
       dialog.querySelector("#social-composer-summary").textContent =
-        `${selected.give.size} exemplaires proposés · ${market ? [...wanted.values()].reduce((n, v) => n + v.quantity, 0) + " recherchés" : selected.receive.size + " à recevoir"}`;
+        `${selected.give.size} proposés : ${selectionLabel(selected.give)} · ${market ? [...wanted.values()].reduce((n, v) => n + v.quantity, 0) + " recherchés" : selected.receive.size + " à recevoir : " + selectionLabel(selected.receive)}`;
       dialog.querySelector("#social-offer-review").innerHTML = "";
     }
     for (const side of ["give", "receive"]) {
@@ -354,6 +369,15 @@ export async function initSocial({ request, refresh }) {
       ) => {
         const input = event.target,
           cards = event.currentTarget._cards;
+        if (input.dataset.pickCard) {
+          const card = cards.find(c=>String(c.id) === input.dataset.pickCard);
+          const available = card.copies.filter(cp=>!cp.locked && !card.locked);
+          const quantity = Math.max(0, Math.min(available.length, Math.floor(Number(input.value)||0)));
+          card.copies.forEach(cp=>selected[side].delete(String(cp.id)));
+          available.slice(0,quantity).forEach(cp=>selected[side].set(String(cp.id), {...cp,name:label(card),cardId:String(card.id),owned:card.count}));
+          input.value = quantity;
+          event.currentTarget.querySelectorAll("[data-copy]").forEach(box=>box.checked=selected[side].has(box.dataset.copy));
+        }
         if (input.dataset.wantedCard) {
           const value = Number(input.value);
           if (value > 0 && value <= 10000) {
@@ -379,6 +403,11 @@ export async function initSocial({ request, refresh }) {
               owned: card.count,
             });
           else selected[side].delete(input.dataset.copy);
+        }
+        if(input.dataset.copy) {
+          const card = cards.find(c=>c.copies.some(cp=>String(cp.id)===input.dataset.copy));
+          const quantity = event.currentTarget.querySelector(`[data-pick-card="${card.id}"]`);
+          quantity.value = card.copies.filter(cp=>selected[side].has(String(cp.id))).length;
         }
         summary();
       };
@@ -701,6 +730,7 @@ export async function initSocial({ request, refresh }) {
       await send("/blocks/" + b.dataset.unblock, {}, "DELETE");
       await render();
     }
+    if (b.dataset.composePerson) await compose(b.dataset.composePerson, b.dataset.personName);
     if (b.dataset.person)
       await personView(b.dataset.person, b.dataset.personName);
     if (b.dataset.reportPlayer)
@@ -726,6 +756,7 @@ export async function initSocial({ request, refresh }) {
   }
   const delegatedKeys = [
     "socialTab",
+    "composePerson",
     "friendRequest",
     "friendAccept",
     "friendRemove",

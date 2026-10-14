@@ -358,6 +358,7 @@ async function drawCollectGame(userId, random, streetGroups, client) {
       require("./domains/collect/game-hints").attemptsForRarity(
         card.fragments_enabled ? 5 : card.current_rarity,
       ),
+      card.name,
     );
   await client.query(
     "INSERT INTO collect_games(id, user_id, card_id, max_attempts) VALUES ($1, $2, $3, $4)",
@@ -387,6 +388,7 @@ async function collectGamePayload(client, row, userId) {
     maxAttempts: require("./domains/collect/game-hints").placementAttemptLimit(
       row.family,
       Number(row.max_attempts) || 1,
+      row.name,
     ),
     guesses: (row.placement_guesses || []).map(
       ({ answerEntityId, answerName, feedback, correct }) => ({
@@ -765,6 +767,7 @@ async function finishCollectGame(
         require("./domains/collect/game-hints").placementAttemptLimit(
           game.family,
           Number(game.max_attempts) || 1,
+          game.name,
         );
       const feedback = correct
         ? null
@@ -1008,6 +1011,7 @@ async function finishCollectGame(
         require("./domains/collect/game-hints").placementAttemptLimit(
           game.family,
           Number(game.max_attempts) || 1,
+          game.name,
         ),
       fragments: fragmentResult,
       rewardAvailable,
@@ -1196,11 +1200,11 @@ async function getCollectCollection(
 ) {
   const result = await pool.query(
     `SELECT c.id, c.family, c.source_entity_id, c.collection_number,
-            CASE WHEN COUNT(cp.id) > 0 OR (NOT $2::boolean AND EXISTS(SELECT 1 FROM collect_fragment_progress p WHERE p.user_id=$1 AND p.card_id=c.id AND p.fragments>0)) THEN c.name END AS name,
+            c.name,
             CASE WHEN COUNT(cp.id) > 0 THEN COALESCE(c.image_override,c.image_reference) END AS image_reference,
             c.image_override,c.description_override,c.description_full_override,c.image_credit_override,
             CASE WHEN c.fragments_enabled THEN 5 ELSE c.current_rarity END AS current_rarity,
-            c.status, c.fragments_enabled, c.fragments_required,
+            CASE WHEN c.catalog_present THEN c.status ELSE 'archived' END AS status, c.fragments_enabled, c.fragments_required,
             (SELECT LEAST(COALESCE((SELECT cp.fragments FROM collect_fragment_progress cp WHERE cp.user_id=$1 AND cp.card_id=c.id),MAX(p.fragments),0),c.fragments_required) FROM collect_fragment_progress p WHERE p.user_id=$1
               AND (p.card_id=c.id OR p.card_id IN (SELECT source_card_id FROM collect_card_merges WHERE canonical_card_id=c.id))) AS fragment_count,
             COUNT(cp.id)::int AS copy_count,
@@ -1213,7 +1217,7 @@ async function getCollectCollection(
               ORDER BY cp.obtained_at) FILTER (WHERE cp.id IS NOT NULL), '[]'::json) END AS copies
      FROM cards c LEFT JOIN card_copies cp ON cp.user_id = $1 AND (cp.card_id = c.id OR cp.card_id IN
        (SELECT source_card_id FROM collect_card_merges WHERE canonical_card_id=c.id))
-     WHERE (c.status = 'active' OR cp.id IS NOT NULL)
+     WHERE ((c.status = 'active' AND c.catalog_present) OR cp.id IS NOT NULL)
        AND ($3::bigint[] IS NULL OR c.id=ANY($3::bigint[]))
        AND (NOT $4::boolean OR cp.id IS NOT NULL)
        AND NOT EXISTS(SELECT 1 FROM collect_card_merges WHERE source_card_id=c.id)

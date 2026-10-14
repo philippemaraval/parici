@@ -1,3 +1,4 @@
+import { initSocial } from "./collect-social-view.js";
 import { initPersonalAlbums } from "./personal-albums-view.js";
 import { renderCardArtwork } from "./collect-card-art.js";
 import { addTouchBufferForLayerRuntime } from "../../map-runtime.js";
@@ -822,7 +823,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   function weeklyPrizeMarkup(payload){const reward=payload.reward;return `<p class="collect-weekly-prize" title="${escapeHtml(payload.rewardPolicy?.weights?.map((weight,i)=>`${fiveRarityLabels[i+1]} : ${weight} %`).filter((_,i)=>payload.rewardPolicy.weights[i]>0).join(' · ')||'')}">${escapeHtml(weeklyPrizeLabel(payload.rewardPolicy))}</p>`+(reward?`<details class="collect-weekly-won"><summary>Bravo ! Ta carte bonus : ${escapeHtml(reward.card?.name||'Déjà attribuée')}</summary>${reward.card?renderCard(reward.card):'<p>Cet exemplaire ne fait plus partie de ta collection.</p>'}<a href="/collect.html?panel=collection">Voir ma collection →</a></details>`:'');}
   let weeklyRequest=0;
   async function loadWeeklyPlay(){
-    try{const payload=await request('/api/collect/weekly-challenge');document.getElementById('collect-weekly-play').innerHTML=`<h3>Défi de la semaine</h3><ul>${payload.personal.progress.map(g=>`<li>${escapeHtml(g.label)} <strong>${g.current}/${g.target}</strong></li>`).join('')}</ul>`+weeklyPrizeMarkup(payload);}
+    try{const payload=await request('/api/collect/weekly-challenge');document.getElementById('collect-weekly-play').innerHTML=`<h3>Défi de la semaine</h3><p>Seules les cartes gagnées cette semaine comptent. Les cartes des semaines précédentes sont exclues.</p><ul>${payload.personal.progress.map(g=>`<li>${escapeHtml(g.label)} <strong>${g.current}/${g.target}</strong></li>`).join('')}</ul>`+weeklyPrizeMarkup(payload);}
     catch(_error){document.getElementById('collect-weekly-play').textContent='';}
   }
   let albumGoal=null;
@@ -1131,9 +1132,6 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       socialReady=(async()=>{
         const config=await request('/api/collect/v2/config').catch(()=>({enabled:false}));
         if(!config.enabled)return;
-        const css=document.createElement('link');css.rel='stylesheet';css.href='/src/public/css/collect-social.css?v=20261008-v2';document.head.append(css);
-        const moduleUrl=new URL('/src/public/js/collect-social-view.js?v=20261008-v2',location.href).href;
-        const {initSocial}=await import(moduleUrl);
         socialApi=await initSocial({request,refresh:async()=>{collectionPayload=null;pagedCollection=null;albumsPayload=null;albumsLoadedAt=0;await loadCollection();await loadAlbumOptions();renderAlbums();await loadLeaderboard();}});
         const ownershipSelect=document.getElementById('collect-filter-owned');for(const [value,text]of [['earned','Gagnées personnellement'],['trade','Obtenues par échange']]){const option=document.createElement('option');option.value=value;option.textContent=text;ownershipSelect.append(option);}
         if(publicProfileName&&!els['collect-profile-content'].querySelector('[data-v2-profile]'))await socialApi.attachProfile(els['collect-profile-content'],publicProfileName);

@@ -10,6 +10,12 @@ function createExplorerRouter({
   const router = express.Router();
 
   router.get("/riddles", asyncHandler(controller.listRiddles));
+  router.get("/riddles/:id/image", asyncHandler(controller.riddleImage));
+  router.post(
+    "/riddles/next",
+    authenticateToken,
+    asyncHandler(controller.nextRiddle),
+  );
   router.get(
     "/progress",
     authenticateToken,

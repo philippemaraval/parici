@@ -770,6 +770,45 @@
           }
         }
       }
+    },
+    "/api/explorer/riddles/next": {
+      "post": {
+        "tags": ["explorer"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["latitude", "longitude"],
+                "properties": {
+                  "latitude": {
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Identifiant de la prochaine énigme, sans réponse ni coordonnées"
+          },
+          "400": {
+            "description": "Position invalide"
+          },
+          "401": {
+            "description": "Connexion requise"
+          }
+        }
+      }
     }
   },
   "components": {

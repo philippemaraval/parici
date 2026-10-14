@@ -166,8 +166,14 @@ function calculateResults(challenge, objectives, participants, units) {
       },
     ]),
   );
+  const startsAt = new Date(challenge.starts_at).getTime();
+  const endsAt = new Date(challenge.ends_at).getTime();
   const unitTimes = new Map();
   for (const unit of units) {
+    const obtainedAt = new Date(unit.first_at).getTime();
+    if (!Number.isFinite(obtainedAt)) continue;
+    if (Number.isFinite(startsAt) && obtainedAt < startsAt) continue;
+    if (Number.isFinite(endsAt) && obtainedAt >= endsAt) continue;
     const key = `${unit.user_id}:${unit.objective_id}`;
     if (!unitTimes.has(key)) unitTimes.set(key, []);
     unitTimes.get(key).push(new Date(unit.first_at).getTime());

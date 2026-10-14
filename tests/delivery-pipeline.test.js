@@ -26,7 +26,8 @@ test("la livraison déploie directement la production après la CI", () => {
   assert.match(workflow, /environment:\s*production/);
   assert.doesNotMatch(workflow, /environment:\s*staging/);
   assert.doesNotMatch(workflow, /needs:\s*staging/);
-  assert.match(workflow, /CAMINO_DELIVERY_ENABLED/);
+  assert.doesNotMatch(workflow, /CAMINO_DELIVERY_ENABLED/);
+  assert.match(workflow,/PRODUCTION_FRONTEND_URL/);
   assert.match(workflow, /head_branch == 'main'/);
   assert.match(workflow, /conclusion == 'success'/);
   assert.match(workflow, /RENDER_PRODUCTION_SERVICE_ID/);

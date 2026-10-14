@@ -30,7 +30,7 @@ test(
     await initializeDatabase({ startBackgroundServices: false });
     await new Promise((resolve) =>
       server.listen(
-        process.env.PARICI_BROWSER === "1" ? 4173 : 0,
+        process.env.CAMINO_REAL_BROWSER === "1" ? 4173 : 0,
         "127.0.0.1",
         resolve,
       ),
@@ -283,10 +283,10 @@ test(
       (await request("/api/admin/site-reports", undefined, user.token)).status,
       403,
     );
-    if (process.env.PARICI_BROWSER === "1") {
+    if (process.env.CAMINO_REAL_BROWSER === "1") {
       const { chromium } = require("@playwright/test");
       const browser = await chromium.launch({
-        channel: "chrome",
+        ...(process.env.CI ? {} : { channel: "chrome" }),
         headless: true,
       });
       try {
@@ -298,6 +298,14 @@ test(
           }),
         );
         const errors = [];
+        const diagnostics = [];
+        page.on("console", (message) => {
+          diagnostics.push(message.text());
+          if (diagnostics.length > 30) diagnostics.shift();
+        });
+        page.on("requestfailed", (request) =>
+          diagnostics.push(`${request.url()}: ${request.failure()?.errorText}`),
+        );
         page.on("pageerror", (e) => errors.push(e.message));
         await page.addInitScript(
           ({ api, user }) => {
@@ -380,6 +388,7 @@ test(
             "Browser startup diagnostics",
             JSON.stringify({
               errors,
+              diagnostics,
               text: await page.locator("body").innerText(),
             }),
           );

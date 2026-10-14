@@ -65,7 +65,12 @@ function main() {
       const initialScriptUrls = [...indexHtml.matchAll(/<script[^>]+src=["']([^"']+)["']/g)]
         .map((match) => match[1])
         .filter((url) => url.startsWith("/assets/"));
-      const initialJavaScriptBytes = initialScriptUrls.reduce((total, url) => {
+      const dependencies=new Set(initialScriptUrls);
+      for(const url of dependencies){
+        const filePath=path.join(DIST,url);if(!fs.existsSync(filePath))continue;
+        for(const match of fs.readFileSync(filePath,"utf8").matchAll(/(?:from|import)\s*["'](\.\/[^"']+)["']/g))dependencies.add(path.posix.join(path.posix.dirname(url),match[1]));
+      }
+      const initialJavaScriptBytes = [...dependencies].reduce((total, url) => {
         const filePath = path.join(DIST, url);
         return total + (fs.existsSync(filePath) ? bytes(filePath) : 0);
       }, 0);

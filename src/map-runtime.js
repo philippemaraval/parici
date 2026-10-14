@@ -200,7 +200,13 @@ export async function loadStreetsRuntime({
   const touchBufferQueue = [];
   let gameId = 0;
 
-  const streetsLayer = L.geoJSON(allStreetFeatures, {
+  // Leaflet 1.9 Canvas normally redraws all existing paths after every batch.
+  // Keep path creation cooperative, then schedule a single complete redraw.
+  const streetRenderer = L.canvas?.();
+  const requestStreetRedraw = streetRenderer?._requestRedraw;
+  if (requestStreetRedraw) streetRenderer._requestRedraw = () => {};
+  const streetsLayer = L.geoJSON([], {
+    renderer: streetRenderer,
     style(feature) {
       return getBaseStreetStyle(feature);
     },
@@ -271,6 +277,15 @@ export async function loadStreetsRuntime({
     },
   }).addTo(map);
 
+  // Yield between short batches so the map never monopolizes the main thread.
+  for(let offset=0;offset<allStreetFeatures.length;offset+=100){
+    streetsLayer.addData({type:"FeatureCollection",features:allStreetFeatures.slice(offset,offset+100)});
+    if(offset+100<allStreetFeatures.length)await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  if (requestStreetRedraw) {
+    streetRenderer._requestRedraw = requestStreetRedraw;
+    requestStreetRedraw.call(streetRenderer, {});
+  }
   if (isTouchDevice) {
     addTouchBuffersInBatches(touchBufferQueue, addTouchBufferForLayer);
   }

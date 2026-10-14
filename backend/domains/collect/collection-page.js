@@ -74,7 +74,7 @@ async function collectionPage(
     FROM collect_fragment_progress p LEFT JOIN collect_card_merges m ON m.source_card_id=p.card_id
     WHERE p.user_id=$1 GROUP BY COALESCE(m.canonical_card_id,p.card_id)
   ), inventory AS (
-    SELECT c.id,c.family,c.name,c.collection_number,c.status,CASE WHEN c.fragments_enabled THEN 5 ELSE c.current_rarity END AS rarity,
+    SELECT c.id,c.family,c.name,c.collection_number,CASE WHEN c.catalog_present THEN c.status ELSE 'archived' END AS status,CASE WHEN c.fragments_enabled THEN 5 ELSE c.current_rarity END AS rarity,
       COALESCE(cp.copies,0) AS copies,COALESCE(cp.earned_copies,0) AS earned_copies,cp.recent,f.card_id IS NOT NULL AS favorite,
       ${publicView ? "0" : "LEAST(COALESCE(p.fragments,0),c.fragments_required)"} AS fragments
     FROM cards c LEFT JOIN user_copies cp ON cp.card_id=c.id LEFT JOIN user_fragments p ON p.card_id=c.id
@@ -93,7 +93,7 @@ async function collectionPage(
     )
   ), filtered AS (
     SELECT * FROM family_inventory WHERE ($3='all' OR ($3='owned' AND (copies>0 OR ($4=5 AND fragments>0))) OR ($3='missing' AND copies=0) OR ($3='favorites' AND favorite AND copies>0) OR ($3='fragments' AND fragments>0) OR ($3='earned' AND earned_copies>0) OR($3='trade' AND copies>earned_copies))
-      AND ($4=0 OR rarity=$4) AND ($5='' OR ((copies>0 OR fragments>0) AND name ILIKE '%'||$5||'%') OR
+      AND ($4=0 OR rarity=$4) AND ($5='' OR name ILIKE '%'||$5||'%' OR
         (CASE family WHEN 'street' THEN 'R-' WHEN 'district' THEN 'Q-' WHEN 'monument' THEN 'M-' ELSE 'B-' END||LPAD(collection_number::text,CASE WHEN family='street' THEN 4 ELSE 3 END,'0')) ILIKE '%'||$5||'%')
   )`;
   const summary = (

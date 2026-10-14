@@ -33,7 +33,7 @@ test(
     await initializeDatabase({ startBackgroundServices: false });
     await new Promise((resolve) =>
       server.listen(
-        process.env.PARICI_EXPLORER_BROWSER === "1" ? 4173 : 0,
+        process.env.CAMINO_REAL_BROWSER === "1" ? 4173 : 0,
         "127.0.0.1",
         resolve,
       ),
@@ -68,26 +68,41 @@ test(
     let catalog = await request("/api/explorer/riddles");
     assert.equal(catalog.status, 200);
     assert.equal(catalog.body.riddles.length, 12);
-    const riddles = catalog.body.riddles;
-    for (const r of riddles) {
-      assert.ok(r.latitude > 48.8 && r.latitude < 48.9);
-      assert.ok(r.longitude > 2.3 && r.longitude < 2.4);
-      assert.ok(r.source_url.startsWith("https://"));
+    for (const r of catalog.body.riddles) {
+      for (const secret of [
+        "street_name_clean",
+        "latitude",
+        "longitude",
+        "way_id",
+        "hint_text",
+        "explanation_text",
+        "source_url",
+      ])
+        assert.equal(secret in r, false, secret);
+      assert.match(r.image_url, /^\/api\/explorer\/riddles\/\d+\/image$/);
       const photo = await fetch(base + r.image_url);
       assert.equal(photo.status, 200);
       assert.match(photo.headers.get("content-type"), /image\/jpeg/);
     }
-    const first = riddles[0];
+    assert.equal((await fetch(base + "/data/explorer_paris.json")).status, 404);
     assert.equal((await request("/api/explorer/admin/riddles")).status, 401);
     assert.equal(
       (await request("/api/explorer/admin/riddles", null, user.token)).status,
       403,
     );
-    assert.equal(
-      (await request("/api/explorer/admin/riddles", null, editor.token)).body
-        .riddles.length,
-      12,
+    const riddles = (
+      await request("/api/explorer/admin/riddles", null, editor.token)
+    ).body.riddles;
+    assert.equal(riddles.length, 12);
+    const first = riddles[0];
+    const next = await request(
+      "/api/explorer/riddles/next",
+      { latitude: first.latitude, longitude: first.longitude },
+      user.token,
     );
+    assert.equal(next.status, 200);
+    assert.equal(next.body.riddleId, first.id);
+    assert.deepEqual(Object.keys(next.body), ["riddleId"]);
     const streets = await request(
       "/api/explorer/admin/streets?q=Francs",
       null,
@@ -162,6 +177,10 @@ test(
         55 - Math.ceil(result.body.saved[0].walking_time_seconds / 60),
       );
       assert.equal(result.body.saved[0].hints_used, 1);
+      assert.equal(
+        result.body.saved[0].solution.street_name_clean,
+        first.street_name_clean,
+      );
     });
     assert.equal(
       Number(
@@ -349,10 +368,10 @@ test(
     const served = await fetch(base + uploaded.body.image_url);
     assert.equal(served.status, 200);
     assert.deepEqual(Buffer.from(await served.arrayBuffer()), image);
-    if (process.env.PARICI_EXPLORER_BROWSER === "1") {
+    if (process.env.CAMINO_REAL_BROWSER === "1") {
       const { chromium } = require("@playwright/test");
       browser = await chromium.launch({
-        channel: "chrome",
+        ...(process.env.CI ? {} : { channel: "chrome" }),
         headless: true,
       });
 
@@ -381,7 +400,7 @@ test(
           });
           localStorage.setItem("camino_paris_user", JSON.stringify(user));
           localStorage.setItem("camino_auth_token", user.token);
-          localStorage.setItem("parici_explorer_completed:"+user.id,"1");
+          localStorage.setItem("parici_explorer_completed:" + user.id, "1");
         },
         { user: other },
       );
@@ -392,7 +411,7 @@ test(
         "/versions.html",
         "/remarques.html",
       ]) {
-        await page.goto(base + route);
+        await page.goto(base + route, { waitUntil: "domcontentloaded" });
         if (await page.locator("#site-menu-toggle").count()) {
           await page
             .locator("#site-menu-drawer")
@@ -416,7 +435,9 @@ test(
           await page.locator("[data-close-drawer]").click();
         }
       }
-      await page.goto(base + "/explorer.html");
+      await page.goto(base + "/explorer.html", {
+        waitUntil: "domcontentloaded",
+      });
       await page.locator("#explorer-start-btn").waitFor({ state: "visible" });
       assert.equal(await page.locator("#explorer-total").innerText(), "12");
       assert.equal(
@@ -501,7 +522,9 @@ test(
         },
         { editor },
       );
-      await page.goto(base + "/admin/explorer/");
+      await page.goto(base + "/admin/explorer/", {
+        waitUntil: "domcontentloaded",
+      });
       await page.locator("#explorer-admin-content:not(.hidden)").waitFor();
       await page.locator(`[data-edit="${first.id}"]`).click();
       await page

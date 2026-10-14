@@ -13,11 +13,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  production:
+  configuration:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main' &&
-      vars.CAMINO_DELIVERY_ENABLED == 'true'
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.access.outputs.configured }}
+    steps:
+      - name: Vérifier les accès de livraison
+        id: access
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_PRODUCTION_SERVICE_ID }}
+        run: |
+          if [ -n "$RENDER_API_KEY" ] && [ -n "$RENDER_SERVICE_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Déploiement différé : configurer RENDER_API_KEY et RENDER_PRODUCTION_SERVICE_ID."
+            echo "Déploiement Render non exécuté : accès de production à configurer." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  production:
+    needs: configuration
+    if: needs.configuration.outputs.configured == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
@@ -28,7 +48,13 @@ jobs:
       - name: Déployer la production avec retour arrière automatique
         env:
           DEPLOY_COMMIT: ${{ github.event.workflow_run.head_sha }}
-          HEALTHCHECK_URL: ${{ vars.PRODUCTION_HEALTHCHECK_URL }}
+          HEALTHCHECK_URL: ${{ vars.PRODUCTION_HEALTHCHECK_URL || 'https://parici.onrender.com/api/ready' }}
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_PRODUCTION_SERVICE_ID }}
         run: node scripts/render_delivery.js
+      - name: Vérifier aussi le frontend Cloudflare public
+        env:
+          DEPLOY_COMMIT: ${{ github.event.workflow_run.head_sha }}
+          ADMIN_DEPLOY_ORIGIN: ${{ vars.PARICI_API_URL || 'https://parici.onrender.com' }}
+          PRODUCTION_FRONTEND_URL: ${{ vars.PRODUCTION_FRONTEND_URL || 'https://parici-ajm.pages.dev' }}
+        run: node scripts/check_admin_deployment.js

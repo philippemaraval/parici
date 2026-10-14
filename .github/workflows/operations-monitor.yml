@@ -25,6 +25,7 @@ jobs:
       failed: ${{ steps.health.outcome == 'failure' }}
     env:
       HEALTHCHECK_URL: ${{ vars.PRODUCTION_HEALTHCHECK_URL }}
+      PRODUCTION_FRONTEND_URL: ${{ vars.PRODUCTION_FRONTEND_URL || 'https://parici-ajm.pages.dev' }}
       MAX_HEALTH_LATENCY_MS: ${{ vars.MAX_HEALTH_LATENCY_MS || '2500' }}
       HEALTH_REQUEST_TIMEOUT_MS: ${{ vars.HEALTH_REQUEST_TIMEOUT_MS || '60000' }}
       HEALTH_MAX_ATTEMPTS: ${{ vars.HEALTH_MAX_ATTEMPTS || '3' }}

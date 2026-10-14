@@ -943,5 +943,47 @@
     ],
     "reviewedAt": "2026-10-14",
     "reason": "La caméra montre une rue extérieure au cimetière, pas la voie intérieure de la carte. Aucun remplacement Google fiable après recherche rapprochée."
+  },
+  "street:Chemin du Puisard": {
+    "images": [
+      "/data/daily_images/2027-03-03__chemin-du-puisard.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Passage Communal F/11": {
+    "images": [
+      "/data/daily_images/2027-02-27__passage-communal-f-11.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Passage Marignan": {
+    "images": [
+      "/data/daily_images/2027-03-08__passage-marignan.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Place Tina Turner": {
+    "images": [
+      "/data/daily_images/2026-09-20__place-tina-turner.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Pont Hélène Duc": {
+    "images": [
+      "/data/daily_images/2026-08-08__pont-helene-duc.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Promenade Georges Ulmer": {
+    "images": [
+      "/data/daily_images/2027-03-31__promenade-georges-ulmer.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
+  },
+  "street:Rue de La Bruyère": {
+    "images": [
+      "/data/daily_images/2027-03-07__rue-de-la-bruyere.jpg"
+    ],
+    "reason": "Audit Daily du 14 octobre : absence de perspective fiable du lieu, façade isolée ou niveau différent de la voie. Logo conservé en attendant une photographie vérifiée."
   }
 }

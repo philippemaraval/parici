@@ -99,7 +99,7 @@ test("map gestures cannot trigger pull-to-refresh", () => {
 });
 
 test("the Daily share artwork uses the Parici green palette without a sun", () => {
-  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
+  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8")+fs.readFileSync(path.join(root,"src","daily-share-image.js"),"utf8");
   assert.match(dailyRuntime, /fillText\("PARICI DAILY"/);
   assert.match(dailyRuntime, /const eiffelCenterX = 874/);
   assert.match(dailyRuntime, /const roofscape = \[/);
@@ -110,7 +110,7 @@ test("the Daily share artwork uses the Parici green palette without a sun", () =
 });
 
 test("Daily text and image shares use the current Parici address", () => {
-  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8");
+  const dailyRuntime = fs.readFileSync(path.join(root, "src", "daily-runtime.js"), "utf8")+fs.readFileSync(path.join(root,"src","daily-share-image.js"),"utf8");
   assert.match(dailyRuntime, /parici-ajm\.pages\.dev/);
   assert.doesNotMatch(dailyRuntime, /parici\.netlify\.app/);
 });

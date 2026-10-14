@@ -94,9 +94,13 @@ function guessFeedback(family, answer, target) {
 function attemptsForRarity(rarity) {
   return { 1: 1, 2: 2, 3: 3, 4: 3, 5: 1 }[Number(rarity)] || 1;
 }
-function placementAttemptLimit(family, limit) {
+function placementAttemptLimit(family, limit, name = "") {
   const attempts = Number(limit) || 1;
-  return family === "monument" && attempts === 3 ? 2 : attempts;
+  const namesDistrict =
+    family === "street" && /\s+-\s+Quartier(?:\s|$)/iu.test(String(name));
+  return attempts === 3 && (family === "monument" || namesDistrict)
+    ? 2
+    : attempts;
 }
 module.exports = {
   attemptsForRarity,
