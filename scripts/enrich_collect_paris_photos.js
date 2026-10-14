@@ -6,6 +6,7 @@ const fs = require("node:fs"),
 const { prepareStreetMap } = require("../backend/domains/collect/map-data");
 const {
   candidateLocations,
+  lines,
   viewAlongStreet,
   bearing,
   distance,
@@ -71,7 +72,64 @@ function localRoads(point, roads, radius = 0.004) {
     );
   });
 }
-function plan({ allStreets = false } = {}) {
+// Areas such as pedestrian squares have no street axis. Aim into their actual
+// polygon instead of inventing a direction from a surrounding road.
+function areaBoundaries(features) {
+  return features.flatMap((f) => {
+    const g = f.geometry;
+    const polygons =
+      g?.type === "Polygon"
+        ? [g.coordinates]
+        : g?.type === "MultiPolygon"
+          ? g.coordinates
+          : [];
+    return polygons.map((p) => ({
+      geometry: { type: "LineString", coordinates: p[0] },
+    }));
+  });
+}
+function photoLocations(features, target, extended = false) {
+  const segments = lines(features)
+    .filter((line) => length(line) > 1)
+    .sort((a, b) => length(b) - length(a));
+  if (segments.length) {
+    if (!extended) return candidateLocations(features);
+    return segments
+      .slice(0, 4)
+      .flatMap((line) =>
+        [0.5, 0.1, 0.9, 0.25, 0.75, 0.35, 0.65].map((f) =>
+          at(line, length(line) * f),
+        ),
+      );
+  }
+  const rings = areaBoundaries(features);
+  return [
+    contains(target, features) ? target : null,
+    ...rings.flatMap((f) =>
+      [0.125, 0.375, 0.625, 0.875, 0, 0.25, 0.5, 0.75].map((fraction) =>
+        at(f.geometry.coordinates, length(f.geometry.coordinates) * fraction),
+      ),
+    ),
+  ].filter(Boolean);
+}
+function streetPhotoView(coordinate, job) {
+  if (lines(job.features).length)
+    return viewAlongStreet(coordinate, job.features);
+  const boundary = nearest(coordinate, areaBoundaries(job.features));
+  if (!boundary) return null;
+  return {
+    heading: bearing(coordinate, job.target),
+    distanceMeters: contains(coordinate, job.features)
+      ? 0
+      : boundary.distanceMeters,
+    surface: true,
+  };
+}
+function plan({
+  allStreets = false,
+  extended = false,
+  includePhotographed = false,
+} = {}) {
   const catalog = read(path.join(root, "data/collect_paris_catalog.json"));
   const index = read(path.join(root, "backend/data/streets_index.json"));
   const map = prepareStreetMap(
@@ -100,7 +158,7 @@ function plan({ allStreets = false } = {}) {
   const records = catalog.records
     .filter(
       (c) =>
-        c.illustration.kind !== "photograph" &&
+        (includePhotographed || c.illustration.kind !== "photograph") &&
         c.family !== "bus" &&
         (c.family !== "street" || allStreets || c.famous || c.main),
     )
@@ -118,7 +176,7 @@ function plan({ allStreets = false } = {}) {
     const projected = match?.coordinate;
     const locations =
       c.family === "street"
-        ? candidateLocations(features)
+        ? photoLocations(features, c.centroid, extended)
         : [
             projected,
             ...(match
@@ -145,14 +203,25 @@ function plan({ allStreets = false } = {}) {
 }
 async function generate(
   directory,
-  { envFile, limit, allStreets = false, only, refresh = false } = {},
+  {
+    envFile,
+    limit,
+    allStreets = false,
+    only,
+    refresh = false,
+    extended = false,
+    excludedPanoramas = {},
+    includePhotographed = false,
+  } = {},
 ) {
   fs.mkdirSync(directory, { recursive: true });
   loadCredentials(envFile);
   const secret =
     process.env.GOOGLE_STREET_VIEW_API_KEY || process.env.GOOGLE_MAPS_API_KEY;
   if (!secret) throw Error("Street View API key unavailable");
-  let jobs = plan({ allStreets });
+  if (includePhotographed && !only?.length)
+    throw Error("Photo repairs require an explicit card list");
+  let jobs = plan({ allStreets, extended, includePhotographed });
   if (only) jobs = jobs.filter((j) => only.includes(j.key));
   if (limit) jobs = jobs.slice(0, limit);
   let cursor = 0,
@@ -168,6 +237,7 @@ async function generate(
       if (
         existing.status === "OK" &&
         existing.providerVerified &&
+        !(excludedPanoramas[job.key] || []).includes(existing.panoId) &&
         existing.candidates.every((c) =>
           fs.existsSync(path.join(directory, c.file)),
         )
@@ -178,7 +248,7 @@ async function generate(
     for (const requested of (refresh
       ? [...job.locations.slice(1), job.locations[0]]
       : job.locations
-    ).slice(0, 3)) {
+    ).slice(0, extended ? 28 : 3)) {
       const q = new URLSearchParams({
         key: secret,
         location: `${requested[1]},${requested[0]}`,
@@ -200,6 +270,8 @@ async function generate(
         lastReason = metadata.status;
         continue;
       }
+      if ((excludedPanoramas[job.key] || []).includes(metadata.pano_id))
+        continue;
       if (!/Google/i.test(metadata.copyright || "")) {
         lastReason = "Unverified panorama copyright";
         continue;
@@ -212,7 +284,10 @@ async function generate(
         continue;
       }
       const coordinate = [metadata.location.lng, metadata.location.lat];
-      const along = viewAlongStreet(coordinate, job.roads);
+      const along =
+        job.family === "street"
+          ? streetPhotoView(coordinate, job)
+          : viewAlongStreet(coordinate, job.roads);
       const gap =
         job.family === "monument"
           ? distance(coordinate, job.target)
@@ -292,6 +367,7 @@ async function generate(
         panoId: metadata.pano_id,
         copyright: metadata.copyright,
         providerVerified: true,
+        surface: Boolean(along?.surface),
         candidates,
       };
       fs.writeFileSync(receipt, JSON.stringify(result, null, 2) + "\n");
@@ -395,7 +471,9 @@ function apply(directory, reviewFile) {
       verification: {
         method:
           receipt.family === "street"
-            ? "geometry-local-axis-and-visual-review"
+            ? receipt.surface
+              ? "geometry-surface-and-visual-review"
+              : "geometry-local-axis-and-visual-review"
             : "coordinates-and-visual-review",
         reviewedAt: new Date().toISOString().slice(0, 10),
         coordinate: receipt.coordinate,
@@ -429,6 +507,11 @@ async function main() {
     allStreets: args.includes("--all-streets"),
     only: get("--only") ? read(get("--only")) : undefined,
     refresh: args.includes("--refresh"),
+    extended: args.includes("--extended"),
+    includePhotographed: args.includes("--include-photographed"),
+    excludedPanoramas: get("--exclude-panoramas")
+      ? read(get("--exclude-panoramas"))
+      : {},
   });
 }
 if (require.main === module)
@@ -436,4 +519,12 @@ if (require.main === module)
     console.error(error.message);
     process.exitCode = 1;
   });
-module.exports = { plan, generate, apply, contains, loadCredentials };
+module.exports = {
+  plan,
+  generate,
+  apply,
+  contains,
+  loadCredentials,
+  photoLocations,
+  streetPhotoView,
+};

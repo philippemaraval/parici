@@ -9,7 +9,17 @@ function photoManifest() {
   );
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
 }
-function photoRevision(manifest = photoManifest()) {
+function photoExclusions() {
+  const file = path.resolve(
+    __dirname,
+    "../../../data/collect_photo_exclusions_paris.json",
+  );
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+}
+function photoRevision(
+  manifest = photoManifest(),
+  exclusions = photoExclusions(),
+) {
   return crypto
     .createHash("sha256")
     .update(
@@ -19,7 +29,12 @@ function photoRevision(manifest = photoManifest()) {
           .map(([key, value]) => [key, value.image]),
       ),
     )
-    .update("parici-logo-fallback-v1")
+    .update(
+      JSON.stringify(
+        Object.entries(exclusions).sort(([a], [b]) => a.localeCompare(b)),
+      ),
+    )
+    .update("parici-logo-fallback-v2")
     .digest("hex");
 }
 async function applyPhotographs(client) {

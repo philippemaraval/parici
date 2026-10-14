@@ -57,3 +57,11 @@ retenus conservent leurs crédits et leurs justificatifs géographiques dans le 
 
 Collect reste sans bouton d'accès public. Les illustrations des autres cartes restent
 le logo Parici et les dérogations manuelles existantes restent prioritaires.
+
+## Enrichissement Google et audit complet suivants
+
+320 voies supplémentaires auparavant au logo ont reçu une photographie Google.
+Après remplacement de 66 anciennes vues de voies et retrait de 69 vues sans
+alternative fiable, les voies atteignent **5 327 / 5 711 (93,28 %)**. Les autres
+familles restent à 100 %. Dix monuments ont également reçu un meilleur cadrage.
+Voir [le rapport de cadrage et ses vérifications](collect-image-audit-20261014.md).

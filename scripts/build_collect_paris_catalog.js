@@ -57,6 +57,11 @@ const transport = read("data/paris_transit_lines.geojson").features;
 const explorer = read("data/explorer_paris.json");
 const editorial = read("data/collect_paris_editorial.json");
 const fragmentRequirements = read("data/collect_paris_fragments.json");
+const photoExclusions = fs.existsSync(
+  path.join(root, "data/collect_photo_exclusions_paris.json"),
+)
+  ? read("data/collect_photo_exclusions_paris.json")
+  : {};
 const reviewedPhotos = fs.existsSync(
   path.join(root, "data/collect_photos_paris.json"),
 )
@@ -172,11 +177,16 @@ function add(family, id, name, features, point, extra = {}) {
     family === "street" &&
     explorer.find((x) => norm(x.street_name_clean) === norm(name));
   const reviewedPhoto = reviewedPhotos[family + ":" + id];
-  const photo =
+  const excluded = photoExclusions[family + ":" + id];
+  const candidatePhoto =
     reviewedPhoto?.image ||
     (family === "street"
       ? historic?.image_url || photoNames.get(slug(name))
       : null);
+  const photo =
+    excluded && (!reviewedPhoto || excluded.images.includes(candidatePhoto))
+      ? null
+      : candidatePhoto;
   const membership = [
     {
       street: "streets",
@@ -251,9 +261,7 @@ function add(family, id, name, features, point, extra = {}) {
       caption: photo
         ? "Photographie du référentiel Daily Paris"
         : "Logo Parici",
-      sourcePage: photo
-        ? "https://www.google.com/streetview/"
-        : null,
+      sourcePage: photo ? "https://www.google.com/streetview/" : null,
       author: photo ? "Google Street View" : "Parici",
       license: photo
         ? "Attribution conservée sur la photographie"
@@ -261,7 +269,7 @@ function add(family, id, name, features, point, extra = {}) {
     },
     questions: [],
   };
-  if (reviewedPhoto) record.illustration = { ...reviewedPhoto };
+  if (reviewedPhoto && photo) record.illustration = { ...reviewedPhoto };
   if (historic && loc) {
     record.questions = [
       question(
@@ -410,10 +418,9 @@ function add(family, id, name, features, point, extra = {}) {
   record.illustration.caption = photo
     ? record.illustration.caption
     : "Logo Parici";
-  const caption =
-    !hasOutline
-      ? "Repère de jeu · voies voisines"
-      : "Illustration cartographique · Paris";
+  const caption = !hasOutline
+    ? "Repère de jeu · voies voisines"
+    : "Illustration cartographique · Paris";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="560" viewBox="0 0 440 560"><defs><clipPath id="map-frame"><rect x="35" y="70" width="370" height="310" rx="12"/></clipPath></defs><rect width="440" height="560" rx="24" fill="#f9f5e9"/><text x="220" y="52" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#12297a">PARICI · ${escape({ street: "RUE", district: "QUARTIER", monument: "MONUMENT", bus: "TRANSPORT" }[family])}</text>${graphic}<text x="220" y="455" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#12297a">${escape(name.length > 49 ? name.slice(0, 46) + "…" : name)}</text><text x="220" y="515" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#526485">${caption}</text><text x="220" y="537" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#526485">© OpenStreetMap contributors · Parici</text></svg>`;
   fs.writeFileSync(path.join(root, art), svg);
 }
@@ -509,7 +516,6 @@ console.log(
     cards: numbers,
     total: records.length,
     fragments: records.filter((r) => r.fragments_required).length,
-    photos: records.filter((r) => r.illustration.kind === "photograph")
-      .length,
+    photos: records.filter((r) => r.illustration.kind === "photograph").length,
   }),
 );

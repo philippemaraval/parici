@@ -15,8 +15,8 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   assert.ok(Object.keys(manifest).length >= 477);
   const streets = catalog.records.filter(c => c.family === 'street');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
-  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.88), 'Street photo coverage must remain at least 88%');
-  assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length >= 160);
+  assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.93), 'Street photo coverage must remain at least 93%');
+  assert.ok(Object.values(manifest).filter(entry => entry.source === 'panoramax').length > 0);
   for (const card of catalog.records.filter(c => c.family !== 'street')) {
     assert.equal(card.illustration.kind, 'photograph', card.name);
   }
@@ -89,4 +89,34 @@ test('quarter photo geometry rejects points outside the polygon and inside holes
   assert.equal(contains([0.5,0.5],features), true);
   assert.equal(contains([2,2],features), false);
   assert.equal(contains([5,2],features), false);
+});
+
+test('discarded photo views cannot return through Daily or Explorer fallbacks', () => {
+  const exclusions = require('../data/collect_photo_exclusions_paris.json');
+  const catalog = require('../data/collect_paris_catalog.json').records;
+  const reviewed = photoManifest();
+  assert.ok(Object.keys(exclusions).length > 100);
+  for (const [key, exclusion] of Object.entries(exclusions)) {
+    const card = catalog.find(c => c.family + ':' + c.source_entity_id === key);
+    assert.ok(card && exclusion.images.length && exclusion.reason);
+    assert.ok(!exclusion.images.includes(card.image_reference), key);
+    if (!reviewed[key]) {
+      assert.equal(card.image_reference, '/apple-touch-icon.png', key);
+      assert.equal(card.illustration.kind, 'logo', key);
+    }
+  }
+  assert.notEqual(photoRevision({}, {}), photoRevision({}, { 'street:Example': {images:['/rejected.jpg']} }));
+  assert.equal(photoRevision({}, {a:{images:['a']},b:{images:['b']}}), photoRevision({}, {b:{images:['b']},a:{images:['a']}}));
+});
+
+test('every displayed photograph has a visual audit tied to its actual image bytes', () => {
+  const audit = require('../data/collect_images/view-audit-20261014.json');
+  const catalog = require('../data/collect_paris_catalog.json').records;
+  for (const card of catalog.filter(c => c.illustration.kind === 'photograph')) {
+    const key = card.family + ':' + card.source_entity_id, entry = audit.cards[key];
+    assert.ok(entry, key);
+    assert.equal(entry.image, card.image_reference, key);
+    assert.equal(entry.sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..',card.image_reference))).digest('hex'), key);
+    assert.ok(entry.visualReview && entry.framing, key);
+  }
 });

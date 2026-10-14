@@ -67,3 +67,76 @@ test("points, polygon rings and degenerate lines do not invent a street directio
     [],
   );
 });
+
+test("extended photo sampling visits disconnected street segments", () => {
+  const { photoLocations } = require("../scripts/enrich_collect_paris_photos");
+  const features = [
+    feature([
+      [2.3, 48.85],
+      [2.31, 48.85],
+    ]),
+    feature([
+      [2.4, 48.86],
+      [2.401, 48.86],
+    ]),
+  ];
+  const samples = photoLocations(features, [2.3, 48.85], true);
+  assert.ok(samples.some((p) => p[0] > 2.4));
+  assert.ok(samples.some((p) => p[0] < 2.31));
+  assert.equal(photoLocations(features, [2.3, 48.85]).length, 3);
+});
+
+test("square photographs aim into the surface and retain actual boundary distance", () => {
+  const {
+    photoLocations,
+    streetPhotoView,
+  } = require("../scripts/enrich_collect_paris_photos");
+  const features = [
+    {
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [2.3, 48.85],
+            [2.302, 48.85],
+            [2.302, 48.852],
+            [2.3, 48.852],
+            [2.3, 48.85],
+          ],
+          [
+            [2.3008, 48.8508],
+            [2.3012, 48.8508],
+            [2.3012, 48.8512],
+            [2.3008, 48.8512],
+            [2.3008, 48.8508],
+          ],
+        ],
+      },
+    },
+  ];
+  const target = [2.301, 48.851];
+  const samples = photoLocations(features, target, true);
+  assert.ok(samples.length >= 8);
+  assert.ok(
+    !samples.some((p) => p[0] === target[0] && p[1] === target[1]),
+    "do not sample a polygon hole as an interior point",
+  );
+  const job = { features, target };
+  assert.equal(streetPhotoView([2.3005, 48.851], job).distanceMeters, 0);
+  assert.ok(
+    streetPhotoView([2.301, 48.851], job).distanceMeters > 18,
+    "a hole is not inside the place",
+  );
+  assert.ok(streetPhotoView([2.29995, 48.851], job).distanceMeters < 18);
+  assert.ok(streetPhotoView([2.299, 48.851], job).distanceMeters > 18);
+  assert.ok(
+    axisDifference(streetPhotoView([2.29995, 48.851], job).heading, 90) < 1,
+  );
+  assert.equal(
+    streetPhotoView([2.3, 48.85], {
+      features: [{ geometry: { type: "Point", coordinates: target } }],
+      target,
+    }),
+    null,
+  );
+});

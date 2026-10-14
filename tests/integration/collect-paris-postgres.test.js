@@ -638,51 +638,64 @@ test(
           JSON.stringify({ ...user, authenticated: true }),
         );
       }, player);
+      page.setDefaultTimeout(15000);
       fs.mkdirSync("/tmp/parici-collect-review", { recursive: true });
-      const photographSamples = ["Rue Foyatier", "Tour Eiffel", "Bonne-Nouvelle"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
+      async function selectArtwork(card) {
+        const response = page.waitForResponse((r) => {
+          const url = new URL(r.url());
+          return url.pathname === '/api/collect/collection/page' &&
+            url.searchParams.get('family') === card.family &&
+            url.searchParams.get('search') === card.name;
+        });
+        await page.locator('#collect-filter-family').selectOption(card.family);
+        await page.locator('#collect-search').fill(card.name);
+        await (await response).finished();
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      }
+      const photographSamples = ["Place Georges Pompidou", "Rue de la Mire", "Opéra Bastille", "Bonne-Nouvelle"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/photo-')));
       assert.ok(photographSamples.every(Boolean));
       for (const card of photographSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const wikimediaSamples = ["Métro 1", "Arc de Triomphe", "Rue Crémieux"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
+      const wikimediaSamples = ["Métro 1", "Panthéon", "Colonne Vendôme", "Rue Crémieux"].map(name => cards.find(c => c.name === name && c.image_reference.includes('/wikimedia-')));
       assert.ok(wikimediaSamples.every(Boolean));
       for (const card of wikimediaSamples) {
         await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,card.id]);
       }
-      const logoSample = cards.find(c => c.image_reference === '/apple-touch-icon.png');
+      const logoSample = cards.find(c => c.name === 'Allée 39/45' && c.image_reference === '/apple-touch-icon.png');
       assert.ok(logoSample);
       await db.pool.query("INSERT INTO card_copies(user_id,card_id,source) VALUES($1,$2,'weekly')",[player.id,logoSample.id]);
-      await page.goto(base + "/collect.html?panel=collection");
+      await page.goto(base + "/collect.html?panel=collection", {waitUntil: "domcontentloaded"});
       for (const width of [390, 1440]) {
         await page.setViewportSize({width,height:900});
         for (const card of photographSamples) {
-          await page.locator('#collect-filter-family').selectOption(card.family);
-          await page.locator('#collect-search').fill(card.name);
+          await selectArtwork(card);
           const tile=page.locator(`.collect-card[data-card-id="${card.id}"]`);
           await tile.waitFor({state:'visible'});
+          await tile.scrollIntoViewIfNeeded();
           const photo=tile.locator('.collect-card-art>img');
-          await photo.evaluate(img=>img.decode());
+          await photo.evaluate(img=>{img.loading="eager";return img.decode();});
           assert.ok((await photo.getAttribute('src')).includes('/photo-'));
           assert.equal(await tile.locator('.collect-card-photo-credit').innerText(),'Google Street View');
           if(card.family==='monument')assert.equal(await photo.evaluate(img=>getComputedStyle(img).objectFit),'contain');
-          await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${width}.png`});
+          await tile.screenshot({path:`/tmp/parici-collect-review/photo-${card.family}-${card.id}-${width}.png`});
         }
         for (const card of wikimediaSamples) {
-          await page.locator('#collect-filter-family').selectOption(card.family);
-          await page.locator('#collect-search').fill(card.name);
+          await selectArtwork(card);
           const tile = page.locator(`.collect-card[data-card-id="${card.id}"]`);
           await tile.waitFor({state:'visible'});
+          await tile.scrollIntoViewIfNeeded();
           const photo = tile.locator('.collect-card-art>img');
-          await photo.evaluate(img => img.decode());
+          await photo.evaluate(img => {img.loading="eager";return img.decode();});
           assert.ok((await photo.getAttribute('src')).includes('/wikimedia-'));
           assert.match(await tile.locator('.collect-card-photo-credit').innerText(), /Wikimedia/);
           if (card.family !== 'street') assert.equal(await photo.evaluate(img => getComputedStyle(img).objectFit), 'contain');
-          await tile.screenshot({path:`/tmp/parici-collect-review/wikimedia-${card.family}-${width}.png`});
+          await tile.screenshot({path:`/tmp/parici-collect-review/wikimedia-${card.family}-${card.id}-${width}.png`});
         }
-        await page.locator('#collect-filter-family').selectOption(logoSample.family);
-        await page.locator('#collect-search').fill(logoSample.name);
+        await selectArtwork(logoSample);
         const logoTile = page.locator(`.collect-card[data-card-id="${logoSample.id}"]`);
         await logoTile.waitFor({state:'visible'});
+        await logoTile.scrollIntoViewIfNeeded();
         const logoImage = logoTile.locator('.collect-card-art--logo>img');
         await logoImage.evaluate(img => img.decode());
         assert.equal(await logoImage.getAttribute('src'), '/apple-touch-icon.png');

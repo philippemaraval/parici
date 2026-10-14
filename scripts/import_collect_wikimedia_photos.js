@@ -53,8 +53,8 @@ const prepared = approvals.map((decision) => {
     author = plain(metadata?.Artist?.value);
   if (
     !card ||
-    manifest[decision.key] ||
-    card.illustration.kind === "photograph"
+    ((manifest[decision.key] || card.illustration.kind === "photograph") &&
+      decision.expectedImage !== card.image_reference)
   )
     throw Error("Unknown or already photographed card: " + decision.key);
   const articleLocation = decision.page.coordinates?.[0];

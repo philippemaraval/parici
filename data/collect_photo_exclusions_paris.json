@@ -1,0 +1,947 @@
+{
+  "street:Allée 39/45": {
+    "images": [
+      "/data/collect_images/panoramax-67416711-d8e7-4062-beee-c65000515696.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Alexis Grüss": {
+    "images": [
+      "/data/collect_images/panoramax-14d52fd7-4cca-4997-8585-42de15844e06.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée de Châtillon": {
+    "images": [
+      "/data/collect_images/panoramax-9c31c435-8368-4bf5-9207-158ac2fefcf4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée de la Bertelotte": {
+    "images": [
+      "/data/collect_images/photo-fbc37853df619bddd10d-195564cf1c98.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée de la Garance": {
+    "images": [
+      "/data/collect_images/photo-d978e356dfc68d5f7c0f-28eeb00fd9e9.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Arbres": {
+    "images": [
+      "/data/collect_images/panoramax-b9470f89-746e-4f89-bc3a-1d8a29a8c07f.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Brouillards": {
+    "images": [
+      "/data/collect_images/panoramax-ee86d3ec-f331-41cc-8e65-80c3a895e9bf.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Chapelles": {
+    "images": [
+      "/data/collect_images/panoramax-a692b77a-9a9b-4031-8d5d-e443e8bfe115.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Chênes Verts": {
+    "images": [
+      "/data/collect_images/panoramax-6e2d99fd-1491-4d76-ae36-5e203126aff1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Deux Portes": {
+    "images": [
+      "/data/collect_images/panoramax-64fd155c-9b2b-4ae7-93a5-b28c9a167996.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Houx": {
+    "images": [
+      "/data/collect_images/panoramax-0d439a1e-fbfc-4b46-a613-f8968c706660.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Prunus": {
+    "images": [
+      "/data/collect_images/panoramax-3a6aecb1-db99-4f70-8db0-af298657a9d4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée des Refuzniks": {
+    "images": [
+      "/data/collect_images/photo-9db499732c4c82c2bba4-9403b728ded5.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée du Calvaire": {
+    "images": [
+      "/data/collect_images/panoramax-24dcefb5-5cd4-4d76-8e8a-597ac5eae468.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée du Columbarium": {
+    "images": [
+      "/data/collect_images/photo-bb19a853a687808d9875-0b7280b7334d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée du Four": {
+    "images": [
+      "/data/collect_images/panoramax-c4c66ed1-4556-4636-b53c-cf8eabc24594.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée du Maquis": {
+    "images": [
+      "/data/collect_images/panoramax-165f3085-bebb-497a-b052-d330984fb373.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Isadora Duncan": {
+    "images": [
+      "/data/collect_images/panoramax-d208a2f4-ee1b-49c5-b250-5ceaecd902b8.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Louise Labé": {
+    "images": [
+      "/data/collect_images/photo-541d6e656acad9729c14-1e0d43fad45c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Shamaï Haber": {
+    "images": [
+      "/data/collect_images/panoramax-0f852599-ecfd-4117-be6b-0efd2300286e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Waslaw Nijinsky": {
+    "images": [
+      "/data/collect_images/panoramax-1f5aa5f6-9010-4706-8c1b-23b1a06f3b4d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Allée Yvonne Beauvais": {
+    "images": [
+      "/data/collect_images/photo-e4941ebdc7569d34e9a3-e305de092e72.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue Charles de Gaulle": {
+    "images": [
+      "/data/collect_images/panoramax-6bbbe46c-297f-4ebc-a8b2-5e6237d2a402.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue de la Porte d'Orléans": {
+    "images": [
+      "/data/collect_images/panoramax-36129bd3-3934-46b4-aaf9-72cff10fec7d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue de la Porte des Ternes": {
+    "images": [
+      "/data/collect_images/panoramax-d33cff36-9cda-49ac-9410-10fb7f10667c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue du Général Détrie": {
+    "images": [
+      "/data/collect_images/panoramax-ede89c76-f8e7-4456-ad48-7edc6cd4dbe2.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue du Maine": {
+    "images": [
+      "/data/daily_images/2027-03-05__avenue-du-maine.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue François Fresneau": {
+    "images": [
+      "/data/collect_images/panoramax-677281dc-9212-4cfc-a9e8-bb76c1e4d61e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue Pasteur - Quartier Saint-Lambert": {
+    "images": [
+      "/data/collect_images/panoramax-8699fc8a-4ee9-4cb2-8f1c-8d7177da8843.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue Principale - Quartier de Javel": {
+    "images": [
+      "/data/collect_images/panoramax-2c829076-1eb7-486f-a3e3-2e52973de78e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue Saint-Charles - Quartier de Javel": {
+    "images": [
+      "/data/collect_images/panoramax-df4f81aa-49b6-455b-a4e6-650c0bfc35ce.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue Victor Hugo - Quartier Saint-Lambert": {
+    "images": [
+      "/data/collect_images/photo-8f880c6e3d58aa4f8cf8-52db4e5e246b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Boulevard du Général d'Armée Jean Simon": {
+    "images": [
+      "/data/collect_images/panoramax-260d42fa-d326-45f8-8d96-c0715cc243f0.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Boulevard Mortier": {
+    "images": [
+      "/data/collect_images/photo-bf4a4852c2493bcdbc8b-432f83ecf52e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Boulevard Victor": {
+    "images": [
+      "/data/collect_images/panoramax-40de0e5e-51b9-4d5f-b8ea-1aba12d3dfab.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin Amiot": {
+    "images": [
+      "/data/collect_images/photo-74edc880e3e83a21c1aa-9eb58838f74b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin Central": {
+    "images": [
+      "/data/collect_images/photo-a3049f1e327eb8b7ce33-5689071e4edc.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin de l'Est - Quartier d'Amérique": {
+    "images": [
+      "/data/collect_images/photo-d6832976a9407feed8e0-ba589b5e122f.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin de la Conservation - Quartier de Picpus": {
+    "images": [
+      "/data/collect_images/photo-f037fa508ea98cb2463f-d86acdfb99d7.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin Lavalée": {
+    "images": [
+      "/data/collect_images/photo-3bb050acddd4746e7e6b-41ec9a3561d1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Chemin Ledoux": {
+    "images": [
+      "/data/collect_images/photo-54ea4482cac3fcc6a5ae-5353693f2393.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Cité Beaurepaire": {
+    "images": [
+      "/data/collect_images/wikimedia-754d724afff68a49b38d9c3c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Cité de Magenta": {
+    "images": [
+      "/data/collect_images/panoramax-25397f1b-694a-4c30-b306-71032e855be4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Cité Joyeux": {
+    "images": [
+      "/data/collect_images/wikimedia-340cfff153edffc4d3936f0e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Cité Montmartre": {
+    "images": [
+      "/data/collect_images/wikimedia-433505ec06c03238e2e59ae7.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Cours des Avocats": {
+    "images": [
+      "/data/collect_images/panoramax-a870efaa-3626-426f-b260-802d852b776b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Esplanade Habib Bourguiba": {
+    "images": [
+      "/data/collect_images/panoramax-98dda25a-1e47-4f6f-ab23-c996e9337e2a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Esplanade Max Guedj": {
+    "images": [
+      "/data/collect_images/panoramax-f3d176e7-9b47-44e9-a08c-3355b85e74b8.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse de Casteggio": {
+    "images": [
+      "/data/collect_images/panoramax-086e126b-5b14-4982-8ac5-26f2844c4548.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse des Arbalétriers": {
+    "images": [
+      "/data/daily_images/2026-07-19__impasse-des-arbaletriers.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse du Labrador": {
+    "images": [
+      "/data/collect_images/photo-eecc0b66929c2f912650-72976980a29b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse Saint-Eustache": {
+    "images": [
+      "/data/collect_images/panoramax-a0df30ba-6a63-4935-a152-f971b4efcc9a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse Saint-Pierre": {
+    "images": [
+      "/data/collect_images/wikimedia-d93b63701624eb1b209f1bbb.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse T/16": {
+    "images": [
+      "/data/daily_images/2026-12-04__impasse-t-16.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Impasse Vincent": {
+    "images": [
+      "/data/daily_images/2026-10-12__impasse-vincent.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Boiton": {
+    "images": [
+      "/data/collect_images/photo-6a47f08aaaaec2e76c59-533a000f14b5.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Collin": {
+    "images": [
+      "/data/collect_images/wikimedia-c2e93d966073d149adc66ee2.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Dauphine": {
+    "images": [
+      "/data/collect_images/panoramax-2e0d1966-95c4-4b7d-84aa-b29cfa96565a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage de Beaujolais": {
+    "images": [
+      "/data/collect_images/wikimedia-420e7b2c2f4521876bf8bbcb.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage de l'Ancre": {
+    "images": [
+      "/data/collect_images/panoramax-884352fc-d1b0-4b0c-bb14-115c5e47e6ae.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage de la Tour de Vanves": {
+    "images": [
+      "/data/daily_images/2027-05-04__passage-de-la-tour-de-vanves.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage de Richelieu": {
+    "images": [
+      "/data/daily_images/2027-06-13__passage-de-richelieu.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage des Épinettes": {
+    "images": [
+      "/data/collect_images/wikimedia-d199f30ae5e23eecb9c5bb75.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage des Petites Écuries": {
+    "images": [
+      "/data/collect_images/photo-dbfc63510e1cdcc63893-d142934f6bdf.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage des Petits Pères": {
+    "images": [
+      "/data/collect_images/panoramax-5b03bd05-91f9-46f7-ba54-3e3d8b3dfa23.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage des Princes": {
+    "images": [
+      "/data/collect_images/photo-46ac9cc4c5dca54a12a2-9ae9a47ffc93.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage du Charolais": {
+    "images": [
+      "/data/collect_images/wikimedia-4072a7d1e7ea8fe6fcebbc6b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage du Désir": {
+    "images": [
+      "/data/collect_images/wikimedia-73e6e2a95dd87c43ee18f6a7.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage du Gantelet": {
+    "images": [
+      "/data/collect_images/panoramax-78a555b4-576a-4626-8fbf-3d1b9b4c077a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage du Maure": {
+    "images": [
+      "/data/daily_images/2027-01-13__passage-du-maure.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage du Pont aux Biches": {
+    "images": [
+      "/data/collect_images/photo-931e1da825f88705fb11-1cd52f3c757f.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Dumas": {
+    "images": [
+      "/data/collect_images/photo-163e20b3a83148ba437d-cbff5d4bbcc4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage L/10": {
+    "images": [
+      "/data/daily_images/2026-09-17__passage-l-10.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Potier": {
+    "images": [
+      "/data/collect_images/photo-99eeabaf0233291abe67-f392500160e1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passage Sainte-Anne": {
+    "images": [
+      "/data/daily_images/2026-07-07__passage-sainte-anne.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Passerelle Simone de Beauvoir": {
+    "images": [
+      "/data/collect_images/panoramax-601da923-31e2-4a5b-8ec4-810002f156c8.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place de l'Opéra": {
+    "images": [
+      "/data/collect_images/panoramax-eccd2b01-ed1a-40e8-b384-fedf4790b705.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place de la Laïcité": {
+    "images": [
+      "/data/collect_images/panoramax-4cca6944-5657-4c07-b1d8-ded36e9fae8d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place des Pyramides": {
+    "images": [
+      "/data/collect_images/panoramax-3919d4fe-8c75-4009-803e-d21ea53060fa.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place du Pont-Neuf": {
+    "images": [
+      "/data/collect_images/panoramax-fe3ca4fd-72c3-42a3-a26d-7ae8c875cef4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place Marguerite de Navarre": {
+    "images": [
+      "/data/collect_images/panoramax-bbc4e1af-5612-483b-8045-dd1dd931518c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Place Maurice Quentin": {
+    "images": [
+      "/data/collect_images/panoramax-a60b962b-5a32-461b-9a9f-a82abfbaa7ad.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Pont au Change": {
+    "images": [
+      "/data/collect_images/panoramax-86506764-66c8-4d4f-823f-7c8b46238432.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Pont d'Iéna": {
+    "images": [
+      "/data/collect_images/panoramax-06d59369-cbcc-4f8e-aaa1-9f3e5a3480a0.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Pont de la Tournelle": {
+    "images": [
+      "/data/daily_images/2027-06-09__pont-de-la-tournelle.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Promenade des Berges de la Seine — Port des Invalides": {
+    "images": [
+      "/data/collect_images/panoramax-fa053bdc-55b0-488a-a92e-f1ff0918deb1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Promenade Gisèle Halimi": {
+    "images": [
+      "/data/collect_images/panoramax-985978b0-c8fa-43e7-96b8-03828fe33614.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Promenade Marceline Loridan-Ivens": {
+    "images": [
+      "/data/collect_images/panoramax-198f0aa6-8c5d-4085-ad01-8868b1faadee.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Quai du Gros Caillou": {
+    "images": [
+      "/data/collect_images/panoramax-59b61a50-a77d-4bc3-8f93-6e9d42c933a9.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Quai Saint-Michel": {
+    "images": [
+      "/data/collect_images/panoramax-b9261bd2-8b8e-4962-a1b4-39428e2ae005.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue André Gill": {
+    "images": [
+      "/data/daily_images/2026-07-16__rue-andre-gill.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Aubry le Boucher": {
+    "images": [
+      "/data/collect_images/panoramax-168adf98-8cfe-45e0-b96a-6e47a6b5c58d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Barrelet de Ricou": {
+    "images": [
+      "/data/collect_images/photo-b90e810928cf4eb2a7f8-1c7d7e8506be.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Berger": {
+    "images": [
+      "/data/collect_images/panoramax-14339b70-d22a-4e80-9524-2fb84aaf265a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue d'Argout": {
+    "images": [
+      "/data/collect_images/panoramax-2c114e08-d5fe-43d3-a7b6-f6b083c71d74.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Danton - Quartier de la Plaine-de-Monceau": {
+    "images": [
+      "/data/collect_images/photo-0fd722a203766bb3f179-d7f4cb5deeff.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de Bourbon le Château": {
+    "images": [
+      "/data/daily_images/2026-10-18__rue-de-bourbon-le-chateau.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de Champagny": {
+    "images": [
+      "/data/collect_images/panoramax-08f76b77-f497-4cd4-ab2c-035684b3d46d.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de l'Abbé Migne": {
+    "images": [
+      "/data/collect_images/photo-b0ee2adae7f93b329882-66b81d962d06.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de l'Encheval": {
+    "images": [
+      "/data/collect_images/photo-1974f328ea671e0f38e9-18705f030962.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de la Petite-Truanderie": {
+    "images": [
+      "/data/collect_images/panoramax-bc3728bd-284a-4a4f-a5cb-f90b3683a3f2.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de la Solidarité": {
+    "images": [
+      "/data/collect_images/photo-f35f25dfda62287f6354-d53bf425a577.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de Montebello": {
+    "images": [
+      "/data/collect_images/panoramax-16a5b6b1-7255-4f36-81bf-f5d31a0dbc62.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de Nevers": {
+    "images": [
+      "/data/collect_images/panoramax-14c47e86-ad15-432f-b5fa-ecf5b1218d85.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue de Rohan": {
+    "images": [
+      "/data/collect_images/photo-df9000ce33451008fea4-40caff3d609c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue des Iris": {
+    "images": [
+      "/data/collect_images/panoramax-a5ed4384-bdbf-4765-9666-a7c32b8bd5b6.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Bocage": {
+    "images": [
+      "/data/collect_images/panoramax-7c401d42-4321-447d-b3ff-817cc9817cba.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Calvaire": {
+    "images": [
+      "/data/collect_images/panoramax-8886d1fe-d758-41f5-9870-cbfee81ed141.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Commandant René Mouchotte - Quartier de Picpus": {
+    "images": [
+      "/data/collect_images/photo-3dfa6bfe657a4a88ceea-d329d7441ddc.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Cygne": {
+    "images": [
+      "/data/collect_images/panoramax-3916d7ee-1749-4a66-a7bf-5cb128562cd4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Général Alain de Boissieu": {
+    "images": [
+      "/data/collect_images/photo-2690ae5f2657a693a6d8-c9b5e6b46cc1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue du Pré aux Chevaux": {
+    "images": [
+      "/data/collect_images/photo-004becc84f34089fdd3f-9ee9ccb58d93.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Fernand Raynaud": {
+    "images": [
+      "/data/daily_images/2027-06-19__rue-fernand-raynaud.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Française": {
+    "images": [
+      "/data/collect_images/panoramax-0ae6c182-000c-4241-8a72-e6016adf741c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Germain Pilon": {
+    "images": [
+      "/data/collect_images/photo-6bb8463b4691ab58a717-39a7a64a3d1b.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Gutenberg - Quartier du Petit-Montrouge": {
+    "images": [
+      "/data/collect_images/photo-4ef2a57b499e8778e5bc-88073e94b3bc.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Jean Renoir": {
+    "images": [
+      "/data/daily_images/2027-03-27__rue-jean-renoir.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Jongkind": {
+    "images": [
+      "/data/collect_images/panoramax-b8a83fde-fec1-404e-bcd8-21a06b6b46d2.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Joseph et Marie Hackin": {
+    "images": [
+      "/data/collect_images/panoramax-4b6e1af2-505f-4075-b76c-d394f024d9c4.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Léon Schwartzenberg": {
+    "images": [
+      "/data/collect_images/panoramax-1f1f7c6f-ac03-4e61-bf22-eb49cda4a3b7.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Louis Pergaud": {
+    "images": [
+      "/data/collect_images/panoramax-506fb263-c0b9-4994-bf21-72fe2449fcee.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Louise Hervieu": {
+    "images": [
+      "/data/collect_images/photo-978529a054b241c462cb-aabfcd7e6f47.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Maurice Arnoux": {
+    "images": [
+      "/data/collect_images/panoramax-269b28ea-92d8-421d-92c2-317d9e72baf6.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Michel-Ange - Quartier Saint-Lambert": {
+    "images": [
+      "/data/collect_images/panoramax-fadd45a4-9954-4bc5-83d2-9bc02c482f56.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Pégoud": {
+    "images": [
+      "/data/daily_images/2027-01-02__rue-pegoud.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Pierre Lescot": {
+    "images": [
+      "/data/collect_images/panoramax-1958375c-41a5-40f4-b6f9-0cdcb8ecef9e.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Radziwill": {
+    "images": [
+      "/data/collect_images/panoramax-a15dc1a3-f1db-432c-9928-a95012a968f7.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Saint-Merri": {
+    "images": [
+      "/data/collect_images/panoramax-de9fb692-26e5-483d-9e88-9e2fe7afecbc.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Rue Sébastien Bottin": {
+    "images": [
+      "/data/collect_images/panoramax-ebc01509-b82f-4647-9d8a-681310204ab1.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Square Dunois": {
+    "images": [
+      "/data/collect_images/wikimedia-27a641ed830869d9fdcc7c4a.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Tunnel d'Orléans": {
+    "images": [
+      "/data/collect_images/panoramax-02b88ac5-6b99-4910-826a-58cce665676c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "Vue écartée après contrôle visuel : le cadrage ou le sujet ne permet pas d'identifier la voie avec fiabilité."
+  },
+  "street:Avenue de la Conservation - Quartier du Père-Lachaise": {
+    "images": [
+      "/data/collect_images/photo-3fada19604dd6a6c3687-baf0224e6784.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "La caméra montre une rue extérieure au cimetière, pas la voie intérieure de la carte. Aucun remplacement Google fiable après recherche rapprochée."
+  },
+  "street:Avenue de la Fontaine du But": {
+    "images": [
+      "/data/collect_images/photo-e98c5b0d304f66167685-ba8784302a58.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "La caméra montre une rue extérieure au cimetière, pas la voie intérieure de la carte. Aucun remplacement Google fiable après recherche rapprochée."
+  },
+  "street:Avenue des Plantations": {
+    "images": [
+      "/data/daily_images/2027-06-15__avenue-des-plantations.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "La caméra montre une rue extérieure au cimetière, pas la voie intérieure de la carte. Aucun remplacement Google fiable après recherche rapprochée."
+  },
+  "street:Avenue Saint-Vincent": {
+    "images": [
+      "/data/collect_images/photo-3fdf79d4531444c8d14d-8cbe86a4d44c.jpg"
+    ],
+    "reviewedAt": "2026-10-14",
+    "reason": "La caméra montre une rue extérieure au cimetière, pas la voie intérieure de la carte. Aucun remplacement Google fiable après recherche rapprochée."
+  }
+}
