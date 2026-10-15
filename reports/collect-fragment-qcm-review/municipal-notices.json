@@ -1,0 +1,669 @@
+{
+  "source": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/",
+  "attribution": "Ville de Paris — données ouvertes, ODbL",
+  "retrieved_on": "2026-10-15",
+  "notices": {
+    "10003": {
+      "id": "10003",
+      "typo_min": "place de la Concorde",
+      "orig": "Nom choisi par le Directoire pour marquer la réconciliation des Français après les excès de la Terreur.",
+      "historique": "Ancienne place royale, elle a été réalisée à partir de 1755 par l'architecte Jacques Ange Gabriel. Les travaux furent achevés en 1775. Une statue de Louis XV à cheval en ornait le centre ; elle fut détruit en août 1792. C'est là que Louis XVI fut décapité le 21 janvier 1793. Sous Louis-Philippe (1835-1838), l'architecte Hittorff réaménagea le décor en faisant réaliser les colonnes rostales, les deux fontaines et les huit statues des villes de France, accompagnant l'obélisque de Louqsor. A l'origine place Louis XV ; en 1792, place de la Révolution ; en 1795, place de la Concorde ; en 1814, place Louis XV ; en 1826, place Louis XVI ; en 1830, elle reprit le nom de la place de la Concorde.",
+      "debut": "entre le jardin des Tuileries, l'avenue des Champs Elysées, le pont de la Concorde et la rue Royale.",
+      "fin": null,
+      "arrdt": [
+        "08e"
+      ],
+      "ouverture": "Lettres patentes du 21 juin 1757",
+      "denomination": null
+    },
+    "10076": {
+      "id": "10076",
+      "typo_min": "rue des Coutures Saint-Gervais",
+      "orig": "Ouverte sur la couture ou culture Saint-Gervais.",
+      "historique": "Elle a aussi porté le nom de rue de l'Hôpital Saint-Gervais et de rue de la Culture Saint-Gervais.",
+      "debut": "rue de Thorigny, 5.",
+      "fin": "rue Vieille du Temple, 94.",
+      "arrdt": [
+        "03e"
+      ],
+      "ouverture": "Ouverte en 1620.",
+      "denomination": null
+    },
+    "10742": {
+      "id": "10742",
+      "typo_min": "avenue Foch",
+      "orig": "Ferdinand Foch (1851-1929), maréchal de France, généralissime des armées alliées en 1918.",
+      "historique": "Précédemment, avenue du bois de Boulogne. Avant 1875, c'était l'avenue du Général Uhrich ; plus anciennement, avenue de l'Impératrice. Le plateau planté délimité par les prolongements de l'avenue Bugeaud et du boulevard Flandrin a reçu le nom de place du Paraguay par arrêté du 13 février 1962. Elle a absorbé la route départementale n° 4.",
+      "debut": "place Charles de Gaulle.",
+      "fin": "boulevard Lannes, et place du Maréchal de Lattre de Tassigny.",
+      "arrdt": [
+        "16e"
+      ],
+      "ouverture": "Décret du 31 mars 1854 (UP), rectification de la route départementale n° 4 entre la barrière de l'Étoile et la porte Dauphine.",
+      "denomination": "Arrêté préfectoral du 29 mars 1929."
+    },
+    "10817": {
+      "id": "10817",
+      "typo_min": "rue des Francs Bourgeois",
+      "orig": "Maison d'aumône destinée à accueillir des bourgeois francs d'impôts du fait de leur pauvreté (emplacement des nos 32-36).",
+      "historique": "L'arr. du 2 avril 1868, réunissait la rue Neuve Sainte-Catherine (comprise entre les rues de Turenne et Payenne) et la rue de Paradis au Marais (comprise entre les rues Vieille du Temple et des Archives) à la rue des Francs Bourgeois (comprise entre les rues Payenne et Vieille du Temple). L'arr. du 26 décembre 1893, réunissait à la rue des Francs Bourgeois une partie de la rue des Vosges (comprise entre la rue de Turenne et la place des Vosges). La rue de Paradis au Marais était, en 1787, la rue des Jardins. La rue des Francs Bourgeois était, plus anciennement, rue des Poulies, des Viez Poulies ou Vieilles Poulies, Richard des Poulies et Ferri des Poulies ; pendant la Révolution, rue des Francs Citoyens. La rue des Vosges, ouverte vers 1606, a été appelée successivement : rue Henri IV, rue de l'Echarpe Blanche, rue de l'Echarpe puis rue des Vosges.",
+      "debut": "place des Vosges, 19.",
+      "fin": "rue des Archives, 56.",
+      "arrdt": [
+        "03e",
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 2 avril 1868, parties comprises entre les rues de Turenne et Payenne et entre les rues Vieille du Temple et des Archives. Arrêté du 26 décembre 1893, partie comprise entre la rue de Turenne et la place des Vosges."
+    },
+    "10995": {
+      "id": "10995",
+      "typo_min": "avenue George V",
+      "orig": "George V, roi d'Angleterre (1865-1936).",
+      "historique": "Précédemment, avenue de l'Alma.",
+      "debut": "place de l'Alma, 5.",
+      "fin": "avenue des Champs Élysées, 99.",
+      "arrdt": [
+        "08e"
+      ],
+      "ouverture": "Décret du 6 mars 1858 (UP). Un décret du 3 décembre 1895 a fixé l'alignement d'un pan coupé à l'angle du côté impair de la rue du Boccador. Décret du 26 décembre 1883, au droit du n° 24.",
+      "denomination": "Délibération municipale du 14 juillet 1918."
+    },
+    "11106": {
+      "id": "11106",
+      "typo_min": "rue du Grand Veneur",
+      "orig": null,
+      "historique": "Elle avait été provisoirement dénommée E/3.",
+      "debut": "rue des Arquebusiers.",
+      "fin": "Hôtel du Grand Veneur.",
+      "arrdt": [
+        "03e"
+      ],
+      "ouverture": null,
+      "denomination": "Décision municipale du 23 février 1987."
+    },
+    "11324": {
+      "id": "11324",
+      "typo_min": "rue de la Huchette",
+      "orig": "Maison dite de la Huchette, probablement à cause de son enseigne, et qui appartenait, au XIVe siècle, au chapitre de Notre-Dame.",
+      "historique": "Elle existait en 1200 et portait le nom de rue de Laas. En 1284, c'était déjà la rue de la Huchette. Au commencement du XVIIe siècle, rue des Rôtisseurs. Le débouché sur la place Saint-Michel a été formé lors de la création de cette place.",
+      "debut": "rue du Petit Pont, 4 et place du Petit Pont, 6.",
+      "fin": "place Saint-Michel, 3.",
+      "arrdt": [
+        "05e"
+      ],
+      "ouverture": null,
+      "denomination": null
+    },
+    "11372": {
+      "id": "11372",
+      "typo_min": "boulevard des Italiens",
+      "orig": "Voisinage de l'ancien théâtre de la Comédie Italienne, plus tard Opéra Italien, aujourd'hui théâtre de l'Opéra Comique.",
+      "historique": "Appelé à l'origine boulevard Neuf, puis boulevard du Dépôt, boulevard de la Chaussée d'Antin, boulevard Cerutti (pendant la Révolution), boulevard de Gand (de 1815 à 1828) et boulevard des Italiens.",
+      "debut": "rue de Richelieu, 103, et boulevard Haussmann, 1.",
+      "fin": "rue Louis le Grand, 34, et rue de la Chaussée d'Antin, 2.",
+      "arrdt": [
+        "02e",
+        "09e"
+      ],
+      "ouverture": "Lettres patentes de juillet 1676 et arrêt du Conseil d'Etat du Roi du 21 juin 1704.",
+      "denomination": null
+    },
+    "11506": {
+      "id": "11506",
+      "typo_min": "quai de Jemmapes",
+      "orig": "Victoire remportée sur les Autrichiens par l'armée française de Dumouriez, le 6 novembre 1792.",
+      "historique": "Formé vers 1822, lors de la construction du canal Saint-Martin, ce quai fut dénommé, en 1824, quai Charles X et, en 1830, quai de Jemmapes. Avant 1911, il commençait rue Rampon ; à cette époque, le tronçon compris entre cette voie et la rue du Faubourg du Temple a été englobé dans le boulevard Jules Ferry. A l'origine il allait jusqu'à la place de la Bastille ; la couverture du canal et la suppression du quai, entre la place de la Bastille et la rue Rampon, compris actuellement dans l'assiette du boulevard Richard Lenoir, ont été approuvées par décret du 30 avril 1859.",
+      "debut": "rue du Faubourg du Temple, 29.",
+      "fin": "boulevard de la Villette, 131.",
+      "arrdt": [
+        "10e"
+      ],
+      "ouverture": "Formé vers 1822.",
+      "denomination": "Ce quai fut dénommé, en 1830, quai de Jemmapes."
+    },
+    "11610": {
+      "id": "11610",
+      "typo_min": "avenue Kléber",
+      "orig": "Jean-Baptiste Kléber (1753-1800), général en chef français ; voisinage de l'Arc de Triomphe.",
+      "historique": "Précédemment, avenue du Roi de Rome. Avant 1864 : 1° à l'extérieur de l'ancien mur d'octroi ; boulevard de Passy (rectifié) entre la place Charles de Gaulle et la rue de Longchamp ; boulevard de Longchamp (partie), pour le surplus ; 2° à l'intérieur de l'ancien mur d'octroi : chemin de ronde des Bassins entre les rues de Belloy et de Longchamp ; chemin de ronde de Longchamp (partie), entre la rue de Longchamp et la place du Trocadéro et du 11 novembre.",
+      "debut": "place Charles de Gaulle.",
+      "fin": "place du Trocadéro et du Onze novembre, 4.",
+      "arrdt": [
+        "16e"
+      ],
+      "ouverture": "Décret du 13 août 1854 (UP), entre la place Charles de Gaulle et la rue de Presbourg (A). Décret du 6 mars 1858 (UP), entre l'avenue des Portugais et la rue Paul Valéry (B). Ordonnance du Bureau des Finances du 16 janvier 1789, entre la rue Paul Valéry et la place du Trocadéro et du 11 novembre (C).",
+      "denomination": "Arrêté du 16 août 1879."
+    },
+    "11674": {
+      "id": "11674",
+      "typo_min": "avenue de La Motte-Picquet",
+      "orig": "Toussaint Guillaume Picquet de La Motte dit La Motte-Picquet (1720-1791) marin français, lieutenant-général des armées navales ; voisinage du Champ de Mars.",
+      "historique": "Précédemment avenue de l'Ecole Militaire. La partie de l'avenue de La Motte-Picquet comprise entre la place de l'Ecole Militaire et l'avenue de Suffren a été cédée avec le Champ de Mars par l'Etat à la Ville de Paris aux termes d'une convention du 29 mars 1890 approuvée par une loi du 31 juillet suivant. Le surplus de la voie avait été cédé antérieurement par l'Etat à la Ville (loi du 19 mars 1838). La partie qui était comprise entre la rue de Grenelle et le boulevard de La Tour-Maubourg a été englobée dans la place de Santiago du Chili en 1955. La partie comprise entre la place de l'Ecole Militaire et l'avenue de Suffren a été nommée place Joffre.",
+      "debut": "boulevard de La Tour-Maubourg, 64.",
+      "fin": "boulevard de Grenelle, 111.",
+      "arrdt": [
+        "07e",
+        "15e"
+      ],
+      "ouverture": "Tracée vers 1680, entre la rue de Grenelle et la place de l'Ecole Militaire (actuellement place Joffre) ; le surplus a été ouvert en 1775.",
+      "denomination": null
+    },
+    "11691": {
+      "id": "11691",
+      "typo_min": "rue de Lappe",
+      "orig": "Ouverte sur les terrains de Girard de Lappe, jardinier (XVIIe siècle).",
+      "historique": "Précédemment, rue Louis-Philippe (1830-1867) et antérieurement, rue Gaillard, indiquée sur le plan de Gomboust (1652).",
+      "debut": "rue de la Roquette, 32.",
+      "fin": "rue de Charonne, 13.",
+      "arrdt": [
+        "11e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 26 février 1867."
+    },
+    "11981": {
+      "id": "11981",
+      "typo_min": "place de la Madeleine",
+      "orig": "L'église de la Madeleine est située sur cette place.",
+      "historique": "La formation de la place avait déjà fait l'objet d'un décret du 10 septembre 1808. Une loi du 27 mai 1827 a autorisé la cession à la Ville des terrains acquis par l'Etat pour former les abords de l'église de la Madeleine.",
+      "debut": "rue Royale, 24-27.",
+      "fin": "rue Tronchet, 1-2.",
+      "arrdt": [
+        "08e"
+      ],
+      "ouverture": "Ordonnance du 2 juin 1824.",
+      "denomination": null
+    },
+    "12308": {
+      "id": "12308",
+      "typo_min": "avenue Montaigne",
+      "orig": "Michel Eyquem de Montaigne (1533-1592), écrivain français.",
+      "historique": "Précédemment allée des Veuves. Elle est indiquée sur le plan de Jouvin de Rochefort (1672).",
+      "debut": "place de l'Alma, 7 et place de la Reine Astrid.",
+      "fin": "rond-point des Champs Elysées-Marcel Dassault, 3.",
+      "arrdt": [
+        "08e"
+      ],
+      "ouverture": null,
+      "denomination": "Décret du 13 juillet 1850."
+    },
+    "12435": {
+      "id": "12435",
+      "typo_min": "place de la Nation",
+      "orig": "Cette place a été ainsi dénommée à l'occasion de la fête nationale du 14 juillet 1880.",
+      "historique": "Précédemment place du Trône ; pendant la Révolution, place du Trône Renversé. Elle est indiquée sur le plan de Delagrive (1728).",
+      "debut": "rue du Faubourg Saint-Antoine.",
+      "fin": "avenue du Trône.",
+      "arrdt": [
+        "11e",
+        "12e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 2 juillet 1880."
+    },
+    "12454": {
+      "id": "12454",
+      "typo_min": "pont Neuf",
+      "orig": "Ainsi appelé au moment de sa construction par opposition aux anciens ponts de Paris.",
+      "historique": "Commencé par Henri III, achevé sous le règne de Henri IV.",
+      "debut": "quais du Louvre et de la Mégisserie.",
+      "fin": "quais de Conti et des Grands Augustins.",
+      "arrdt": [
+        "01e",
+        "06e"
+      ],
+      "ouverture": "Construit entre 1578 et 1607.",
+      "denomination": null
+    },
+    "12544": {
+      "id": "12544",
+      "typo_min": "avenue de l'Opéra",
+      "orig": "Conduit au théâtre national de l'Opéra.",
+      "historique": "Précédemment avenue de la Nation, antérieurement avenue Napoléon.",
+      "debut": "place André Malraux, 4.",
+      "fin": "place de l'Opéra, 1.",
+      "arrdt": [
+        "01e",
+        "02e"
+      ],
+      "ouverture": "La partie comprise entre la place André Malraux et les rues de l'Echelle et Molière (A) a été percée en 1867 ; son ouverture avait été prévue par les décrets du 15 novembre 1853 et 3 mai 1854, mais avec une largeur de 22 m seulement. Décret du 27 juin 1876 (UP), entre les rues de l'Echelle et Molière et la rue Louis le Grand (B). Décret du 24 août 1864, le surplus (C).",
+      "denomination": "Arrêté du 10 novembre 1873."
+    },
+    "12545": {
+      "id": "12545",
+      "typo_min": "place de l'Opéra",
+      "orig": "Place située devant le théâtre national de l'Opéra.",
+      "historique": null,
+      "debut": "avenue de l'Opéra, boulevard des Capucines, au débouché des rues Auber, Halévy, de la Paix et du Quatre Septembre.",
+      "fin": null,
+      "arrdt": [
+        "02e",
+        "09e"
+      ],
+      "ouverture": "Décret du 16 juillet 1862 (UP), partie située au nord du boulevard des Capucines (A). Décret du 24 août 1864 (UP), partie située au sud du boulevard des Capucines (B).",
+      "denomination": "Arrêté du 19 août 1864, partie A. Arrêté du 10 novembre 1873, partie B."
+    },
+    "12615": {
+      "id": "12615",
+      "typo_min": "place du Panthéon",
+      "orig": "Cette place entoure le Panthéon.",
+      "historique": "Dès 1770, elle portait le nom de place Sainte-Geneviève. Pendant la Révolution, on l'appela place du Panthéon Français.",
+      "debut": "entre la rue Clotilde, la place Sainte-Geneviève et les rues Cujas, Soufflot, Clotaire, d'Ulm et Valette.",
+      "fin": null,
+      "arrdt": [
+        "05e"
+      ],
+      "ouverture": null,
+      "denomination": null
+    },
+    "12820": {
+      "id": "12820",
+      "typo_min": "rue de Picardie",
+      "orig": "Province française ; voisinage de la place de France projetée par Henri IV.",
+      "historique": "Précédemment rue de Beaujolais (partie A) et partie de la place de la Rotonde du Temple (partie B). La partie A, ouverte sur la culture du Temple, a été appelée rue des Alpes de 1798 à 1814. \r\nLa partie de la rue de Picardie située au Nord de la rue de Franche-Comté a été dénomée rue de la Corderie par arrêté préfectoral du 11 mai 1885.",
+      "debut": "rue de Bretagne, 40.",
+      "fin": "rue de Franche Comté, 2.",
+      "arrdt": [
+        "03e"
+      ],
+      "ouverture": "Partie A, ouverte en 1626.",
+      "denomination": "Arrêté du 26 février 1867, partie A. Arrêté du 1er février 1877, partie B."
+    },
+    "13108": {
+      "id": "13108",
+      "typo_min": "rue Quincampoix",
+      "orig": "Ancien nom (XIIIe siècle), supposé être celui d'un particulier.",
+      "historique": "Précédemment, rue des Cinq Diamants (partie A) et rue Quincampoix (partie B). L'ancienne rue des Cinq Diamants, ainsi appelée dès 1536, a porté les noms de rue de la Couréerie, rue de la Courroirie, rue de la Vieille Courroierie. L'ancienne rue Quincampoix existait en 1210. On a écrit son nom : Quinquempoit (Guillot), Cinquampoit, Quiquenpoit (Ducerceau), Quinquempoix (Jaillot). Elle fut également appelée rue de la Confréerie.",
+      "debut": "rue des Lombards, 16-20.",
+      "fin": "rue aux Ours, 17.",
+      "arrdt": [
+        "03e",
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": "Décision ministérielle du 18 février 1851, réunissant la rue des Cinq Diamants (partie A) à la rue Quincampoix (partie B)."
+    },
+    "13204": {
+      "id": "13204",
+      "typo_min": "place de la République",
+      "orig": "Une statue de la République est érigée sur cette place.",
+      "historique": "Précédemment place du Château d'Eau.",
+      "debut": "boulevards du Temple, Saint-Martin, de Magenta et Voltaire, avenue de la République, et rues du Temple, René Boulanger, Léon Jouhaux, du Faubourg du Temple.",
+      "fin": null,
+      "arrdt": [
+        "03e",
+        "10e",
+        "11e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 4 mai 1879."
+    },
+    "13413": {
+      "id": "13413",
+      "typo_min": "boulevard de Sébastopol",
+      "orig": "Port de guerre de Crimée pris par l'armée anglo-française, après un long siège, le 8 septembre 1855.",
+      "historique": "Précédemment boulevard du Centre et partie de la rue du Ponceau située entre les rues de Palestro et Notre-Dame de Nazareth. Il a englobé ou supprimé : la rue de la Vieille Monnaie, la rue Trognon, le passage Saucède, la cour Batave, la rue des Trois Maures, le passage et l'impasse de Venise, le passage Beaufort, l'impasse Beaufort, l'impasse des Etuves, le passage du Cheval Rouge, la rue Salle au Comte ou de la Salle au Comte, l'ancienne rue du Bourg l'Abbé, la poterne du Bourg l'Abbé, la rue des Arts, la rue du Grand Hurleur, la rue du Petit Hurleur, le passage ou cour Saint-Chaumont, le passage Saint-Denis, l'impasse Saint-François, la rue Saint-Magloire, l'enclos de la Trinité (comprenant le passage Greneta, la Grande Rue, les rues des Métiers, des Mécaniques et de la Laiterie et la rue ou cour du Commerce) et le passage de la Longue Allée.",
+      "debut": "avenue Victoria, 12.",
+      "fin": "boulevard Saint-Denis, 11.",
+      "arrdt": [
+        "01e",
+        "02e",
+        "03e",
+        "04e"
+      ],
+      "ouverture": "Décret du 29 septembre 1854 (UP). Décret du 23 août 1858 : 1° raccordement des côtés impair et pair avec le côté pair de la rue Greneta ; 2° au droit du n° 107 (partie) ; 3° au droit du square Chautemps.",
+      "denomination": "Décret du 25 septembre 1855."
+    },
+    "13493": {
+      "id": "13493",
+      "typo_min": "rue Soufflot",
+      "orig": "Jacques Germain Soufflot (1713-1780), architecte français du Panthéon.",
+      "historique": "La partie A fut dénommée rue Soufflot en 1807 ; elle est appelée rue du Panthéon Français sur le plan de Verniquet. L'ouverture du tronçon B, avait déjà été prévue par une décision ministérielle du 24 frimaire an XIII (larg. : 12 m). Le décret d'alignements du 30 juillet 1859 a reçu sa complète exécution en 1876.",
+      "debut": "place du Panthéon, 21.",
+      "fin": "boulevard Saint-Michel, 65.",
+      "arrdt": [
+        "05e"
+      ],
+      "ouverture": "Ouverture en 1846, partie B (Ordonnance du 9 août 1826 [larg. : 14 m] et ordonnance du 13 mars 1845 [UP]).  La partie A a été créée vers 1760.",
+      "denomination": null
+    },
+    "13598": {
+      "id": "13598",
+      "typo_min": "place Saint-Germain des Prés",
+      "orig": null,
+      "historique": "Un arrêté du 27 janvier 1977 a réuni à la place Saint-Germain des Prés, les nos 44 et 46 de la rue de Rennes, situés au nord du boulevard Saint-Germain.",
+      "debut": "entre le boulevard Saint-Germain, la rue de l'Abbaye et la rue Guillaume Apollinaire.",
+      "fin": null,
+      "arrdt": [
+        "06e"
+      ],
+      "ouverture": "Décret du 28 juillet 1866 (UP).",
+      "denomination": null
+    },
+    "13612": {
+      "id": "13612",
+      "typo_min": "rue Saint-Jacques",
+      "orig": "Dû à une ancienne chapelle Saint-Jacques, donnée au XIIIe siècle aux Dominicains, surnommés depuis Jacobins.",
+      "historique": "C'est l'antique voie gallo-romaine qui formait le cardo de Lutèce. Au XIIe siècle c'était la grand'rue du Petit Pont. Elle porta plus tard les noms de grand'rue Saint-Jacques des Prêcheurs, grand'rue Saint-Etienne des Grès, grand'rue Saint-Benoît Le Bestournet, grand'rue près du chevet de l'Eglise Saint-Séverin, grand'rue oultre Petit Pont ou rue outre Petit Pont, grand'rue vers Saint-Matelin, grand'rue Saint-Benoît et enfin grand'rue Saint-Jacques. Depuis 1806 rue Saint-Jacques. En 1974, on a étendu l'assiette de la place Alphonse Laveran jusqu'à la grille de l'hôpital militaire du Val de Grâce incorporant ainsi une partie de la rue.",
+      "debut": "rue Galande, 79, et rue Saint-Séverin.",
+      "fin": "boulevard de Port-Royal, 84.",
+      "arrdt": [
+        "05e"
+      ],
+      "ouverture": null,
+      "denomination": "La dénomination actuelle date de 1806."
+    },
+    "13685": {
+      "id": "13685",
+      "typo_min": "place Saint-Sulpice",
+      "orig": "Située devant l'église Saint-Sulpice.",
+      "historique": "Commencée en octobre 1757. Un arrêté des consuls du 17 vendémiaire an XI lui avait assigné de nouvelles dimensions qui furent changées par décret de 1806. Trois projets successivement présentés en 1806, 1808 1810, modifièrent les premiers tracés. Un décret du 18 février 1811 ordonna l'achèvement de la place.",
+      "debut": "rue Bonaparte, 61 bis, devant l'église Saint-Sulpice.",
+      "fin": null,
+      "arrdt": [
+        "06e"
+      ],
+      "ouverture": null,
+      "denomination": null
+    },
+    "13911": {
+      "id": "13911",
+      "typo_min": "rue de Turenne",
+      "orig": "Henri de La Tour d'Auvergne, vicomte de Turenne (1611-1675), maréchal-général, avait son hôtel dans cette rue.",
+      "historique": "Précédemment rue du Val Sainte-Catherine dans la partie A et rue Saint-Louis dans la partie B. La partie A s'est appelée successivement : ruelle des Egouts (1590), rue des Egouts (1606), rue de l'Egout Couvert, rue de l'Egout Sainte-Catherine, rue du Val Sainte-Catherine (déc. min. du 17 août 1839). La partie comprise entre les rues des Francs Bourgeois et des Filles du Calvaire s'est appelée successivement : rue de l'Egout, rue de l'Egout Couvert, rue Neuve Saint-Louis, grande rue Saint-Louis, rue Saint-Louis au Marais, rue de Turenne (14 vendémiaire an IX), rue Saint-Louis (arr. du 26 avril 1814). La section comprise entre les rues des Filles du Calvaire et Charlot s'est appelée successivement : rue Boucherat et rue Saint-Louis (en partie, arr. du 11 mars 1851).",
+      "debut": "rue Saint-Antoine, 72.",
+      "fin": "rue Charlot, 70.",
+      "arrdt": [
+        "03e",
+        "04e"
+      ],
+      "ouverture": "Arrêt du Conseil du Roi des 23 novembre 1694, 22 décembre 1696 et 12 juillet 1698, entre les rues des Filles du Calvaire et Charlot. Arrêt du Conseil du Roi du 21 février 1701, ancienne partie de la rue de Normandie comprise entre les rues de Bretagne et Debelleyme (M). La partie M a été réunie à la rue de Turenne en 1830.",
+      "denomination": "Décret du 2 octobre 1865."
+    },
+    "13918": {
+      "id": "13918",
+      "typo_min": "rue de l'Université",
+      "orig": "Ouverte en partie sur des terrains ayant appartenu à l'ancienne Université.",
+      "historique": "Précédemment, rue de l'Université au Gros Caillou, dans les parties B, C, D et E et rue Barbey d'Aurevilly, dans la partie F (arr. du 24 juin 1907). La partie de la voie comprise entre la rue des Saints-Pères et l'avenue de La Bourdonnais a remplacé un ancien chemin sinueux dit chemin des Treilles ou de la Petite Seine et plus tard chemin aux Clercs ou rue du Pré aux Clercs (1649). Entre les rues des Saints-Pères et du Bac, elle a porté le nom de rue de la Sorbonne. La partie F a été ouverte sous le nom de rue de l'Université, sur les terrains détachés du Champ de Mars.",
+      "debut": "rue des Saints-Pères, 20.",
+      "fin": "allée Paul Deschanel, 11.",
+      "arrdt": [
+        "07e"
+      ],
+      "ouverture": "Ouverte en 1880, partie F.",
+      "denomination": "Arrêté du 31 août 1838, parties B, C, D et E. Arrêté du 7 mars 1908, partie F."
+    },
+    "13938": {
+      "id": "13938",
+      "typo_min": "quai de Valmy",
+      "orig": "Victoire remportée sur les Prussiens par l'armée française de Kellermann et Dumouriez (20 septembre 1792).",
+      "historique": "Il a été appelé, lors de sa formation, en 1824, quai Louis XVIII. Il s'étendait alors jusqu'à la place de la Bastille ; le tronçon supprimé par décret du 30 avril 1859 est compris dans l'assiette du boulevard Richard Lenoir ; le tronçon supprimé par arrêté préfectoral du 27 juillet 1906 est compris dans l'assiette du boulevard Jules Ferry.",
+      "debut": "rue du Faubourg du Temple, 27.",
+      "fin": "rue La Fayette, 230.",
+      "arrdt": [
+        "10e"
+      ],
+      "ouverture": null,
+      "denomination": "Nommé, en 1830, quai de Valmy."
+    },
+    "13983": {
+      "id": "13983",
+      "typo_min": "place Vendôme",
+      "orig": "Créée sur l'emplacement de l'hôtel de Vendôme.",
+      "historique": "Elle a été appelée place Vendôme dès le XVIIIe siècle ; c'était plus anciennement la place Louis le Grand et, à l'origine, la place des Conquêtes. On lui a donné le nom de place des Piques pendant la Révolution et de la place Internationale en 1871.",
+      "debut": "rue Saint-Honoré, 356.",
+      "fin": "rue des Capucines, 1.",
+      "arrdt": [
+        "01e"
+      ],
+      "ouverture": "Lettres patentes du 7 avril 1699. Elle avait été commencée suivant un autre plan à la suite d'un arrêt du Conseil du Roi du 2 mai 1686.",
+      "denomination": null
+    },
+    "14039": {
+      "id": "14039",
+      "typo_min": "avenue Victor Hugo",
+      "orig": "Marie Victor Hugo (1802-1885), poète et homme politique français.",
+      "historique": "Précédemment, avenue d'Eylau et, antérieurement, avenue de Saint-Cloud. Route départementale n° 64 en 1840.",
+      "debut": "place Charles de Gaulle.",
+      "fin": "avenue Henri Martin, 76, et rue de la Faisanderie, 127.",
+      "arrdt": [
+        "16e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 9 décembre 1885, entre la place Charles de Gaulle et la place Victor Hugo, et Décret du 2 mai 1881, entre la place Victor Hugo et l'avenue Henri Martin."
+    },
+    "14052": {
+      "id": "14052",
+      "typo_min": "rue Vieille du Temple",
+      "orig": "Ancien chemin qui conduisait à la Commanderie du Temple.",
+      "historique": "Des titres du XIIIe siècle la mentionnent déjà, sous le nom de vieille rue du Temple ; Guillot, en 1300, rue du Temple. Elle a encore porté les noms de : rue de la Culture du Temple, rue de la Couture du Temple, rue de la Clôture du Temple, rue de l'Egout du Temple, rue de la Porte Barbette, rue de la Poterne Barbette, rue Barbette et rue Vieille Barbette. La rue Vieille du Temple commençait jadis rue Saint-Antoine (rue François Miron actuelle) ; le tronçon compris entre cette dernière voie et la rue de Rivoli a été réunie à la rue du Pont Louis-Philippe par un arr. du 13 juillet 1885.",
+      "debut": "rue de Rivoli, 36.",
+      "fin": "rue de Bretagne, 1.",
+      "arrdt": [
+        "03e",
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": null
+    },
+    "14109": {
+      "id": "14109",
+      "typo_min": "rue Vivienne",
+      "orig": "Dû à la famille Vivien, à laquelle appartenait Louis Vivien, seigneur de Saint-Marc, échevin en 1599.",
+      "historique": "La partie A est dénommée rue du Perron dans le dictionnaire des Frères Lazare (1844-1855). La partie B est appelée rue Vivien sur le plan de Gomboust (1652).",
+      "debut": "rue de Beaujolais, 14.",
+      "fin": "boulevard Montmartre, 13.",
+      "arrdt": [
+        "01e",
+        "02e"
+      ],
+      "ouverture": "La partie A a été percée en 1784. Décision ministérielle du 15 février 1809, entre les rues du Quatre Septembre et Feydeau. Ordonnance du 16 juin 1824, entre la rue Feydeau et le boulevard Montmartre. L'ouverture de la partie C prévue par la décision ministérielle du 15 février 1809 ne fut d'abord réalisée que jusqu'à la rue Feydeau. Le percement jusqu'au boulevard Montmartre fut exécuté en 1830.",
+      "denomination": null
+    },
+    "14121": {
+      "id": "14121",
+      "typo_min": "place des Vosges",
+      "orig": "Donné en l'an VIII parce que le département des Vosges avait été le premier à acquitter la totalité de ses contributions.",
+      "historique": "Elle a été dénommée : place Royale à l'origine ; place des Fédérés, le 19 août 1792 ; place de l'Indivisibilité, le 4 juillet 1793 ; place des Vosges, le 26 fructidor an VIII ; place Royale, le 27 avril 1814 ; place des Vosges, le 14 mars 1848, et place Royale, de 1852 à 1870. La partie située au nord du jardin, dénommée rue des Vosges, par arr. préf. du 22 janvier 1862, a été de nouveau réunie à la place par arr. préf. du 26 décembre 1893. Le jardin public situé au milieu de la place a été créé en 1866.",
+      "debut": "rue de Birague, 11 bis.",
+      "fin": "rue de Béarn, 1.",
+      "arrdt": [
+        "03e",
+        "04e"
+      ],
+      "ouverture": "Lettres patentes de juillet 1605.",
+      "denomination": "Arrêté du maire de Paris, du 16 septembre 1870."
+    },
+    "15068": {
+      "id": "15068",
+      "typo_min": "place de l'Hôtel de Ville-esplanade de la Libération",
+      "orig": "Dénommée en commémoration de la Libération de Paris lors de la Seconde Guerre Mondiale.",
+      "historique": "Précédemment dénommée place de l'Hôtel de Ville. Elle existait au commencement du XIIe siècle, sous le nom de place de Grève. Pendant la Révolution, elle s'est appelée place de la Maison Commune.",
+      "debut": "quai de Gesvres, 2, et quai de l'Hôtel de Ville.",
+      "fin": "rue de Rivoli, 31.",
+      "arrdt": [
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": "Délibération municipale du 22 et 23 avril 2013."
+    },
+    "15390": {
+      "id": "15390",
+      "typo_min": "place Juliette Gréco",
+      "orig": "Juliette Gréco (Montpellier (Hérault), 1927 - Ramatuelle (Var), 2020 ), artiste-interprète et comédienne. Commandeure de la Légion d'honneur, grande officière de l'ordre national du Mérite et commandeure de l'ordre des Arts et des Lettres.",
+      "historique": null,
+      "debut": "située place Saint-Germain-des-Prés, devant le square Laurent Prache.",
+      "fin": null,
+      "arrdt": [
+        "06e"
+      ],
+      "ouverture": null,
+      "denomination": "Délibération municipale des 1er, 2, 3 et 4 juin 2021."
+    },
+    "8871": {
+      "id": "8871",
+      "typo_min": "pont Alexandre III",
+      "orig": "Alexandre III (1845-1894), tsar de Russie.",
+      "historique": null,
+      "debut": "cours La Reine.",
+      "fin": "quai d'Orsay.",
+      "arrdt": [
+        "07e",
+        "08e"
+      ],
+      "ouverture": "La première pierre de ce pont a été solennellement posée par le tsar Nicolas II, l'impératrice de Russie et le président Félix Faure, le 7 octobre 1896.",
+      "denomination": "Décret du 4 octobre 1896."
+    },
+    "9037": {
+      "id": "9037",
+      "typo_min": "rue des Arènes",
+      "orig": "Voisinage des anciennes Arènes de Lutèce.",
+      "historique": null,
+      "debut": "rue Linné, 21.",
+      "fin": "place Émile Mâle.",
+      "arrdt": [
+        "05e"
+      ],
+      "ouverture": "Ouverte en 1888.",
+      "denomination": "Arrêté du 18 avril 1890."
+    },
+    "9076": {
+      "id": "9076",
+      "typo_min": "pont des Arts",
+      "orig": "Voisinage du Palais du Louvre qui a porté au début du XIXe siècle, le nom de Palais des Arts.",
+      "historique": "Précédemment pont du Louvre.",
+      "debut": "situé entre le quai François Mitterrand et les quais de Conti et Malaquais, au droit du guichet du Louvre et de la place de l'Institut.",
+      "fin": null,
+      "arrdt": [
+        "01e",
+        "06e"
+      ],
+      "ouverture": "Construit en 1802-1803, en vertu d'une loi du 15 mars 1801. Reconstruit entre 1981 et 1984.",
+      "denomination": null
+    },
+    "9168": {
+      "id": "9168",
+      "typo_min": "boulevard Barbès",
+      "orig": "Armand Barbès (1809-1870), homme politique français né à Pointe-à-Pitre.",
+      "historique": "Précédemment, partie de l'avenue Barbès (3 avril 1882) et antérieurement partie du boulevard Ornano. Il a absorbé une partie de la rue des Poissonniers et la rue Lévisse.",
+      "debut": "boulevard de Rochechouart, 2, et boulevard de la Chapelle, 126.",
+      "fin": "rue Ordener, 75.",
+      "arrdt": [
+        "18e"
+      ],
+      "ouverture": "Décret du 23 mai 1863 (UP), sauf au droit du n° 3, régi par l'ordonnance du 31 mars 1847.",
+      "denomination": "Arrêté du 12 mai 1882."
+    },
+    "9196": {
+      "id": "9196",
+      "typo_min": "place de la Bastille",
+      "orig": "Place créée sur l'emplacement de la forteresse de la Bastille, construite en 1369, prise le 14 juillet 1789.",
+      "historique": "Une ordonnance royale du 6 juillet 1831 a prescrit l'érection de la colonne de Juillet. Elle a absorbé la place de la Porte Saint-Antoine.",
+      "debut": "boulevard Richard Lenoir, et boulevard Beaumarchais, rue de la Bastille, rue Saint-Antoine, et boulevard Henri IV, boulevard Bourdon, boulevard de la Bastille, rue de Lyon, rue de Charenton, rue du Faubourg Saint-Antoine et rue de la Roquette.",
+      "fin": null,
+      "arrdt": [
+        "04e",
+        "11e",
+        "12e"
+      ],
+      "ouverture": "Loi du 27 juin 1792.",
+      "denomination": null
+    },
+    "9341": {
+      "id": "9341",
+      "typo_min": "pont de Bir-Hakeim",
+      "orig": "Point stratégique dans le désert de Libye où les forces françaises opposèrent, en juin 1942, une défense héroïque aux troupes allemandes.",
+      "historique": "Précédemment, pont-viaduc de Passy. Il a remplacé, en 1907, une passerelle édifiée en 1877-1878 et dénommée pont de Passy par arrêté préfectoral du 3 mai 1878.",
+      "debut": "avenue du Président Kennedy.",
+      "fin": "quai de Grenelle.",
+      "arrdt": [
+        "15e",
+        "16e"
+      ],
+      "ouverture": "Construit en 1907.",
+      "denomination": "Arrêté du 10 juin 1949."
+    },
+    "9385": {
+      "id": "9385",
+      "typo_min": "rue Bonaparte",
+      "orig": "Napoléon Bonaparte (1769-1821), empereur des Français.",
+      "historique": "Précédemment, rue des Petits Augustins, entre le quai Malaquais et la rue Jacob ; rue Saint-Germain des Prés, entre les rues Jacob et du Vieux Colombier ; rue du Pot de Fer Saint-Sulpice, entre les rues du Vieux Colombier et de Vaugirard ; rue Saint-Germain entre la place Saint-Germain des Prés et la place Saint-Sulpice. La partie qui était comprise entre les rues de Vaugirard et d'Assas a pris en 1879 le nom de rue du Luxembourg puis, en 1918, celui de rue Guynemer. A la fin du XVIe siècle, l'ancienne rue des Petits Augustins a porté les noms de rue de Bouyn, petite rue de Seine, rue de la Petite Seine, chemin de la Noue. L'ancienne rue Saint-Germain des Prés, tracée en 1804, entre la rue Jacob et l'ancienne place Saint-Germain des Prés et en 1852, entre ladite place et la rue du Vieux Colombier. La première partie a été dénommée cour des Religieux, rue Bonaparte, rue de la Poste aux Chevaux et, en 1816, rue Saint-Germain des Prés. La seconde partie avait été dénommée rue Saint-Germain des Prés en 1847. Au XVe siècle, l'ancienne rue du Pot de Fer Saint-Sulpice était dénommée ruelle Saint-Sulpice ; plus tard, ruelle Henri du Vergier et rue du Verger. Au début du XVIIe siècle, on l'appelait rue du Pot de Fer dite du Verger. Elle aurait aussi porté les noms de rue des Jardins Saint-Sulpice et de rue des Jésuites.",
+      "debut": "quai Malaquais, 7.",
+      "fin": "rue de Vaugirard, 58.",
+      "arrdt": [
+        "06e"
+      ],
+      "ouverture": "Ordonnance du 7 septembre 1845 (UP), entre le boulevard Saint-Germain et la rue du Vieux Colombier.",
+      "denomination": "Arrêté du 12 août 1852."
+    },
+    "9448": {
+      "id": "9448",
+      "typo_min": "rue du Bourg Tibourg",
+      "orig": "Principale rue de l'ancien bourg Tibout ou Thibault.",
+      "historique": "Précédemment, rue du Bourg Tibourg, entre les rues de la Verrerie et Sainte-Croix de la Bretonnerie et partie de la place du Marché Saint-Jean, entre les rues de la Verrerie et de Rivoli. L'ancienne rue du Bourg Tibourg existait dès le milieu du XIIe siècle (`vicus Burgi Thibaudi`). On l'a appelée : rue du Bourtibou, du Bourc Tibout, du Bouc Thibout, du Bourg Thiboud, du Beautibourg et rue du Bourg Thiébault. L'ancienne place du Marché Saint-Jean existait à la fin du XIIIe siècle et s'appelait place du cimetière Saint-Jean ; plus tard, place du Vieux Cimetière Saint-Jean. Sous la Révolution, elle porta le nom de place des Droits de l'Homme.",
+      "debut": "rue de Rivoli, 42 bis.",
+      "fin": "rue Sainte-Croix de la Bretonnerie, 7.",
+      "arrdt": [
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 20 juillet 1868."
+    },
+    "9607": {
+      "id": "9607",
+      "typo_min": "boulevard des Capucines",
+      "orig": "Ce boulevard longeait les jardins du couvent des Capucines.",
+      "historique": "Précédemment, rue Basse du Rempart, entre les rues Scribe et de Caumartin. Pendant la Révolution c'était une partie du boulevard Cerutti.",
+      "debut": "rue Louis le Grand, 25 et rue de la Chaussée d'Antin, 1.",
+      "fin": "rue des Capucines, 24 et rue de Caumartin, 2.",
+      "arrdt": [
+        "02e",
+        "09e"
+      ],
+      "ouverture": "Lettres patentes de juillet 1676.",
+      "denomination": "Arrêté du 11 mai 1885, réunissant au boulevard des Capucines, la rue Basse du Rempart, entre les rues Scribe et de Caumartin."
+    },
+    "9710": {
+      "id": "9710",
+      "typo_min": "avenue des Champs Élysées",
+      "orig": "Les Champs Elysées ont été ainsi nommés par allusion au séjour des bienheureux dans les mythologies grecque et romaine.",
+      "historique": "Elle a porté les noms d'allée du Roule et d'avenue de Neuilly. La partie comprise entre la place de la Concorde et le rond-point des Champs Elysées est dénommée avenue des Tuileries sur le plan de Verniquet.",
+      "debut": "place de la Concorde.",
+      "fin": "place Charles de Gaulle.",
+      "arrdt": [
+        "08e"
+      ],
+      "ouverture": "Ouverte en 1670.",
+      "denomination": "Décret du 2 mars 1864."
+    },
+    "9759": {
+      "id": "9759",
+      "typo_min": "place Charles de Gaulle",
+      "orig": "Charles de Gaulle (1890-1970), général, chef de la France Libre et président de la République française de 1959 à 1969.",
+      "historique": "Précédemment, place de l'Etoile. Créée vers 1670. Une loi du 22 juin 1854 a autorisé l'Etat à céder à la Ville de Paris des terrains provenant de l'ancien promenoir de Chaillot pour achever et embellir les abords de l'Arc de Triomphe de l'Etoile.",
+      "debut": "intersection des avenues des Champs Elysées, de Friedland, Hoche, de Wagram, Mac-Mahon, Carnot, de la Grande Armée, Foch, Victor Hugo, Kléber, d'Iéna et Marceau.",
+      "fin": null,
+      "arrdt": [
+        "08e",
+        "16e",
+        "17e"
+      ],
+      "ouverture": null,
+      "denomination": "Arrêté du 13 novembre 1970."
+    },
+    "9929": {
+      "id": "9929",
+      "typo_min": "rue du Cloître Saint-Merri",
+      "orig": "Traversait autrefois le cloître de l'église Saint-Merri.",
+      "historique": "Cette voie est indiquée dans le Dit des rues de Paris de Guillot (1300). Elle formait autrefois un coude qui aboutissait rue de la Verrerie ; ce tronçon est actuellement dénommé rue des Juges Consuls. Le percement du tronçon compris entre la rue des Juges Consuls et la rue du Renard est prévu sur le plan annexé à l'ordonnance royale du 11 avril 1827 concernant la vente de l'ancien hôtel du Tribunal de Commerce de Paris, situé dans le cloître Saint-Merri.",
+      "debut": "rue du Renard, 17.",
+      "fin": "rue Saint-Martin, 78.",
+      "arrdt": [
+        "04e"
+      ],
+      "ouverture": null,
+      "denomination": null
+    }
+  }
+}

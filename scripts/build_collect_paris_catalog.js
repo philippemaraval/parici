@@ -13,6 +13,9 @@ const {
 } = require("../src/geometry-center.cjs");
 const root = path.resolve(__dirname, "..");
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
+const rarityOverrides = read(
+  "data/collect_curated_rarity_overrides_paris.json",
+);
 const norm = (s) =>
   String(s || "")
     .normalize("NFD")
@@ -57,7 +60,8 @@ const transport = read("data/paris_transit_lines.geojson").features;
 const explorer = read("data/explorer_paris.json");
 const editorial = read("data/collect_paris_editorial.json");
 const descriptions = read("data/collect_descriptions.json");
-const fragmentRequirements = read("data/collect_paris_fragments.json");
+const fragmentRequirements = read("data/collect_paris_fragments_active.json");
+const reviewedFragmentRequirements = read("data/collect_paris_fragments.json");
 const photoExclusions = fs.existsSync(
   path.join(root, "data/collect_photo_exclusions_paris.json"),
 )
@@ -486,6 +490,20 @@ for (const f of transport.sort((a, b) =>
       source: "https://www.openstreetmap.org/copyright",
     },
   );
+const knownCards = new Map(
+  records.map((r) => [r.family + ":" + r.source_entity_id, r]),
+);
+for (const [key, rarity] of Object.entries(rarityOverrides)) {
+  if (!knownCards.has(key) || ![1, 2, 3, 4, 5].includes(rarity))
+    throw Error("Invalid curated rarity: " + key);
+  knownCards.get(key).base_rarity = rarity;
+}
+// Apply reviewed fragment requirements after all card content is assembled.
+for (const [key, required] of Object.entries(reviewedFragmentRequirements)) {
+  if (!knownCards.has(key) || ![2, 3, 4].includes(required))
+    throw Error("Invalid fragment requirement: " + key);
+  // Reviewed requirements stay pending until the question bank is activated.
+}
 const previousCatalog = fs.existsSync(
   path.join(root, "data/collect_paris_catalog.json"),
 )

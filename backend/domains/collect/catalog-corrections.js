@@ -2,6 +2,7 @@
 const catalog = require("../../../data/collect_paris_catalog.json");
 const VERSION = "20261013-2";
 async function applyCatalogCorrections(client) {
+  await require("./curated-rarities").applyCuratedRarities(client);
   const marker = await client.query(
     "SELECT value_text FROM app_settings WHERE key='parici_collect_catalog_revision'",
   );

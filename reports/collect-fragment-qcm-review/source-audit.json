@@ -1,0 +1,651 @@
+{
+  "checked_on": "2026-10-15",
+  "scope": "Retrieval and source identity only; not an automatic proof of historical truth.",
+  "sources": [
+    {
+      "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Sulpice_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "bccc86a99dfcce9078821a8e84650b54d6cbe7126c3110779445b356f13d5209"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/%C3%89glise_de_la_Madeleine",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "0b95c465cb75a5bafdfd9d59a457401bd3aba024a086a883369c99dddb88f56d"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Arc_de_triomphe_de_l%27%C3%89toile",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "4a89551cdd08f19b2e07695dd5270fe6bbccac36a10a246d5290e66f36f5fa63"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Avenue_de_l%27Op%C3%A9ra",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "742bb5e093af3e2e2f45224b6ad0c2b05643eecffed2693a5a11f9d12e0f2ebf"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Avenue_des_Champs-%C3%89lys%C3%A9es",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "d86c11e87b0f3f9a46124ae1018e21a0cf5a698c7c868f1cf5fff5795367969c"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Basilique_du_Sacr%C3%A9-C%C5%93ur_de_Montmartre",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "21ecc2315d73c511d45bfa1496711544d3a38ad4d4c745827549ae799adfd065"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Biblioth%C3%A8que_nationale_de_France",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "95140cd54a491ca36f32dbc27eee7256c4eca6fce1ac87dd4f3e7815a836b2fb"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Bourse_de_commerce_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "eade4d4c52e3af8f81e26fab0edc03bf6a0cdef07eb64e01f0358f54104788d4"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Canal_Saint-Martin",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "375ca5953a8e3f6f0dad9b92fba175d099373821bed839dc5ace954005bc4088"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Cath%C3%A9drale_Notre-Dame_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "3b3be4a005020c99625a14dc7072b4108a420b5fc4546bcdb0e066e74aae520d"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Centre_national_d%27art_et_de_culture_Georges-Pompidou",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "8463ea1293c65a27f5e71d063863b6baa361bfd8948d84c0baa0de8698f2b02b"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Cimeti%C3%A8re_du_P%C3%A8re-Lachaise",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "d090bf79bf5e3e021a594825d2f7562065c063ed160fec7a6ebaf68375893da8"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Colonne_Vend%C3%B4me",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "0a962570bbe0e9176b53ab3e3c8f4ed1cbd65a7dcc583e2bdf06058cc64d3ac9"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "6c91d35ffd16ecf99f00a09e7c342bd5797fcab5d612ed680c5a7ad413b02d56"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_des_Invalides",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "225302891a27166ca46442ac9b0ba8a115f2eab9225bc4967a3756d5254e68bc"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Institut_de_France",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "513c8beaa51394a5710d94f16e1abcb8508c9544cb08e4704b048ea4d2c9f1e7"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Jardin_du_Luxembourg",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "cb12d28d698ead77419e6bd8628632cb625184bb8acc97c32bcb68d9a8d17144"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ligne_14_du_m%C3%A9tro_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "1e4ad72a3a63e253ef5b38eb1de8527546f82e4e25764647428fbe0089cf9d1e"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ligne_1_du_m%C3%A9tro_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "ac8f2bb988bb51be5919295a48ac452e45bb4cd283e6a0e4e3d566008fb5e062"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ligne_6_du_m%C3%A9tro_de_Paris",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "45963d406e7aae91983392ed5cdc9d3e2261efa359e44f5fcd221e1d1ede9a29"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ligne_A_du_RER_d%27%C3%8Ele-de-France",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "8450d5878961cc9e37edb4c899ae4ef4253f97135af332273eab70046cac41dc"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ligne_B_du_RER_d%27%C3%8Ele-de-France",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "0c59a7144f7bf47579191c5e39d8f5552975076b1bab04bf27c74d32db67e816"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Moulin-Rouge",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "5c227f2617b8e840bc4efb59e8ae17fe35cd86e1fe13f3f24028252f5158e60c"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_d%27Orsay",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "76e6fe3412f3c5bfb7152411b7833a4c5df317ba2ea816385cc9d08589380e3f"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_du_Louvre",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "5beb6311f8fa18c248b10a81d8954452170b7f947b097e85244196532eaa8146"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Ob%C3%A9lisque_de_Louxor",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "8b343f2179384d232d4171bbb9a793695f1fbe38404db8ec5e7e74a3b0650ca1"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Op%C3%A9ra_Garnier",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "e8ab37d98f61c1b9831f301de72e880fad02b80f4d128a90c92825b2a9a13e12"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Palais_Bourbon",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "ac7e9d1ebbcaf530f1ad363f92e104182f3d18e47969c1b60ac87744335f3cbe"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Palais_de_l%27%C3%89lys%C3%A9e",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "0b8c040013a5a035e7a36436a046fd3b7f8a5dfc0a4eef5b070b4c1209d392f2"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Panth%C3%A9on_(Paris)",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "6a57c4ba694e21ac5fff76ea7d7a087f6b9b0b0c4fd9b442fda70c35b9a2722d"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Parc_de_Bercy",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "f00da96aacb37a6184282a567f1d5f89d04b06840553b4fb7015598b123dde3f"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_Vend%C3%B4me",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "f962068ea2787d456ccf7f6c557151d9b1415a0fbb12ce036effd217e03f7288"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_de_la_Bastille",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "11873cbf55ea25a41d932d7723c0c898d4f9b096e54049a02631a628d10a35d2"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_de_la_Concorde",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "9d79e972599786b9cb328029a1a2d1133d9db82aeb95196e1c1fc6ffb48c4a50"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_de_la_Nation_(Paris)",
+      "checked_on": "2026-10-15",
+      "retrieval": "web_reader"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_de_la_R%C3%A9publique_(Paris)",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "3274b9438f2879e0d2ca4a7fd482de887fc84b2c7877d4dd091e3c69c2f7de13"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Place_des_Vosges",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "92faf986a90e0597ba5ce301353068dad5d853f35a860732e9d98ea90b5b11e5"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Pont_Alexandre-III",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "eeb2207d1b603be720b4349875d5c3889277b8931515465320756de97624ba1c"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Pont_Neuf",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "5de25e8227c5441f869bd822a3e11edef971c6e6ddd72188240b8edbfe5acf78"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Pont_de_Bir-Hakeim",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "b683ba9c6bbc8c83a54bbc8135a6093943c8c3aea626583c1606cb38f141570d"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Pont_des_Arts",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "deee6a56c1c4ed4683878b21c3b9fc4f29c02d218e421c8fc50ef4ac1abd42de"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_Belleville",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "c4476a30aea7ce8b310e63c9e0046a2d9f9f2a851dc81ada10dd474459d78be1"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_Bercy",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "211d994baf40dd2cfa1162bc1df11b7083a08a75cb92bf22cc44a28d6de1fe43"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_Grenelle",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "88ef8c7c27213a8d063bfd8110caea08dfc3e1496b0f001bdcf27e1583d91ef4"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27Od%C3%A9on",
+      "checked_on": "2026-10-15",
+      "retrieval": "web_reader"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Madeleine",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "a515d2591b8a4228beaddde648b0bb71511312333eb7f2a38d76f02fbe83747f"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Place-Vend%C3%B4me",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "06efc9c85b18402efccf29f455e17d891c410a2068ba98bd28b76c902c14fcb9"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Sorbonne",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "222a4d042e78dc913dcb0ad5709c8ee1ecc00515a876a327c7ff3d61b3f5b9e0"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_des_Champs-%C3%89lys%C3%A9es",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "a45846b0ed1b3baa000480b424366caf2b6fa4c865a90e2723d5c7eed5b70664"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_des_Halles",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "0f111bd325e0aa1399b80d48ee6c5e0d5585159912bec396af3d6195d8fc39d4"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_des_Invalides",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "00116b5ec95b313974ba25411f5a7f8643ce9a4f5a5c36d5ab87606df70100ac"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_du_P%C3%A8re-Lachaise",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "a2a6ee924598a438d7b8479ec168c148769ea4959a87486fc0c3931dc71f7dbb"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Quartier_du_Palais-Royal",
+      "checked_on": "2026-10-15",
+      "retrieval": "web_reader"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Sainte-Chapelle",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "a827c47a98b92c9a6801764593473d5f2c10b1d301e558b5d2be35c9b9b89396"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Sorbonne",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "7d5289de1731eba983d29d6cea4682f1c0a782bed9ec8fe1321e2d8875c65cbe"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Stade_Roland-Garros",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "4ca995e231ec229c0e32848fe3388a672262bc5eef9e3423972a106d633ff081"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Tour_Eiffel",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "645874283b40f26f3f0df49b9d9525107df4442ee19e56c601e435a327a30222"
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Tour_Montparnasse",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "ae2a225202bfeedf4b2f6657e2ae66f1b8bdbd9dfed391ade85e028071e284ef"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10003",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "10003"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10076",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "10076"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10742",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "10742"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10817",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "10817"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=10995",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "10995"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11106",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11106"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11324",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11324"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11372",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11372"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11506",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11506"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11610",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11610"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11674",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11674"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11691",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11691"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=11981",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "11981"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12308",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12308"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12435",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12435"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12454",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12454"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12544",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12544"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12545",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12545"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12615",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12615"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=12820",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "12820"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13108",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13108"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13204",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13204"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13413",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13413"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13493",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13493"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13598",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13598"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13612",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13612"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13685",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13685"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13911",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13911"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13918",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13918"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13938",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13938"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=13983",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "13983"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=14039",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "14039"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=14052",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "14052"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=14109",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "14109"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=14121",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "14121"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=15068",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "15068"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=15390",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "15390"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=8871",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "8871"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9037",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9037"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9076",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9076"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9168",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9168"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9196",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9196"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9341",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9341"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9385",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9385"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9448",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9448"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9607",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9607"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9710",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9710"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9759",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9759"
+    },
+    {
+      "url": "https://opendata.paris.fr/explore/dataset/denominations-emprises-voies-actuelles/table/?refine.id=9929",
+      "checked_on": "2026-10-15",
+      "retrieval": "municipal_export",
+      "municipal_id": "9929"
+    },
+    {
+      "url": "https://www.museedelatoiledejouy.fr/histoire/lhistoire-de-la-manufacture-oberkampf/",
+      "checked_on": "2026-10-15",
+      "retrieval": "https_page",
+      "content_sha256": "cc984963a430ebc31fe3e5679d2d57ae50efe03720ee6d25247a32003bb3b9d3"
+    }
+  ]
+}

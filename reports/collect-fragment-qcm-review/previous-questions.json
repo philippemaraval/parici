@@ -1,0 +1,974 @@
+[
+  {
+    "family": "street",
+    "source_entity_id": "Place des Vosges",
+    "questions": [
+      {
+        "id": "c82b0368-347b-508a-a7b5-c5ecdcc4ca4e",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Arsenal",
+          "Odéon",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 0,
+        "explanation": "Le repère de Place des Vosges est situé dans le quartier Arsenal, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "6684efc6-0751-5894-addf-2efa7734fdfe",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "4",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 4e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "4c0a90a9-12dd-5f44-a33c-f4307cbdba73",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "Le square Saint-Gilles Grand Veneur – Pauline Roland est situé près des rues du Grand Veneur et de Hesse. La dénomination rend également hommage à Pauline Roland."
+        ],
+        "correct_index": 0,
+        "explanation": "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+        "sources": [
+          "https://www.maisonsvictorhugo.paris.fr/paris/musee/histoire-du-musee"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Place du Panthéon",
+    "questions": [
+      {
+        "id": "735533e3-b255-55ac-a5f6-d3cea107e814",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Sorbonne"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Place du Panthéon est situé dans le quartier Sorbonne, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "5615b641-8802-50e2-a9e9-65ac5f39ad33",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "5",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 5e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "93dc68e4-976b-55a5-a692-1f92be9dd568",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "Le Panthéon a d’abord été conçu comme l’église Sainte-Geneviève, avant de devenir un lieu d’hommage national. La place porte le nom du monument."
+        ],
+        "correct_index": 3,
+        "explanation": "Le Panthéon a d’abord été conçu comme l’église Sainte-Geneviève, avant de devenir un lieu d’hommage national. La place porte le nom du monument.",
+        "sources": [
+          "https://www.paris-pantheon.fr/decouvrir/histoire-du-pantheon"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Place Juliette Gréco",
+    "questions": [
+      {
+        "id": "2ecfd9d8-f359-593e-acb6-684d4e4445f9",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Roquette",
+          "Odéon",
+          "Saint-Germain-des-Prés",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Place Juliette Gréco est situé dans le quartier Saint-Germain-des-Prés, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "322eb4d4-36c8-5047-a98b-4d9052f43c96",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "6",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 6e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "9c96d953-271f-51ab-a01e-77fb3fd1fffa",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La place Juliette Gréco a été inaugurée le 23 septembre 2021, à l’angle des rues de l’Abbaye et Bonaparte. Elle rend hommage à la chanteuse associée à Saint-Germain-des-Prés.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny."
+        ],
+        "correct_index": 0,
+        "explanation": "La place Juliette Gréco a été inaugurée le 23 septembre 2021, à l’angle des rues de l’Abbaye et Bonaparte. Elle rend hommage à la chanteuse associée à Saint-Germain-des-Prés.",
+        "sources": [
+          "https://www.paris.fr/pages/juliette-greco-et-paris-une-histoire-d-amour-12206"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Place Saint-Germain des Prés",
+    "questions": [
+      {
+        "id": "39d4ad1d-1e6b-5e59-ac0b-2f4dac42ed5b",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Odéon",
+          "Saint-Germain-des-Prés",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 1,
+        "explanation": "Le repère de Place Saint-Germain des Prés est situé dans le quartier Saint-Germain-des-Prés, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "f0de1f2a-b5ce-5725-aa9d-3503af00f53d",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "6",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_index": 0,
+        "explanation": "Ce repère appartient au 6e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "175eda25-e48b-50bb-a4e9-b5fd6d9e057a",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "L’église Saint-Germain-des-Prés est héritière d’une abbaye fondée au VIe siècle. Le monument se trouve au 3, place Saint-Germain des Prés."
+        ],
+        "correct_index": 3,
+        "explanation": "L’église Saint-Germain-des-Prés est héritière d’une abbaye fondée au VIe siècle. Le monument se trouve au 3, place Saint-Germain des Prés.",
+        "sources": [
+          "https://a06-v7.apps.paris.fr/a06/jsp/site/plugins/odjcp/DoDownload.jsp?id_entite=61222&id_type_entite=6"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue de Picardie",
+    "questions": [
+      {
+        "id": "f562ea0e-113f-556b-aae8-7aa96bafda8f",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Odéon",
+          "Enfants-Rouges",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 1,
+        "explanation": "Le repère de Rue de Picardie est situé dans le quartier Enfants-Rouges, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "7556e7f7-27f6-5f58-a675-1f6b10af84a5",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "1",
+          "3",
+          "2",
+          "4"
+        ],
+        "correct_index": 1,
+        "explanation": "Ce repère appartient au 3e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "9a39b272-2e36-5904-afdc-ec84c9a9968a",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "La rue de Picardie se trouve dans le quartier du Carreau du Temple. Elle permet de poursuivre la découverte du nord du Marais et de ses anciennes rues.",
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny."
+        ],
+        "correct_index": 2,
+        "explanation": "La rue de Picardie se trouve dans le quartier du Carreau du Temple. Elle permet de poursuivre la découverte du nord du Marais et de ses anciennes rues.",
+        "sources": [
+          "https://fr.wikipedia.org/wiki/Rue_de_Picardie_(Paris)"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue de Turenne",
+    "questions": [
+      {
+        "id": "11cbfea6-43c1-50e0-acb4-fbc85c2d4f2f",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Odéon",
+          "Archives",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 1,
+        "explanation": "Le repère de Rue de Turenne est situé dans le quartier Archives, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "7e20b955-56d5-519b-ac38-39529141ed35",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "3",
+          "4"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 3e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "f17840e3-e858-5aa0-a10b-b56ed95042bc",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "L’église Saint-Denys-du-Saint-Sacrement se trouve au 68 bis, rue de Turenne. Achevée en 1835, elle a été construite par Étienne-Hippolyte Godde.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny."
+        ],
+        "correct_index": 1,
+        "explanation": "L’église Saint-Denys-du-Saint-Sacrement se trouve au 68 bis, rue de Turenne. Achevée en 1835, elle a été construite par Étienne-Hippolyte Godde.",
+        "sources": [
+          "https://cdn.paris.fr/paris/2019/07/24/21487e542e9245c9a02671e2717c7521.pdf"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue des Arènes",
+    "questions": [
+      {
+        "id": "cb3e8bcc-298c-55dd-a112-0dff6b925fac",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Saint-Victor"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Rue des Arènes est situé dans le quartier Saint-Victor, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "e8abab6b-6660-5dd6-a9c1-53ebdaf98564",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "5",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_index": 0,
+        "explanation": "Ce repère appartient au 5e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "9b85d0c0-9922-50cb-a5e6-743fb2830dcd",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "Le square des arènes de Lutèce est accessible au 4, rue des Arènes. Le jardin conserve un théâtre antique au cœur du 5e arrondissement."
+        ],
+        "correct_index": 3,
+        "explanation": "Le square des arènes de Lutèce est accessible au 4, rue des Arènes. Le jardin conserve un théâtre antique au cœur du 5e arrondissement.",
+        "sources": [
+          "https://www.paris.fr/lieux/square-des-arenes-de-lutece-et-square-capitan-1760"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue des Coutures Saint-Gervais",
+    "questions": [
+      {
+        "id": "774ce4c1-29d6-5a45-a76c-64ef0a78fdc1",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Archives"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Rue des Coutures Saint-Gervais est situé dans le quartier Archives, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "afb75d01-f34d-5a7b-a64f-100e2cfb037e",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "4",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_index": 3,
+        "explanation": "Ce repère appartient au 3e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "54924a65-7714-5a07-a8e3-1a56b7d2e060",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "Le square Saint-Gilles Grand Veneur – Pauline Roland est situé près des rues du Grand Veneur et de Hesse. La dénomination rend également hommage à Pauline Roland."
+        ],
+        "correct_index": 0,
+        "explanation": "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+        "sources": [
+          "https://www.parismuseescollections.paris.fr/fr/musee-carnavalet/oeuvres/angle-de-la-rue-thorigny-et-de-la-rue-des-coutures-saint-gervais-3eme"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue des Francs Bourgeois",
+    "questions": [
+      {
+        "id": "f1581bee-3bda-5ef5-ac6f-e187c4ae415f",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Odéon",
+          "Archives",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 1,
+        "explanation": "Le repère de Rue des Francs Bourgeois est situé dans le quartier Archives, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "23b88870-4710-54fa-a18c-3dde0001129d",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "4",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_index": 3,
+        "explanation": "Ce repère appartient au 3e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "ca570768-ae24-57bb-a271-362f39d67bfa",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Le square Saint-Gilles Grand Veneur – Pauline Roland est situé près des rues du Grand Veneur et de Hesse. La dénomination rend également hommage à Pauline Roland."
+        ],
+        "correct_index": 2,
+        "explanation": "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+        "sources": [
+          "https://www.archives-nationales.culture.gouv.fr/le-musee-des-archives-nationales-lhotel-de-soubise-informations-pratiques"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue du Bourg Tibourg",
+    "questions": [
+      {
+        "id": "f6b549ae-980a-56c2-aa92-4276fd309c35",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Roquette",
+          "Odéon",
+          "Saint-Gervais",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Rue du Bourg Tibourg est situé dans le quartier Saint-Gervais, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "57d71caf-b10d-51da-ab61-9bbe84c79e39",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "3",
+          "1",
+          "2",
+          "4"
+        ],
+        "correct_index": 3,
+        "explanation": "Ce repère appartient au 4e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "6f9d146f-17c6-5609-a3e6-87843619772a",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "La rue du Bourg Tibourg appartient au quartier Saint-Gervais, dans le Marais. Son nom conserve le souvenir d’un ancien bourg."
+        ],
+        "correct_index": 3,
+        "explanation": "La rue du Bourg Tibourg appartient au quartier Saint-Gervais, dans le Marais. Son nom conserve le souvenir d’un ancien bourg.",
+        "sources": [
+          "https://fr.wikipedia.org/wiki/Rue_du_Bourg-Tibourg"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue du Cloître Saint-Merri",
+    "questions": [
+      {
+        "id": "2f608164-41e0-5798-a579-ff460d4295b0",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Saint-Merri"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Rue du Cloître Saint-Merri est situé dans le quartier Saint-Merri, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "cadbbc01-30f2-5034-a1b1-0e3c1c844cc0",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "4",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 4e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "33f772e3-e2a8-55ab-a64c-65fac212a24e",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "Cette rue tient son nom de l’ancien cloître voisin de l’église Saint-Merri. Elle se situe à proximité de la fontaine Stravinsky et du Centre Pompidou."
+        ],
+        "correct_index": 3,
+        "explanation": "Cette rue tient son nom de l’ancien cloître voisin de l’église Saint-Merri. Elle se situe à proximité de la fontaine Stravinsky et du Centre Pompidou.",
+        "sources": [
+          "https://fr.wikipedia.org/wiki/Rue_du_Clo%C3%AEtre-Saint-Merri"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "street",
+    "source_entity_id": "Rue du Grand Veneur",
+    "questions": [
+      {
+        "id": "7fda3717-fc5f-517d-ac68-5cf01bbdfe12",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère cartographique de cette voie ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Archives"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Rue du Grand Veneur est situé dans le quartier Archives, d’après les limites administratives de Paris.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "befc1329-501d-5418-a70f-798209e8458f",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe ce repère cartographique ?",
+        "answers": [
+          "2",
+          "1",
+          "3",
+          "4"
+        ],
+        "correct_index": 2,
+        "explanation": "Ce repère appartient au 3e arrondissement. La question concerne le repère, pas l’intégralité de la voie.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "30458d55-a837-5321-a618-ede51030fd33",
+        "theme": "Patrimoine",
+        "text": "Quel repère ou fait est associé à cette voie ?",
+        "answers": [
+          "Le square Saint-Gilles Grand Veneur – Pauline Roland est situé près des rues du Grand Veneur et de Hesse. La dénomination rend également hommage à Pauline Roland.",
+          "L’hôtel de Soubise abrite le musée des Archives nationales. Son entrée se trouve au 60 de cette rue, qui traverse le Marais.",
+          "Victor Hugo a habité au deuxième étage du 6, place des Vosges de 1832 à 1848. Son appartement est aujourd’hui un musée consacré à sa vie.",
+          "La rue des Coutures Saint-Gervais longe le secteur de l’hôtel Salé, siège du musée Picasso. Paris Musées conserve une photographie ancienne de son angle avec la rue de Thorigny."
+        ],
+        "correct_index": 0,
+        "explanation": "Le square Saint-Gilles Grand Veneur – Pauline Roland est situé près des rues du Grand Veneur et de Hesse. La dénomination rend également hommage à Pauline Roland.",
+        "sources": [
+          "https://www.paris.fr/lieux/square-saint-gilles-grand-veneur-pauline-roland-2428"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Arc de Triomphe",
+    "questions": [
+      {
+        "id": "e555423f-c5c9-53d2-a7ac-a36c05e02955",
+        "theme": "Patrimoine",
+        "text": "En quelle année commence le chantier de l’Arc de Triomphe ?",
+        "answers": [
+          "1789",
+          "1806",
+          "1836",
+          "1889"
+        ],
+        "correct_index": 1,
+        "explanation": "Le chantier de l’Arc de Triomphe s’étend de 1806 à 1836. Décidé sous Napoléon Ier, le monument est achevé sous Louis-Philippe, après plusieurs changements de régime politique.",
+        "sources": [
+          "https://www.paris-arc-de-triomphe.fr/decouvrir/histoire-de-l-arc-de-triomphe"
+        ]
+      },
+      {
+        "id": "82634f26-10e2-50b9-a095-97fe8b64bcc6",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Roquette",
+          "Odéon",
+          "Ternes",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Arc de Triomphe appartient au quartier Ternes dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "7eb56011-4c05-50a7-afc8-438375a749ea",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "2",
+          "1",
+          "17",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Arc de Triomphe appartient au 17e arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Musée d'Orsay",
+    "questions": [
+      {
+        "id": "7cc98bca-409d-52fc-ae13-81364f3458f4",
+        "theme": "Patrimoine",
+        "text": "Quelle était la fonction du bâtiment avant sa transformation en musée ?",
+        "answers": [
+          "Une gare",
+          "Une manufacture",
+          "Une caserne",
+          "Un palais de justice"
+        ],
+        "correct_index": 0,
+        "explanation": "Le musée d’Orsay occupe une ancienne gare construite pour l’Exposition universelle de 1900. Le bâtiment ferroviaire, conçu par Victor Laloux, a été réaménagé pour accueillir les collections du musée.",
+        "sources": [
+          "https://www.musee-orsay.fr/fr/articles/histoire-du-musee-60"
+        ]
+      },
+      {
+        "id": "c3db38de-915b-5bde-aecb-f2e87f6d07c6",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Saint-Thomas-d'Aquin"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Musée d'Orsay appartient au quartier Saint-Thomas-d'Aquin dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "0b4a2638-8e1b-5c9a-a59c-fc55e6ac008b",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "3",
+          "1",
+          "2",
+          "7"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Musée d'Orsay appartient au 7e arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Panthéon",
+    "questions": [
+      {
+        "id": "1f45cd1a-b104-5c9d-a802-ef9af5f12000",
+        "theme": "Patrimoine",
+        "text": "Sous quel nom d’église le Panthéon a-t-il été conçu ?",
+        "answers": [
+          "Saint-Germain-l’Auxerrois",
+          "Saint-Sulpice",
+          "Saint-Eustache",
+          "Sainte-Geneviève"
+        ],
+        "correct_index": 3,
+        "explanation": "Le Panthéon a d’abord été conçu comme l’église Sainte-Geneviève. L’histoire politique du monument l’a ensuite transformé en lieu d’hommage national aux grandes personnalités de la France.",
+        "sources": [
+          "https://www.paris-pantheon.fr/decouvrir/histoire-du-pantheon"
+        ]
+      },
+      {
+        "id": "efa2a7cd-7c4d-5b95-a8a4-db2c4a839f72",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Sorbonne"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Panthéon appartient au quartier Sorbonne dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "99452384-0f91-5839-ae70-360d4b9f8a19",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "1",
+          "5",
+          "2",
+          "3"
+        ],
+        "correct_index": 1,
+        "explanation": "Le repère de Panthéon appartient au 5e arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Place des Vosges",
+    "questions": [
+      {
+        "id": "813b8ec9-552a-5d17-aac7-163afb4079ce",
+        "theme": "Patrimoine",
+        "text": "Quel était l’ancien nom de la place des Vosges ?",
+        "answers": [
+          "Place Dauphine",
+          "Place Royale",
+          "Place du Trône",
+          "Place de Grève"
+        ],
+        "correct_index": 1,
+        "explanation": "La place des Vosges portait autrefois le nom de place Royale. Achevée en 1612 sous Louis XIII, elle entoure aujourd’hui le square Louis-XIII, au centre duquel se trouve une statue équestre du roi.",
+        "sources": [
+          "https://www.paris.fr/lieux/square-louis-xiii-36"
+        ]
+      },
+      {
+        "id": "c82b0368-347b-508a-a7b5-c5ecdcc4ca4e",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Arsenal",
+          "Odéon",
+          "Roquette",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 0,
+        "explanation": "Le repère de Place des Vosges appartient au quartier Arsenal dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "6684efc6-0751-5894-addf-2efa7734fdfe",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "2",
+          "1",
+          "4",
+          "3"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Place des Vosges appartient au 4e arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Sainte-Chapelle",
+    "questions": [
+      {
+        "id": "f22a6515-c7df-5411-a6ab-82f0e3ad2073",
+        "theme": "Patrimoine",
+        "text": "Quel roi est le commanditaire de la Sainte-Chapelle ?",
+        "answers": [
+          "François Ier",
+          "Louis XIV",
+          "Louis IX",
+          "Henri IV"
+        ],
+        "correct_index": 2,
+        "explanation": "Louis IX a fait édifier la Sainte-Chapelle au XIIIe siècle pour abriter les reliques de la Passion du Christ. Elle appartenait au palais royal de la Cité et son décor de vitraux raconte de nombreux épisodes bibliques.",
+        "sources": [
+          "https://www.sainte-chapelle.fr/decouvrir/histoire-de-la-sainte-chapelle"
+        ]
+      },
+      {
+        "id": "c6b42c81-6508-5ea9-a225-193ff7b8cce9",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Roquette",
+          "Odéon",
+          "Saint-Germain-l'Auxerrois",
+          "Faubourg-Montmartre"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Sainte-Chapelle appartient au quartier Saint-Germain-l'Auxerrois dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "aa0c61cb-3f4c-509e-ab4f-4ed2a4267228",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "3",
+          "2",
+          "1",
+          "4"
+        ],
+        "correct_index": 2,
+        "explanation": "Le repère de Sainte-Chapelle appartient au 1er arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  },
+  {
+    "family": "monument",
+    "source_entity_id": "Tour Eiffel",
+    "questions": [
+      {
+        "id": "0fce264a-80e0-5099-aa68-65ee4e8e4077",
+        "theme": "Patrimoine",
+        "text": "Pour quelle Exposition universelle la tour Eiffel a-t-elle été construite ?",
+        "answers": [
+          "Paris 1937",
+          "Paris 1878",
+          "Paris 1900",
+          "Paris 1889"
+        ],
+        "correct_index": 3,
+        "explanation": "La tour Eiffel a été construite pour l’Exposition universelle de Paris de 1889. Le projet répondait à l’ambition d’élever une tour de 300 mètres, devenue l’un des repères majeurs de la capitale.",
+        "sources": [
+          "https://www.toureiffel.paris/fr/le-monument/histoire"
+        ]
+      },
+      {
+        "id": "8b5395b8-ac70-56c9-a10e-8170ffb66097",
+        "theme": "Géographie",
+        "text": "Dans quel quartier administratif se situe le repère de ce monument ?",
+        "answers": [
+          "Faubourg-Montmartre",
+          "Odéon",
+          "Roquette",
+          "Gros-Caillou"
+        ],
+        "correct_index": 3,
+        "explanation": "Le repère de Tour Eiffel appartient au quartier Gros-Caillou dans le référentiel de jeu.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      },
+      {
+        "id": "1cac6e1d-fb19-5b38-a342-2aa887e80b70",
+        "theme": "Géographie",
+        "text": "Dans quel arrondissement se situe le repère de ce monument ?",
+        "answers": [
+          "7",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct_index": 0,
+        "explanation": "Le repère de Tour Eiffel appartient au 7e arrondissement.",
+        "sources": [
+          "https://opendata.paris.fr/explore/dataset/quartier_paris/"
+        ]
+      }
+    ]
+  }
+]
