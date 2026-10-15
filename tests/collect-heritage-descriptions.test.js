@@ -16,7 +16,7 @@ test("all famous and main streets, monuments, districts and transport lines have
     bus: 45,
     district: 80,
     monument: 107,
-    street: 1420,
+    street: 2420,
   });
   assert.deepEqual(validateHeritageDescriptions(catalog, descriptions), []);
   for (const [key, entry] of Object.entries(descriptions)) {
@@ -30,7 +30,7 @@ test("all famous and main streets, monuments, districts and transport lines have
 
   assert.equal(
     new Set(Object.values(descriptions).map((entry) => entry.text)).size,
-    1652,
+    2652,
   );
 });
 
@@ -149,4 +149,42 @@ test("the new epic batch contains exactly 1000 distinct, sourced epic cards", ()
     );
     assert.equal(card.description_full, entry.text, key);
   }
+});
+
+test("the second epic batch adds 1000 distinct cards and preserves the first batch", () => {
+  const first = require("./fixtures/collect-heritage-epic-20261015.json");
+  const second = require("./fixtures/collect-heritage-epic-20261015-lot2.json");
+  const firstSet = new Set(first);
+  const sourceIds = new Set(
+    first.map((key) => descriptions[key].source_record_id),
+  );
+  const cards = new Map(
+    catalog.records.map((card) => [
+      card.family + ":" + card.source_entity_id,
+      card,
+    ]),
+  );
+  assert.equal(second.length, 1000);
+  assert.equal(new Set(second).size, 1000);
+  for (const key of second) {
+    assert.ok(!firstSet.has(key), key);
+    const card = cards.get(key),
+      entry = descriptions[key];
+    assert.equal(card.base_rarity, 4, key);
+    assert.equal(card.fragments_required, 0, key);
+    assert.ok(!sourceIds.has(entry.source_record_id), key);
+    sourceIds.add(entry.source_record_id);
+    assert.equal(card.description_full, entry.text, key);
+    assert.match(
+      entry.source,
+      /^https:\/\/opendata\.paris\.fr\/.*refine\.id=\d+$/,
+      key,
+    );
+    assert.doesNotMatch(
+      entry.text,
+      /rend hommage (?:à|au) (?:Voisinage|Famille|Ouverte|Substitué)|\), (?:il |elle |a |fut )|héros|héroïne/,
+      key,
+    );
+  }
+  assert.equal(sourceIds.size, 2000);
 });
