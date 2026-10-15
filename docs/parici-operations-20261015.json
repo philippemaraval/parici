@@ -38,5 +38,26 @@
   "pages-build": {
     "commit": "4e56f95ed3a0abde57200ed36eecd653fadb7533",
     "builtAt": "2026-10-15T13:28:51.273Z"
+  },
+  "after_fix_delivery": {
+    "commit": "91d2f75d210bfa480081873c5858af093d8c2af6",
+    "ready_http_status": 200,
+    "health": {
+      "ok": true,
+      "database": "ready",
+      "uptimeSec": 100,
+      "collectApiVersion": 4,
+      "backendCommit": "91d2f75d210bfa480081873c5858af093d8c2af6",
+      "domains": [
+        "administration",
+        "auth",
+        "collect",
+        "daily",
+        "explorer",
+        "notifications",
+        "profiles",
+        "scores"
+      ]
+    }
   }
 }

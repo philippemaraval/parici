@@ -119,7 +119,7 @@ test("friends can compose a multi-card exchange with quantities", async ({
     await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
   ).toBe(true);
   await page.screenshot({
-    path: `/private/tmp/parici-social-${test.info().project.name}.png`,
+    path: test.info().outputPath("social-exchange.png"),
     fullPage: true,
   });
   await dialog.getByRole("button", { name: "Examiner la proposition" }).click();
