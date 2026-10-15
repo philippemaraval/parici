@@ -4,7 +4,7 @@ const path = require("node:path");
 const test = require("node:test");
 
 const root = path.resolve(__dirname, "..");
-const { selectPreviousLiveDeploy, findCommitDeploy, deployWithRollback } = require("../scripts/render_delivery");
+const { selectPreviousLiveDeploy, findCommitDeploy, deployWithRollback, assertHealthy } = require("../scripts/render_delivery");
 
 test("le rollback cible le dernier déploiement live précédent", () => {
   const selected = selectPreviousLiveDeploy(
@@ -53,4 +53,18 @@ test("une réponse Render mise en file attend le bon commit sans redéclencher l
 });
 test("la file de déploiement ignore les autres commits et les déploiements échoués",()=>{
  assert.equal(findCommitDeploy([{deploy:{id:'wrong',status:'live',commit:{id:'other'}}},{deploy:{id:'failed',status:'build_failed',commit:{id:'expected'}}}], 'expected'),undefined);
+});
+
+
+test("la sonde serveur ne simule pas une origine navigateur refusée par CORS", async (t) => {
+  const previousFetch = global.fetch;
+  t.after(() => { global.fetch = previousFetch; });
+  let headers;
+  global.fetch = async (_url, options) => {
+    headers = new Headers(options.headers);
+    return Response.json({ ok: true, database: "ready" });
+  };
+  await assertHealthy("https://api.example.test/api/ready");
+  assert.equal(headers.has("origin"), false);
+  assert.equal(headers.get("accept"), "application/json");
 });

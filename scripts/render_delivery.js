@@ -118,7 +118,6 @@ async function assertHealthy(healthcheckUrl, attempts = 12) {
       const response = await fetch(healthcheckUrl, {
         headers: {
           accept: "application/json",
-          origin: new URL(healthcheckUrl).origin,
         },
       });
       const payload = await response.json().catch(() => ({}));
