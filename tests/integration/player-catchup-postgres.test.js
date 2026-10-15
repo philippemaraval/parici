@@ -290,7 +290,9 @@ test(
         headless: true,
       });
       try {
-        const page = await browser.newPage();
+        // This API integration uses an ephemeral origin; a precached runtime config
+        // from the service worker must not replace its routed local API origin.
+        const page = await browser.newPage({ serviceWorkers: "block" });
         await page.route(
           /\/(?:src\/public\/js\/runtime-config|assets\/runtime-config(?:\.[\w-]+)?)\.js(?:\?.*)?$/,
           (route) =>
