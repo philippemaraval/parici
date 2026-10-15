@@ -16,7 +16,7 @@ test("all famous and main streets, monuments, districts and transport lines have
     bus: 45,
     district: 80,
     monument: 107,
-    street: 2420,
+    street: 4420,
   });
   assert.deepEqual(validateHeritageDescriptions(catalog, descriptions), []);
   for (const [key, entry] of Object.entries(descriptions)) {
@@ -30,7 +30,7 @@ test("all famous and main streets, monuments, districts and transport lines have
 
   assert.equal(
     new Set(Object.values(descriptions).map((entry) => entry.text)).size,
-    2652,
+    4652,
   );
 });
 
@@ -187,4 +187,47 @@ test("the second epic batch adds 1000 distinct cards and preserves the first bat
     );
   }
   assert.equal(sourceIds.size, 2000);
+});
+
+test("the third epic batch adds 2000 sourced cards without reusing previous cards or municipal records", () => {
+  const previous = [
+    ...require("./fixtures/collect-heritage-epic-20261015.json"),
+    ...require("./fixtures/collect-heritage-epic-20261015-lot2.json"),
+  ];
+  const batch = require("./fixtures/collect-heritage-epic-20261015-lot3.json");
+  const previousKeys = new Set(previous);
+  const sourceIds = new Set(
+    previous.map((key) => descriptions[key].source_record_id),
+  );
+  const cards = new Map(
+    catalog.records.map((card) => [
+      card.family + ":" + card.source_entity_id,
+      card,
+    ]),
+  );
+  assert.equal(batch.length, 2000);
+  assert.equal(new Set(batch).size, 2000);
+  for (const key of batch) {
+    assert.ok(!previousKeys.has(key), key);
+    const card = cards.get(key),
+      entry = descriptions[key];
+    assert.equal(card.base_rarity, 4, key);
+    assert.equal(card.fragments_required, 0, key);
+    assert.ok(entry, key);
+    assert.ok(!sourceIds.has(entry.source_record_id), key);
+    sourceIds.add(entry.source_record_id);
+    assert.equal(card.description_full, entry.text, key);
+    assert.match(
+      entry.source,
+      /^https:\/\/opendata\.paris\.fr\/.*refine\.id=\d+$/,
+      key,
+    );
+    assert.equal(entry.license, "ODbL 1.0", key);
+    assert.doesNotMatch(
+      entry.text,
+      /rappelle (?:Appel|Anciennement|Principale|Communication|Dû|Ainsi|Longe|Débouch|Hommage|Substitué|Donné|Origine|Forme|Sans|Probablement|Tiré|Contigu|Famille|Bord|Cette|Ce |On |Il |nom |en |à )/,
+      key,
+    );
+  }
+  assert.equal(sourceIds.size, 4000);
 });
