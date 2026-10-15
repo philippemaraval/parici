@@ -16,7 +16,7 @@ test("all famous and main streets, monuments, districts and transport lines have
     bus: 45,
     district: 80,
     monument: 107,
-    street: 4420,
+    street: 5711,
   });
   assert.deepEqual(validateHeritageDescriptions(catalog, descriptions), []);
   for (const [key, entry] of Object.entries(descriptions)) {
@@ -30,7 +30,7 @@ test("all famous and main streets, monuments, districts and transport lines have
 
   assert.equal(
     new Set(Object.values(descriptions).map((entry) => entry.text)).size,
-    4652,
+    5943,
   );
 });
 
@@ -96,9 +96,11 @@ test("every common, uncommon, rare and legendary card has a complete heritage sh
     assert.ok(descriptions[card.family + ":" + card.source_entity_id]);
   }
   assert.deepEqual(counts, { 1: 182, 2: 306, 3: 146, 5: 18 });
-  const unlisted = catalog.records.find(
-    (card) => !descriptions[card.family + ":" + card.source_entity_id],
-  );
+  const unlisted = {
+    ...catalog.records[0],
+    source_entity_id: "Voie test sans notice",
+    album_slugs: [],
+  };
   for (const rarity of [1, 2, 3, 5]) {
     const card = {
       ...unlisted,
@@ -230,4 +232,90 @@ test("the third epic batch adds 2000 sourced cards without reusing previous card
     );
   }
   assert.equal(sourceIds.size, 4000);
+});
+
+test("all remaining epic cards and every catalogue card now have a sourced description", () => {
+  const batch = require("./fixtures/collect-heritage-epic-20261015-final.json");
+  assert.equal(batch.length, 1291);
+  assert.equal(new Set(batch).size, 1291);
+  for (const card of catalog.records) {
+    assert.ok(descriptions[card.family + ":" + card.source_entity_id]);
+  }
+  const {
+    descriptionCoverage,
+  } = require("../backend/domains/collect/description-coverage");
+  assert.deepEqual(descriptionCoverage(catalog, descriptions), {
+    documentedDescriptions: 5943,
+    heritageDescriptions: 5369,
+    geographicDescriptions: 574,
+  });
+  assert.equal(
+    catalog.records.filter(
+      (card) => card.base_rarity === 4 && !card.fragments_required,
+    ).length,
+    5291,
+  );
+});
+
+test("geographic notices cite their own OSM objects and only genuine shared vertices", () => {
+  const fs = require("node:fs");
+  const features =
+    require("../backend/domains/collect/map-data").prepareStreetMap(
+      JSON.parse(
+        fs.readFileSync(
+          require("node:path").join(
+            __dirname,
+            "../data/paris_rues_light.geojson",
+          ),
+          "utf8",
+        ),
+      ),
+      require("../backend/data/streets_index.json"),
+    ).features;
+  const byEntity = new Map();
+  function vertices(value, output = new Set()) {
+    if (typeof value[0] === "number") output.add(JSON.stringify(value));
+    else for (const child of value) vertices(child, output);
+    return output;
+  }
+  for (const feature of features) {
+    const entity = feature.properties.collect_entity_id;
+    const group = byEntity.get(entity) || { ids: new Set(), points: new Set() };
+    group.ids.add(feature.properties.osm_id || feature.properties.id);
+    for (const point of vertices(feature.geometry.coordinates))
+      group.points.add(point);
+    byEntity.set(entity, group);
+  }
+  for (const [key, entry] of Object.entries(descriptions)) {
+    if (entry.description_kind !== "geographic") continue;
+    const group = byEntity.get(key.slice("street:".length));
+    assert.ok(group, key);
+    for (const id of entry.source_osm_ids)
+      assert.ok(group.ids.has(id), key + ": " + id);
+    assert.ok(entry.sources.includes(entry.source), key);
+    for (const name of entry.geographic_evidence.neighbors) {
+      const neighbor = byEntity.get(name);
+      assert.ok(
+        neighbor &&
+          [...neighbor.points].some((point) => group.points.has(point)),
+        key + ": " + name,
+      );
+      assert.ok(entry.text.includes(name), key);
+    }
+    const changed = {
+      [key]: { ...entry, source: "https://www.openstreetmap.org/copyright" },
+    };
+    assert.ok(
+      validateHeritageDescriptions(
+        {
+          records: [
+            catalog.records.find(
+              (card) => card.family + ":" + card.source_entity_id === key,
+            ),
+          ],
+        },
+        changed,
+      ).length,
+    );
+  }
 });

@@ -39,11 +39,10 @@ async function editorialHealth(pool) {
     referencePoints: catalog.records.filter(
       (c) => c.illustration.kind === "reference-point",
     ).length,
-    heritageDescriptions: catalog.records.filter(
-      (card) =>
-        card.description_source &&
-        card.description_source !== "https://www.openstreetmap.org/copyright",
-    ).length,
+    ...require("./description-coverage").descriptionCoverage(
+      catalog,
+      require("../../../data/collect_descriptions.json"),
+    ),
     correctedDescriptions: corrected,
   };
 }

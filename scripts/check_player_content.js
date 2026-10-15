@@ -78,7 +78,7 @@ function validateHeritageDescriptions(catalog, descriptions) {
   for (const card of catalog.records) {
     const targeted =
       Boolean(descriptions[card.family + ":" + card.source_entity_id]) ||
-      [1, 2, 3, 5].includes(
+      [1, 2, 3, 4, 5].includes(
         card.fragments_required > 0 ? 5 : card.base_rarity,
       ) ||
       card.family !== "street" ||
@@ -112,7 +112,13 @@ function validateHeritageDescriptions(catalog, descriptions) {
         try {
           return (
             new URL(source).protocol !== "https:" ||
-            source.includes("openstreetmap.org")
+            (source.includes("openstreetmap.org") &&
+              !(
+                entry.description_kind === "geographic" &&
+                /^https:\/\/www\.openstreetmap\.org\/(?:way|relation)\/\d+$/.test(
+                  source,
+                )
+              ))
           );
         } catch {
           return true;
@@ -120,6 +126,17 @@ function validateHeritageDescriptions(catalog, descriptions) {
       })
     )
       errors.push(`${key}: source historique manquante ou invalide`);
+    if (
+      entry.description_kind === "geographic" &&
+      (!/^https:\/\/www\.openstreetmap\.org\/(?:way|relation)\/\d+$/.test(
+        entry.source,
+      ) ||
+        !entry.source_osm_ids?.length ||
+        !entry.geographic_evidence ||
+        !Array.isArray(entry.geographic_evidence.neighbors))
+    ) {
+      errors.push(`${key}: preuves géographiques absentes`);
+    }
     if (
       card.description_full !== entry.text ||
       card.short_description !== entry.short ||
@@ -188,10 +205,10 @@ function validatePlayerContent(root = path.resolve(__dirname, "..")) {
   if (errors.length) throw new Error(errors.join("\n"));
   return {
     cards: catalog.records.length,
-    heritageDescriptions: catalog.records.filter(
-      (card) =>
-        card.description_source !== "https://www.openstreetmap.org/copyright",
-    ).length,
+    ...require("../backend/domains/collect/description-coverage").descriptionCoverage(
+      catalog,
+      read("data/collect_descriptions.json"),
+    ),
     dailyTargets: rows.length,
     famous: catalog.records.filter((c) =>
       c.album_slugs.includes("famous-streets"),
