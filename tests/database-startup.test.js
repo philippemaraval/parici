@@ -43,6 +43,15 @@ test("database startup skips migrations when the schema version is current", asy
             },
           ],
         };
+      if (String(sql).includes("key='parici_fragment_bank_revision'"))
+        return {
+          rows: [
+            {
+              value_text: require("../backend/domains/collect/fragment-bank")
+                .revision,
+            },
+          ],
+        };
       if (String(sql).includes("key='parici_curated_rarity_revision'"))
         return {
           rows: [

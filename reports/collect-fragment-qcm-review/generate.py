@@ -48,11 +48,11 @@ def build():
                 'correct_answer_index': correct_index,
                 'explanation': explanation,
                 'sources': meta['sources'],
-                'status': 'draft_for_review',
+                'status': 'active_private',
             })
         card['questions'] = questions
         cards.append(card)
-    return {'revision': '20261015-1', 'status': 'draft_for_review', 'cards': cards}
+    return {'revision': '20261015-1', 'status': 'active_private', 'cards': cards}
 
 
 def validate(bank):
@@ -80,7 +80,7 @@ def validate(bank):
             assert type(q['correct_answer_index']) is int and q['correct_answer_index'] in range(4)
             assert c['name'] in q['question']
             assert q['explanation'] and q['theme'] and q['topic']
-            assert q['status'] == 'draft_for_review'
+            assert q['status'] == 'active_private'
             assert q['sources'] and all(u.startswith('https://') for u in q['sources'])
             positions[q['correct_answer_index']] += 1
     assert len(ids) == 299
@@ -94,7 +94,7 @@ def render(bank, fragments=None):
              f"{len(cards)} cartes · {sum(len(c['questions']) for c in cards)} questions · Version {bank['revision']}", '',
              'Les numéros correspondent à la liste des 102 cartes légendaires. '
              'Chaque carte possède autant de questions que de fragments. '
-             'Banque préparée : aucune activation ni publication.', '']
+             'Banque intégrée au catalogue privé ; aucun bouton d’accès public.', '']
     for c in cards:
         lines += [f"## {c['reference']}. {c['catalog_name']} — {c['fragments']} fragments", '',
                   f"Famille : {c['family']} · Identifiant : `{c['source_entity_id']}`", '']

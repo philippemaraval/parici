@@ -2,7 +2,7 @@
 
 La banque couvre les **102 cartes légendaires** de la liste validée : **43 cartes à deux fragments, 23 à trois et 36 à quatre**, soit **299 questions et 1 196 propositions**. Chaque carte dispose d’autant de questions distinctes que de fragments requis.
 
-**Cette banque est préparée pour relecture. Elle n’est ni activée, ni publiée, ni poussée.** Les questions et leurs identifiants actuellement utilisés dans le catalogue et en base ne sont pas remplacés. Les anciens QCM sont conservés dans `previous-questions.json` comme référence éditoriale.
+**La banque est intégrée au catalogue privé à la demande de l’utilisateur (point 11).** Elle n’ouvre aucun accès public à Collect ou Explorer. Le catalogue et la migration utilisent `data/collect_paris_fragment_questions.json`. Les questions des parties en cours restent dans leurs instantanés ; les anciennes formulations sont archivées en base lors de la migration. `previous-questions.json` conserve la référence éditoriale initiale.
 
 ## Consignes reprises de Camino
 
@@ -40,8 +40,8 @@ node reports/collect-fragment-qcm-review/validate-runtime.js
 
 Le générateur met en forme les textes rédigés, sans inventer de questions ni de distracteurs. Le contrôle vérifie la couverture des 102 cartes du catalogue local, le nombre de fragments, les identités, les 299 UUID uniques, les quatre réponses distinctes, les pronoms, les thèmes, les explications, les liens sources, l’équilibrage A–D et la concordance JSON/Markdown. Le second validateur passe les 102 banques dans `validateFragmentConfig`, le validateur réel du backend.
 
-Ces contrôles ne mesurent pas la difficulté ressentie et ne constituent pas une preuve historique automatique. La relecture éditoriale reste possible avant activation. Les adaptations de migration et l’activation en base ne font pas partie de cette préparation de contenu.
+Ces contrôles ne mesurent pas la difficulté ressentie et ne constituent pas une preuve historique automatique. La relecture éditoriale reste possible avant activation. L’activation en base est assurée par une migration idempotente qui protège les contenus manuels et les progressions.
 
-## Livraison de la préparation
+## Configuration active
 
-`data/collect_paris_fragments.json` contient les besoins validés des 102 cartes. La configuration de jeu existante reste dans `data/collect_paris_fragments_active.json` jusqu’à l’activation de la banque relue. Le catalogue conserve ainsi les 18 cartes à fragments déjà dotées de questions ; les autres légendaires gardent leur rareté préparée, sans recevoir prématurément un parcours QCM vide. Le contrôle de la banque compare ses besoins au fichier préparé, et non au nombre de fragments actuellement actif.
+`data/collect_paris_fragments.json` contient les besoins validés des 102 cartes. La configuration active `data/collect_paris_fragments_active.json` les reprend intégralement. Le générateur exige une banque complète avant d’activer les fragments d’une carte : aucune carte ne reçoit un parcours QCM vide.

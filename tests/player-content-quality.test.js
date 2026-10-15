@@ -37,6 +37,7 @@ test("street illustrations use observed outlines, not a generic building symbol"
   const curated = catalog.records.filter(
     (c) => c.family === "monument" && c.fragments_required,
   );
-  assert.equal(curated.length, 6);
-  for (const c of curated) assert.equal(c.questions.length, 3);
+  assert.equal(curated.length, 34);
+  for (const c of curated)
+    assert.equal(c.questions.length, c.fragments_required);
 });

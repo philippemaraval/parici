@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS cards (
   collection_number INTEGER NOT NULL CHECK (collection_number > 0),
   name TEXT NOT NULL,
   image_reference TEXT,
-  base_rarity SMALLINT NOT NULL DEFAULT 1 CHECK (base_rarity BETWEEN 1 AND 4),
-  current_rarity SMALLINT NOT NULL DEFAULT 1 CHECK (current_rarity BETWEEN 1 AND 4),
+  base_rarity SMALLINT NOT NULL DEFAULT 1 CHECK (base_rarity BETWEEN 1 AND 5),
+  current_rarity SMALLINT NOT NULL DEFAULT 1 CHECK (current_rarity BETWEEN 1 AND 5),
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'archived')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   archived_at TIMESTAMPTZ,
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS card_answer_aliases (
 CREATE TABLE IF NOT EXISTS card_rarity_history (
   id BIGSERIAL PRIMARY KEY,
   card_id BIGINT NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
-  old_rarity SMALLINT NOT NULL CHECK (old_rarity BETWEEN 1 AND 4),
-  new_rarity SMALLINT NOT NULL CHECK (new_rarity BETWEEN 1 AND 4),
+  old_rarity SMALLINT NOT NULL CHECK (old_rarity BETWEEN 1 AND 5),
+  new_rarity SMALLINT NOT NULL CHECK (new_rarity BETWEEN 1 AND 5),
   changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   attempt_count INTEGER NOT NULL,
   success_rate NUMERIC(7,6) NOT NULL CHECK (success_rate BETWEEN 0 AND 1),
@@ -257,7 +257,7 @@ CREATE INDEX IF NOT EXISTS idx_collect_card_merges_canonical
 -- An administrator can pin a card rarity. NULL keeps the automatic rarity.
 ALTER TABLE cards
   ADD COLUMN IF NOT EXISTS rarity_override SMALLINT
-  CHECK (rarity_override BETWEEN 1 AND 4);
+  CHECK (rarity_override BETWEEN 1 AND 5);
 
 
 -- 20261001_collect_rarity_catalog.sql
@@ -310,7 +310,7 @@ END $$;
 -- 20261002_collect_initial_rarity.sql
 -- Initial estimates are independent of the existing manual freeze.
 ALTER TABLE cards ADD COLUMN IF NOT EXISTS base_rarity_override SMALLINT
-  CHECK (base_rarity_override BETWEEN 1 AND 4);
+  CHECK (base_rarity_override BETWEEN 1 AND 5);
 ALTER TABLE cards ADD COLUMN IF NOT EXISTS rarity_evaluated_at TIMESTAMPTZ;
 
 -- Preserve already calculated rarities, including monthly runs with no change.
@@ -509,7 +509,7 @@ CREATE TABLE IF NOT EXISTS collect_weekly_rewards (
   challenge_id BIGINT NOT NULL REFERENCES weekly_challenges(id) ON DELETE CASCADE,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   copy_id BIGINT NOT NULL UNIQUE REFERENCES card_copies(id) ON DELETE RESTRICT,
-  awarded_rarity SMALLINT NOT NULL CHECK(awarded_rarity BETWEEN 1 AND 4),
+  awarded_rarity SMALLINT NOT NULL CHECK(awarded_rarity BETWEEN 1 AND 5),
   awarded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY(challenge_id,user_id)
 );

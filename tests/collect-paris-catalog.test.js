@@ -23,7 +23,7 @@ test("Paris Collect catalog uses existing identities, complete assets and source
     assert.ok(card.description_source.startsWith("https://"));
     assert.ok(card.album_slugs.every((slug) => albums.has(slug)));
     if (card.fragments_required) {
-      assert.ok(card.questions.length >= 3);
+      assert.equal(card.questions.length, card.fragments_required);
       for (const q of card.questions) {
         assert.equal(new Set(q.answers).size, 4);
         assert.ok(q.correct_index >= 0 && q.correct_index < 4);
@@ -65,15 +65,35 @@ test("Collect and Explorer have no public entry links or release announcement", 
   assert.doesNotMatch(migration, /\b(?:TRUNCATE|DELETE FROM)\b/i);
 });
 
-test("weekly scoring excludes invalid dates and both sides of the weekly boundary",()=>{
- const {calculateResults}=require("../backend/domains/collect/weekly-challenge");
- const rows=calculateResults({starts_at:"2026-10-12T00:00:00Z",ends_at:"2026-10-19T00:00:00Z"},[{id:1,target:2}],[{id:1,username:"Joueur"}],
-  ["2026-10-11T23:59:59Z","invalid","2026-10-12T00:00:00Z","2026-10-19T00:00:00Z"].map(first_at=>({user_id:1,objective_id:1,first_at})));
- assert.equal(rows[0].progress[0].current,1);assert.equal(rows[0].score,50);
+test("weekly scoring excludes invalid dates and both sides of the weekly boundary", () => {
+  const {
+    calculateResults,
+  } = require("../backend/domains/collect/weekly-challenge");
+  const rows = calculateResults(
+    { starts_at: "2026-10-12T00:00:00Z", ends_at: "2026-10-19T00:00:00Z" },
+    [{ id: 1, target: 2 }],
+    [{ id: 1, username: "Joueur" }],
+    [
+      "2026-10-11T23:59:59Z",
+      "invalid",
+      "2026-10-12T00:00:00Z",
+      "2026-10-19T00:00:00Z",
+    ].map((first_at) => ({ user_id: 1, objective_id: 1, first_at })),
+  );
+  assert.equal(rows[0].progress[0].current, 1);
+  assert.equal(rows[0].score, 50);
 });
 
-test("public Collect descriptions exclude the question bank and seed gameplay fields",()=>{
- const {cardDetails}=require("../backend/domains/collect/catalog-details");
- const card=catalog.records.find(c=>c.questions.length);const details=cardDetails(card.family,card.source_entity_id);
- assert.ok(details.description_full);for(const key of ['questions','base_rarity','fragments_required','image_reference'])assert.equal(key in details,false);
+test("public Collect descriptions exclude the question bank and seed gameplay fields", () => {
+  const { cardDetails } = require("../backend/domains/collect/catalog-details");
+  const card = catalog.records.find((c) => c.questions.length);
+  const details = cardDetails(card.family, card.source_entity_id);
+  assert.ok(details.description_full);
+  for (const key of [
+    "questions",
+    "base_rarity",
+    "fragments_required",
+    "image_reference",
+  ])
+    assert.equal(key in details, false);
 });

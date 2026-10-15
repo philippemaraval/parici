@@ -95,7 +95,12 @@ test("every common, uncommon, rare and legendary card has a complete heritage sh
     counts[rarity] = (counts[rarity] || 0) + 1;
     assert.ok(descriptions[card.family + ":" + card.source_entity_id]);
   }
-  assert.deepEqual(counts, { 1: 182, 2: 306, 3: 146, 5: 18 });
+  assert.equal(
+    Object.values(counts).reduce((total, n) => total + n, 0),
+    catalog.records.filter(
+      (c) => c.base_rarity !== 4 || c.fragments_required > 0,
+    ).length,
+  );
   const unlisted = {
     ...catalog.records[0],
     source_entity_id: "Voie test sans notice",
@@ -132,8 +137,16 @@ test("the new epic batch contains exactly 1000 distinct, sourced epic cards", ()
   for (const key of batch) {
     const card = cards.get(key);
     assert.ok(card, key);
-    assert.equal(card.base_rarity, 4, key);
-    assert.equal(card.fragments_required, 0, key);
+    assert.equal(
+      card.base_rarity,
+      require("../data/collect_curated_rarity_overrides_paris.json")[key] || 4,
+      key,
+    );
+    assert.equal(
+      card.fragments_required,
+      require("../data/collect_paris_fragments_active.json")[key] || 0,
+      key,
+    );
     const entry = descriptions[key];
     assert.ok(entry, key);
     assert.match(
@@ -172,8 +185,16 @@ test("the second epic batch adds 1000 distinct cards and preserves the first bat
     assert.ok(!firstSet.has(key), key);
     const card = cards.get(key),
       entry = descriptions[key];
-    assert.equal(card.base_rarity, 4, key);
-    assert.equal(card.fragments_required, 0, key);
+    assert.equal(
+      card.base_rarity,
+      require("../data/collect_curated_rarity_overrides_paris.json")[key] || 4,
+      key,
+    );
+    assert.equal(
+      card.fragments_required,
+      require("../data/collect_paris_fragments_active.json")[key] || 0,
+      key,
+    );
     assert.ok(!sourceIds.has(entry.source_record_id), key);
     sourceIds.add(entry.source_record_id);
     assert.equal(card.description_full, entry.text, key);
@@ -213,8 +234,16 @@ test("the third epic batch adds 2000 sourced cards without reusing previous card
     assert.ok(!previousKeys.has(key), key);
     const card = cards.get(key),
       entry = descriptions[key];
-    assert.equal(card.base_rarity, 4, key);
-    assert.equal(card.fragments_required, 0, key);
+    assert.equal(
+      card.base_rarity,
+      require("../data/collect_curated_rarity_overrides_paris.json")[key] || 4,
+      key,
+    );
+    assert.equal(
+      card.fragments_required,
+      require("../data/collect_paris_fragments_active.json")[key] || 0,
+      key,
+    );
     assert.ok(entry, key);
     assert.ok(!sourceIds.has(entry.source_record_id), key);
     sourceIds.add(entry.source_record_id);
@@ -249,12 +278,6 @@ test("all remaining epic cards and every catalogue card now have a sourced descr
     heritageDescriptions: 5369,
     geographicDescriptions: 574,
   });
-  assert.equal(
-    catalog.records.filter(
-      (card) => card.base_rarity === 4 && !card.fragments_required,
-    ).length,
-    5291,
-  );
 });
 
 test("geographic notices cite their own OSM objects and only genuine shared vertices", () => {

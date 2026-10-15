@@ -13,6 +13,7 @@ const records = Object.entries(overrides)
   });
 const revision = crypto
   .createHash("sha256")
+  .update("legendary-schema-v1")
   .update(JSON.stringify(records))
   .digest("hex");
 async function applyCuratedRarities(client) {
@@ -20,6 +21,15 @@ async function applyCuratedRarities(client) {
     "SELECT value_text FROM app_settings WHERE key='parici_curated_rarity_revision'",
   );
   if (marker.rows[0]?.value_text === revision) return;
+  await client.query(
+    require("node:fs").readFileSync(
+      require("node:path").resolve(
+        __dirname,
+        "../../../migrations/20261015_collect_legendary_rarities.sql",
+      ),
+      "utf8",
+    ),
+  );
   await client.query(
     `UPDATE cards c SET
     base_rarity=COALESCE(c.base_rarity_override,r.base_rarity),

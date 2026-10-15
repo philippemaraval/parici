@@ -3,6 +3,7 @@ const catalog = require("../../../data/collect_paris_catalog.json");
 const VERSION = "20261013-2";
 async function applyCatalogCorrections(client) {
   await require("./curated-rarities").applyCuratedRarities(client);
+  await require("./fragment-bank").applyFragmentBank(client);
   const marker = await client.query(
     "SELECT value_text FROM app_settings WHERE key='parici_collect_catalog_revision'",
   );
@@ -48,7 +49,7 @@ async function applyCatalogCorrections(client) {
     `INSERT INTO collect_questions(id,card_id,position,theme,text,answers,correct_index,explanation,sources)
     SELECT q.id,c.id,q.position,q.theme,q.text,q.answers,q.correct_index,q.explanation,q.sources
     FROM jsonb_to_recordset($1::jsonb) AS q(id uuid,family text,source_entity_id text,position integer,theme text,text text,answers jsonb,correct_index integer,explanation text,sources jsonb)
-    JOIN cards c ON c.family=q.family AND c.source_entity_id=q.source_entity_id ON CONFLICT(id) DO NOTHING`,
+    JOIN cards c ON c.family=q.family AND c.source_entity_id=q.source_entity_id ON CONFLICT DO NOTHING`,
     [JSON.stringify(questions)],
   );
   // Only these two automatically managed memberships were broken. Other albums,

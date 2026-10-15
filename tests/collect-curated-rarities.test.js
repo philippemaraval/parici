@@ -17,8 +17,8 @@ test("reviewed rarities run once and preserve manual or game-evaluated rarities"
       return { rows: [] };
     },
   });
-  assert.equal(calls.length, 3);
-  const update = calls[1];
+  assert.equal(calls.length, 4);
+  const update = calls[2];
   assert.match(update.sql, /COALESCE\(c.base_rarity_override,r.base_rarity\)/);
   assert.match(
     update.sql,
@@ -36,7 +36,7 @@ test("reviewed rarities run once and preserve manual or game-evaluated rarities"
     new Set(records.map((c) => c.family + ":" + c.source_entity_id)).size,
     records.length,
   );
-  assert.equal(calls[2].values[0], revision);
+  assert.equal(calls[3].values[0], revision);
   let repeated = 0;
   await applyCuratedRarities({
     query: async () => {
@@ -47,7 +47,7 @@ test("reviewed rarities run once and preserve manual or game-evaluated rarities"
   assert.equal(repeated, 1);
 });
 
-test("all legendary fragment assignments are reviewable without activating empty banks", () => {
+test("all legendary cards have complete activated fragment banks", () => {
   assert.equal(bank.cards.length, 102);
   assert.equal(
     bank.cards.reduce((n, c) => n + c.questions.length, 0),
@@ -62,7 +62,7 @@ test("all legendary fragment assignments are reviewable without activating empty
     assert.equal(card.questions.length, card.fragments);
     const active = cards.get(key);
     assert.ok(active.base_rarity === 5 || active.fragments_required > 0);
-    if (!active.questions.length) assert.equal(active.fragments_required, 0);
+    assert.equal(active.questions.length, active.fragments_required);
   }
-  assert.equal(catalog.records.filter((c) => c.fragments_required).length, 18);
+  assert.equal(catalog.records.filter((c) => c.fragments_required).length, 102);
 });

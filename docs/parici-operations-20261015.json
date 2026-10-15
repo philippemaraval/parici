@@ -1,0 +1,42 @@
+{
+  "checked_on": "2026-10-15",
+  "phase": "before_fix_delivery",
+  "github_secret_names": [],
+  "production_backup": "not_attested_missing_secrets",
+  "external_email_delivery": "not_attested",
+  "physical_device_push": "not_attested",
+  "last_quality_run": {
+    "id": 38742928079,
+    "conclusion": "failure",
+    "identified_causes": [
+      "PostgreSQL rarity constraints limited to 4",
+      "Historical rarity assertions outdated",
+      "Playwright screenshot path specific to macOS"
+    ]
+  },
+  "health": {
+    "ok": true,
+    "database": "initializing",
+    "uptimeSec": 1291,
+    "collectApiVersion": 4,
+    "backendCommit": "4e56f95ed3a0abde57200ed36eecd653fadb7533",
+    "domains": [
+      "administration",
+      "auth",
+      "collect",
+      "daily",
+      "explorer",
+      "notifications",
+      "profiles",
+      "scores"
+    ]
+  },
+  "render-build": {
+    "commit": "4e56f95ed3a0abde57200ed36eecd653fadb7533",
+    "builtAt": "2026-10-15T13:28:59.789Z"
+  },
+  "pages-build": {
+    "commit": "4e56f95ed3a0abde57200ed36eecd653fadb7533",
+    "builtAt": "2026-10-15T13:28:51.273Z"
+  }
+}

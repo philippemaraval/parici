@@ -291,11 +291,13 @@ test(
       });
       try {
         const page = await browser.newPage();
-        await page.route("**/src/public/js/runtime-config.js", (route) =>
-          route.fulfill({
-            contentType: "application/javascript",
-            body: `window.CaminoRuntimeConfig=Object.freeze({apiUrl:${JSON.stringify(base)}});`,
-          }),
+        await page.route(
+          /\/(?:src\/public\/js\/runtime-config|assets\/runtime-config(?:\.[\w-]+)?)\.js(?:\?.*)?$/,
+          (route) =>
+            route.fulfill({
+              contentType: "application/javascript",
+              body: `window.CaminoRuntimeConfig=Object.freeze({apiUrl:${JSON.stringify(base)}});`,
+            }),
         );
         const errors = [];
         const diagnostics = [];

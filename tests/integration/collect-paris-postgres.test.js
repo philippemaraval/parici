@@ -495,6 +495,8 @@ test(
       "collect_paris_catalog.json",
       "collect_paris_editorial.json",
       "collect_paris_fragments.json",
+      "collect_paris_fragments_active.json",
+      "collect_paris_fragment_questions.json",
     ])
       assert.equal((await fetch(base + "/data/" + file)).status, 404);
     const first = await request("/api/collect/games", player, {});

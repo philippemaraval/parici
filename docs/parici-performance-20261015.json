@@ -1,0 +1,32 @@
+{
+  "context": "Local production build, Chrome desktop, Lighthouse; no public upload and no INP field measurement.",
+  "thresholds": {
+    "performance_score_min": 85,
+    "tbt_ms_max": 200,
+    "lcp_ms_max": 2500,
+    "cls_max": 0.1
+  },
+  "runs": [
+    {
+      "performance_score": 96,
+      "tbt_ms": 72.93,
+      "lcp_ms": 1253.43,
+      "cls": 0.01289040829393223,
+      "fetch_time": "2026-10-15T13:46:21.495Z"
+    },
+    {
+      "performance_score": 97,
+      "tbt_ms": 9,
+      "lcp_ms": 1136.91,
+      "cls": 0.01289040829393223,
+      "fetch_time": "2026-10-15T13:50:47.475Z"
+    },
+    {
+      "performance_score": 98,
+      "tbt_ms": 4,
+      "lcp_ms": 990.93,
+      "cls": 0.008825998161281849,
+      "fetch_time": "2026-10-15T13:53:54.521Z"
+    }
+  ]
+}

@@ -67,7 +67,7 @@ function generateDistFolder() {
   fs.mkdirSync(DIST_DIR, { recursive: true });
 
   DIST_INCLUDE.forEach(copyItemToDist);
-  for(const privateFile of ["collect_descriptions.json","collect_paris_catalog.json","collect_question_additions.json","collect_fragment_plan.json","collect_paris_editorial.json","collect_paris_fragments.json","explorer_paris.json"])fs.rmSync(path.join(DIST_DIR,"data",privateFile),{force:true});
+  for(const privateFile of ["collect_descriptions.json","collect_paris_catalog.json","collect_question_additions.json","collect_fragment_plan.json","collect_paris_editorial.json","collect_paris_fragments.json","collect_paris_fragments_active.json","collect_paris_fragment_questions.json","explorer_paris.json"])fs.rmSync(path.join(DIST_DIR,"data",privateFile),{force:true});
 
   const backendDataInDist = path.join(DIST_DIR, "backend", "data");
   if (fs.existsSync(backendDataInDist)) {

@@ -71,18 +71,34 @@ export function decorateInterface(root = document.body) {
   if (root.nodeType === Node.TEXT_NODE) { replaceText(root); return; }
   if (root.nodeType !== Node.ELEMENT_NODE || root.closest(excluded)) return;
   if (!root.closest(scope) && !root.querySelector(scope)) return;
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const texts = [];
-  while (walker.nextNode()) texts.push(walker.currentNode);
-  texts.forEach(replaceText);
-  const labels = [root, ...root.querySelectorAll("[title], [aria-label]")];
-  for (const element of labels) {
-    if (!element.closest(scope) || element.closest(excluded)) continue;
-    for (const attr of ["title", "aria-label"]) {
-      const value = element.getAttribute(attr);
-      if (value) {
-        const plain = value.replace(pattern, symbol => symbols[symbol][1]).replace(/\uFE0F/g, "");
-        if (plain !== value) element.setAttribute(attr, plain);
+  // Scan only interface scopes. The document also contains thousands of map
+  // features and select options which must never enter the text walker.
+  const candidates = root.closest(scope) ? [root] : [...root.querySelectorAll(scope)];
+  const roots = new Set(candidates);
+  for (const candidate of candidates) {
+    if (candidate.closest(excluded)) continue;
+    let ancestor = candidate.parentElement;
+    while (ancestor && !roots.has(ancestor)) ancestor = ancestor.parentElement;
+    if (ancestor) continue;
+    const walker = document.createTreeWalker(candidate, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          return node.matches(excluded) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_SKIP;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    const texts = [];
+    while (walker.nextNode()) texts.push(walker.currentNode);
+    texts.forEach(replaceText);
+    for (const element of [candidate, ...candidate.querySelectorAll("[title], [aria-label]")]) {
+      if (element.closest(excluded)) continue;
+      for (const attr of ["title", "aria-label"]) {
+        const value = element.getAttribute(attr);
+        if (value) {
+          const plain = value.replace(pattern, symbol => symbols[symbol][1]).replace(/\uFE0F/g, "");
+          if (plain !== value) element.setAttribute(attr, plain);
+        }
       }
     }
   }

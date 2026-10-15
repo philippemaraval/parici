@@ -92,7 +92,7 @@ test("friends can compose a multi-card exchange with quantities", async ({
       ),
   );
   await page.screenshot({
-    path: `/private/tmp/parici-friends-${test.info().project.name}.png`,
+    path: test.info().outputPath("friends.png"),
     fullPage: true,
   });
   await page.getByRole("button", { name: "Échanger", exact: true }).click();

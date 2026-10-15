@@ -2,7 +2,7 @@
 
 102 cartes · 299 questions · Version 20261015-1
 
-Les numéros correspondent à la liste des 102 cartes légendaires. Chaque carte possède autant de questions que de fragments. Banque préparée : aucune activation ni publication.
+Les numéros correspondent à la liste des 102 cartes légendaires. Chaque carte possède autant de questions que de fragments. Banque intégrée au catalogue privé ; aucun bouton d’accès public.
 
 ## 1. Quartier Les Halles — 3 fragments
 

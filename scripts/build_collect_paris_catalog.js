@@ -504,6 +504,22 @@ for (const [key, required] of Object.entries(reviewedFragmentRequirements)) {
     throw Error("Invalid fragment requirement: " + key);
   // Reviewed requirements stay pending until the question bank is activated.
 }
+// Activated banks are validated before any generated files are written.
+const activeFragmentQuestions = read(
+  "data/collect_paris_fragment_questions.json",
+);
+const {
+  validateFragmentConfig,
+} = require("../backend/domains/collect/fragments");
+for (const [key, required] of Object.entries(fragmentRequirements)) {
+  const record = knownCards.get(key);
+  const questions = activeFragmentQuestions[key];
+  if (!record || !questions || questions.length !== required)
+    throw Error("Incomplete active fragment bank: " + key);
+  validateFragmentConfig({ enabled: true, required, questions });
+  record.fragments_required = required;
+  record.questions = questions;
+}
 const previousCatalog = fs.existsSync(
   path.join(root, "data/collect_paris_catalog.json"),
 )

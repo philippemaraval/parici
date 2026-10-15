@@ -38,7 +38,7 @@ async function applyParisCollect(client) {
   );
   await client.query(
     `INSERT INTO collect_questions(id,card_id,position,theme,text,answers,correct_index,explanation,sources)
- SELECT q.id,c.id,q.position,q.theme,q.text,q.answers,q.correct_index,q.explanation,q.sources FROM jsonb_to_recordset($1::jsonb) AS q(id uuid,family text,source_entity_id text,position integer,theme text,text text,answers jsonb,correct_index integer,explanation text,sources jsonb) JOIN cards c ON c.family=q.family AND c.source_entity_id=q.source_entity_id ON CONFLICT(id) DO NOTHING`,
+ SELECT q.id,c.id,q.position,q.theme,q.text,q.answers,q.correct_index,q.explanation,q.sources FROM jsonb_to_recordset($1::jsonb) AS q(id uuid,family text,source_entity_id text,position integer,theme text,text text,answers jsonb,correct_index integer,explanation text,sources jsonb) JOIN cards c ON c.family=q.family AND c.source_entity_id=q.source_entity_id ON CONFLICT DO NOTHING`,
     [JSON.stringify(questions)],
   );
   await client.query(

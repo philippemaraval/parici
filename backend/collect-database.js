@@ -1539,7 +1539,7 @@ async function saveCollectFragments(cardId, config) {
       return null;
     }
     await client.query(
-      "UPDATE cards SET fragments_enabled=$2,fragments_required=$3 WHERE id=$1",
+      "UPDATE cards SET fragments_enabled=$2,fragments_required=$3,fragments_manual_override=TRUE WHERE id=$1",
       [cardId, valid.enabled, valid.required],
     );
     await client.query("DELETE FROM collect_questions WHERE card_id=$1", [
