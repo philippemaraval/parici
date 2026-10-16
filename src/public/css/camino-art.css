@@ -33,3 +33,4 @@ button .camino-inline-icon,
 .mobile-mode-card__icon > img { display: block; width: 34px; height: 34px; }
 .mobile-mode-card--camino .mobile-mode-card__icon { background: linear-gradient(145deg, var(--brand-sea-900, #12297a), var(--brand-sea-950, #0c1d57)); box-shadow: 0 4px 12px #12297a33; }
 .mobile-mode-card--daily .mobile-mode-card__icon { background: var(--camino-art-yellow); box-shadow: 0 4px 12px #f2a90033; }
+.mobile-mode-card--collect .mobile-mode-card__icon { background: linear-gradient(145deg, #d24a43, #a82d2b); box-shadow: 0 4px 12px #a82d2b44; }

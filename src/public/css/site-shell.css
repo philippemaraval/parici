@@ -479,5 +479,5 @@ dialog.site-menu-drawer[open].is-closing::backdrop { animation: site-drawer-back
 .site-menu-drawer #site-report-form textarea { box-sizing: border-box; width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #ccd5e6; border-radius: 10px; color: #14255b; background: white; font: 14px "Nunito", sans-serif; }
 .site-menu-drawer #site-report-form textarea { resize: vertical; }
 
-.site-nav.mobile-mode-nav{grid-template-columns:repeat(4,minmax(0,1fr))}
+.site-nav.mobile-mode-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 .site-header .site-header__control--sound,.site-header .site-header__control--haptics{display:none}

@@ -80,7 +80,7 @@
         <button id="site-notification-bell" class="site-header__control site-header__control--notifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="site-notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 16h14l-2-3V9a5 5 0 0 0-10 0v4ZM10 20h4M12 2v2"/></svg><span id="site-notification-count" class="site-notification-count" hidden></span></button></header>
 
         <nav class="mobile-mode-nav site-nav" aria-label="Navigation des modes de jeu">
-<a href="/">Accueil</a><a href="/?view=camino">Parici</a><a href="/?view=daily">Daily</a>
+<a href="/">Accueil</a><a href="/?view=camino">Parici</a><a href="/?view=daily">Daily</a><a href="/collect.html">Collect</a>
 <button id="site-menu-toggle" class="site-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-menu-drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
 </nav>
 
@@ -147,7 +147,7 @@
         <main class="mobile-home" aria-labelledby="mobile-home-title">
           <div class="mobile-home__intro">
             <h2 id="mobile-home-title">Vous connaissez Paris ?</h2>
-            <p>Une ville, deux façons de jouer.</p>
+            <p>Une ville, trois façons de jouer.</p>
           </div>
           <div class="mobile-home__modes">
             <a class="mobile-mode-card mobile-mode-card--camino" href="/?view=camino">
@@ -163,6 +163,14 @@
               <span>
                 <strong>Daily</strong>
                 <small>Une rue par jour. Sept essais. À vous de jouer.</small>
+              </span>
+              <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
+            </a>
+            <a class="mobile-mode-card mobile-mode-card--collect" href="/collect.html">
+              <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/home-card.svg" alt="" width="34" height="34"></span>
+              <span>
+                <strong>Collect</strong>
+                <small>Retrouve un lieu. Gagne sa carte. Collectionne Paris.</small>
               </span>
               <span class="mobile-mode-card__arrow" aria-hidden="true">›</span>
             </a>
