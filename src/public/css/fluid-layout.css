@@ -135,6 +135,7 @@ body { background: var(--layout-paper); }
   background: transparent;
   box-shadow: none;
 }
+.site-shell-page .collect-mode-nav.site-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .site-shell-page .site-nav a,
 .site-shell-page .collect-mode-nav.site-nav a {
   display: flex;
