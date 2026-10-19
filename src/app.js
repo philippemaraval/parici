@@ -6555,14 +6555,8 @@ function handleDailyShareText(e) {
     showMessage,
   });
 }
-async function handleDailyShareImage(e) {
-  const ranking = await loadAllLeaderboards();
-  if (!ranking) {
-    showMessage("Impossible de charger le classement de ce Daily. Réessayez.", "error");
-    return;
-  }
-  return handleDailyShareImageRuntime({
-    dailyLeaderboardRows: ranking.date === dailyTargetData?.date ? ranking.rows : [],
+function handleDailyShareImage(e) {
+  handleDailyShareImageRuntime({
     result: e,
     dailyTargetData,
     dailyGuessHistory,

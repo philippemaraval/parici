@@ -17,7 +17,7 @@ test.beforeAll(async () => {
   bundle = built.outputFiles[0].text;
 });
 
-test("Daily page and both shared images preserve all twenty server ranks", async ({
+test("weekly image preserves server ranks and daily result keeps its original format", async ({
   page,
 }) => {
   const rows = Array.from({ length: 20 }, (_, index) => ({
@@ -135,10 +135,11 @@ test("Daily page and both shared images preserve all twenty server ranks", async
   });
   const expected = rows.map((row) => row.username);
   expect(result.weeklyNames).toEqual(expected);
-  expect(result.dailyNames).toEqual(expected);
+  expect(result.dailyNames).toEqual([]);
   expect(result.dayPage.map((row) => row.name)).toEqual(expected);
   expect(result.weekPage).toEqual(expected);
-  expect(result.dailyResults).toEqual(result.dayPage.map((row) => row.result));
+  expect(result.dailyResults).toEqual([]);
+  expect(result.dayHeight).toBe(1350);
   expect(result.weeklyHeight).toBeGreaterThan(2000);
   await page
     .locator("#weekly-canvas")

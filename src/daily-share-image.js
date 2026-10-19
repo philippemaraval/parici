@@ -1,8 +1,6 @@
 import { getDailySuccessComment } from "./daily-runtime.js";
-import { snapshotDailyLeaderboard, formatDailyLeaderboardResult } from "./daily-leaderboard-share.js";
 export function handleDailyShareImageRuntime({
   result,
-  dailyLeaderboardRows = [],
   dailyTargetData,
   dailyGuessHistory,
   getDailyShareDateLabel,
@@ -15,8 +13,7 @@ export function handleDailyShareImageRuntime({
 
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
-  const leaderboard = snapshotDailyLeaderboard(dailyLeaderboardRows);
-  canvas.height = leaderboard.length ? 1510 + leaderboard.length * 72 : 1350;
+  canvas.height = 1350;
 
   const ctx = canvas.getContext("2d");
   if (!ctx) {
@@ -25,7 +22,7 @@ export function handleDailyShareImageRuntime({
   }
 
   const width = canvas.width;
-  const height = 1350;
+  const height = canvas.height;
   const centerX = width / 2;
   const resultLabel = result.success ? result.attempts : "X";
   const streetName = dailyTargetData.streetName || "Rue inconnue";
@@ -421,30 +418,6 @@ export function handleDailyShareImageRuntime({
   ctx.fillStyle = "#6ee7b7";
   ctx.font = '700 24px "Nunito", "Avenir Next", "Segoe UI", sans-serif';
   ctx.fillText("parici-ajm.pages.dev", bestCenterX, photoHostY);
-
-  if (leaderboard.length) {
-    ctx.fillStyle = "#064e3b";
-    ctx.fillRect(0, height, width, canvas.height - height);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
-    ctx.font = '700 38px "Nunito", sans-serif';
-    ctx.fillText(`Classement du ${dateLabel}`, centerX, height + 65);
-    leaderboard.forEach((row, index) => {
-      const y = height + 100 + index * 72;
-      ctx.fillStyle = index < 3 ? "rgba(255,255,255,0.16)" : "rgba(2,44,34,0.6)";
-      ctx.beginPath();
-      ctx.roundRect(90, y, 900, 60, 14);
-      ctx.fill();
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#ffffff";
-      ctx.font = '700 28px "Nunito", sans-serif';
-      ctx.fillText(String(index + 1), 115, y + 40);
-      ctx.fillText(String(row.username || "Anonyme"), 190, y + 40, 490);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#a7f3d0";
-      ctx.fillText(formatDailyLeaderboardResult(row), 960, y + 40, 260);
-    });
-  }
 
   const finalizeShareImage = () => {
     canvas.toBlob(async (blob) => {

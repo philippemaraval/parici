@@ -620,12 +620,7 @@ export function updateDailyResultPanelRuntime({
         showMessage("Impossible de préparer le partage du Daily.", "error");
         return;
       }
-      shareImageBtn.disabled = true;
-      try {
-        await handleDailyShareImage(result);
-      } finally {
-        shareImageBtn.disabled = false;
-      }
+      handleDailyShareImage(result);
     };
   }
 }
