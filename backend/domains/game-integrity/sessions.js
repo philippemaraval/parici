@@ -98,13 +98,16 @@ function catalogNames(mode) {
     mode === "monuments"
       ? "backend/data/paris_monuments.geojson"
       : mode === "arrondissements-ville"
-        ? "backend/data/paris_arrondissements.geojson"
+        ? "data/paris_quartiers.geojson"
         : mode === "lignes-transports-idf"
           ? "data/paris_transit_lines.geojson"
           : "backend/data/paris_rues_light.geojson";
   return new Set(
     JSON.parse(fs.readFileSync(path.join(root, file), "utf8")).features.map(
-      (f) => normalize(f.properties.name || f.properties.nom_qua),
+      (f) =>
+        normalize(
+          f.properties.name || f.properties.l_qu || f.properties.nom_qua,
+        ),
     ),
   );
 }
@@ -124,6 +127,7 @@ async function start(db, userId, body, authorityTargets = null) {
   )
     throw fail("Configuration invalide");
   const names = [...new Set(body.availableNames.map((v) => String(v).trim()))];
+  const available = new Set(names.map(normalize));
   const known = authorityTargets ? null : catalogNames(mode);
   if (
     names.some(
@@ -144,11 +148,11 @@ async function start(db, userId, body, authorityTargets = null) {
     targets = challenge.targets_json.map((value) =>
       typeof value === "string" ? value : value.name,
     );
-    if (targets.some((n) => !names.some((v) => normalize(v) === normalize(n))))
+    if (targets.some((n) => !available.has(normalize(n))))
       throw fail("Lieux du défi indisponibles");
   } else if (authorityTargets) {
     targets = authorityTargets;
-    if (targets.some((n) => !names.some((v) => normalize(v) === normalize(n))))
+    if (targets.some((n) => !available.has(normalize(n))))
       throw fail("Rechargez le référentiel avant de démarrer", 409);
   } else {
     for (let i = names.length - 1; i > 0; i--) {

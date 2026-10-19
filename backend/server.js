@@ -30,6 +30,7 @@ const { createProfileService } = require('./domains/profiles/service');
 const { createProfileController } = require('./domains/profiles/controller');
 const { createProfileRouter } = require('./domains/profiles/routes');
 const { shouldKeepStreetForGame } = require('../street_filter');
+const { createArrondissementResolver } = require('./domains/game-integrity/arrondissements');
 const {
     FAMOUS_STREET_NAMES: DEFAULT_FAMOUS_STREET_NAMES,
     MAIN_STREET_NAMES: DEFAULT_MAIN_STREET_NAMES,
@@ -48,7 +49,7 @@ const DAILY_MANIFEST_ABSOLUTE_PATH = path.join(
 const DAILY_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'webp', 'png'];
 const BACKEND_STREETS_LIGHT_PATH = path.join(__dirname, 'data', 'paris_rues_light.geojson');
 const BACKEND_STREETS_INDEX_PATH = path.join(__dirname, 'data', 'streets_index.json');
-const BACKEND_QUARTIERS_GEOJSON_PATH = path.join(__dirname, 'data', 'paris_arrondissements.geojson');
+const PARIS_QUARTIERS_GEOJSON_PATH = path.join(__dirname, '..', 'data', 'paris_quartiers.geojson');
 const BACKEND_MONUMENTS_GEOJSON_PATH = path.join(__dirname, 'data', 'paris_monuments.geojson');
 const STREET_GEOMETRY_CANDIDATE_PATHS = [
     path.join(__dirname, 'data', 'paris_rues_light.geojson'),
@@ -3751,6 +3752,9 @@ function reloadStreetChallengeIndex() {
             name: entry?.name,
         })
     );
+    const resolveArrondissement = createArrondissementResolver(
+        JSON.parse(fs.readFileSync(PARIS_QUARTIERS_GEOJSON_PATH, 'utf8'))
+    );
     streetChallengeIndex = streetIndex
         .map((entry) => {
             const targetCentroid = normalizeCoordinatePair(entry?.centroid);
@@ -3772,7 +3776,7 @@ function reloadStreetChallengeIndex() {
                 name: String(entry?.name || '').trim(),
                 featureId: matchingFeature ? getStreetFeatureId(matchingFeature) : '',
                 centroid: targetCentroid,
-                arrondissementName: String(entry?.arrondissement || '').trim() || null,
+                arrondissementName: resolveArrondissement(entry?.arrondissement) || null,
             };
             if (!target || !shouldKeepStreetForGame({ name: target.name })) {
                 return null;
@@ -3817,11 +3821,11 @@ function reloadStreetChallengeIndex() {
 }
 
 function reloadArrondissementChallengeIndex() {
-    const rawArrondissements = fs.readFileSync(BACKEND_QUARTIERS_GEOJSON_PATH, 'utf8');
+    const rawArrondissements = fs.readFileSync(PARIS_QUARTIERS_GEOJSON_PATH, 'utf8');
     const parsedArrondissements = JSON.parse(rawArrondissements);
     const seen = new Set();
     arrondissementChallengeIndex = (Array.isArray(parsedArrondissements?.features) ? parsedArrondissements.features : [])
-        .map((feature) => String(feature?.properties?.nom_qua || '').trim())
+        .map((feature) => String(feature?.properties?.l_qu || feature?.properties?.nom_qua || '').trim())
         .filter(Boolean)
         .filter((name) => {
             const key = normalizeArrondissementChallengeKey(name);

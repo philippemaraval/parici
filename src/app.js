@@ -4620,7 +4620,14 @@ function setNewTarget({ waitForAnswerFeedback = !1 } = {}) {
   if(currentUser?.token && isSessionRunning && !verifiedSession) {
     verifiedSession={pending:true};
     showMessage('Préparation de la session…','info');
-    prepareVerifiedSession().catch(error=>{verifiedSession=null;isSessionRunning=false;updateStartStopButton();showMessage(error.message,'error');});
+    prepareVerifiedSession().catch(error => {
+      verifiedSession = null;
+      isSessionRunning = false;
+      updateStartStopButton();
+      updatePauseButton();
+      updateLayoutSessionState();
+      showMessage(error.message, 'error');
+    });
     return;
   }
   if(verifiedSession?.pending)return;
