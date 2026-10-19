@@ -1967,6 +1967,10 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
          LEAST(COALESCE(d.attempts_count, 0), 7)::int AS attempts_count,
          d.success,
          d.best_distance_meters,
+         CASE WHEN d.started_at IS NOT NULL
+           THEN EXTRACT(EPOCH FROM (d.last_attempt_at - d.started_at))
+           ELSE NULL
+         END AS elapsed_seconds,
          d.last_attempt_at
        FROM daily_user_attempts d
        WHERE d.date::date >= date_trunc('week', $1::date)::date
@@ -1981,6 +1985,10 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
          SUM(CASE WHEN completed.success THEN 1 ELSE 0 END)::int AS successes,
          SUM(CASE WHEN completed.success THEN completed.attempts_count ELSE 7 END)::int AS total_attempts,
          SUM(completed.best_distance_meters)::int AS total_distance_meters,
+         CASE WHEN COUNT(completed.elapsed_seconds) = COUNT(*)
+           THEN SUM(completed.elapsed_seconds)
+           ELSE NULL
+         END AS total_elapsed_seconds,
          MAX(completed.last_attempt_at) AS last_completed_at
        FROM completed
        JOIN users u ON completed.user_id = u.id
@@ -1998,6 +2006,7 @@ async function getDailyWeeklyLeaderboard(date, limit = 20) {
        successes DESC,
        total_attempts ASC,
        total_distance_meters ASC NULLS LAST,
+       total_elapsed_seconds ASC NULLS LAST,
        last_completed_at ASC,
        username ASC
      LIMIT $2`,
