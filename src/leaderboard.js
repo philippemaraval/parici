@@ -1,3 +1,4 @@
+import { snapshotDailyLeaderboard, formatDailyLeaderboardResult } from "./daily-leaderboard-share.js";
 import { loadCanvasAvatar } from "./public/js/canvas-avatar.js";
 import { avatarMarkup } from "./public/js/camino-art.js";
 import { API_URL, LEADERBOARD_VISIBLE_ROWS } from "./config.js";
@@ -239,14 +240,6 @@ function appendTextCell(row, value, className = "") {
   cell.textContent = String(value ?? "");
   row.appendChild(cell);
   return cell;
-}
-
-function formatDailySolveTime(seconds) {
-  const parsedSeconds = Number(seconds);
-  if (!Number.isFinite(parsedSeconds) || parsedSeconds < 0) {
-    return "";
-  }
-  return `${parsedSeconds.toFixed(1).replace(".", ",")} s`;
 }
 
 function appendPlayerCell(row, {
@@ -504,7 +497,7 @@ export function buildWeeklyLeaderboardShareText(weeklyPayload, username = getCur
     : "Cette semaine";
   const lines = [`👤 Joueur : ${playerName}`, "🏆 Parici Daily — Classement de la semaine", `📅 ${range}`, ""];
 
-  rows.slice(0, 10).forEach((row, index) => {
+  rows.forEach((row, index) => {
     const successes = Number(row.successes) || 0;
     const attempts = Number(row.total_attempts) || 0;
     lines.push(
@@ -532,13 +525,13 @@ async function copyWeeklyLeaderboardText(weeklyPayload) {
   textarea.remove();
 }
 
-async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurrentShareUsername()) {
-  const rows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows.slice(0, 10) : [];
+export async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurrentShareUsername()) {
+  const rows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows : [];
   const playerName = String(username || "Anonyme").trim() || "Anonyme";
   const avatarImages = await Promise.all(rows.map(row => loadCanvasAvatar(row.avatar)));
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
-  canvas.height = 1350;
+  canvas.height = Math.max(1350, 470 + rows.length * 88);
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
 
@@ -551,7 +544,7 @@ async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurren
 
   ctx.fillStyle = "rgba(2, 6, 23, 0.72)";
   ctx.beginPath();
-  ctx.roundRect(55, 55, 970, 1240, 38);
+  ctx.roundRect(55, 55, 970, canvas.height - 110, 38);
   ctx.fill();
 
   ctx.textAlign = "center";
@@ -586,7 +579,7 @@ async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurren
     ctx.fillText(String(index + 1), 120, y + 47);
     if (avatarImages[index]) ctx.drawImage(avatarImages[index], 178, y + 17, 38, 38);
     const rawName = String(row.username || "Anonyme");
-    const playerName = rawName.length > 20 ? `${rawName.slice(0, 19)}…` : rawName;
+    const playerName = rawName;
     ctx.font = '700 28px "Nunito", "Avenir Next", sans-serif';
     ctx.fillText(playerName, 255, y + 45, 310);
 
@@ -604,10 +597,10 @@ async function createWeeklyLeaderboardCanvas(weeklyPayload, username = getCurren
   ctx.textAlign = "center";
   ctx.fillStyle = "#cbd5e1";
   ctx.font = '500 27px "Nunito", "Avenir Next", sans-serif';
-  ctx.fillText("À toi de jouer sur", 540, 1230);
+  ctx.fillText("À toi de jouer sur", 540, canvas.height - 120);
   ctx.fillStyle = "#93c5fd";
   ctx.font = '700 29px "Nunito", "Avenir Next", sans-serif';
-  ctx.fillText("parici-ajm.pages.dev", 540, 1270);
+  ctx.fillText("parici-ajm.pages.dev", 540, canvas.height - 80);
   return canvas;
 }
 
@@ -645,7 +638,8 @@ async function shareWeeklyLeaderboardImage(weeklyPayload) {
 }
 
 function appendWeeklyDailyLeaderboard(rootElement, weeklyPayload) {
-  const weeklyRows = Array.isArray(weeklyPayload?.rows) ? weeklyPayload.rows : [];
+  weeklyPayload = Object.freeze({ ...weeklyPayload, rows: snapshotDailyLeaderboard(weeklyPayload?.rows) });
+  const weeklyRows = weeklyPayload.rows;
   const weeklyDetails = document.createElement("details");
   weeklyDetails.className = "leaderboard-zone-details";
   weeklyDetails.open = false;
@@ -872,7 +866,7 @@ export function loadAllLeaderboards() {
       return response.json();
     });
 
-  Promise.all([
+  return Promise.all([
     showCaminoLeaderboards ? fetchLeaderboard("/api/leaderboards") : Promise.resolve({}),
     showCaminoLeaderboards
       ? fetchLeaderboard("/api/leaderboards?period=month")
@@ -889,6 +883,11 @@ export function loadAllLeaderboards() {
       : Promise.resolve([]),
   ])
     .then(([allBoards, monthlyBoards, dailyRows, weeklyDaily, dailyPodiums, dailyAverages]) => {
+      dailyRows = snapshotDailyLeaderboard(dailyRows);
+      const snapshot = {
+        date: new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()),
+        rows: dailyRows,
+      };
       const hasAllTimeRows = hasLeaderboardRows(allBoards);
       const hasMonthlyRows = hasLeaderboardRows(monthlyBoards);
       const hasDailyRows = !!(dailyRows && dailyRows.length > 0);
@@ -901,7 +900,7 @@ export function loadAllLeaderboards() {
       const hasVisibleCaminoRows = showCaminoLeaderboards && (hasAllTimeRows || hasMonthlyRows);
       if (!hasVisibleDailyRows && !hasVisibleCaminoRows) {
         leaderboardRoot.innerHTML = '<p class="leaderboard-empty">Le classement attend ses premiers joueurs.</p>';
-        return;
+        return snapshot;
       }
 
       leaderboardRoot.innerHTML = "";
@@ -935,12 +934,7 @@ export function loadAllLeaderboards() {
           }
           const rank = (index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "") || `${index + 1}`;
           const playerAvatar = row.avatar || "👤";
-          const solveTime = row.success && Number(row.attempts_count) === 1
-            ? formatDailySolveTime(row.solve_time_seconds)
-            : "";
-          const resultText = row.success 
-            ? `${row.attempts_count}/7${solveTime ? ` · ${solveTime}` : ""}`
-            : `❌ ${Math.round(row.best_distance_meters || 0)}m`;
+          const resultText = formatDailyLeaderboardResult(row);
           appendTextCell(tr, rank);
           appendPlayerCell(tr, { avatar: playerAvatar, username: row.username });
           appendTextCell(tr, resultText);
@@ -1000,6 +994,7 @@ export function loadAllLeaderboards() {
           firstDetails.open = true;
         }
       }
+      return snapshot;
     })
     .catch((error) => {
       console.warn("Leaderboard indisponible :", error.message);

@@ -41,7 +41,7 @@ function loadRenderAvatarGridRuntime(document) {
     .readFileSync(path.join(ROOT, "src/profile-runtime.js"), "utf8")
     .replace(/^import .*;\n/gm, "")
     .replace(/export const /g, "const ")
-    .replace(/export function /g, "function ");
+    .replace(/export (async )?function /g, "$1function ");
   const art = fs.readFileSync(path.join(ROOT, "src/public/js/camino-art.js"), "utf8").replace(/export /g, "");
   const context = vm.createContext({ console, document });
   vm.runInContext(art, context);
@@ -114,7 +114,7 @@ function loadLeaderboardRankHelpers() {
     .readFileSync(path.join(ROOT, "src/leaderboard.js"), "utf8")
     .replace(/^import .*;\n/gm, "")
     .replace(/export const /g, "const ")
-    .replace(/export function /g, "function ");
+    .replace(/export (async )?function /g, "$1function ");
   const context = vm.createContext({ console });
   vm.runInContext(`const VILLE_RANK_AVATAR_DEFINITIONS = [];
     ${source}

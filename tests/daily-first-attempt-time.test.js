@@ -13,11 +13,7 @@ test("Daily leaderboard exposes and displays solve time only for 1/7 successes",
     database,
     /AND LEAST\(COALESCE\(d\.attempts_count, 0\), 7\) = 1[\s\S]*END AS solve_time_seconds/,
   );
-  assert.match(
-    frontend,
-    /row\.success && Number\(row\.attempts_count\) === 1[\s\S]*formatDailySolveTime\(row\.solve_time_seconds\)/,
-  );
-  assert.match(frontend, /solveTime \? ` · \$\{solveTime\}` : ""/);
+  assert.match(frontend, /formatDailyLeaderboardResult\(row\)/);
 });
 
 test("current Daily leaderboard uses balanced column widths", () => {
