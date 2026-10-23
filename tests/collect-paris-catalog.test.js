@@ -11,7 +11,12 @@ test("Paris Collect catalog uses existing identities, complete assets and source
     const key = card.family + ":" + card.source_entity_id;
     assert.ok(!identities.has(key), key);
     identities.add(key);
-    counts[card.family] = (counts[card.family] || 0) + 1;
+    if (card.editorial_status !== "pending")
+      counts[card.family] = (counts[card.family] || 0) + 1;
+    else {
+      assert.equal(card.fragments_required, 0, key);
+      assert.deepEqual(card.questions, [], key);
+    }
     assert.ok(
       fs.existsSync(path.join(__dirname, "..", card.image_reference)),
       card.image_reference,
@@ -39,7 +44,7 @@ test("Paris Collect catalog uses existing identities, complete assets and source
   });
   assert.ok(albums.has("street-arrondissement-20"));
 });
-test("Collect and Explorer have no public entry links or release announcement", () => {
+test("Collect is public and Explorer keeps its deferred navigation", () => {
   for (const file of fs
     .readdirSync(path.join(__dirname, ".."))
     .filter(
@@ -49,15 +54,16 @@ test("Collect and Explorer have no public entry links or release announcement", 
     const html = fs.readFileSync(path.join(__dirname, "..", file), "utf8");
     assert.doesNotMatch(
       html,
-      /href=["'][^"']*(?:collect|explorer)\.html/i,
+      /href=["'][^"']*explorer\.html/i,
       file,
     );
   }
+  assert.match(fs.readFileSync(path.join(__dirname, "../index.html"), "utf8"), /href=["'][^"']*collect\.html/i);
   const menu = fs.readFileSync(
     path.join(__dirname, "../src/public/js/site-menu.js"),
     "utf8",
   );
-  assert.doesNotMatch(menu, /href=["'][^"']*(?:collect|explorer)\.html/i);
+  assert.doesNotMatch(menu, /href=["'][^"']*explorer\.html/i);
   const migration = fs.readFileSync(
     path.join(__dirname, "../migrations/20261013_collect_paris.sql"),
     "utf8",

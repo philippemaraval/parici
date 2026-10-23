@@ -1513,6 +1513,15 @@ async function listDailyTargets() {
   return res.rows;
 }
 
+// Automatic selection may create a date, but must never overwrite a concurrent publication.
+async function createDailyTargetIfAbsent(date, streetName, arrondissement, coordinates, geometry) {
+  await pool.query(
+    `INSERT INTO daily_targets (date, street_name, arrondissement, coordinates_json, geometry_json)
+     VALUES ($1, $2, $3, $4, $5) ON CONFLICT (date) DO NOTHING`,
+    [date, streetName, arrondissement, JSON.stringify(coordinates), geometry ? JSON.stringify(geometry) : null]
+  );
+}
+
 async function setDailyTarget(date, streetName, arrondissement, coordinates, geometry) {
   await pool.query(
     `INSERT INTO daily_targets (date, street_name, arrondissement, coordinates_json, geometry_json)
@@ -3259,6 +3268,7 @@ module.exports = {
   getRecentDailyTargets,
   listDailyTargets,
   setDailyTarget,
+  createDailyTargetIfAbsent,
   getDailyUserStatus,
   countDailyUserAttemptsForDate,
   startDailyUserAttempt,

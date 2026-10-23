@@ -28,6 +28,7 @@ export function saveDailyMetaToStorageRuntime(dailyTargetData, getDailyMetaStora
           date: dailyTargetData.date,
           streetName: dailyTargetData.streetName || "",
           arrondissement: dailyTargetData.arrondissement || "",
+          quartier: dailyTargetData.quartier || "",
           dailyImageUrl: dailyTargetData.dailyImageUrl || "",
         }),
       );
@@ -110,6 +111,7 @@ export function restoreDailyMetaFromStorageRuntime(dailyDate, dailyTargetData, g
       date: dailyDate,
       streetName: parsed.streetName,
       arrondissement: parsed.arrondissement || dailyTargetData?.arrondissement || "",
+      quartier: parsed.quartier || dailyTargetData?.quartier || "",
       dailyImageUrl: parsed.dailyImageUrl || dailyTargetData?.dailyImageUrl || "",
     };
   } catch (error) {
@@ -322,8 +324,8 @@ export function renderDailyGuessHistoryRuntime({
         console.error("Error with Hint 1:", error);
       }
 
-      if (guessCount >= 4 && arrondissementName) {
-        html += `<div class="daily-hint">🏘️ Arrondissement : <strong>${arrondissementName}</strong></div>`;
+      if (guessCount >= 4 && dailyTargetData.quartier) {
+        html += `<div class="daily-hint">🏘️ Quartier : <strong>${escapeHtml(dailyTargetData.quartier)}</strong></div>`;
       }
 
       if (guessCount >= 6 && dailyTargetData.streetName) {

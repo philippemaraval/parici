@@ -31,6 +31,12 @@ const { createProfileController } = require('./domains/profiles/controller');
 const { createProfileRouter } = require('./domains/profiles/routes');
 const { shouldKeepStreetForGame } = require('../street_filter');
 const { createArrondissementResolver } = require('./domains/game-integrity/arrondissements');
+const { createDailyLocationResolver } = require('./domains/game-integrity/daily-location');
+let dailyLocationResolver;
+function dailyLocation(target) {
+    dailyLocationResolver ||= createDailyLocationResolver(JSON.parse(fs.readFileSync(PARIS_QUARTIERS_GEOJSON_PATH, 'utf8')));
+    return dailyLocationResolver(target.arrondissement, resolveStreetIndexEntry(target.street_name, target.arrondissement, parseCoordinatesJson(target.coordinates_json)));
+}
 const {
     FAMOUS_STREET_NAMES: DEFAULT_FAMOUS_STREET_NAMES,
     MAIN_STREET_NAMES: DEFAULT_MAIN_STREET_NAMES,
@@ -4171,39 +4177,13 @@ function normalizeDailyTargetGeometryPayload(rawGeometry, streetName) {
 }
 
 async function refreshDailyTargetsFromCurrentStreetData() {
+    // OSM synchronization does not republish existing Daily challenges.
     const targets = await db.listDailyTargets();
-    let refreshed = 0;
-    let missingGeometry = 0;
-
-    for (const target of targets) {
-        const geometry = extractStreetGeometry(target?.street_name);
-        if (!geometry) {
-            missingGeometry += 1;
-            continue;
-        }
-
-        let coordinates = parseCoordinatesJson(target?.coordinates_json);
-        if (!coordinates) {
-            coordinates = computeRepresentativeCoordinatesFromGeometry(geometry);
-        }
-        if (!coordinates) {
-            coordinates = [2.3522, 48.8566];
-        }
-
-        await db.setDailyTarget(
-            target.date,
-            target.street_name,
-            target.arrondissement,
-            coordinates,
-            geometry
-        );
-        refreshed += 1;
-    }
-
     return {
         totalTargets: targets.length,
-        refreshed,
-        missingGeometry,
+        refreshed: 0,
+        preserved: targets.length,
+        missingGeometry: targets.filter(target => !parseGeometryJson(target.geometry_json)).length,
     };
 }
 
@@ -4389,34 +4369,6 @@ function getCoordinateDistanceMeters(a, b) {
     return Math.hypot((b[0] - a[0]) * lonScale, (b[1] - a[1]) * latScale);
 }
 
-function shouldSyncDailyTargetFromManifest(target, desired) {
-    if (!target) {
-        return true;
-    }
-
-    if (normalizeContentName(target.street_name) !== normalizeContentName(desired.streetName)) {
-        return true;
-    }
-
-    if (normalizeContentName(target.arrondissement) !== normalizeContentName(desired.arrondissement)) {
-        return true;
-    }
-
-    const storedCoordinates = parseCoordinatesJson(target.coordinates_json);
-    if (!storedCoordinates) {
-        return true;
-    }
-
-    return getCoordinateDistanceMeters(storedCoordinates, desired.coordinates) > 25;
-}
-
-function shouldForceSyncExcludedDailyTarget(target) {
-    return Boolean(
-        target?.street_name
-        && !shouldKeepStreetForGame({ name: target.street_name })
-    );
-}
-
 function dateHash(dateStr) {
     let h = 0;
     for (let i = 0; i < dateStr.length; i++) {
@@ -4428,69 +4380,18 @@ function dateHash(dateStr) {
 async function ensureDailyTarget() {
     const date = getDailyDateKey();
     let target = await db.getDailyTarget(date);
-    // Editorial publications take precedence over the generated manifest.
-    if (target?.image_url && parseCoordinatesJson(target.coordinates_json)) return date;
+    // The published challenge is immutable, including after a filter or manifest update.
+    if (target) return date;
     const manifestEntry = getDailyManifestEntryByDate(date);
-
     if (manifestEntry) {
-        const desired = resolveDailyTargetFromManifest(manifestEntry, target);
+        const desired = resolveDailyTargetFromManifest(manifestEntry);
         if (desired) {
-            const sameStreet =
-                target &&
-                normalizeContentName(target.street_name) === normalizeContentName(desired.streetName);
-            const needsSync = shouldSyncDailyTargetFromManifest(target, desired);
-
-            if (needsSync) {
-                const forceExcludedTargetSync = shouldForceSyncExcludedDailyTarget(target);
-                const canSyncWithoutChangingStartedChallenge = !target || sameStreet || forceExcludedTargetSync;
-                let canSync = canSyncWithoutChangingStartedChallenge;
-
-                if (forceExcludedTargetSync) {
-                    console.warn(
-                        `[Daily] Replacing excluded target for ${date}: "${target.street_name}" ` +
-                        `with manifest "${desired.streetName}" even if players already started.`
-                    );
-                }
-
-                if (!canSync) {
-                    const attemptCount = await db.countDailyUserAttemptsForDate(date);
-                    canSync = attemptCount === 0;
-                    if (!canSync) {
-                        console.warn(
-                            `[Daily] Keeping existing target for ${date}: "${target.street_name}" ` +
-                            `instead of manifest "${desired.streetName}" because ${attemptCount} player(s) already started.`
-                        );
-                    }
-                }
-
-                if (canSync) {
-                    await db.setDailyTarget(
-                        date,
-                        desired.streetName,
-                        desired.arrondissement,
-                        desired.coordinates,
-                        desired.geometry
-                    );
-                    target = await db.getDailyTarget(date);
-                    console.log(`[Daily] Synced target from manifest for ${date}: ${desired.streetName}`);
-                }
-            }
+            await db.createDailyTargetIfAbsent(date, desired.streetName, desired.arrondissement,
+                desired.coordinates, desired.geometry || extractStreetGeometry(desired.streetName));
+            target = await db.getDailyTarget(date);
         }
     }
 
-    if (target && !manifestEntry && !shouldKeepStreetForGame({ name: target.street_name })) {
-        const attemptCount = await db.countDailyUserAttemptsForDate(date);
-        if (attemptCount > 0) {
-            console.warn(
-                `[Daily] Keeping excluded existing target for ${date}: "${target.street_name}" ` +
-                `because ${attemptCount} player(s) already started.`
-            );
-        } else {
-            console.warn(`[Daily] Existing target excluded by filter for ${date}: "${target.street_name}". Regenerating.`);
-            target = null;
-        }
-    }
-    
     if (!target && streetIndex.length > 0) {
         // Find recent arrondissements to avoid
         const recentTargets = await db.getRecentDailyTargets(5);
@@ -4539,40 +4440,17 @@ async function ensureDailyTarget() {
             console.warn(`[Daily] Could not find a street in a new arrondissement after 100 attempts for date ${date}. Using fallback.`);
         }
 
-        await db.setDailyTarget(date, street.name, street.arrondissement, street.centroid, null);
+        await db.createDailyTargetIfAbsent(date, street.name, street.arrondissement, street.centroid, extractStreetGeometry(street.name));
     } else if (!target) {
-        await db.setDailyTarget(date, 'Avenue des Champs-Élysées', '8e arrondissement', [2.30782, 48.8698], null);
+        await db.createDailyTargetIfAbsent(date, 'Avenue des Champs-Élysées', '8e arrondissement', [2.30782, 48.8698], null);
     }
     return date;
 }
 
 async function getTargetGeometry(target) {
-    const normalizedGeometry = normalizeDailyTargetGeometryPayload(
-        target?.geometry_json,
-        target?.street_name
-    );
-
-    if (normalizedGeometry) {
-        const currentStored = parseGeometryJson(target?.geometry_json);
-        const hasChanged =
-            !currentStored || JSON.stringify(currentStored) !== JSON.stringify(normalizedGeometry);
-        if (hasChanged) {
-            const coordinates =
-                parseCoordinatesJson(target?.coordinates_json) ||
-                computeRepresentativeCoordinatesFromGeometry(normalizedGeometry) ||
-                [2.3522, 48.8566];
-            await db.setDailyTarget(
-                target.date,
-                target.street_name,
-                target.arrondissement,
-                coordinates,
-                normalizedGeometry
-            );
-        }
-        return JSON.stringify(normalizedGeometry);
-    }
-
-    return null;
+    // Reading a result must not overwrite a concurrent editorial publication.
+    const geometry = normalizeDailyTargetGeometryPayload(target?.geometry_json, target?.street_name);
+    return geometry ? JSON.stringify(geometry) : null;
 }
 
 app.get('/api/daily/health', asyncHandler(async (req, res) => {
@@ -4619,7 +4497,7 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
             displayStreetName:
                 resolveStreetIndexEntry(target.street_name, target.arrondissement)?.osmName
                 || target.street_name,
-            arrondissement: target.arrondissement,
+            ...dailyLocation(target),
             dailyImageUrl: await require("./domains/collect/daily-image").dailyImageForStreet(db.pool, target.street_name, target.image_url || resolveDailyImageUrl(date, target.street_name, manifestEntry)),
             targetGeoJson: target.coordinates_json,
             userStatus,

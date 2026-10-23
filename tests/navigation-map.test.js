@@ -155,9 +155,9 @@ test("the installed application uses Parici as its exact name", () => {
   assert.equal(manifest.short_name, "Parici");
 });
 
-test("the displayed application version is V0.4.1", () => {
+test("the displayed application version follows the weekly release state", () => {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const rules = fs.readFileSync(path.join(root, "regles.html"), "utf8");
-  assert.match(html, />\s*V0\.4\.1\s*</);
-  assert.match(rules, />V0\.4\.1</);
+  const version = require("../.github/releases/state.json").version;
+  for (const source of [html, rules]) assert.match(source, new RegExp(`>\\s*V${version.replace(/\./g, "\\.")}\\s*<`));
 });

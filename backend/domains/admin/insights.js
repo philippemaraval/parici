@@ -82,7 +82,8 @@ async function quality(pool) {
   const content = require("../../database").collectCardContent;
   let imagesChecked = 0;
   for (const card of allCards) {
-    const effective = content(card);
+    // Checking file existence does not require hashing every photograph.
+    const effective = content(card, { versionImages: false });
     if (effective.image_reference?.startsWith("/")) imagesChecked++;
     const issue = missingLocal(effective.image_reference)
       ? "Fichier image local introuvable"

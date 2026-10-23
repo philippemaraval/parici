@@ -76,6 +76,17 @@ function validateCatalog(catalog, index) {
 function validateHeritageDescriptions(catalog, descriptions) {
   const errors = [];
   for (const card of catalog.records) {
+    if (card.editorial_status === "pending") {
+      if (
+        descriptions[card.family + ":" + card.source_entity_id] ||
+        card.fragments_required ||
+        card.questions.length
+      )
+        errors.push(
+          `${card.family}:${card.source_entity_id}: carte en attente incohérente`,
+        );
+      continue;
+    }
     const targeted =
       Boolean(descriptions[card.family + ":" + card.source_entity_id]) ||
       [1, 2, 3, 4, 5].includes(
@@ -205,6 +216,9 @@ function validatePlayerContent(root = path.resolve(__dirname, "..")) {
   if (errors.length) throw new Error(errors.join("\n"));
   return {
     cards: catalog.records.length,
+    pendingEditorial: catalog.records.filter(
+      (c) => c.editorial_status === "pending",
+    ).length,
     ...require("../backend/domains/collect/description-coverage").descriptionCoverage(
       catalog,
       read("data/collect_descriptions.json"),

@@ -1155,7 +1155,7 @@ test(
       assert.equal(
         await page
           .locator(
-            'nav.site-nav a[href*="collect.html"],nav.site-nav a[href*="explorer.html"],.site-drawer-links a[href*="collect.html"],.site-drawer-links a[href*="explorer.html"]',
+            'nav.site-nav a[href*="explorer.html"],.site-drawer-links a[href*="explorer.html"]',
           )
           .count(),
         0,
@@ -1225,7 +1225,7 @@ test(
       await page.goto(base + "/?view=home");
       assert.equal(
         await page
-          .locator('a[href*="collect.html"],a[href*="explorer.html"]')
+          .locator('a[href*="explorer.html"]')
           .count(),
         0,
       );

@@ -1,7 +1,7 @@
 "use strict";
 const crypto = require("node:crypto");
 const catalog = require("../../../data/collect_paris_catalog.json");
-const VERSION = "parici-catalog-sync-v1";
+const VERSION = "parici-catalog-sync-v2";
 function catalogRevision(value = catalog) {
   return crypto
     .createHash("sha256")
@@ -21,7 +21,10 @@ async function syncCatalog(client, value = catalog) {
     snapshot = JSON.parse(marker?.value_text || "{}");
   } catch {}
   if (snapshot.revision === revision) return;
-  const records = value.records.map((c) => ({ ...c, questions: undefined }));
+  const playable = value.records.filter(
+    (c) => c.editorial_status !== "pending",
+  );
+  const records = playable.map((c) => ({ ...c, questions: undefined }));
   const previous = Array.isArray(snapshot.identities)
     ? snapshot.identities
     : [];
@@ -82,7 +85,7 @@ async function syncCatalog(client, value = catalog) {
     JOIN cards c ON c.family='street' AND c.source_entity_id=r.entity ON CONFLICT DO NOTHING`,
     [JSON.stringify(aliases)],
   );
-  const questions = value.records.flatMap((r) =>
+  const questions = playable.flatMap((r) =>
     r.questions.map((q, position) => ({
       ...q,
       position,

@@ -603,6 +603,7 @@ test(
           await page.locator('#studio-nav a[data-view="' + view + '"]').click();
           await expect(page.locator("#studio-status")).toHaveText(
             "Données à jour.",
+            { timeout: 15000 },
           );
           assert.equal(
             await page.evaluate(

@@ -19,7 +19,7 @@ test.beforeAll(async () => {
 
 test("weekly image preserves server ranks and daily result keeps its original format", async ({
   page,
-}) => {
+}, testInfo) => {
   const rows = Array.from({ length: 20 }, (_, index) => ({
     username:
       index === 0
@@ -141,10 +141,10 @@ test("weekly image preserves server ranks and daily result keeps its original fo
   expect(result.dailyResults).toEqual([]);
   expect(result.dayHeight).toBe(1350);
   expect(result.weeklyHeight).toBeGreaterThan(2000);
-  await page
-    .locator("#weekly-canvas")
-    .screenshot({ path: "/private/tmp/parici-daily-weekly-shared.png" });
-  await page
-    .locator("#daily-canvas")
-    .screenshot({ path: "/private/tmp/parici-daily-result-shared.png" });
+  await page.locator("#weekly-canvas").screenshot({
+    path: testInfo.outputPath("parici-daily-weekly-shared.png"),
+  });
+  await page.locator("#daily-canvas").screenshot({
+    path: testInfo.outputPath("parici-daily-result-shared.png"),
+  });
 });

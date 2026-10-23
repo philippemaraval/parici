@@ -9,7 +9,10 @@ test("accueil compact, illustrations et commandes cohérentes sans signature", a
 }) => {
   await page.setViewportSize({ width: 360, height: 640 });
   await page.goto("/");
-  await expect(page.locator(".mobile-mode-card__icon img")).toHaveCount(2);
+  await expect(page.locator(".mobile-mode-card__icon img")).toHaveCount(3);
+  await expect(
+    page.locator(".mobile-mode-card--collect a, a.mobile-mode-card--collect"),
+  ).toHaveAttribute("href", "/collect.html");
   await expect(page.locator(".mobile-mode-card--camino img")).toHaveAttribute(
     "src",
     /home-route.svg$/,

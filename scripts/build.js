@@ -404,6 +404,7 @@ async function fingerprintProductionAssets() {
 }
 
 async function build() {
+  await require("./check_deploy_quality").checkHostedBuild();
   console.log("Building Parici...\n");
 
   execSync("node scripts/build_collect_paris_catalog.js",{cwd:ROOT,stdio:"inherit"});

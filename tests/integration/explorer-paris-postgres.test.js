@@ -420,7 +420,7 @@ test(
           await page.locator("#site-menu-drawer[open]").waitFor();
           assert.equal(
             await page
-              .locator('a[href*="explorer.html"],a[href*="collect.html"]')
+              .locator('a[href*="explorer.html"]')
               .count(),
             0,
           );
@@ -442,7 +442,7 @@ test(
       assert.equal(await page.locator("#explorer-total").innerText(), "12");
       assert.equal(
         await page
-          .locator('a[href*="explorer.html"],a[href*="collect.html"]')
+          .locator('a[href*="explorer.html"]')
           .count(),
         0,
       );

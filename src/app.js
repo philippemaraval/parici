@@ -1104,7 +1104,7 @@ async function disableDailyReminder() {
     const registration = await ensureServiceWorkerRegistration();
     const subscription = registration ? await registration.pushManager.getSubscription() : null;
 
-    await fetchWithTimeout(
+    const unsubscribeResult = await fetchWithTimeout(
       `${API_URL}/api/notifications/unsubscribe`,
       {
         method: "POST",
@@ -1121,9 +1121,10 @@ async function disableDailyReminder() {
       if (!response.ok) {
         throw await buildApiError(response, `HTTP ${response.status}`);
       }
+      return response.json();
     });
 
-    if (subscription) {
+    if (subscription && !unsubscribeResult.keepSubscription) {
       await subscription.unsubscribe().catch(() => { });
     }
 

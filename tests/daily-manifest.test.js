@@ -90,16 +90,40 @@ test("the server ignores excluded Daily entries even in a cached manifest", () =
   assert.equal(context.getDailyManifestEntryByDate("2027-01-04"), null);
 });
 
-test("the server force-syncs a replacement for an excluded current Daily target", () => {
+test("an existing Daily target is preserved when the manifest or filter changes", async () => {
   const vm = require("node:vm");
-  const { shouldKeepStreetForGame } = require("../street_filter");
   const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
-  const start = source.indexOf("function shouldForceSyncExcludedDailyTarget(");
-  const end = source.indexOf("\nfunction ", start + 1);
-  const context = vm.createContext({ shouldKeepStreetForGame });
-  vm.runInContext(source.slice(start, end), context);
+  const start = source.indexOf("async function ensureDailyTarget()");
+  const end = source.indexOf("\nasync function getTargetGeometry", start);
+  for (const street_name of ["Passage F/7", "Passage du Grand-Cerf"]) {
+    const target = { street_name, coordinates_json: "[2.35,48.86]" };
+    let writes = 0;
+    const context = vm.createContext({
+      getDailyDateKey: () => "2026-10-23",
+      db: { getDailyTarget: async () => target, createDailyTargetIfAbsent: async () => { writes++; } },
+      getDailyManifestEntryByDate: () => { throw Error("An existing publication must not read a revised manifest"); },
+    });
+    vm.runInContext(source.slice(start,end), context);
+    assert.equal(await context.ensureDailyTarget(), "2026-10-23");
+    assert.equal(writes, 0);
+  }
+});
 
-  assert.equal(context.shouldForceSyncExcludedDailyTarget({ street_name: "Passage F/7" }), true);
-  assert.equal(context.shouldForceSyncExcludedDailyTarget({ street_name: "Passage du Grand-Cerf" }), false);
-  assert.equal(context.shouldForceSyncExcludedDailyTarget(null), false);
+test("reading a Daily result preserves snapshots and resolves missing geometry without a database write", async () => {
+  const vm = require("node:vm");
+  const source = fs.readFileSync(path.join(ROOT, "backend/server.js"), "utf8");
+  const normalization = source.slice(source.indexOf("function shouldRefreshStoredDailyGeometry("), source.indexOf("async function refreshDailyTargetsFromCurrentStreetData("));
+  const reader = source.slice(source.indexOf("async function getTargetGeometry("), source.indexOf("\napp.get('/api/daily/health'"));
+  const stored = { type: "LineString", coordinates: [[2.35, 48.86], [2.36, 48.87]] };
+  const fallback = { type: "LineString", coordinates: [[2.37, 48.86], [2.38, 48.87]] };
+  const context = vm.createContext({
+    parseGeometryJson: (value) => value ? JSON.parse(value) : null,
+    extractStreetGeometry: () => fallback,
+    db: new Proxy({}, { get() { throw Error("A result reader must not access a database writer"); } }),
+  });
+  vm.runInContext(normalization + reader, context);
+  assert.equal(await context.getTargetGeometry({ geometry_json: JSON.stringify(stored) }), JSON.stringify(stored));
+  for (const geometry of [null, { type: "FeatureCollection", features: [] }]) {
+    assert.equal(await context.getTargetGeometry({ geometry_json: geometry && JSON.stringify(geometry) }), JSON.stringify(fallback));
+  }
 });

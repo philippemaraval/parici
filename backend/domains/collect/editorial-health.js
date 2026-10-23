@@ -7,8 +7,8 @@ async function editorialHealth(pool) {
   ).rows;
   const issues = [];
   for (const slug of ["famous-streets", "main-streets"]) {
-    const expected = catalog.records.filter((c) =>
-      c.album_slugs.includes(slug),
+    const expected = catalog.records.filter(
+      (c) => c.editorial_status !== "pending" && c.album_slugs.includes(slug),
     ).length;
     const actual = albums.find((a) => a.slug === slug)?.actual || 0;
     if (actual !== expected)
@@ -23,6 +23,18 @@ async function editorialHealth(pool) {
         url: "/admin/collect/",
       });
   }
+  const pending = catalog.records.filter(
+    (c) => c.editorial_status === "pending",
+  );
+  for (const card of pending)
+    issues.push({
+      domain: "collect",
+      key: card.family + ":" + card.source_entity_id,
+      title: "Nouvelle carte en attente : " + card.name,
+      issue:
+        "La géométrie est à jour ; une fiche sourcée est requise avant publication de cette carte.",
+      url: "/admin/collect/",
+    });
   const corrected = (
     await pool.query(
       "SELECT COUNT(*)::int AS descriptions FROM cards WHERE status='active' AND NULLIF(description_full_override,'') IS NOT NULL",
@@ -44,6 +56,7 @@ async function editorialHealth(pool) {
       require("../../../data/collect_descriptions.json"),
     ),
     correctedDescriptions: corrected,
+    pendingEditorial: pending.length,
   };
 }
 module.exports = { editorialHealth };

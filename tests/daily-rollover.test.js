@@ -32,8 +32,9 @@ test("daily target cannot be changed after players started the date", () => {
   const databaseSource = fs.readFileSync(path.join(ROOT, "backend/database.js"), "utf8");
 
   assert.match(databaseSource, /async function countDailyUserAttemptsForDate\(date\)/);
-  assert.match(serverSource, /countDailyUserAttemptsForDate\(date\)/);
-  assert.match(serverSource, /Keeping existing target for \$\{date\}/);
+  assert.match(serverSource, /if \(target\) return date;/);
+  assert.match(serverSource, /db\.createDailyTargetIfAbsent\(/);
+  assert.match(databaseSource, /ON CONFLICT \(date\) DO NOTHING/);
 });
 
 test("a Daily started before 03:00 can finish after the rollover", () => {

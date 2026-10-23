@@ -13,6 +13,14 @@ const {
 } = require("../src/geometry-center.cjs");
 const root = path.resolve(__dirname, "..");
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
+const previousCatalog = fs.existsSync(
+  path.join(root, "data/collect_paris_catalog.json"),
+)
+  ? read("data/collect_paris_catalog.json")
+  : { records: [] };
+const previousCards = new Map(
+  previousCatalog.records.map((r) => [r.family + ":" + r.source_entity_id, r]),
+);
 const rarityOverrides = read(
   "data/collect_curated_rarity_overrides_paris.json",
 );
@@ -278,6 +286,19 @@ function add(family, id, name, features, point, extra = {}) {
     },
     questions: [],
   };
+  if (!heritage) {
+    const previous = previousCards.get(family + ":" + id);
+    if (previous && previous.editorial_status !== "pending")
+      throw new Error(
+        "Fiche vérifiée supprimée pour une carte existante : " +
+          family +
+          ":" +
+          id,
+      );
+    // Keep real map updates independent from the editorial release of a new card.
+    // Reserved numbers remain stable, but this record is never inserted into public cards.
+    record.editorial_status = "pending";
+  }
   if (reviewedPhoto && photo) record.illustration = { ...reviewedPhoto };
   if (historic && loc) {
     record.questions = [
@@ -520,11 +541,6 @@ for (const [key, required] of Object.entries(fragmentRequirements)) {
   record.fragments_required = required;
   record.questions = questions;
 }
-const previousCatalog = fs.existsSync(
-  path.join(root, "data/collect_paris_catalog.json"),
-)
-  ? read("data/collect_paris_catalog.json")
-  : { records: [] };
 const numberingPath = path.join(root, "data/collect_numbering_paris.json");
 const numbering = fs.existsSync(numberingPath)
   ? read("data/collect_numbering_paris.json")
@@ -577,6 +593,8 @@ console.log(
   JSON.stringify({
     cards: numbers,
     total: records.length,
+    pendingEditorial: records.filter((r) => r.editorial_status === "pending")
+      .length,
     fragments: records.filter((r) => r.fragments_required).length,
     photos: records.filter((r) => r.illustration.kind === "photograph").length,
   }),

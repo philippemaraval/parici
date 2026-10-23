@@ -5,15 +5,19 @@ const fs = require("node:fs"),
 const root = path.resolve(__dirname, "../../.."),
   cache = new Map();
 let responsive;
-function imageVariants(url) {
+function imageVariants(url, { versioned = true } = {}) {
   if (!responsive) {
     const file = path.join(root, "data/collect_images/responsive.json");
     responsive = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : {};
   }
   const variants = responsive[url];
   return {
-    image_reference: versionedImage(variants?.detail || url),
-    image_thumbnail: versionedImage(variants?.thumbnail || url),
+    image_reference: versioned
+      ? versionedImage(variants?.detail || url)
+      : variants?.detail || url,
+    image_thumbnail: versioned
+      ? versionedImage(variants?.thumbnail || url)
+      : variants?.thumbnail || url,
   };
 }
 function versionedImage(url) {

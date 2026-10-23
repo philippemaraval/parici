@@ -13,12 +13,15 @@ async function applyParisCollect(client) {
     ),
   );
   const catalog = require("../../../data/collect_paris_catalog.json");
+  const records = catalog.records.filter(
+    (c) => c.editorial_status !== "pending",
+  );
   await client.query(
     `INSERT INTO cards(family,source_entity_id,collection_number,name,image_reference,base_rarity,current_rarity,fragments_enabled,fragments_required)
  SELECT family,source_entity_id,collection_number,name,image_reference,base_rarity,base_rarity,fragments_required>0,fragments_required
  FROM jsonb_to_recordset($1::jsonb) AS r(family text,source_entity_id text,collection_number integer,name text,image_reference text,base_rarity smallint,fragments_required integer)
  ON CONFLICT(family,source_entity_id) DO NOTHING`,
-    [JSON.stringify(catalog.records)],
+    [JSON.stringify(records)],
   );
   await client.query(
     `INSERT INTO albums(slug,name) SELECT slug,name FROM jsonb_to_recordset($1::jsonb) AS a(slug text,name text) ON CONFLICT(slug) DO NOTHING`,
@@ -26,9 +29,9 @@ async function applyParisCollect(client) {
   );
   await client.query(
     `INSERT INTO album_cards(album_id,card_id) SELECT a.id,c.id FROM jsonb_to_recordset($1::jsonb) AS r(family text,source_entity_id text,album_slugs jsonb) JOIN cards c ON c.family=r.family AND c.source_entity_id=r.source_entity_id CROSS JOIN LATERAL jsonb_array_elements_text(r.album_slugs) slug JOIN albums a ON a.slug=slug.value ON CONFLICT DO NOTHING`,
-    [JSON.stringify(catalog.records)],
+    [JSON.stringify(records)],
   );
-  const questions = catalog.records.flatMap((r) =>
+  const questions = records.flatMap((r) =>
     r.questions.map((q, position) => ({
       ...q,
       position,

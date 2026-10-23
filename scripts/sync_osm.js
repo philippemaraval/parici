@@ -45,6 +45,7 @@ const OVERPASS_URLS = Array.from(new Set([
   process.env.OVERPASS_URL,
   "https://overpass-api.de/api/interpreter",
   "https://lz4.overpass-api.de/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
 ].filter(Boolean)));
 
@@ -256,6 +257,7 @@ function httpPost(url, body) {
         resolve(data);
       });
     });
+    req.setTimeout(330_000, () => req.destroy(new Error("Overpass request timed out")));
     req.on("error", reject);
     req.write(body);
     req.end();

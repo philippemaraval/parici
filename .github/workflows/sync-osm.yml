@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: sync-osm
@@ -80,13 +81,12 @@ jobs:
           git pull --rebase origin main
           git push origin main
 
-      - name: Trigger Render deploy
+      # A GITHUB_TOKEN push does not trigger push workflows. Dispatch the checks
+      # explicitly; hosted builds reject any commit until both have succeeded.
+      - name: Validate the published synchronization before deployment
         if: steps.check.outputs.changed == 'true'
         env:
-          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
-            echo "No render deploy hook configured; skipping deploy trigger."
-            exit 0
-          fi
-          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+          gh workflow run quality.yml --ref main
+          gh workflow run performance-budget.yml --ref main

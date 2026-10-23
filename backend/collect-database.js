@@ -182,7 +182,7 @@ async function markCollectPushDelivery(cycleCopyId, endpoint, sent) {
   );
 }
 
-function collectCardContent(card) {
+function collectCardContent(card, { versionImages = true } = {}) {
   const details = require("./domains/collect/catalog-details").cardDetails(
     card.family,
     card.source_entity_id || card.name,
@@ -190,6 +190,7 @@ function collectCardContent(card) {
   return {
     ...require("./domains/collect/image-urls").imageVariants(
       card.image_override || card.image_reference,
+      { versioned: versionImages },
     ),
     image_attribution: card.image_override
       ? { source: "custom", author: card.image_credit_override || "" }

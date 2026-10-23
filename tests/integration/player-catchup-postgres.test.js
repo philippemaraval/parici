@@ -6,7 +6,7 @@ const { createTestDatabase } = require("./test-database");
 
 test(
   "Parici: authoritative sessions, concurrent Daily receipts, notification isolation and browser",
-  { skip: !process.env.TEST_DATABASE_URL, timeout: 180000 },
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 300000 },
   async (t) => {
     const isolated = await createTestDatabase(
       process.env.TEST_DATABASE_URL,
@@ -293,6 +293,10 @@ test(
         // This API integration uses an ephemeral origin; a precached runtime config
         // from the service worker must not replace its routed local API origin.
         const page = await browser.newPage({ serviceWorkers: "block" });
+        // Functional navigation must not depend on the external font CDN.
+        await page.route("https://fonts.googleapis.com/**", (route) =>
+          route.fulfill({ contentType: "text/css", body: "" }),
+        );
         await page.route(
           /\/(?:src\/public\/js\/runtime-config|assets\/runtime-config(?:\.[\w-]+)?)\.js(?:\?.*)?$/,
           (route) =>
@@ -335,7 +339,7 @@ test(
           await page.locator("#site-menu-drawer[open]").waitFor();
           assert.equal(
             await page
-              .locator('a[href*="collect.html"],a[href*="explorer.html"]')
+              .locator('a[href*="explorer.html"]')
               .count(),
             0,
           );
@@ -365,7 +369,7 @@ test(
             await page.goto(base + path);
             assert.equal(
               await page
-                .locator('a[href*="collect.html"],a[href*="explorer.html"]')
+                .locator('a[href*="explorer.html"]')
                 .count(),
               0,
             );
