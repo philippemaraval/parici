@@ -431,7 +431,7 @@ body .profile-stats-section>summary:focus-visible{outline:2px solid #2878bc;outl
 .daily-card-reward .rarity-3{--rarity:#8656be;background:#f4edff}
 .daily-card-reward .rarity-4{--rarity:#bd8b16;background:#fff7dc}
 .daily-card-reward .rarity-5{--rarity:#bb4c3d;background:#fff0e8}
-.daily-card-reward .collect-card-art{aspect-ratio:5/4}
+.daily-card-reward .collect-card-art{aspect-ratio:auto}
 .daily-card-reward .collect-tile__name{font-size:15px}
 .daily-card-reward .daily-collect-link{display:inline-flex;justify-content:center;background:#cc3232;color:#fff;padding:9px 14px;border-radius:9px;text-decoration:none}
 .daily-card-reward>p:last-child{margin-bottom:0;color:#53616c}
