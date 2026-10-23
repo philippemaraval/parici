@@ -28,6 +28,8 @@ La suppression accidentelle d’une fiche déjà vérifiée reste bloquante. Les
 
 Le workflow OSM déclenche explicitement les deux workflows de validation après publication du commit de données, car une poussée effectuée avec `GITHUB_TOKEN` ne déclenche pas les workflows `push`. Il ne lance plus un hook Render en dehors des contrôles de qualité. L’instance publique Private.coffee est ajoutée aux sources de secours ; chaque requête possède une limite de temps.
 
+Une identité OSM renommée peut conserver son identifiant de jeu au moyen de `data/street_identity_aliases_paris.json`. Chaque correspondance est gardée par l’identifiant OSM exact et le nom actuel vérifié ; une simple ressemblance de noms ne suffit pas. La place Aimée Millot conserve ainsi son identité historique « Place de la Bergère d’Ivry », sa fiche, ses numéros et le Daily déjà planifié, avec le nom OSM actuel disponible pour l’affichage. La géométrie reste celle de la source OSM.
+
 ## Preuves de validation
 
 Les tests couvrent les deux anciens formats géographiques, tous les quartiers et rues du référentiel et les dates planifiées, la concurrence PostgreSQL, la conservation d’un abonnement partagé, l’exclusion des nouvelles cartes en attente et les refus du contrôle de publication. Les parcours navigateur vérifient les deux indices et conservent les accès publics actuels.

@@ -36,3 +36,25 @@ test("scheduled and admin OSM paths share the validated sync script", () => {
   assert.match(admin, /window\.setTimeout\(pollOnce, OSM_SYNC_POLL_INTERVAL_MS\)/);
   assert.match(syncScript, /validateOsmOutputs/);
 });
+
+test("a verified OSM rename preserves published card and Daily identities without conflating other streets", () => {
+  const { applyStreetIdentityAliases, buildLightFeatures, buildStreetIndex } = require("../scripts/sync_osm");
+  const original = JSON.parse(read("data/paris_rues_enrichi.geojson")).features.find((f) => f.properties.osm_id === "way/253867538");
+  const renamed = structuredClone(original);
+  renamed.name = renamed.properties.name = renamed.properties.osm_tags.name = "Place Aimée Millot";
+  const differentObject = structuredClone(renamed);
+  differentObject.properties.osm_id = "way/other-object";
+  const futureRename = structuredClone(renamed);
+  futureRename.properties.name = "Unverified future name";
+  applyStreetIdentityAliases([renamed, differentObject, futureRename]);
+  assert.equal(renamed.properties.name, "Place de la Bergère d'Ivry");
+  assert.equal(renamed.properties.osm_name, "Place Aimée Millot");
+  assert.equal(renamed.properties.osm_tags.name, "Place Aimée Millot");
+  assert.deepEqual(renamed.geometry, original.geometry);
+  assert.equal(differentObject.properties.name, "Place Aimée Millot");
+  assert.equal(futureRename.properties.name, "Unverified future name");
+  const [entry] = buildStreetIndex(buildLightFeatures([renamed]));
+  assert.equal(entry.name, "Place de la Bergère d'Ivry");
+  assert.equal(entry.osmName, "Place Aimée Millot");
+  assert.deepEqual(entry.centroid, original.properties.centroid);
+});

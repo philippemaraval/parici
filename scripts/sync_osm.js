@@ -741,6 +741,22 @@ function buildStreets(overpassJson, arrondissements, excludedStreetAreas = []) {
   return { features, skipped };
 }
 
+// Keep published game identities when the same verified OSM object is renamed.
+function applyStreetIdentityAliases(features) {
+  const aliases = require("../data/street_identity_aliases_paris.json");
+  for (const feature of features) {
+    const properties = feature.properties;
+    const alias = aliases.find((entry) =>
+      entry.osm_id === properties.osm_id && entry.osm_name === properties.name
+    );
+    if (!alias) continue;
+    properties.osm_name = properties.name;
+    properties.name = alias.canonical_name;
+    feature.name = alias.canonical_name;
+  }
+  return features;
+}
+
 function buildLightFeatures(features) {
   return features
     .filter((feature) => shouldKeepStreetForGame({
@@ -757,6 +773,7 @@ function buildLightFeatures(features) {
         centroid: feature.properties.centroid,
         highway: feature.properties.highway,
         osm_id: feature.properties.osm_id,
+        ...(feature.properties.osm_name ? { osm_name: feature.properties.osm_name } : {}),
       },
       geometry: feature.geometry,
       name: feature.properties.name,
@@ -842,6 +859,7 @@ async function main() {
   console.log("🛣️  Chargement des voies parisiennes...");
   const streetRaw = await fetchOverpass(STREETS_QUERY, "rues");
   const { features, skipped } = buildStreets(streetRaw, arrondissements.features, excludedStreetAreas);
+  applyStreetIdentityAliases(features);
   const lightFeatures = buildLightFeatures(features);
   const homonyms = disambiguateHomonymousStreets(lightFeatures);
   console.log(`   ${features.length} géométries de voies, ${lightFeatures.length} retenues pour le jeu.`);
@@ -898,6 +916,9 @@ if (require.main === module) {
 }
 
 module.exports = {
+  applyStreetIdentityAliases,
+  buildLightFeatures,
+  buildStreetIndex,
   buildMonuments,
   buildExcludedStreetAreas,
   buildStreets,

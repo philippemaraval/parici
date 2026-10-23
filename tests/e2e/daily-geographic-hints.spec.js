@@ -24,7 +24,9 @@ const bundle = buildSync({
 test("Daily reveals the arrondissement and then a distinct quarter for both legacy formats", async ({
   page,
 }, testInfo) => {
-  await page.setContent('<main><div id="daily-guesses-history"></div></main>');
+  await page.setContent(
+    '<meta name="viewport" content="width=device-width, initial-scale=1"><main><div id="daily-guesses-history"></div></main>',
+  );
   await page.addStyleTag({ path: path.resolve(__dirname, "../../style.css") });
   await page.addScriptTag({ content: bundle });
   for (const [stored, street] of [
@@ -64,8 +66,12 @@ test("Daily reveals the arrondissement and then a distinct quarter for both lega
       location.quartier,
     );
   }
-  await page.screenshot({
+  const screenshot = await page.screenshot({
     path: testInfo.outputPath("daily-geographic-hints.png"),
     fullPage: true,
+  });
+  await testInfo.attach("daily-geographic-hints", {
+    body: screenshot,
+    contentType: "image/png",
   });
 });
