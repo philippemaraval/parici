@@ -49,14 +49,22 @@ L'API émet une ligne JSON par requête avec `request_id`, route normalisée,
 statut et latence, sans corps, adresse IP, email, jeton ni nom d'utilisateur.
 `/api/metrics` expose les compteurs d'erreurs API, connexions, push,
 synchronisation OSM et Daily, ainsi que les histogrammes de latence. Définir
-`METRICS_TOKEN` en production et utiliser `Authorization: Bearer ...`.
+`METRICS_TOKEN` et utiliser `Authorization: Bearer ...`. Sans jeton configuré,
+l’export refuse toute lecture (503) ; un jeton absent ou incorrect reçoit 401.
+La livraison crée une valeur aléatoire uniquement si la variable Render est
+absente, via l’API de cette seule variable ; une valeur existante est conservée.
 
 Le workflow `Operations monitor` contrôle la santé et la latence toutes les dix
 minutes et ouvre une issue `operations` en cas d'échec de production, de
 synchronisation OSM ou de sauvegarde. Variable GitHub requise :
 `PRODUCTION_HEALTHCHECK_URL`. Pour contrôler aussi les seuils d'erreurs API,
-connexion, push, OSM et Daily, définir `PRODUCTION_METRICS_URL` et le secret
-`METRICS_TOKEN`. Les variables `MAX_HEALTH_LATENCY_MS`, `MAX_API_ERRORS`,
+connexion, push, OSM et Daily, le moniteur lit le jeton Render avec les accès
+de livraison existants, le masque et le conserve seulement pour le job.
+Un secret GitHub `METRICS_TOKEN` reste utilisable comme configuration explicite.
+`PRODUCTION_METRICS_URL` est facultative : la route `/api/metrics` est déduite
+de l’origine de santé. L’absence de configuration fait échouer le contrôle.
+Les compteurs sont cumulatifs depuis le démarrage du processus (pas un taux
+sur dix minutes). Les variables `MAX_HEALTH_LATENCY_MS`, `MAX_API_ERRORS`,
 `MAX_CONNECTION_FAILURES`, `MAX_PUSH_FAILURES`, `MAX_OSM_SYNC_FAILURES` et
 `MAX_DAILY_FAILURES` permettent d'ajuster les seuils.
 

@@ -35,6 +35,7 @@ const DIST_INCLUDE = [
   "confidentialite.html",
   "admin",
   "src/public",
+  "src/types/api-boundaries.js",
   "data_rules.js",
   "sw.js",
   "site.webmanifest",

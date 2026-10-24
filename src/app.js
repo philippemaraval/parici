@@ -1,3 +1,4 @@
+import { parseVerifiedSession } from "./types/api-boundaries.js";
 import { renderReminderControl, setReminderStatus, reminderBlockReason } from "./public/js/reminder-control.js";
 import { reviewMapFeatures } from "./map-review.js";
 import { avatarMarkup, iconMarkup, renderPasswordToggle } from "./public/js/camino-art.js";
@@ -4570,7 +4571,7 @@ async function prepareVerifiedSession() {
   const mode=getZoneMode();
   const pool=mode==='monuments'?allMonuments:mode==='arrondissements-ville'?allArrondissementFeatures:mode==='lignes-transports-idf'?allBusLines:buildUniqueStreetList(getCurrentZoneStreets());
   const name=feature=>mode==='arrondissements-ville'?getArrondissementTargetName(feature):feature.properties.name;
-  const result=await verifiedRequest('/api/game-sessions',{mode,gameType:getGameMode(),arrondissementName:getSelectedArrondissement(),challengeCode:activeFriendChallenge?.code,availableNames:pool.map(name)});
+  const result=parseVerifiedSession(await verifiedRequest('/api/game-sessions',{mode,gameType:getGameMode(),arrondissementName:getSelectedArrondissement(),challengeCode:activeFriendChallenge?.code,availableNames:pool.map(name)}));
   if(!isSessionRunning)return;
   const byName=new Map(pool.map(f=>[normalizeName(name(f)),f]));
   const targets=result.targets.map(n=>byName.get(normalizeName(n)));

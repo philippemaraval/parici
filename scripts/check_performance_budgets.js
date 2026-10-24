@@ -45,6 +45,9 @@ function main() {
   if (!fs.existsSync(DIST)) {
     fail("dist/ est absent ; exécutez npm run build");
   } else {
+    const publishedFiles = collectFiles(DIST, () => true).length;
+    if (publishedFiles > budgets.assets.maxPublishedFiles) fail(`Fichiers publiés: ${publishedFiles} > ${budgets.assets.maxPublishedFiles}`);
+    else pass(`Fichiers publiés: ${publishedFiles} / ${budgets.assets.maxPublishedFiles}`);
     const assetManifestPath = path.join(DIST, "asset-manifest.json");
     if (!fs.existsSync(assetManifestPath)) {
       fail("asset-manifest.json est absent");

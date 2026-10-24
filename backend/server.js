@@ -69,7 +69,7 @@ app.disable('x-powered-by');
 const observability = createObservability({
     service: 'parici-api',
     metricsToken: process.env.METRICS_TOKEN || '',
-    requireMetricsToken: process.env.NODE_ENV === 'production',
+    requireMetricsToken: true,
 });
 const PORT = process.env.PORT || 3000;
 const startupState = {
@@ -538,6 +538,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use(observability.requestMiddleware);
+app.get('/api/metrics', observability.metricsHandler);
 
 app.use(cors({
     origin: function (origin, callback) {

@@ -1,5 +1,6 @@
 (async function () {
   "use strict";
+  const { parseExplorerProgress } = await import("/src/types/api-boundaries.js");
   const { avatarMarkup } = await import("/src/public/js/camino-art.js");
 
   const identity = (() => {try{return JSON.parse(localStorage.getItem("camino_paris_user") || "null")?.id || "guest";}catch{return "guest";}})();
@@ -220,7 +221,7 @@
     try {
       const response=await fetchWithTimeout(`${API_BASE}/progress`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store'});
       if(!response.ok)throw new Error('Progression indisponible');
-      const result=await response.json();
+      const result=parseExplorerProgress(await response.json());
       for(const row of result.progress||[])state.solved[String(row.riddle_id)]={...row,server_verified:true};
       if(state.solved[String(state.currentRiddleId)]){state.currentRiddleId=null;state.currentStartedAt=null;}
       if(result.profile?.completed){state.completed=true;setLocalStorageItem(COMPLETED_KEY,'1');}

@@ -9,6 +9,13 @@ function imageVariants(url, { versioned = true } = {}) {
   if (!responsive) {
     const file = path.join(root, "data/collect_images/responsive.json");
     responsive = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : {};
+    const explorerFile = path.join(root, "data/explorer_images/manifest.json");
+    if (fs.existsSync(explorerFile)) {
+      for (const entry of JSON.parse(fs.readFileSync(explorerFile)).images ||
+        []) {
+        if (entry.detail && entry.thumbnail) responsive[entry.url] = entry;
+      }
+    }
   }
   const variants = responsive[url];
   return {

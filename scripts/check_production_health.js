@@ -23,8 +23,11 @@ function metricTotal(text, metricName) {
 }
 
 async function checkMetrics() {
-  const metricsUrl = process.env.METRICS_URL;
+  const metricsUrl = process.env.METRICS_URL
+    || (process.env.METRICS_TOKEN || process.env.REQUIRE_METRICS === 'true'
+      ? new URL('/api/metrics', healthUrl).toString() : '');
   if (!metricsUrl) return {};
+  if (!process.env.METRICS_TOKEN) throw new Error('METRICS_TOKEN is required for the protected metrics collector');
   const headers = { 'user-agent': 'camino-operations-monitor/1.0' };
   if (process.env.METRICS_TOKEN) {
     headers.authorization = `Bearer ${process.env.METRICS_TOKEN}`;

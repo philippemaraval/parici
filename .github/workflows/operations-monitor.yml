@@ -32,6 +32,7 @@ jobs:
       HEALTH_RETRY_DELAY_MS: ${{ vars.HEALTH_RETRY_DELAY_MS || '5000' }}
       DAILY_HEALTHCHECK_URL: ${{ vars.DAILY_HEALTHCHECK_URL }}
       METRICS_REQUEST_TIMEOUT_MS: ${{ vars.METRICS_REQUEST_TIMEOUT_MS || '30000' }}
+      REQUIRE_METRICS: "true"
       METRICS_URL: ${{ vars.PRODUCTION_METRICS_URL }}
       METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
       MAX_API_ERRORS: ${{ vars.MAX_API_ERRORS || '50' }}
@@ -41,6 +42,13 @@ jobs:
       MAX_DAILY_FAILURES: ${{ vars.MAX_DAILY_FAILURES || '10' }}
     steps:
       - uses: actions/checkout@v4
+      - name: Charger le jeton privé des métriques
+        continue-on-error: true
+        if: env.METRICS_TOKEN == ''
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_PRODUCTION_SERVICE_ID }}
+        run: node scripts/render_metrics_token.js --load
       - id: health
         continue-on-error: true
         run: node scripts/check_production_health.js

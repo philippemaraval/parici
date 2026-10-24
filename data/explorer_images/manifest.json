@@ -1,1 +1,89 @@
-{"images": []}
+{
+  "version": 2,
+  "images": [
+    {
+      "url": "/data/explorer_images/marais-01.jpg",
+      "thumbnail": "/data/explorer_images/optimized-28b71edf0b4091f0168e49ab-320.webp",
+      "detail": "/data/explorer_images/optimized-28b71edf0b4091f0168e49ab-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-02.jpg",
+      "thumbnail": "/data/explorer_images/optimized-9e051a8de5a656c85dedfa73-320.webp",
+      "detail": "/data/explorer_images/optimized-9e051a8de5a656c85dedfa73-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-03.jpg",
+      "thumbnail": "/data/explorer_images/optimized-b24f76ec7f36963d50695a3e-320.webp",
+      "detail": "/data/explorer_images/optimized-b24f76ec7f36963d50695a3e-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-04.jpg",
+      "thumbnail": "/data/explorer_images/optimized-14fa5a0c6845e30a113fbaf8-320.webp",
+      "detail": "/data/explorer_images/optimized-14fa5a0c6845e30a113fbaf8-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-05.jpg",
+      "thumbnail": "/data/explorer_images/optimized-e1733c5207bcae78f98bffa8-320.webp",
+      "detail": "/data/explorer_images/optimized-e1733c5207bcae78f98bffa8-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-06.jpg",
+      "thumbnail": "/data/explorer_images/optimized-f35f1e337c2de18ee5f168a7-320.webp",
+      "detail": "/data/explorer_images/optimized-f35f1e337c2de18ee5f168a7-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-07.jpg",
+      "thumbnail": "/data/explorer_images/optimized-cd3019d480bd99636df06ebf-320.webp",
+      "detail": "/data/explorer_images/optimized-cd3019d480bd99636df06ebf-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/marais-08.jpg",
+      "thumbnail": "/data/explorer_images/optimized-314b8263345dace10c56ae47-320.webp",
+      "detail": "/data/explorer_images/optimized-314b8263345dace10c56ae47-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/rive-gauche-01.jpg",
+      "thumbnail": "/data/explorer_images/optimized-7eb734f00cdc2108844f6f10-320.webp",
+      "detail": "/data/explorer_images/optimized-7eb734f00cdc2108844f6f10-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/rive-gauche-02.jpg",
+      "thumbnail": "/data/explorer_images/optimized-a15646575ebf4584db762065-320.webp",
+      "detail": "/data/explorer_images/optimized-a15646575ebf4584db762065-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/rive-gauche-03.jpg",
+      "thumbnail": "/data/explorer_images/optimized-e604c61df9bbc9f9e4434052-320.webp",
+      "detail": "/data/explorer_images/optimized-e604c61df9bbc9f9e4434052-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    },
+    {
+      "url": "/data/explorer_images/rive-gauche-04.jpg",
+      "thumbnail": "/data/explorer_images/optimized-b3ff678673ba860ee8358471-320.webp",
+      "detail": "/data/explorer_images/optimized-b3ff678673ba860ee8358471-960.webp",
+      "source": "Google Street View",
+      "license": "Attribution conservée sur la photographie"
+    }
+  ]
+}

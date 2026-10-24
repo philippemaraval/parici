@@ -198587,5 +198587,125 @@
       "provider": "google-street-view-static-api",
       "contributorPanorama": false
     }
+  },
+  "street:Chemin des Israélites": {
+    "image": "/data/collect_images/panoramax-bc69d30a-d2d5-4cfa-9c94-3363c29df8c1.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=bc69d30a-d2d5-4cfa-9c94-3363c29df8c1",
+    "verifiedEntity": "street:Chemin des Israélites",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-24",
+      "coordinate": [
+        2.331827972,
+        48.887070972
+      ],
+      "target": [
+        2.3318895582744426,
+        48.88706026568927
+      ],
+      "distanceMeters": 2.8,
+      "captureDate": "2024-01-07T16:03:40.475306+00:00",
+      "pictureId": "bc69d30a-d2d5-4cfa-9c94-3363c29df8c1",
+      "azimuth": 83,
+      "streetHeading": 67.73334995430861,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/29aa3956-ac01-4b32-a638-ecf43d35eccc/items/bc69d30a-d2d5-4cfa-9c94-3363c29df8c1",
+      "sha256": "ef77a4e211d6a8c9aecdcf41bca42f7ae6e11249fdba004c99523cd827156192",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Cité Beaurepaire": {
+    "image": "/data/collect_images/panoramax-f9643b6c-b2dc-47bf-a690-c69568966952.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=f9643b6c-b2dc-47bf-a690-c69568966952",
+    "verifiedEntity": "street:Cité Beaurepaire",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-24",
+      "coordinate": [
+        2.348438972,
+        48.865631972
+      ],
+      "target": [
+        2.348410692788113,
+        48.865632078364335
+      ],
+      "distanceMeters": 2,
+      "captureDate": "2025-06-19T06:46:08.001567+00:00",
+      "pictureId": "f9643b6c-b2dc-47bf-a690-c69568966952",
+      "azimuth": 223,
+      "streetHeading": 12.367802380360104,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/ac0dff52-f58d-4543-bf1f-4f018dadcca1/items/f9643b6c-b2dc-47bf-a690-c69568966952",
+      "sha256": "51ec491b58ce424961ec63ae9aad5fc4a00b84f447c346f6a1f20467e48d095f",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Passage Commun P/12": {
+    "image": "/data/collect_images/panoramax-712745b1-1f8d-49a0-8096-921a92dae4cd.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=712745b1-1f8d-49a0-8096-921a92dae4cd",
+    "verifiedEntity": "street:Passage Commun P/12",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-24",
+      "coordinate": [
+        2.375119972,
+        48.848973972
+      ],
+      "target": [
+        2.3747837699703345,
+        48.8486454455127
+      ],
+      "distanceMeters": 13.1,
+      "captureDate": "2023-11-15T07:02:02.417774+00:00",
+      "pictureId": "712745b1-1f8d-49a0-8096-921a92dae4cd",
+      "azimuth": 169,
+      "streetHeading": 25.472073113386784,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/73693435-d121-4b3b-97db-d3d7c68b9de6/items/712745b1-1f8d-49a0-8096-921a92dae4cd",
+      "sha256": "4a1d2bc38b57f9c6c670388a9a0993cf30373eaee78e1169a8f2a1200f014129",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
+  },
+  "street:Passage Lucien Lambeau": {
+    "image": "/data/collect_images/panoramax-d7942910-b438-40da-b682-8055ac361045.jpg",
+    "source": "panoramax",
+    "kind": "photograph",
+    "caption": "Photographie de la voie",
+    "author": "Britzz",
+    "license": "CC-BY-SA-4.0",
+    "sourcePage": "https://api.panoramax.xyz/?pic=d7942910-b438-40da-b682-8055ac361045",
+    "verifiedEntity": "street:Passage Lucien Lambeau",
+    "verification": {
+      "method": "geometry-local-axis-and-visual-review",
+      "reviewedAt": "2026-10-24",
+      "coordinate": [
+        2.413288,
+        48.857759
+      ],
+      "target": [
+        2.412652095317383,
+        48.857538791840454
+      ],
+      "distanceMeters": 1.3,
+      "captureDate": "2026-06-13T11:03:43.834002+00:00",
+      "pictureId": "d7942910-b438-40da-b682-8055ac361045",
+      "azimuth": 55,
+      "streetHeading": 64.43389378036795,
+      "metadataPage": "https://api.panoramax.xyz/api/collections/46dc56f2-9f42-4687-8db0-5ac97caf2efa/items/d7942910-b438-40da-b682-8055ac361045",
+      "sha256": "95acc3de1863c46836bbf016a83aa31c608b8c017b659aa6dde9f2e01efd6a00",
+      "evidence": "Vue de l'axe de la voie retenue après contrôle visuel."
+    }
   }
 }

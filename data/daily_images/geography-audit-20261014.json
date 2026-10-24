@@ -6684,6 +6684,5055 @@
       "visualReview": true,
       "framing": "Perspective longitudinale de la voie ; espace public identifiable pour les places.",
       "sourceImage": "6cfddca9af863d4fe933-0.jpg"
+    },
+    {
+      "date": "2027-06-28",
+      "street": "Impasse Bonne Nouvelle",
+      "cardKey": "street:Impasse Bonne Nouvelle",
+      "image": "/data/daily_images/2027-06-28__verified-588375e7332ce779.jpg",
+      "sha256": "588375e7332ce779cf20d20a6f0b3a4d41d838a2af7a2d5c411fefe86ea0854e",
+      "coordinate": [
+        2.350602192828214,
+        48.87049982846395
+      ],
+      "target": [
+        2.350598705290182,
+        48.8705232392985
+      ],
+      "panoId": "bKvW75sP5JaMGAqTmb_zsA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 5.0600496469185146,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-38bd8908dc582719fdd4-588375e7332c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-06-29",
+      "street": "Cité Popincourt",
+      "cardKey": "street:Cité Popincourt",
+      "image": "/data/daily_images/2027-06-29__verified-973668e5b94a016a.jpg",
+      "sha256": "973668e5b94a016a21d66a248281e4b17f6b76766fb22ccb86c259df4f8e1214",
+      "coordinate": [
+        2.374889600305249,
+        48.86241644234154
+      ],
+      "target": [
+        2.3747992831785285,
+        48.86238559847235
+      ],
+      "panoId": "VEBxe6mDrFr1oyg6jYonQw",
+      "captureDate": "2018-08",
+      "copyright": "© Google",
+      "heading": 56.34743097148214,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-62fc4d82814aac99c712-973668e5b94a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-06-30",
+      "street": "Rue Baulant",
+      "cardKey": "street:Rue Baulant",
+      "image": "/data/daily_images/2027-06-30__verified-f87e1bf3c4d4e7ed.jpg",
+      "sha256": "f87e1bf3c4d4e7ed66c21e61271c3d03d81d6097a14115cca68078dbf1517ca6",
+      "coordinate": [
+        2.386857928630902,
+        48.84096936566444
+      ],
+      "target": [
+        2.386843624342724,
+        48.84096190862138
+      ],
+      "panoId": "bZ0iLvnD3txKy5ydYl_jHA",
+      "captureDate": "2023-04",
+      "copyright": "© Google",
+      "heading": 61.197971987860285,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-92d96e4eb937cd5a0b2e-f87e1bf3c4d4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-01",
+      "street": "Rue Jean-Sébastien Bach",
+      "cardKey": "street:Rue Jean-Sébastien Bach",
+      "image": "/data/daily_images/2027-07-01__verified-8174f74c19e282ff.jpg",
+      "sha256": "8174f74c19e282ff751e6d5b1334812f4a4529b60fe6f7356b0187334586864b",
+      "coordinate": [
+        2.365026231542382,
+        48.83090720278733
+      ],
+      "target": [
+        2.364993382901185,
+        48.83089887236627
+      ],
+      "panoId": "sMW43gLgzglLIG_aZX8i2g",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 121.73113554494785,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7f48d68a7e7e4119ea02-8174f74c19e2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-02",
+      "street": "Rue Crocé-Spinelli",
+      "cardKey": "street:Rue Crocé-Spinelli",
+      "image": "/data/daily_images/2027-07-02__verified-763760cae8275ab8.jpg",
+      "sha256": "763760cae8275ab8ad1f58746667ba75b26f5bf46c0b2cb2bb64306e45aa18c6",
+      "coordinate": [
+        2.317072929188218,
+        48.83522662024476
+      ],
+      "target": [
+        2.316440334419222,
+        48.83565298971105
+      ],
+      "panoId": "aPQ-z2CVQGoS8sDlAw3Ddg",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 136.44547478431872,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b531c57245b64e52c704-763760cae827.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-03",
+      "street": "Rampe Keller",
+      "cardKey": "street:Rampe Keller",
+      "image": "/data/daily_images/2027-07-03__verified-b6420b28c3d7ad42.jpg",
+      "sha256": "b6420b28c3d7ad4213595a0c3ef4929cf23dbc7476b7f9c42f7f6ebb6255201d",
+      "coordinate": [
+        2.281979288811527,
+        48.84800462025667
+      ],
+      "target": [
+        2.2816335165147326,
+        48.84798656803053
+      ],
+      "panoId": "hdSRV3XBw1DIOb4f7WZ1IQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 128.05511033130455,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 14.3,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la voie ou de son accès caractéristique, perspective dans sa longueur contrôlée visuellement dans les deux sens.",
+      "sourceImage": "/data/collect_images/photo-dd3cbd6638f06cfb6528-b6420b28c3d7.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-04",
+      "street": "Rue François Gérard",
+      "cardKey": "street:Rue François Gérard",
+      "image": "/data/daily_images/2027-07-04__verified-b03506f5f717b653.jpg",
+      "sha256": "b03506f5f717b65351111ee9fa33d91163d1af396802118c2b1cc832da71f117",
+      "coordinate": [
+        2.271106665590688,
+        48.84886396800915
+      ],
+      "target": [
+        2.2711259251594216,
+        48.84889344050053
+      ],
+      "panoId": "Teh3Qk0XBbOFHD8Ppwq4yQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 201.50785866790585,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-28c27be6b161ab03c3dc-b03506f5f717.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-05",
+      "street": "Rue Torricelli",
+      "cardKey": "street:Rue Torricelli",
+      "image": "/data/daily_images/2027-07-05__verified-daf8bf8bd9b0eec8.jpg",
+      "sha256": "daf8bf8bd9b0eec8deb1d23b6697d2bdbcb43e1b4bbc262a1a48b9926d47305b",
+      "coordinate": [
+        2.291732922088694,
+        48.88070517313321
+      ],
+      "target": [
+        2.291759712677362,
+        48.88070515985985
+      ],
+      "panoId": "aH44nNupbjz9rzJPuShxMg",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 51.067718317938784,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bf458a080408efdbfccf-daf8bf8bd9b0.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-06",
+      "street": "Rue Gaston Tissandier",
+      "cardKey": "street:Rue Gaston Tissandier",
+      "image": "/data/daily_images/2027-07-06__verified-d3a724d814bd03e7.jpg",
+      "sha256": "d3a724d814bd03e7a8c4ddc676b503af258f229317387f000834b7ee67b64cc0",
+      "coordinate": [
+        2.366147523747169,
+        48.8992154175055
+      ],
+      "target": [
+        2.3663270992848333,
+        48.89908478933918
+      ],
+      "panoId": "OP1oIjGMVLaIhbSrQqc3-w",
+      "captureDate": "2024-05",
+      "copyright": "© Google",
+      "heading": 313.7646274638398,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-50ddd3cadd97d423c1c8-d3a724d814bd.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-07",
+      "street": "Rue Rampal",
+      "cardKey": "street:Rue Rampal",
+      "image": "/data/daily_images/2027-07-07__verified-7934af8d894e0e90.jpg",
+      "sha256": "7934af8d894e0e90da2cf10ff80c468c405f151ec0641bff57a110c79e814798",
+      "coordinate": [
+        2.379772335552123,
+        48.8734799872306
+      ],
+      "target": [
+        2.3797267032982328,
+        48.8738118498013
+      ],
+      "panoId": "dK-WzshZSsd55SPeEZh8sA",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 176.2984479074912,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a3f3fb77dc30b4ca12f3-7934af8d894e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-08",
+      "street": "Quai Aimé Césaire",
+      "cardKey": "street:Quai Aimé Césaire",
+      "image": "/data/daily_images/2027-07-08__verified-10ad0be0e378d250.jpg",
+      "sha256": "10ad0be0e378d2509d20f3f7e3d0f90fb1d5f37b8b6983f0f94ad7e0a9f10ce1",
+      "coordinate": [
+        2.327312969275702,
+        48.86176081161417
+      ],
+      "target": [
+        2.327479886179281,
+        48.861798926360734
+      ],
+      "panoId": "mSvhV5YhOH1PITJzhzosvg",
+      "captureDate": "2026-07",
+      "copyright": "© Google",
+      "heading": 116.17653303566561,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-2786a11487c4c00e67b5-10ad0be0e378.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-09",
+      "street": "Rue Charles Friedel",
+      "cardKey": "street:Rue Charles Friedel",
+      "image": "/data/daily_images/2027-07-09__verified-a5fa95185a6c635d.jpg",
+      "sha256": "a5fa95185a6c635dc6d008f11b1a06899c1d1d6fe85d3a147af72bb6d9fec1ce",
+      "coordinate": [
+        2.395250435335309,
+        48.8726537770243
+      ],
+      "target": [
+        2.395222819435222,
+        48.87265435058048
+      ],
+      "panoId": "hLpZNU7LxqSnM-3s5-Amgg",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 94.86827995493536,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-172808c313770465f267-a5fa95185a6c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-10",
+      "street": "Passage des Panoramas",
+      "cardKey": "street:Passage des Panoramas",
+      "image": "/data/daily_images/2027-07-10__verified-190f8735bf962823.jpg",
+      "sha256": "190f8735bf962823127279152e5f7fda58ed595046a595eba41375ce165eb73a",
+      "coordinate": [
+        2.341672166722891,
+        48.87097185801879
+      ],
+      "target": [
+        2.3416649600471726,
+        48.87098488014152
+      ],
+      "panoId": "LhUfAi8SbpepRjw6LTceQg",
+      "captureDate": "2017-11",
+      "copyright": "© Google",
+      "heading": 190.51475262717892,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-50fc6b5a449ea84b8329-190f8735bf96.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-11",
+      "street": "Rue Chapon",
+      "cardKey": "street:Rue Chapon",
+      "image": "/data/daily_images/2027-07-11__verified-fd50cea4c816f5fb.jpg",
+      "sha256": "fd50cea4c816f5fba691cf49e09eebb2bb8c8df699a7cf237f80fd50b723ebec",
+      "coordinate": [
+        2.356426568960423,
+        48.86331940798537
+      ],
+      "target": [
+        2.3554610685869024,
+        48.863591407246645
+      ],
+      "panoId": "YEmI2MB7ZYJRCmm2RaYEhA",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 294.3967000004212,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c557e1efb43db1b0e105-fd50cea4c816.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-12",
+      "street": "Place Louis Lépine",
+      "cardKey": "street:Place Louis Lépine",
+      "image": "/data/daily_images/2027-07-12__verified-e9b99ee20ca4ac23.jpg",
+      "sha256": "e9b99ee20ca4ac236d1cab312553fdcfbda462af56c85da899da818c783074e8",
+      "coordinate": [
+        2.347386071109636,
+        48.85504970896866
+      ],
+      "target": [
+        2.3471069083630676,
+        48.85519396034074
+      ],
+      "panoId": "P5pwTDwldLuITUOeD5f_hw",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 119.62326997743389,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-178dce3c99df4f5582ef-e9b99ee20ca4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-13",
+      "street": "Boulevard de Port-Royal",
+      "cardKey": "street:Boulevard de Port-Royal",
+      "image": "/data/daily_images/2027-07-13__verified-b022d51b9f5a6eca.jpg",
+      "sha256": "b022d51b9f5a6eca90607e5ced2591868fd21ba4786049fb3a00e8ff2a7636d3",
+      "coordinate": [
+        2.34329269900911,
+        48.83813425917971
+      ],
+      "target": [
+        2.3449153600505555,
+        48.83780464232077
+      ],
+      "panoId": "YRYcmTG7cPSUY5qkWiXIlQ",
+      "captureDate": "2025-07",
+      "copyright": "© Google",
+      "heading": 287.9140571974365,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-0c0bc19e0f988fdd01b8-b022d51b9f5a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-14",
+      "street": "Rue Cassette",
+      "cardKey": "street:Rue Cassette",
+      "image": "/data/daily_images/2027-07-14__verified-a687099969b8baeb.jpg",
+      "sha256": "a687099969b8baeb2c5e27c27fd1bfdd9eb10682b4a4c84b13c61ca541463d9e",
+      "coordinate": [
+        2.330876253511642,
+        48.84971655942316
+      ],
+      "target": [
+        2.33088001389889,
+        48.84969487838471
+      ],
+      "panoId": "Bz5KMEUBXGF9jiwWsf8paw",
+      "captureDate": "2023-05",
+      "copyright": "© Google",
+      "heading": 355.69922450406733,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-264ccb6661ba427022e0-a687099969b8.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-15",
+      "street": "Rue Fabert",
+      "cardKey": "street:Rue Fabert",
+      "image": "/data/daily_images/2027-07-15__verified-bc307431619ef9b2.jpg",
+      "sha256": "bc307431619ef9b2fbe74a21becdd5f9f441f13fdb44174192263cd9bac4289f",
+      "coordinate": [
+        2.311357433738077,
+        48.85976448449085
+      ],
+      "target": [
+        2.311420526700328,
+        48.86045210862787
+      ],
+      "panoId": "w9lLR6c9bqR8U-e95VsrEQ",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 183.13812651984824,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-53ff54f705498cc7b952-bc307431619e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-16",
+      "street": "Avenue Franklin Delano Roosevelt",
+      "cardKey": "street:Avenue Franklin Delano Roosevelt",
+      "image": "/data/daily_images/2027-07-16__verified-e5a873c676ad7d46.jpg",
+      "sha256": "e5a873c676ad7d463131e82ddefd8a2a740e448a55bac4dd9c3582059a1a7356",
+      "coordinate": [
+        2.310052133411499,
+        48.8711691636332
+      ],
+      "target": [
+        2.31014,
+        48.868253288606425
+      ],
+      "panoId": "Q674QC5WN2TvEcLZZPRqNA",
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "heading": 179.46921758737153,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-ddc28017ededf9571747-e5a873c676ad.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-17",
+      "street": "Rue d'Athènes",
+      "cardKey": "street:Rue d'Athènes",
+      "image": "/data/daily_images/2027-07-17__verified-805d4e95b27e81ee.jpg",
+      "sha256": "805d4e95b27e81eee4a6b48e0e730828ab1653929376f0c4cc70325779cc8ba7",
+      "coordinate": [
+        2.328459561119259,
+        48.87801478693996
+      ],
+      "target": [
+        2.328520124286426,
+        48.878020693869914
+      ],
+      "panoId": "ZHUUWGS-1gSHgKEgw1pGPQ",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 83.7591876588076,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c7e26981e05fc724f750-805d4e95b27e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-18",
+      "street": "Rue Perdonnet",
+      "cardKey": "street:Rue Perdonnet",
+      "image": "/data/daily_images/2027-07-18__verified-a4c6f0413e08bdf1.jpg",
+      "sha256": "a4c6f0413e08bdf13637e607e46f7b5ccefb4d025e45d51ce95048da6a6fa31a",
+      "coordinate": [
+        2.36101981297739,
+        48.88390306813773
+      ],
+      "target": [
+        2.3603343276888786,
+        48.88350128437211
+      ],
+      "panoId": "Esl9FOSKEYKgVf1RhW4Iqw",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 228.71187254875161,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-88038b2283d414932446-a4c6f0413e08.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-19",
+      "street": "Cité Industrielle",
+      "cardKey": "street:Cité Industrielle",
+      "image": "/data/daily_images/2027-07-19__verified-3c0283c5494b5a4c.jpg",
+      "sha256": "3c0283c5494b5a4cd8ba09e9d0dff69815651fdf6ae76168a3c75fe6aef9dd55",
+      "coordinate": [
+        2.381113126107434,
+        48.85844089633447
+      ],
+      "target": [
+        2.380813592317031,
+        48.858796407682966
+      ],
+      "panoId": "39qRiDWM8EmM5Ln6O_iEVw",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 331.77646464281366,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-4f73888f8b6f3ff1e15a-3c0283c5494b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-20",
+      "street": "Rue Dubrunfaut",
+      "cardKey": "street:Rue Dubrunfaut",
+      "image": "/data/daily_images/2027-07-20__verified-b655ed6c6b9f6d70.jpg",
+      "sha256": "b655ed6c6b9f6d702c136be30db16215a312f7fc5d4769583157a77a84fb044b",
+      "coordinate": [
+        2.390183431822383,
+        48.83975193507464
+      ],
+      "target": [
+        2.390406026947757,
+        48.84006068463184
+      ],
+      "panoId": "SfOAAn8RRd4mp13qcLfOog",
+      "captureDate": "2023-04",
+      "copyright": "© Google",
+      "heading": 196.89721713457345,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f2a2c81d6cb351488bb3-b655ed6c6b9f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-21",
+      "street": "Rue Ernest et Henri Rousselle",
+      "cardKey": "street:Rue Ernest et Henri Rousselle",
+      "image": "/data/daily_images/2027-07-21__verified-3853bd85caaddd91.jpg",
+      "sha256": "3853bd85caaddd918733689909950267282395017cefbcde4bc9619353249f73",
+      "coordinate": [
+        2.354618085204326,
+        48.82517497329299
+      ],
+      "target": [
+        2.354651561339289,
+        48.82514131829936
+      ],
+      "panoId": "jjpaXjlpANIEUl3pQpk9oA",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 302.81515968628673,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-d7bb873b7a28a7a290e7-3853bd85caad.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-22",
+      "street": "Place Édith Thomas",
+      "cardKey": "street:Place Édith Thomas",
+      "image": "/data/daily_images/2027-07-22__verified-78a37d61d451c6cf.jpg",
+      "sha256": "78a37d61d451c6cfe95640b6d2c70c54094d6fa17e36e1de1f04c2cb7dd1cfde",
+      "coordinate": [
+        2.325428747055407,
+        48.82188875972281
+      ],
+      "target": [
+        2.3256815633826826,
+        48.82140915816818
+      ],
+      "panoId": "be48HLldtOz4GgL05tCxeA",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 99.49664295290302,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-dea8628bae54834278ef-78a37d61d451.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-23",
+      "street": "Rue Lakanal",
+      "cardKey": "street:Rue Lakanal",
+      "image": "/data/daily_images/2027-07-23__verified-a82d8b7d6892dc73.jpg",
+      "sha256": "a82d8b7d6892dc738770bdd0057b0cf79e93ce1d3e9d0c0759217f71f18dc473",
+      "coordinate": [
+        2.294823263173991,
+        48.84415478431529
+      ],
+      "target": [
+        2.2948179670196076,
+        48.84414303319648
+      ],
+      "panoId": "-YgKiRdEm9X2hUoHLCwWVQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 300.50650150532795,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-24b8bcf9ef984d0651af-a82d8b7d6892.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-24",
+      "street": "Avenue Adrien Hébrard",
+      "cardKey": "street:Avenue Adrien Hébrard",
+      "image": "/data/daily_images/2027-07-24__verified-36dcb45d5a8378f2.jpg",
+      "sha256": "36dcb45d5a8378f2490f8e6e1af8e8d8d14db4f9cbd8a50b3ed2b743052aa5f4",
+      "coordinate": [
+        2.269928691143595,
+        48.85364845111331
+      ],
+      "target": [
+        2.2698778231384624,
+        48.853652355231524
+      ],
+      "panoId": "G_oAt8EytR2LOGFKSUBnNA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 298.25757819974683,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bc79f17c2b9054d05942-36dcb45d5a83.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-25",
+      "street": "Rue Marius Aufan",
+      "cardKey": "street:Rue Marius Aufan",
+      "image": "/data/daily_images/2027-07-25__verified-a6f652444597acc8.jpg",
+      "sha256": "a6f652444597acc87695ccb659aa0764d8f7d697fdd9f25d0eb6a5a5c71c87dd",
+      "coordinate": [
+        2.287724374061587,
+        48.88764430249432
+      ],
+      "target": [
+        2.2877600000013576,
+        48.88759999999864
+      ],
+      "panoId": "SM4vRQApaF6mo3xQTLgNMQ",
+      "captureDate": "2022-04",
+      "copyright": "© Google",
+      "heading": 146.67352488137942,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cc7cea4e08b97a1268c4-a6f652444597.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-26",
+      "street": "Rue du Roi d'Alger",
+      "cardKey": "street:Rue du Roi d'Alger",
+      "image": "/data/daily_images/2027-07-26__verified-242a9957d24d81fb.jpg",
+      "sha256": "242a9957d24d81fb62c752b125c3e07f0c15cad87ebe49a0408bd74f784620c8",
+      "coordinate": [
+        2.347342279005975,
+        48.89526814322272
+      ],
+      "target": [
+        2.3473049065545957,
+        48.89527200315868
+      ],
+      "panoId": "MzJtbyXvUk7hQtJSxh7m7A",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 106.4571349244867,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-6da96c634997a606e2a7-242a9957d24d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-27",
+      "street": "Rue Lally-Tollendal",
+      "cardKey": "street:Rue Lally-Tollendal",
+      "image": "/data/daily_images/2027-07-27__verified-e56843bfb97b70c9.jpg",
+      "sha256": "e56843bfb97b70c9a02cf103de118c35b34433216b7b83d932dcee485745dfee",
+      "coordinate": [
+        2.373942193339976,
+        48.88322873466041
+      ],
+      "target": [
+        2.374797391344752,
+        48.88267596734595
+      ],
+      "panoId": "TzDUl2xzi3ao67m4CTsTHA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 314.9803449898147,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-0a68c6163357f5449671-e56843bfb97b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-28",
+      "street": "Rue des Déchargeurs",
+      "cardKey": "street:Rue des Déchargeurs",
+      "image": "/data/daily_images/2027-07-28__verified-32e1c3e2685657d4.jpg",
+      "sha256": "32e1c3e2685657d48fafce125f47bc4c932e4a2abd4d43628c714ebde0685426",
+      "coordinate": [
+        2.346013237321883,
+        48.85971116007509
+      ],
+      "target": [
+        2.3460339532939685,
+        48.85971246791635
+      ],
+      "panoId": "VzhdUoFq7gXr7PUHw3t7HA",
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "heading": 213.28495705258985,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9410673525d001f947ec-32e1c3e26856.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-29",
+      "street": "Rue Pierre Bonnard",
+      "cardKey": "street:Rue Pierre Bonnard",
+      "image": "/data/daily_images/2027-07-29__verified-af39a58153a631ea.jpg",
+      "sha256": "af39a58153a631ea0f076edc4cebb63819482b515c64dd09197c866dadea194d",
+      "coordinate": [
+        2.403673442437187,
+        48.85959367647766
+      ],
+      "target": [
+        2.4041,
+        48.8595
+      ],
+      "panoId": "HFMsbjTbSD93ZxrWnPdqsg",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 60.92313066866592,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-3fcf653beadd98c623aa-af39a58153a6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-30",
+      "street": "Rue Paul Lelong",
+      "cardKey": "street:Rue Paul Lelong",
+      "image": "/data/daily_images/2027-07-30__verified-2e8ca2bb29634ed0.jpg",
+      "sha256": "2e8ca2bb29634ed095aae9aa9c3af35bf9a88b70d4193f2ccfc3ee41ae48be4d",
+      "coordinate": [
+        2.342345326902904,
+        48.86767670619786
+      ],
+      "target": [
+        2.3422936757867245,
+        48.86766560999222
+      ],
+      "panoId": "qUMMtSudoQDlL7D5Glq8Pg",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 262.9510466230894,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b73f3cd85ffa42c87bd2-2e8ca2bb2963.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-07-31",
+      "street": "Rue au Maire",
+      "cardKey": "street:Rue au Maire",
+      "image": "/data/daily_images/2027-07-31__verified-2914d4c6dec9551e.jpg",
+      "sha256": "2914d4c6dec9551e86f7fabb8bac19b74e99db90808dc08626d11915bfe9d372",
+      "coordinate": [
+        2.356136809431349,
+        48.86467485241761
+      ],
+      "target": [
+        2.356117367751297,
+        48.86467210537479
+      ],
+      "panoId": "9pMKlyoFuUWSPyD-K8jWSA",
+      "captureDate": "2023-07",
+      "copyright": "© Google",
+      "heading": 284.75949249557584,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bb6b3bec004c4a78653a-2914d4c6dec9.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-01",
+      "street": "Rue de la Coutellerie",
+      "cardKey": "street:Rue de la Coutellerie",
+      "image": "/data/daily_images/2027-08-01__verified-6e5c114f8f734177.jpg",
+      "sha256": "6e5c114f8f7341773e0d423dbb5a19c5a6460e8faf02f1149093c686056bb1b1",
+      "coordinate": [
+        2.350712355323159,
+        48.85743819691996
+      ],
+      "target": [
+        2.3505021818015948,
+        48.857404540602964
+      ],
+      "panoId": "8RHiUek1HNX2pqJ2Q4abFA",
+      "captureDate": "2026-08",
+      "copyright": "© Google",
+      "heading": 254.16062752565904,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-43f8ef799390cf9600d5-6e5c114f8f73.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-02",
+      "street": "Rue des Fossés Saint-Jacques",
+      "cardKey": "street:Rue des Fossés Saint-Jacques",
+      "image": "/data/daily_images/2027-08-02__verified-2076ec656a3e358e.jpg",
+      "sha256": "2076ec656a3e358e8c967815a827aea79765ffe083c9cb6641d620d4214b43d9",
+      "coordinate": [
+        2.344071773204109,
+        48.84577216909634
+      ],
+      "target": [
+        2.3442832098743445,
+        48.845638216736475
+      ],
+      "panoId": "k6kVwMRw_YPnbDZqgq3CTw",
+      "captureDate": "2025-05",
+      "copyright": "© Google",
+      "heading": 308.6189757652976,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cda6d3cbb3e624e70ee3-2076ec656a3e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-03",
+      "street": "Rue Honoré Chevalier",
+      "cardKey": "street:Rue Honoré Chevalier",
+      "image": "/data/daily_images/2027-08-03__verified-4494754f66ee1589.jpg",
+      "sha256": "4494754f66ee1589c98ebe9611503c0bf900b049a02d85dfd75810ccf23b4f0f",
+      "coordinate": [
+        2.332185184115606,
+        48.84941878139636
+      ],
+      "target": [
+        2.331827034927081,
+        48.84937358294214
+      ],
+      "panoId": "iMByZAw-GsM7gdvJINwi4A",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 258.6130117160133,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c611d602ca205ace0d82-4494754f66ee.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-04",
+      "street": "Rue Jean Nicot",
+      "cardKey": "street:Rue Jean Nicot",
+      "image": "/data/daily_images/2027-08-04__verified-dbabcb165ab2ed00.jpg",
+      "sha256": "dbabcb165ab2ed00ca05fa1e7d92d1450014b3302e0396f41bddfe3aebe21dee",
+      "coordinate": [
+        2.307066086676866,
+        48.86099298858279
+      ],
+      "target": [
+        2.307056912458094,
+        48.8610205174717
+      ],
+      "panoId": "ehzrmGlSc5QBoug3F-rc0g",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 339.45856289160656,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b7e8a2d5c76a0b54cb0a-dbabcb165ab2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-05",
+      "street": "Rue de Turin",
+      "cardKey": "street:Rue de Turin",
+      "image": "/data/daily_images/2027-08-05__verified-8499280c94ed848f.jpg",
+      "sha256": "8499280c94ed848feac30328bd06ed77c3ad38589d724e407076cdbb72fef5e3",
+      "coordinate": [
+        2.324497315477434,
+        48.88185104844303
+      ],
+      "target": [
+        2.3246761976145334,
+        48.88106901192733
+      ],
+      "panoId": "IstVUWqcELvnpIzUtiRQ_w",
+      "captureDate": "2023-02",
+      "copyright": "© Google",
+      "heading": 350.7552077704478,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7fdd88daaa178d0f3084-8499280c94ed.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-06",
+      "street": "Place Garbis Aprikian",
+      "cardKey": "street:Place Garbis Aprikian",
+      "image": "/data/daily_images/2027-08-06__verified-0695921b3e6a1a21.jpg",
+      "sha256": "0695921b3e6a1a2126c4afc4f1e068610cf17f90883a09b9bf0c7ff3e81b94ca",
+      "coordinate": [
+        2.348871150947165,
+        48.87949201133677
+      ],
+      "target": [
+        2.3488523963000083,
+        48.879410460298146
+      ],
+      "panoId": "2Wv7nsOihEmXGqIu0Q02wQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 188.60033237871076,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 5.6,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-351fc6f5b5d2bea376d5-0695921b3e6a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-07",
+      "street": "Cité de Chabrol",
+      "cardKey": "street:Cité de Chabrol",
+      "image": "/data/daily_images/2027-08-07__verified-35b2eaabdf6299e6.jpg",
+      "sha256": "35b2eaabdf6299e624d505d6345ed14fa296994c91cb5a2352ad0bf5656cf700",
+      "coordinate": [
+        2.353916918946005,
+        48.8766140013696
+      ],
+      "target": [
+        2.3538773123153374,
+        48.87654193694601
+      ],
+      "panoId": "qiW2i5u-qvR1-U0voEDTsQ",
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "heading": 192.86029131856202,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7fd1d882d55e143465eb-35b2eaabdf62.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-08",
+      "street": "Rue Chevreul",
+      "cardKey": "street:Rue Chevreul",
+      "image": "/data/daily_images/2027-08-08__verified-8473a9af57eaffbf.jpg",
+      "sha256": "8473a9af57eaffbf8894937050cac678f116a79fd756959bde6dd1a9b2c4cdbf",
+      "coordinate": [
+        2.39199539611508,
+        48.84972971676522
+      ],
+      "target": [
+        2.391977178947554,
+        48.84968464497392
+      ],
+      "panoId": "CydM3XmtKBSFO_JHuk0vEA",
+      "captureDate": "2023-04",
+      "copyright": "© Google",
+      "heading": 176.7633648686293,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b65173ab06dfa041214a-8473a9af57ea.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-09",
+      "street": "Rue Antoine Vollon",
+      "cardKey": "street:Rue Antoine Vollon",
+      "image": "/data/daily_images/2027-08-09__verified-a406c91580507f5d.jpg",
+      "sha256": "a406c91580507f5dac4aa83efeea7785b92aba35c8ad68b98b65c6d18d19761e",
+      "coordinate": [
+        2.377068455056914,
+        48.85082343113749
+      ],
+      "target": [
+        2.3768850648698336,
+        48.85055181808735
+      ],
+      "panoId": "G9AI071OACm0ivLR5cfGQQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 204.4346472306057,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-3a46fc308bdff5fa4c78-a406c9158050.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-10",
+      "street": "Allée du Sommet",
+      "cardKey": "street:Allée du Sommet",
+      "image": "/data/daily_images/2027-08-10__verified-6b15b95f4f6ff913.jpg",
+      "sha256": "6b15b95f4f6ff9131672cecfb9ad1377be421f2570ab81801a4ca818ef8742bb",
+      "coordinate": [
+        2.348929799424068,
+        48.81914784081279
+      ],
+      "target": [
+        2.3491456160019752,
+        48.8187950719842
+      ],
+      "panoId": "7I8_uADPEUk6s_4RDwXL0Q",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 174.62640717733086,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 13.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7b01b0a3d5b732830991-6b15b95f4f6f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-11",
+      "street": "Avenue Maurice d'Ocagne",
+      "cardKey": "street:Avenue Maurice d'Ocagne",
+      "image": "/data/daily_images/2027-08-11__verified-acdf74a3d2422eff.jpg",
+      "sha256": "acdf74a3d2422eff45522d3320cf8f6155dba55b1744284ce035d6d19d747b04",
+      "coordinate": [
+        2.314141661546378,
+        48.82460221531935
+      ],
+      "target": [
+        2.3143017498195286,
+        48.82455595002808
+      ],
+      "panoId": "WTkpSqttHEbGOI41ph0OKA",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 283.2938797442824,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9113c5f5b931586f2ec5-acdf74a3d242.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-12",
+      "street": "Rue Guynemer - Quartier de Javel",
+      "cardKey": "street:Rue Guynemer - Quartier de Javel",
+      "image": "/data/daily_images/2027-08-12__verified-9ba43ef7560d89ca.jpg",
+      "sha256": "9ba43ef7560d89cae66c35cd0279d8e196f580992cdf4d8e8ecd68c3285cea19",
+      "coordinate": [
+        2.279187277460851,
+        48.83245269850185
+      ],
+      "target": [
+        2.279197033876517,
+        48.832490550814775
+      ],
+      "panoId": "Q9sJqcgWwmW9lwh6GQobGA",
+      "captureDate": "2017-08",
+      "copyright": "© Google",
+      "heading": 198.2180256937224,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-540305f3e561cfac95e2-9ba43ef7560d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-13",
+      "street": "Rue Pierre Guérin",
+      "cardKey": "street:Rue Pierre Guérin",
+      "image": "/data/daily_images/2027-08-13__verified-aa38c816e6eca3d0.jpg",
+      "sha256": "aa38c816e6eca3d02fe22ab05f5209f30437795ab24886e03e5838f4fe4d92ad",
+      "coordinate": [
+        2.266573420570269,
+        48.84831753687576
+      ],
+      "target": [
+        2.266000759983183,
+        48.84931287924791
+      ],
+      "panoId": "9A4rsSOJb2ubaJj0ardW9w",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 8.873347803492265,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8397a72a3ae2d7ae813e-aa38c816e6ec.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-14",
+      "street": "Rue de Saussure",
+      "cardKey": "street:Rue de Saussure",
+      "image": "/data/daily_images/2027-08-14__verified-19894381d0ccdc85.jpg",
+      "sha256": "19894381d0ccdc859c114d93bdc9bb4d75fc4109d947f79b0e2f8f68cb18cdc6",
+      "coordinate": [
+        2.306437343966973,
+        48.88959868135973
+      ],
+      "target": [
+        2.3120908668149824,
+        48.887268890645984
+      ],
+      "panoId": "Zxflj8yM74QHOpT881TVCg",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 117.4651201062245,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-2c3bf8b6b600fc8dbbaa-19894381d0cc.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-15",
+      "street": "Place Noël Veg",
+      "cardKey": "street:Place Noël Veg",
+      "image": "/data/daily_images/2027-08-15__verified-8fccd902ca2703a1.jpg",
+      "sha256": "8fccd902ca2703a17b956964dc0eab0f7e65c594dbcf2c3ac49ed2c47e579845",
+      "coordinate": [
+        2.330529052316729,
+        48.89602061282626
+      ],
+      "target": [
+        2.3306166971909037,
+        48.89606386706159
+      ],
+      "panoId": "q38lerZgwr9d5mw4NKfcoQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 53.105171554622984,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-9fc6144dddbe0d20dfe2-8fccd902ca27.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-16",
+      "street": "Rue Petit",
+      "cardKey": "street:Rue Petit",
+      "image": "/data/daily_images/2027-08-16__verified-ed61032afd02ed4e.jpg",
+      "sha256": "ed61032afd02ed4ef68cf0d00a855e746f4ff87412cf0ca732a02604899938a5",
+      "coordinate": [
+        2.390392214976788,
+        48.88613951040706
+      ],
+      "target": [
+        2.386457296605495,
+        48.8855974593211
+      ],
+      "panoId": "ZRp-dZHOvkWV_xO6clpinQ",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 81.64660785174033,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-77318570201a68251ec7-ed61032afd02.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-17",
+      "street": "Rue du Roule",
+      "cardKey": "street:Rue du Roule",
+      "image": "/data/daily_images/2027-08-17__verified-b1ad98af3b9b96a3.jpg",
+      "sha256": "b1ad98af3b9b96a36de5f5ac378f241a1e4bd5197601f56b9367ee84aef0f45d",
+      "coordinate": [
+        2.343701820046902,
+        48.86061642569551
+      ],
+      "target": [
+        2.34370582662701,
+        48.86064705453988
+      ],
+      "panoId": "ALzJ5rxwz57jTsoe0rPooQ",
+      "captureDate": "2020-08",
+      "copyright": "© Google",
+      "heading": 19.06306084063732,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-38b1211b96ee7b9c2927-b1ad98af3b9b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-18",
+      "street": "Passage des Rondeaux",
+      "cardKey": "street:Passage des Rondeaux",
+      "image": "/data/daily_images/2027-08-18__verified-2c730abc6a665287.jpg",
+      "sha256": "2c730abc6a665287c6db7a4ad1248b9571d4a9f8f00580755365cc4a26378ef9",
+      "coordinate": [
+        2.395895645171183,
+        48.86486346013738
+      ],
+      "target": [
+        2.3959556728174363,
+        48.864868554269286
+      ],
+      "panoId": "5-Od1qRRNMKPpiuv77s2mQ",
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "heading": 59.57484384714195,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f31d5656733e28323711-2c730abc6a66.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-19",
+      "street": "Rue Chabanais",
+      "cardKey": "street:Rue Chabanais",
+      "image": "/data/daily_images/2027-08-19__verified-8e3d80a42de8ac50.jpg",
+      "sha256": "8e3d80a42de8ac507f46d13654f36d1fbeea739b50e9bc177c0b0894b300fbd3",
+      "coordinate": [
+        2.336808010867815,
+        48.86727538062701
+      ],
+      "target": [
+        2.336833956075239,
+        48.86733905350557
+      ],
+      "panoId": "SmkrXdgQul2aDgnZa3WhuA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 199.22453053768268,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8c46c3602065ee4930fc-8e3d80a42de8.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-20",
+      "street": "Rue de Saintonge",
+      "cardKey": "street:Rue de Saintonge",
+      "image": "/data/daily_images/2027-08-20__verified-fd7dfe839a7bc19b.jpg",
+      "sha256": "fd7dfe839a7bc19b9a5571fca531c92c5b4502d5567af2025874f82f59e30403",
+      "coordinate": [
+        2.363272756326445,
+        48.86243491163289
+      ],
+      "target": [
+        2.363613839113,
+        48.8627241392362
+      ],
+      "panoId": "64QyctbjKweal5w3AZ_HXA",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 38.95796529831466,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b79a45ef8f0bc71536dc-fd7dfe839a7b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-21",
+      "street": "Allée Waslaw Nijinsky",
+      "cardKey": "street:Allée Waslaw Nijinsky",
+      "image": "/data/daily_images/2027-08-21__verified-479f0f30a98ed8bf.jpg",
+      "sha256": "479f0f30a98ed8bf2f50fd867fc37288b452813d24e623e34b4087138ba0eb55",
+      "coordinate": [
+        2.349442750102706,
+        48.85797995128015
+      ],
+      "target": [
+        2.349495833955302,
+        48.85798291697765
+      ],
+      "panoId": "cbxuMBj6_Hk83519ddT9CA",
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "heading": 253.09154801333725,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue reconnaissable de la voie dans sa longueur ou sur son accès caractéristique, contrôlée visuellement après comparaison des deux orientations.",
+      "sourceImage": "/data/collect_images/photo-016de3b2a4aac665cf33-479f0f30a98e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-22",
+      "street": "Place Alphonse Laveran",
+      "cardKey": "street:Place Alphonse Laveran",
+      "image": "/data/daily_images/2027-08-22__verified-ea30d274fd99a56c.jpg",
+      "sha256": "ea30d274fd99a56cdc802a759a566062c4ee26e95715e0f201a57d59adc66847",
+      "coordinate": [
+        2.340887022390011,
+        48.84088512115078
+      ],
+      "target": [
+        2.3409149184007245,
+        48.840861742419456
+      ],
+      "panoId": "SHeHlmILaGXps1nEGQR5UQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 141.85666530881224,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-d69dc863cae9ab73b306-ea30d274fd99.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-23",
+      "street": "Rue des Ciseaux",
+      "cardKey": "street:Rue des Ciseaux",
+      "image": "/data/daily_images/2027-08-23__verified-3a8e3a156168ebeb.jpg",
+      "sha256": "3a8e3a156168ebeb8e7b9b5687f0454ecc4e3aec57f97643ce46592034891adf",
+      "coordinate": [
+        2.334021473589392,
+        48.85300089888053
+      ],
+      "target": [
+        2.334021778731085,
+        48.85302457824763
+      ],
+      "panoId": "C8Q8ObU6xlsUZtoOP7-BVg",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 11.495981116731343,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-af7f5c52817a8a98749f-3a8e3a156168.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-24",
+      "street": "Rue Aristide Briand",
+      "cardKey": "street:Rue Aristide Briand",
+      "image": "/data/daily_images/2027-08-24__verified-4ef20f143b6c4115.jpg",
+      "sha256": "4ef20f143b6c411510b7fec3d4e4485883e68a30776fb3835fff6a6e31226669",
+      "coordinate": [
+        2.319086411536688,
+        48.86114899661297
+      ],
+      "target": [
+        2.3193477958440125,
+        48.861619310801906
+      ],
+      "panoId": "f6rqpsK5BrIR9DsKaZZURA",
+      "captureDate": "2024-04",
+      "copyright": "© Google",
+      "heading": 22.040661071862985,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-fded42a474fdedd47d30-4ef20f143b6c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-25",
+      "street": "Rue de Naples",
+      "cardKey": "street:Rue de Naples",
+      "image": "/data/daily_images/2027-08-25__verified-91896d10cee98d1c.jpg",
+      "sha256": "91896d10cee98d1c1aceedcf4c5d58de6b168fc733e8bb4dfaa574b5f07b829f",
+      "coordinate": [
+        2.319521271960534,
+        48.8797110617739
+      ],
+      "target": [
+        2.318194575658703,
+        48.879506457565874
+      ],
+      "panoId": "QdI42khr46ccuLwkEb3-dQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 257.0036723329071,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7b8c13427e4d2df7b05b-91896d10cee9.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-26",
+      "street": "Rue de l'Agent Bailly",
+      "cardKey": "street:Rue de l'Agent Bailly",
+      "image": "/data/daily_images/2027-08-26__verified-696512095b52801a.jpg",
+      "sha256": "696512095b52801ae2282a71bb7f31442a983e98d19c8301d7ff4d3e3eaba248",
+      "coordinate": [
+        2.342329395791953,
+        48.8783824678795
+      ],
+      "target": [
+        2.3419771590059404,
+        48.878432622863905
+      ],
+      "panoId": "FTf1KPK8FPe06j-ryfqDLg",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 284.66190127985465,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cf489edac9cefbd2bc17-696512095b52.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-27",
+      "street": "Rue des Récollets",
+      "cardKey": "street:Rue des Récollets",
+      "image": "/data/daily_images/2027-08-27__verified-3a34c99cfa54a7dd.jpg",
+      "sha256": "3a34c99cfa54a7dda65d6abdb8a668a99e06c8d8052ef0f820737ed71c47f04f",
+      "coordinate": [
+        2.360058362667723,
+        48.87498340548783
+      ],
+      "target": [
+        2.3609549635809803,
+        48.87465824814789
+      ],
+      "panoId": "raC332CyK197oPVu6CjnKw",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 116.87638710538124,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-0a497cf8efffa62bbf0c-3a34c99cfa54.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-28",
+      "street": "Rue Scarron",
+      "cardKey": "street:Rue Scarron",
+      "image": "/data/daily_images/2027-08-28__verified-7ba0f37bbc769f94.jpg",
+      "sha256": "7ba0f37bbc769f94af4d56c7a852f0f534d877bd5cace5d925f9a7df03d7763b",
+      "coordinate": [
+        2.368327766118306,
+        48.85860373110459
+      ],
+      "target": [
+        2.368351548746103,
+        48.85859815487461
+      ],
+      "panoId": "daCMWU8sN4V3D0XtLJOAVQ",
+      "captureDate": "2023-08",
+      "copyright": "© Google",
+      "heading": 261.357557260542,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f41b77f7965dd949bc9f-7ba0f37bbc76.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-29",
+      "street": "Rue Henri Desgrange",
+      "cardKey": "street:Rue Henri Desgrange",
+      "image": "/data/daily_images/2027-08-29__verified-3984d85d1a3efac8.jpg",
+      "sha256": "3984d85d1a3efac8198455f068c886a6334a72b050e3157933287a6c83663df1",
+      "coordinate": [
+        2.381577257564921,
+        48.83954162975286
+      ],
+      "target": [
+        2.3813659722177842,
+        48.839463692489616
+      ],
+      "panoId": "d6mgr7Ehm-65XEiilQ7Mng",
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "heading": 59.81625611792322,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8317ca7bac94340b449d-3984d85d1a3e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-30",
+      "street": "Rue de la Fontaine à Mulard",
+      "cardKey": "street:Rue de la Fontaine à Mulard",
+      "image": "/data/daily_images/2027-08-30__verified-c24ab5b07bcad589.jpg",
+      "sha256": "c24ab5b07bcad589d04116c481e9c88913b5fa0d7c1076d6513e8ade7b4dc11f",
+      "coordinate": [
+        2.349605925200749,
+        48.82345101391729
+      ],
+      "target": [
+        2.3489,
+        48.82299
+      ],
+      "panoId": "IOYp8hrrZcDW5AbfrqaL3w",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 45.599820660718194,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-36ee3c38a893ce5c7fc0-c24ab5b07bca.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-08-31",
+      "street": "Place Marthe Simard",
+      "cardKey": "street:Place Marthe Simard",
+      "image": "/data/daily_images/2027-08-31__verified-a9f97ae079ce0a3d.jpg",
+      "sha256": "a9f97ae079ce0a3d6808699caa898a33f81f7db93635f6fb325f10024a70899c",
+      "coordinate": [
+        2.305062280090453,
+        48.8262605584888
+      ],
+      "target": [
+        2.305016477738961,
+        48.8262089659053
+      ],
+      "panoId": "eQlcKRjrneKzlXRQkUuFaw",
+      "captureDate": "2023-07",
+      "copyright": "© Google",
+      "heading": 210.3045467930672,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-83692f00bfb4f8afc553-a9f97ae079ce.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-01",
+      "street": "Rue Miollis",
+      "cardKey": "street:Rue Miollis",
+      "image": "/data/daily_images/2027-09-01__verified-b66de37d7d39c61a.jpg",
+      "sha256": "b66de37d7d39c61a6b36ef763701368a862af4c9ecc1ba76e3715366fdf0b8be",
+      "coordinate": [
+        2.303191140540991,
+        48.84567092354864
+      ],
+      "target": [
+        2.3042639997514955,
+        48.8459357072504
+      ],
+      "panoId": "vX6UibWsXx6X5ttoDc34yw",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 248.4693576667837,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-76c0fa5db6797fc8c6bb-b66de37d7d39.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-02",
+      "street": "Rue du Commandant Schloesing",
+      "cardKey": "street:Rue du Commandant Schloesing",
+      "image": "/data/daily_images/2027-09-02__verified-51955878d8f6e3c5.jpg",
+      "sha256": "51955878d8f6e3c59e62db35a1cbb8952d00b607b2817e4b2aed844d88d939dd",
+      "coordinate": [
+        2.28435145366199,
+        48.86177305325894
+      ],
+      "target": [
+        2.28431079418871,
+        48.86176273403188
+      ],
+      "panoId": "GJFnF-2Z7wVDdyYxeq7Lkw",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 83.273822591059,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-17bca8810f44dedbb115-51955878d8f6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-03",
+      "street": "Rue Nicolas Chuquet",
+      "cardKey": "street:Rue Nicolas Chuquet",
+      "image": "/data/daily_images/2027-09-03__verified-0f54b274fd44cf75.jpg",
+      "sha256": "0f54b274fd44cf750b60cb43a9001eb28e835b9c1b417bbe6bb40ea00358edc6",
+      "coordinate": [
+        2.303312043023924,
+        48.88861096675246
+      ],
+      "target": [
+        2.303262997848941,
+        48.88858166552993
+      ],
+      "panoId": "2CVm7LYqNtKmx_E-SozG6Q",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 51.210936447620554,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-73fa00f96eeac1301f7d-0f54b274fd44.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-04",
+      "street": "Rue Gabrielle",
+      "cardKey": "street:Rue Gabrielle",
+      "image": "/data/daily_images/2027-09-04__verified-72786c1902fc0ad7.jpg",
+      "sha256": "72786c1902fc0ad7dd4afc8b5ed75a2f4bc7e9ed8ca719ba3e1ce79f1bfc9eef",
+      "coordinate": [
+        2.339805369283793,
+        48.8860132889259
+      ],
+      "target": [
+        2.3406417098463064,
+        48.88576808290105
+      ],
+      "panoId": "MBtUy_16PWsiLBe7cftSaA",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 113.4851840473471,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9ec44eca7bc1f04d6fa2-72786c1902fc.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-05",
+      "street": "Rue de l'Équerre",
+      "cardKey": "street:Rue de l'Équerre",
+      "image": "/data/daily_images/2027-09-05__verified-15cded7781a2e9ab.jpg",
+      "sha256": "15cded7781a2e9abcff8bdd892076226f43574a6380892ed94d5ac28c9c69da8",
+      "coordinate": [
+        2.381763807326861,
+        48.87478253672563
+      ],
+      "target": [
+        2.382529505306191,
+        48.87456098938762
+      ],
+      "panoId": "esHfF_3eZOIoEA1z3gLSzQ",
+      "captureDate": "2021-03",
+      "copyright": "© Google",
+      "heading": 251.0515517691178,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7324f88ada8314fe71f0-15cded7781a2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-06",
+      "street": "Place Marguerite de Navarre",
+      "cardKey": "street:Place Marguerite de Navarre",
+      "image": "/data/daily_images/2027-09-06__verified-c90656153417e606.jpg",
+      "sha256": "c90656153417e606c51adc99a75be867add72b7c97f1d095cab0ae9e7064a8b7",
+      "coordinate": [
+        2.346423070238943,
+        48.8602537538401
+      ],
+      "target": [
+        2.3463714052719293,
+        48.86058797178015
+      ],
+      "panoId": "Bfl2I7gtkSg2tlH0xDL8Ww",
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "heading": 156.2498080143639,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue reconnaissable de la voie ou de son accès, perspective contrôlée visuellement après comparaison des deux sens.",
+      "sourceImage": "/data/collect_images/photo-d5678f339ff5c843b763-c90656153417.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-07",
+      "street": "Rue Raoul Dufy",
+      "cardKey": "street:Rue Raoul Dufy",
+      "image": "/data/daily_images/2027-09-07__verified-8a4dd1b17b113902.jpg",
+      "sha256": "8a4dd1b17b113902cb287b031853878acf2a21f3e83a2bc6b9f08156c51f2e34",
+      "coordinate": [
+        2.390967357953102,
+        48.86594338895269
+      ],
+      "target": [
+        2.391009974908031,
+        48.865745935792205
+      ],
+      "panoId": "bFGd8ZCclLC3NCmqpLrCNA",
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "heading": 168.88516663721316,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8b1085c890346f18d4ca-8a4dd1b17b11.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-08",
+      "street": "Rue du Nil",
+      "cardKey": "street:Rue du Nil",
+      "image": "/data/daily_images/2027-09-08__verified-7ecd1c1eb8e60205.jpg",
+      "sha256": "7ecd1c1eb8e6020585e919523ab98e7f2039b53c79ba79e5c818026f8267b346",
+      "coordinate": [
+        2.347874755844509,
+        48.86775322230539
+      ],
+      "target": [
+        2.347869768970022,
+        48.86776035782337
+      ],
+      "panoId": "om1jX6zzLR3ptEsy0jMNhQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 247.40985138720555,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-fbd4f6915b915e723ead-7ecd1c1eb8e6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-09",
+      "street": "Place de Thorigny",
+      "cardKey": "street:Place de Thorigny",
+      "image": "/data/daily_images/2027-09-09__verified-141bd74497f78a61.jpg",
+      "sha256": "141bd74497f78a6192262056e7e280ed17f396b3c7312412adb8aa19cecdf95f",
+      "coordinate": [
+        2.362186223867543,
+        48.85901743457318
+      ],
+      "target": [
+        2.362164996237617,
+        48.8590500225743
+      ],
+      "panoId": "83otWdxBRudBQGLzjEI58g",
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "heading": 343.9219170551937,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-749ac8e24e34b6a74e21-141bd74497f7.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-10",
+      "street": "Rue des Ursins",
+      "cardKey": "street:Rue des Ursins",
+      "image": "/data/daily_images/2027-09-10__verified-5bd89e5785b48f06.jpg",
+      "sha256": "5bd89e5785b48f066dfc09097a72dbee9074d265b23b2d860d8423fd42cea3d6",
+      "coordinate": [
+        2.351224897083034,
+        48.85424774147744
+      ],
+      "target": [
+        2.3511692206642034,
+        48.854272408587725
+      ],
+      "panoId": "TGz1N9b5Ytar5jkND4_Fww",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 139.0246414256742,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-49bbf936ce288b9ea8c8-5bd89e5785b4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-11",
+      "street": "Rue des Grands Degrés",
+      "cardKey": "street:Rue des Grands Degrés",
+      "image": "/data/daily_images/2027-09-11__verified-02df9bc1a25e608c.jpg",
+      "sha256": "02df9bc1a25e608c27a4cbbf0f10bc6b4b7dc8f8d8079d9ed711a23e2133f863",
+      "coordinate": [
+        2.349806836920193,
+        48.8513396166578
+      ],
+      "target": [
+        2.349794771615991,
+        48.85132004625499
+      ],
+      "panoId": "tYyyWZj2FwQsWQSdgvlW4w",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 107.10781377779853,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-620b29a10d71cdd3e309-02df9bc1a25e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-12",
+      "street": "Place Laurent Terzieff et Pascale de Boysson",
+      "cardKey": "street:Place Laurent Terzieff et Pascale de Boysson",
+      "image": "/data/daily_images/2027-09-12__verified-9798b3cd9ab74106.jpg",
+      "sha256": "9798b3cd9ab741066d181b3f2966e0e08755cb30e4adf151ab7497bfdd08b571",
+      "coordinate": [
+        2.330180017314068,
+        48.84370243727496
+      ],
+      "target": [
+        2.3302751674740083,
+        48.843664594364505
+      ],
+      "panoId": "Py4x5RaTzy-yNjNLanzu5g",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 121.14571370584872,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.5,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-9223c056772012676ff3-9798b3cd9ab7.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-13",
+      "street": "Avenue Bosquet",
+      "cardKey": "street:Avenue Bosquet",
+      "image": "/data/daily_images/2027-09-13__verified-d3b62485630a104f.jpg",
+      "sha256": "d3b62485630a104f0d06ee2672557750546e8d44cb84cc6f15ca7275162efe6a",
+      "coordinate": [
+        2.302582098740428,
+        48.86039013961048
+      ],
+      "target": [
+        2.30371559523497,
+        48.858344092781614
+      ],
+      "panoId": "b5oVEBPA31SRwLLQ-Us82A",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 342.66053168894496,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-9c3048bc1c3af1b1b945-d3b62485630a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-14",
+      "street": "Place de Rio de Janeiro",
+      "cardKey": "street:Place de Rio de Janeiro",
+      "image": "/data/daily_images/2027-09-14__verified-9247694f0fe29449.jpg",
+      "sha256": "9247694f0fe29449b85a6165af64861386c5cae6af3a800364e6cee2e1cf52bc",
+      "coordinate": [
+        2.31028917603055,
+        48.87755957694438
+      ],
+      "target": [
+        2.310387349312403,
+        48.87752
+      ],
+      "panoId": "dUF-sKgUGV6jeobH2JVhlw",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 261.47145481947007,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 3.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-aad315b128896c587e44-9247694f0fe2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-15",
+      "street": "Rue de la Victoire",
+      "cardKey": "street:Rue de la Victoire",
+      "image": "/data/daily_images/2027-09-15__verified-33a89b0ec8ac0426.jpg",
+      "sha256": "33a89b0ec8ac04263edf2bddf2dad4800edcb73f8dc08d0d321c7bb435999a95",
+      "coordinate": [
+        2.335359423551628,
+        48.87521543446704
+      ],
+      "target": [
+        2.3353812174118644,
+        48.87520714075108
+      ],
+      "panoId": "TlfVIJHTG0Q3K21w_3dj4w",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 271.82189019104004,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-49ccfda995cc555793ee-33a89b0ec8ac.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-16",
+      "street": "Place Franz Liszt",
+      "cardKey": "street:Place Franz Liszt",
+      "image": "/data/daily_images/2027-09-16__verified-6219ffaf1470ae30.jpg",
+      "sha256": "6219ffaf1470ae308c8efecb262d5d10ed406e96467d41868ec7543ca346817c",
+      "coordinate": [
+        2.351822617485705,
+        48.87847903976916
+      ],
+      "target": [
+        2.351621124800897,
+        48.8778763029034
+      ],
+      "panoId": "pOOOpD1B-j0uGbXH-w2DIQ",
+      "captureDate": "2026-06",
+      "copyright": "© Google",
+      "heading": 279.343329439767,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-e0ff077e0507db39d3de-6219ffaf1470.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-17",
+      "street": "Passage du Bureau",
+      "cardKey": "street:Passage du Bureau",
+      "image": "/data/daily_images/2027-09-17__verified-0035c3de70a1f33b.jpg",
+      "sha256": "0035c3de70a1f33b08644ae5c5179701d9333a60ba650107fb74203eeb29c504",
+      "coordinate": [
+        2.39482750880188,
+        48.85350146678061
+      ],
+      "target": [
+        2.393911927435484,
+        48.85434470823992
+      ],
+      "panoId": "UYrVCRH9HoFvlx18Isuuqw",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 253.2062101362027,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f3a63f535b790f3f9a47-0035c3de70a1.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-18",
+      "street": "Rue Cailletet",
+      "cardKey": "street:Rue Cailletet",
+      "image": "/data/daily_images/2027-09-18__verified-da12e14acb33b5c3.jpg",
+      "sha256": "da12e14acb33b5c357b046e4a09993891c940bce3ad9ecaf12b2ec1503a7655e",
+      "coordinate": [
+        2.414729445749731,
+        48.84280515995162
+      ],
+      "target": [
+        2.4147237323698008,
+        48.84278600361324
+      ],
+      "panoId": "4NZulXMquvj6pyorXKpMgA",
+      "captureDate": "2017-08",
+      "copyright": "© Google",
+      "heading": 349.36132732157427,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-75376f8b6e1c7d2864ee-da12e14acb33.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-19",
+      "street": "Place André et Françoise Trannoy",
+      "cardKey": "street:Place André et Françoise Trannoy",
+      "image": "/data/daily_images/2027-09-19__verified-eb813fba56bd60ad.jpg",
+      "sha256": "eb813fba56bd60adec765ebeb859c4b4571cb97828e7a1da0b141d1a99969d61",
+      "coordinate": [
+        2.352303346007248,
+        48.83003123447247
+      ],
+      "target": [
+        2.3522176591869948,
+        48.83007520277249
+      ],
+      "panoId": "iMWqJLsYw58cW85pys8rHw",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 307.93575426433165,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.6,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-f87efe45acc97c7088ba-eb813fba56bd.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-20",
+      "street": "Boulevard Jourdan",
+      "cardKey": "street:Boulevard Jourdan",
+      "image": "/data/daily_images/2027-09-20__verified-9666be563a07b3c7.jpg",
+      "sha256": "9666be563a07b3c74af3dcfccbdb7ed532cd13e1e7721bbad9497f4297fe4883",
+      "coordinate": [
+        2.332380605931767,
+        48.82167533391918
+      ],
+      "target": [
+        2.334843947803955,
+        48.82122504448922
+      ],
+      "panoId": "RHyz3OZDJcr7_YcqxY1_nw",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 108.9771724333275,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-29679973cef6e456b0b2-9666be563a07.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-21",
+      "street": "Rue Gaston de Cavaillet",
+      "cardKey": "street:Rue Gaston de Cavaillet",
+      "image": "/data/daily_images/2027-09-21__verified-f599060ca9c4f28b.jpg",
+      "sha256": "f599060ca9c4f28b14d935b91522b778bfe472f8f9c8a558d481ad30f5197ef2",
+      "coordinate": [
+        2.282724588257153,
+        48.84993168429889
+      ],
+      "target": [
+        2.282747902337569,
+        48.84991326660487
+      ],
+      "panoId": "pTCPUXu9V3jFK7DhCBOqbg",
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "heading": 128.86737118492147,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bd852083718b39965e31-f599060ca9c4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-22",
+      "street": "Chemin du Nord",
+      "cardKey": "street:Chemin du Nord",
+      "image": "/data/daily_images/2027-09-22__verified-5ebe49ebf1f12fe2.jpg",
+      "sha256": "5ebe49ebf1f12fe2ff5101fd8093ad60b62bb00b149c65f40a7a5d808c8fdce5",
+      "coordinate": [
+        2.259539393284435,
+        48.84158227706504
+      ],
+      "target": [
+        2.2596532395029323,
+        48.841395586832355
+      ],
+      "panoId": "s1hiBuh43cbWTTr_Bt9QqQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 116.86092618166305,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 14.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-d29e3666016a056262bd-5ebe49ebf1f1.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-23",
+      "street": "Rue Redon",
+      "cardKey": "street:Rue Redon",
+      "image": "/data/daily_images/2027-09-23__verified-63fcf53e8988309c.jpg",
+      "sha256": "63fcf53e8988309caf378d32eccf55cff7d8ce973cf5539ef25ad6e118b0c54d",
+      "coordinate": [
+        2.30230626700667,
+        48.89040709827952
+      ],
+      "target": [
+        2.302315688370929,
+        48.89041014372097
+      ],
+      "panoId": "_ljGj2j3JWtHTjvbTNsKMQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 272.90236177293366,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-14a80c40da99f89baee4-63fcf53e8988.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-24",
+      "street": "Rue du Pré",
+      "cardKey": "street:Rue du Pré",
+      "image": "/data/daily_images/2027-09-24__verified-0ecf67b3e6ec52fa.jpg",
+      "sha256": "0ecf67b3e6ec52fac49ff0d44ea4106d69b7bf3423b6b3351c55f93f9f284606",
+      "coordinate": [
+        2.360159305798347,
+        48.89713190427525
+      ],
+      "target": [
+        2.3598113668617966,
+        48.897120710428865
+      ],
+      "panoId": "w0FgK-r0kXlUhrC8nFELDg",
+      "captureDate": "2020-07",
+      "copyright": "© Google",
+      "heading": 270.00012369739954,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c5b987b59fd1f3341c42-0ecf67b3e6ec.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-25",
+      "street": "Route des Petits Ponts",
+      "cardKey": "street:Route des Petits Ponts",
+      "image": "/data/daily_images/2027-09-25__verified-e740138bc44b2686.jpg",
+      "sha256": "e740138bc44b2686d2f014e9a821a1553292a97bb319f90a4c6c27586f74b22d",
+      "coordinate": [
+        2.398205238095933,
+        48.89249244714268
+      ],
+      "target": [
+        2.3983719087802675,
+        48.89182579996606
+      ],
+      "panoId": "j1V2-HKIV-E4_VisTmWJYw",
+      "captureDate": "2022-07",
+      "copyright": "© Google",
+      "heading": 350.37592505916,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f5bb1d73d7dc29cd4007-e740138bc44b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-26",
+      "street": "Place André Malraux",
+      "cardKey": "street:Place André Malraux",
+      "image": "/data/daily_images/2027-09-26__verified-1a3ec5045f388bf8.jpg",
+      "sha256": "1a3ec5045f388bf848a733b49bd3c4bcd3267f8404bc34dd30a9df2b14e352d8",
+      "coordinate": [
+        2.335350690148514,
+        48.86357946968318
+      ],
+      "target": [
+        2.3352612677667737,
+        48.86376567367594
+      ],
+      "panoId": "GgiSUFGHkHciEJ8IQ67EiQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 162.53084317650178,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-d70976c12ec7dd5332df-1a3ec5045f38.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-27",
+      "street": "Rue Francis Picabia",
+      "cardKey": "street:Rue Francis Picabia",
+      "image": "/data/daily_images/2027-09-27__verified-a1c38b6d76b3becf.jpg",
+      "sha256": "a1c38b6d76b3becfd95d5ae5bec26eef8d3b4cfad318aa61d87d09abc29b83ad",
+      "coordinate": [
+        2.382018305232444,
+        48.87000554841549
+      ],
+      "target": [
+        2.382002729245842,
+        48.86999550477155
+      ],
+      "panoId": "5UhdZX6wi5WPBdqJ5_raCw",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 158.230154108708,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-042eff67e013dbec3124-a1c38b6d76b3.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-28",
+      "street": "Rue des Filles Saint-Thomas",
+      "cardKey": "street:Rue des Filles Saint-Thomas",
+      "image": "/data/daily_images/2027-09-28__verified-bc31cd34e07ab389.jpg",
+      "sha256": "bc31cd34e07ab3894c37e39cfcc46c33d2eeb3dfba077a04f22496c82966713f",
+      "coordinate": [
+        2.339042243721688,
+        48.86888761543055
+      ],
+      "target": [
+        2.339139208390935,
+        48.86888426197252
+      ],
+      "panoId": "sjmxx1eyX35NqyaUs3eXTw",
+      "captureDate": "2024-06",
+      "copyright": "© Google",
+      "heading": 91.0009722255503,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-6933bfbb6af76a4eca4c-bc31cd34e07a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-29",
+      "street": "Rue du Forez",
+      "cardKey": "street:Rue du Forez",
+      "image": "/data/daily_images/2027-09-29__verified-75b9de687daba95e.jpg",
+      "sha256": "75b9de687daba95e866ddbb34ad0def2637c803452c04391dd62edcb8c542f42",
+      "coordinate": [
+        2.362903067100208,
+        48.86374327966416
+      ],
+      "target": [
+        2.363047361720143,
+        48.863662706143714
+      ],
+      "panoId": "KtqkW9IU9wTQCFok5A-gvQ",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 127.97519104885237,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9d31b86f0c797dee3ee9-75b9de687dab.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-09-30",
+      "street": "Quai d'Anjou",
+      "cardKey": "street:Quai d'Anjou",
+      "image": "/data/daily_images/2027-09-30__verified-db1de6e86f8bb178.jpg",
+      "sha256": "db1de6e86f8bb17853831023ce83723085a0fe4fd2b41c25a32b9cf38b3e254f",
+      "coordinate": [
+        2.359084290416945,
+        48.85174430727128
+      ],
+      "target": [
+        2.3589983893394595,
+        48.851774614979476
+      ],
+      "panoId": "u-4RMGlE0JYXVUWV5Sfssw",
+      "captureDate": "2025-05",
+      "copyright": "© Google",
+      "heading": 120.21990082373458,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-72f68100fb5e2c27e9a8-db1de6e86f8b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-01",
+      "street": "Place Bernard Halpern",
+      "cardKey": "street:Place Bernard Halpern",
+      "image": "/data/daily_images/2027-10-01__verified-45843dadf5b78485.jpg",
+      "sha256": "45843dadf5b78485464b24cb9632a43fba9c87370166ceb270ed3d08869c65a4",
+      "coordinate": [
+        2.350770238662323,
+        48.84044028274428
+      ],
+      "target": [
+        2.3507991689073915,
+        48.84043274632106
+      ],
+      "panoId": "QhsWe_H4kzK_uyOs7HNI9g",
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "heading": 111.59396566958446,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 9,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-28d28940a0c8c309f8ea-45843dadf5b7.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-02",
+      "street": "Place Mahmoud Darwich",
+      "cardKey": "street:Place Mahmoud Darwich",
+      "image": "/data/daily_images/2027-10-02__verified-ea4105f84d13a1bd.jpg",
+      "sha256": "ea4105f84d13a1bd2fec5c03bb4afeba3c01d7753f604e9c36914bdb6f681781",
+      "coordinate": [
+        2.336161876195335,
+        48.85769013316816
+      ],
+      "target": [
+        2.3358947733288997,
+        48.857728050341535
+      ],
+      "panoId": "x7LBxYGWCgZeouNFVAaxTg",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 282.17575653820114,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 4.6,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, contrôlée visuellement après comparaison des deux orientations.",
+      "sourceImage": "/data/collect_images/photo-d2cafc4c71dd335852ae-ea4105f84d13.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-03",
+      "street": "Rue Barbet de Jouy",
+      "cardKey": "street:Rue Barbet de Jouy",
+      "image": "/data/daily_images/2027-10-03__verified-7480567be4e3bc05.jpg",
+      "sha256": "7480567be4e3bc05734b9b1ebac6d50bb8175c6b1f4a1be84e000322800b77e6",
+      "coordinate": [
+        2.31760295544537,
+        48.85362443713977
+      ],
+      "target": [
+        2.317588782984704,
+        48.85359513193882
+      ],
+      "panoId": "gt9IHmHXPlSIvAMHMLZF1A",
+      "captureDate": "2024-04",
+      "copyright": "© Google",
+      "heading": 189.34130452570668,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-09509e5ba37f2bb1df90-7480567be4e3.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-04",
+      "street": "Rue Robert Estienne",
+      "cardKey": "street:Rue Robert Estienne",
+      "image": "/data/daily_images/2027-10-04__verified-a13a9779d7492a8f.jpg",
+      "sha256": "a13a9779d7492a8fc8f950a56eab1f8df2434f8edc3adc675dda07768be2a5e1",
+      "coordinate": [
+        2.304775286419845,
+        48.86894986252855
+      ],
+      "target": [
+        2.304796170522919,
+        48.86891068534371
+      ],
+      "panoId": "mIBpbBBLpPJz9EsK4LmkJQ",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 139.09592467354207,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-294d93c1e39e290a7ac0-a13a9779d749.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-05",
+      "street": "Rue Milton",
+      "cardKey": "street:Rue Milton",
+      "image": "/data/daily_images/2027-10-05__verified-6edea01213223654.jpg",
+      "sha256": "6edea01213223654d1ddcffe697cc9b9fa42f7cc594ccbc7c09bf40e26422cea",
+      "coordinate": [
+        2.341301160812503,
+        48.87869379469245
+      ],
+      "target": [
+        2.3410496777194134,
+        48.878179355438824
+      ],
+      "panoId": "Z6VTI7VM4X7HfrXxL4PTPw",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 20.945560367846667,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cebaaca25a7399522d16-6edea0121322.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-06",
+      "street": "Pont Maria Casarès",
+      "cardKey": "street:Pont Maria Casarès",
+      "image": "/data/daily_images/2027-10-06__verified-123a75300fc838c2.jpg",
+      "sha256": "123a75300fc838c275dd57639ef257e32d01161c073495066cb1ca61af5efd9c",
+      "coordinate": [
+        2.365596796102478,
+        48.87756939412078
+      ],
+      "target": [
+        2.365648396457724,
+        48.877535366164466
+      ],
+      "panoId": "ZWXeXz2Zos6Utzz947VVBA",
+      "captureDate": "2026-06",
+      "copyright": "© Google",
+      "heading": 122.05044244261393,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b0cc967f14306e312ee9-123a75300fc8.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-07",
+      "street": "avenue Parmentier",
+      "cardKey": "street:avenue Parmentier",
+      "image": "/data/daily_images/2027-10-07__verified-a21df94d590986fb.jpg",
+      "sha256": "a21df94d590986fbe6152947f2d2482187f5da6bda4b1c4167b4162813a487ba",
+      "coordinate": [
+        2.379503801626093,
+        48.85917883246049
+      ],
+      "target": [
+        2.374802269108186,
+        48.86492338906595
+      ],
+      "panoId": "NVhzjv367jZHtADjkRI0Ow",
+      "captureDate": "2026-08",
+      "copyright": "© Google",
+      "heading": 152.49756383672968,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-9c5211e2871f0d07cd30-a21df94d5909.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-08",
+      "street": "Avenue Armand Rousseau",
+      "cardKey": "street:Avenue Armand Rousseau",
+      "image": "/data/daily_images/2027-10-08__verified-5ad4b95f7018c0f1.jpg",
+      "sha256": "5ad4b95f7018c0f176e40ba271fd3bbf651414e420528f4c6fea88eff6d6a7dd",
+      "coordinate": [
+        2.408648421305399,
+        48.83560987988558
+      ],
+      "target": [
+        2.40892431507218,
+        48.835959683224246
+      ],
+      "panoId": "4fUHKZ_FC3C9i5zdM7UclQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 27.436512472934453,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-23cf47fd1ca34844a2d0-5ad4b95f7018.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-09",
+      "street": "Rue des Grands Moulins",
+      "cardKey": "street:Rue des Grands Moulins",
+      "image": "/data/daily_images/2027-10-09__verified-a85af09ddf6b7dc6.jpg",
+      "sha256": "a85af09ddf6b7dc61d0cf2bcfadce85be4b2a77a61ae769ded78a9d252af1640",
+      "coordinate": [
+        2.375511381148361,
+        48.82737737034732
+      ],
+      "target": [
+        2.3771753916531604,
+        48.82782377878297
+      ],
+      "panoId": "VRf27DL1pgWob-6KdS481A",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 71.86175154580377,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9ef99249b06a3180c633-a85af09ddf6b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-10",
+      "street": "Rue Asseline",
+      "cardKey": "street:Rue Asseline",
+      "image": "/data/daily_images/2027-10-10__verified-8d74b162e541153c.jpg",
+      "sha256": "8d74b162e541153c090e0b9f9895c7bbf2b70e94af8eb951554ab88b6c60e5d5",
+      "coordinate": [
+        2.322386554759775,
+        48.83490579007213
+      ],
+      "target": [
+        2.3223948186051184,
+        48.83490754891646
+      ],
+      "panoId": "p4Nu3-gfg--tECshPn1POg",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 216.23208426819608,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a90b900516739ed5d1cd-8d74b162e541.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-11",
+      "street": "Passage des Charbonniers",
+      "cardKey": "street:Passage des Charbonniers",
+      "image": "/data/daily_images/2027-10-11__verified-88131fbcdee9e995.jpg",
+      "sha256": "88131fbcdee9e995d6e0435d01510292ded628826f4cfe6876a3e7ecf4dc2995",
+      "coordinate": [
+        2.30976441062299,
+        48.84512753053248
+      ],
+      "target": [
+        2.30976996108006,
+        48.84512918119992
+      ],
+      "panoId": "6SMVxP61QQsOMc8t6KJv7w",
+      "captureDate": "2023-05",
+      "copyright": "© Google",
+      "heading": 334.0153869854467,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c6cfaecaf581e539cd46-88131fbcdee9.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-12",
+      "street": "Avenue du Général Mangin",
+      "cardKey": "street:Avenue du Général Mangin",
+      "image": "/data/daily_images/2027-10-12__verified-b933a776618f33e4.jpg",
+      "sha256": "b933a776618f33e415176f1bac726657553cb753deb52a124107a983db0c011f",
+      "coordinate": [
+        2.280696473428211,
+        48.85408777735846
+      ],
+      "target": [
+        2.2812919337286264,
+        48.85444862800836
+      ],
+      "panoId": "-Toa0PZdTwJ2muCMEl6PMQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 227.55488680708282,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-859cb92a540fd00e5a0e-b933a776618f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-13",
+      "street": "Avenue Émile et Armand Massard",
+      "cardKey": "street:Avenue Émile et Armand Massard",
+      "image": "/data/daily_images/2027-10-13__verified-6d5c53e672df1660.jpg",
+      "sha256": "6d5c53e672df16603981bf44649cbf7257b03307e9fc9cec7a7c4a4316f8a6ae",
+      "coordinate": [
+        2.296764514122988,
+        48.88832642103421
+      ],
+      "target": [
+        2.2965976473979137,
+        48.8882643968426
+      ],
+      "panoId": "NKvZ4ymZTBzSP9wKNjhxBg",
+      "captureDate": "2024-05",
+      "copyright": "© Google",
+      "heading": 54.19219761413689,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cafc3734a08d66a24c1b-6d5c53e672df.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-14",
+      "street": "Avenue Principale - Quartier des Grandes-Carrières - 72 m",
+      "cardKey": "street:Avenue Principale - Quartier des Grandes-Carrières - 72 m",
+      "image": "/data/daily_images/2027-10-14__verified-b4796f9d7b4df862.jpg",
+      "sha256": "b4796f9d7b4df86200ac4efb2cb5c22eb699163942a0b292ceba5476b6395ae1",
+      "coordinate": [
+        2.331195634777167,
+        48.88568888846374
+      ],
+      "target": [
+        2.331218682387973,
+        48.88568510125354
+      ],
+      "panoId": "MZ_QbQkFj6hr8kaPJj7bHg",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 17.964915776979637,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-16502fbedcbce984eed3-b4796f9d7b4d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-15",
+      "street": "Rue de l'Orme",
+      "cardKey": "street:Rue de l'Orme",
+      "image": "/data/daily_images/2027-10-15__verified-b5c125360deacf84.jpg",
+      "sha256": "b5c125360deacf845d151fd7b033ff8a81b822ccda1c14ee935378f03ba36e5f",
+      "coordinate": [
+        2.39997492640896,
+        48.87889024414875
+      ],
+      "target": [
+        2.400108095423732,
+        48.87851976144067
+      ],
+      "panoId": "IkGP6_k-bSEE7a7HASc44w",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 165.54770999427683,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-ff97608b287a42c889b2-b5c125360dea.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-16",
+      "street": "Rue de la Grande Truanderie",
+      "cardKey": "street:Rue de la Grande Truanderie",
+      "image": "/data/daily_images/2027-10-16__verified-f847b1bfbc29f9df.jpg",
+      "sha256": "f847b1bfbc29f9df0f502192f306c1c137c028d1cc6c1b52bbf419c47fc8bc43",
+      "coordinate": [
+        2.349616753826282,
+        48.86266770368369
+      ],
+      "target": [
+        2.349272005503488,
+        48.86275055860578
+      ],
+      "panoId": "t7rTSR_EZ3qe3JPFG6BNPQ",
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "heading": 111.45296309007097,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a67870f61cc3be2d7ba3-f847b1bfbc29.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-17",
+      "street": "Rue de Tlemcen",
+      "cardKey": "street:Rue de Tlemcen",
+      "image": "/data/daily_images/2027-10-17__verified-8ffb8601a7aefbba.jpg",
+      "sha256": "8ffb8601a7aefbbac87fa1d63ff0b8acb4a628e49e197186242ea5f7610e9e2b",
+      "coordinate": [
+        2.389016645679193,
+        48.86524081596212
+      ],
+      "target": [
+        2.3879923075000717,
+        48.86485807687502
+      ],
+      "panoId": "HW2mrSKqYzDeqNICcyAnMA",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 60.25616811808743,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-74aa82ca1690d6fd845b-8ffb8601a7ae.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-18",
+      "street": "Rue de Tracy",
+      "cardKey": "street:Rue de Tracy",
+      "image": "/data/daily_images/2027-10-18__verified-bfaf971a41506bb1.jpg",
+      "sha256": "bfaf971a41506bb1625c516ea6319a8be445cdacbcdb07b82d30ba398785d123",
+      "coordinate": [
+        2.35268898745182,
+        48.86805656408996
+      ],
+      "target": [
+        2.352692170723441,
+        48.868048857273436
+      ],
+      "panoId": "8hG8JDtyM2daaU29azYkmg",
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "heading": 285.7233044364875,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-986b4e4579012d05d47c-bfaf971a4150.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-19",
+      "street": "Rue Papin",
+      "cardKey": "street:Rue Papin",
+      "image": "/data/daily_images/2027-10-19__verified-c354843ecd6030d1.jpg",
+      "sha256": "c354843ecd6030d12969b094edb9f1b91589d236fe9972126260186e5cdbe329",
+      "coordinate": [
+        2.353868624667149,
+        48.86684259227121
+      ],
+      "target": [
+        2.353621945472411,
+        48.86688907111897
+      ],
+      "panoId": "LY2npAehRIGXfZGnhDMPyQ",
+      "captureDate": "2020-08",
+      "copyright": "© Google",
+      "heading": 288.9212447297572,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9a71e3d267ace02c89e4-c354843ecd60.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-20",
+      "street": "Rue Jacques Cœur",
+      "cardKey": "street:Rue Jacques Cœur",
+      "image": "/data/daily_images/2027-10-20__verified-aa26f402209c28c8.jpg",
+      "sha256": "aa26f402209c28c851541249d068d4ee83a8ba2b53cfbe9acb6e712bf4db31d1",
+      "coordinate": [
+        2.367189903859892,
+        48.8521862483489
+      ],
+      "target": [
+        2.367329792948071,
+        48.852559482370175
+      ],
+      "panoId": "VbMzviwgg10myVe0bGl69Q",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 14.745870125215731,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-d690c3703424cc116166-aa26f402209c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-21",
+      "street": "Rue Le Goff",
+      "cardKey": "street:Rue Le Goff",
+      "image": "/data/daily_images/2027-10-21__verified-4133def16cb8a249.jpg",
+      "sha256": "4133def16cb8a24948e9a1211ad2fc07e8af41cabe11adb447d5f971140994fd",
+      "coordinate": [
+        2.341402347924558,
+        48.84638182117242
+      ],
+      "target": [
+        2.34155908494789,
+        48.846595324122994
+      ],
+      "panoId": "dv9R-0gGFngI-neGiynd8w",
+      "captureDate": "2021-04",
+      "copyright": "© Google",
+      "heading": 27.386948798604237,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a8d44661d37c8b9e1ad5-4133def16cb8.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-22",
+      "street": "Rue Mignon",
+      "cardKey": "street:Rue Mignon",
+      "image": "/data/daily_images/2027-10-22__verified-71e26f604b046709.jpg",
+      "sha256": "71e26f604b0467092d86fc93091817a0438aa839fb3dda16d9f4e887c3d1b8e0",
+      "coordinate": [
+        2.34167131127471,
+        48.85213538615637
+      ],
+      "target": [
+        2.3416615702417225,
+        48.85212024259335
+      ],
+      "panoId": "NGSqF0692LV6QxhrwImDeg",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 25.378457703029596,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-0524b0884400ec16a3c0-71e26f604b04.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-23",
+      "street": "Pont de l'Alma",
+      "cardKey": "street:Pont de l'Alma",
+      "image": "/data/daily_images/2027-10-23__verified-36ea9695ae62dd90.jpg",
+      "sha256": "36ea9695ae62dd90f7bb5b79509511accc451981d810725845827cd7d35cdd54",
+      "coordinate": [
+        2.301657625643384,
+        48.8633996310209
+      ],
+      "target": [
+        2.3016725080771594,
+        48.863306792209116
+      ],
+      "panoId": "_QkLY1HctwLZxAP2MoKJDw",
+      "captureDate": "2026-06",
+      "copyright": "© Google",
+      "heading": 356.32772153798464,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-3840b7022f6d98176129-36ea9695ae62.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-24",
+      "street": "Rue Bayard",
+      "cardKey": "street:Rue Bayard",
+      "image": "/data/daily_images/2027-10-24__verified-f2d82d4acd8de965.jpg",
+      "sha256": "f2d82d4acd8de965436e734ecdeaf12bf406fa2ed762f50b8e9bc8adad6edc8b",
+      "coordinate": [
+        2.307766164734483,
+        48.86696639676501
+      ],
+      "target": [
+        2.30781,
+        48.86636
+      ],
+      "panoId": "Adv7E49GcDBvZcEnzykWeQ",
+      "captureDate": "2023-04",
+      "copyright": "© Google",
+      "heading": 177.2610123174196,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7507b1a967428e30b9fb-f2d82d4acd8d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-25",
+      "street": "Place Jacques Rouché",
+      "cardKey": "street:Place Jacques Rouché",
+      "image": "/data/daily_images/2027-10-25__verified-5c81b9919cd0cebc.jpg",
+      "sha256": "5c81b9919cd0cebcea078b65c8cf997be9376cf394925656b6757408f2943ee3",
+      "coordinate": [
+        2.332655475822443,
+        48.87230479691366
+      ],
+      "target": [
+        2.332768128043269,
+        48.87222859197476
+      ],
+      "panoId": "25ILzBCOKfVdoe97eGxlOA",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 311.5691204973042,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-20c58e6c66c14419ff42-5c81b9919cd0.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-26",
+      "street": "Rue Ambroise Paré",
+      "cardKey": "street:Rue Ambroise Paré",
+      "image": "/data/daily_images/2027-10-26__verified-c8e31a73b889b351.jpg",
+      "sha256": "c8e31a73b889b35127a35793eb3b8ce0b624e79b40d59e9c810cd6f81015632b",
+      "coordinate": [
+        2.352652254482613,
+        48.88192837909814
+      ],
+      "target": [
+        2.352607560091961,
+        48.88193632532107
+      ],
+      "panoId": "N6yG1FWngH5Z-S1lkdoEPQ",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 281.07847837781765,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-425257291fcb96785c96-c8e31a73b889.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-27",
+      "street": "Passage Lisa",
+      "cardKey": "street:Passage Lisa",
+      "image": "/data/daily_images/2027-10-27__verified-216e96524cbc2c79.jpg",
+      "sha256": "216e96524cbc2c79eb0109a0e6b23204494f04b2c8513e0a294ddf910402537c",
+      "coordinate": [
+        2.377146894082508,
+        48.85835691075897
+      ],
+      "target": [
+        2.377145168825576,
+        48.858354783844376
+      ],
+      "panoId": "OXaTIj7nJ79yRpTmQKTmNw",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 62.50175210253997,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-230d79a09d70c871dd83-216e96524cbc.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-28",
+      "street": "Boulevard de la Guyane",
+      "cardKey": "street:Boulevard de la Guyane",
+      "image": "/data/daily_images/2027-10-28__verified-c84b9648ba95c98d.jpg",
+      "sha256": "c84b9648ba95c98db78924326f8ddb71856493ecdf60485c202ae0018e1894bd",
+      "coordinate": [
+        2.413017578334132,
+        48.83697537959569
+      ],
+      "target": [
+        2.4131195054489996,
+        48.83778121299844
+      ],
+      "panoId": "jse_8yD5D6IybatXmVOs2w",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 13.864949108813619,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-0eb896f41296a2ba1f2c-c84b9648ba95.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-29",
+      "street": "Rue Giffard",
+      "cardKey": "street:Rue Giffard",
+      "image": "/data/daily_images/2027-10-29__verified-6707556d624d7618.jpg",
+      "sha256": "6707556d624d7618ea6d07a52b3cc5214701dbd68835ff61b1e4ecf0f3c64fe7",
+      "coordinate": [
+        2.372835638058923,
+        48.83769646529605
+      ],
+      "target": [
+        2.3727608189477856,
+        48.83765338760256
+      ],
+      "panoId": "QU3Pknq8KGjhYpmy4o0VVQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 51.76923734549075,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-45717839cf17e8ef3ebf-6707556d624d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-30",
+      "street": "Rue Victor Schœlcher",
+      "cardKey": "street:Rue Victor Schœlcher",
+      "image": "/data/daily_images/2027-10-30__verified-6cfe7074b30e5cfe.jpg",
+      "sha256": "6cfe7074b30e5cfe6eee33f674cb1f7b5770ed3bf7de7b3b343a190813e72be4",
+      "coordinate": [
+        2.330694404655688,
+        48.83603530511958
+      ],
+      "target": [
+        2.3307228105975795,
+        48.8360605801601
+      ],
+      "panoId": "Jgq9raJ0dxPl8mJHE8kLXg",
+      "captureDate": "2024-05",
+      "copyright": "© Google",
+      "heading": 27.908245207696098,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-5f0b14fdaf8b72704654-6cfe7074b30e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-10-31",
+      "street": "Place Robert Guillemard",
+      "cardKey": "street:Place Robert Guillemard",
+      "image": "/data/daily_images/2027-10-31__verified-2f729e9ed966253d.jpg",
+      "sha256": "2f729e9ed966253ded83a11dea0dadbad1281bbe1e2a281f94d9648a4ed1c406",
+      "coordinate": [
+        2.281300993861871,
+        48.8362357229834
+      ],
+      "target": [
+        2.2814140414989144,
+        48.836085685235346
+      ],
+      "panoId": "qZNIVWxqnoKZIdeQuk2DxA",
+      "captureDate": "2017-08",
+      "copyright": "© Google",
+      "heading": 286.9016555793785,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-ae44e4861922c19e5ba5-2f729e9ed966.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-01",
+      "street": "Rue Édouard Fournier",
+      "cardKey": "street:Rue Édouard Fournier",
+      "image": "/data/daily_images/2027-11-01__verified-ed5eb8ba661222d8.jpg",
+      "sha256": "ed5eb8ba661222d89bcf35670ce0e99cfcb73fd749d8e3f136650a464f1aba01",
+      "coordinate": [
+        2.271678297238096,
+        48.86219338700149
+      ],
+      "target": [
+        2.271739686154233,
+        48.862186529024235
+      ],
+      "panoId": "Zk2gXBkpvBBKPEyyfpRMsw",
+      "captureDate": "2024-06",
+      "copyright": "© Google",
+      "heading": 275.2460384164596,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-9ae5478fb58a2aeb38ee-ed5eb8ba6612.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-02",
+      "street": "Rue Navier",
+      "cardKey": "street:Rue Navier",
+      "image": "/data/daily_images/2027-11-02__verified-7e825e4192e9eb58.jpg",
+      "sha256": "7e825e4192e9eb58af2158f531a984f9441b1355b790ca2cba0e25b0ea033377",
+      "coordinate": [
+        2.325536355564634,
+        48.89572995379764
+      ],
+      "target": [
+        2.3250755350300873,
+        48.89580215616912
+      ],
+      "panoId": "6Mll-2cKtzSma48mcn_bZw",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 100.63539772106742,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-2812f45a4cf98a4a2c7f-7e825e4192e9.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-03",
+      "street": "Rue du Nord",
+      "cardKey": "street:Rue du Nord",
+      "image": "/data/daily_images/2027-11-03__verified-c464b5831f8d5b06.jpg",
+      "sha256": "c464b5831f8d5b066ce3db516636d71f4d7f590edfaed42aab16dfca3b3caa8a",
+      "coordinate": [
+        2.35153289928751,
+        48.89280763274287
+      ],
+      "target": [
+        2.3507086136447937,
+        48.89296251860632
+      ],
+      "panoId": "Y2apEhhR6DuKsLvUL96XvA",
+      "captureDate": "2023-07",
+      "copyright": "© Google",
+      "heading": 106.4196152787755,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cd5dd36fe46ea0ebe083-c464b5831f8d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-04",
+      "street": "Place de la Fontaine aux Lions",
+      "cardKey": "street:Place de la Fontaine aux Lions",
+      "image": "/data/daily_images/2027-11-04__verified-38409661dfc60496.jpg",
+      "sha256": "38409661dfc6049616b34f992805504031c04a5550ad4ade0cb3b0d3271e650e",
+      "coordinate": [
+        2.391218829096411,
+        48.88964312885277
+      ],
+      "target": [
+        2.3922087718935776,
+        48.889565927269594
+      ],
+      "panoId": "GWxSdqKwFIJWwHzmpd39_w",
+      "captureDate": "2022-10",
+      "copyright": "© Google",
+      "heading": 96.76374039534483,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la place ou de l'espace piéton identifiable, prise sur sa surface ou à son accès et contrôlée visuellement.",
+      "sourceImage": "/data/collect_images/photo-94dd0817f42217ac5eb3-38409661dfc6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-05",
+      "street": "Rue la Feuillade",
+      "cardKey": "street:Rue la Feuillade",
+      "image": "/data/daily_images/2027-11-05__verified-0c8a9fec0e69a5ca.jpg",
+      "sha256": "0c8a9fec0e69a5ca618f12e18ac3127a4ccf2fd66e9663a4b8365729b8af97e8",
+      "coordinate": [
+        2.340425911179456,
+        48.86594071621666
+      ],
+      "target": [
+        2.340386417587769,
+        48.865936725273464
+      ],
+      "panoId": "hmR6eCSLA4f3PZRIYTmdlA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 289.9514977337819,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-4648a06fc0c6f2f1501c-0c8a9fec0e69.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-06",
+      "street": "Rue Antoinette Fouque",
+      "cardKey": "street:Rue Antoinette Fouque",
+      "image": "/data/daily_images/2027-11-06__verified-99641fef872dc153.jpg",
+      "sha256": "99641fef872dc153a70d1420df99d1d4193b6a121a25bde46dcaf9225bdddedd",
+      "coordinate": [
+        2.406741961713992,
+        48.87584310754608
+      ],
+      "target": [
+        2.406620527867069,
+        48.8758150897374
+      ],
+      "panoId": "t3HWU2xL-DXWlGOWt8j-kQ",
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "heading": 75.5073089950788,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-e237b69fc1e76312d665-99641fef872d.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-07",
+      "street": "Rue de la Bourse",
+      "cardKey": "street:Rue de la Bourse",
+      "image": "/data/daily_images/2027-11-07__verified-73b2f043e43c4f62.jpg",
+      "sha256": "73b2f043e43c4f6201a8566b4a1420db2419c136d86f6e30fccffa10656b039a",
+      "coordinate": [
+        2.339632266619259,
+        48.86950643266134
+      ],
+      "target": [
+        2.339635726092624,
+        48.86950163012301
+      ],
+      "panoId": "EOgZDjC2o4t57hwKqnMQ2g",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 106.79573037436501,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-4c13abfd8d2f164a7129-73b2f043e43c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-08",
+      "street": "Rue Roger Verlomme",
+      "cardKey": "street:Rue Roger Verlomme",
+      "image": "/data/daily_images/2027-11-08__verified-bd9247c9e05b4dfa.jpg",
+      "sha256": "bd9247c9e05b4dfa43ee35aae25c81cdcd6554505aa30fb52e07b96472e54ded",
+      "coordinate": [
+        2.366600627133725,
+        48.85673259962191
+      ],
+      "target": [
+        2.3666643446639775,
+        48.856715241405844
+      ],
+      "panoId": "R6ZKBWZFUH30vXSDFFGkXA",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 283.84573855078474,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b93956ac9baa6de23389-bd9247c9e05b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-09",
+      "street": "Rue Saint-Louis en l'Île",
+      "cardKey": "street:Rue Saint-Louis en l'Île",
+      "image": "/data/daily_images/2027-11-09__verified-4ce1d403c6a9a74d.jpg",
+      "sha256": "4ce1d403c6a9a74deef30bdacafb25b28777660a0a292b11b9ed43c160c1c36d",
+      "coordinate": [
+        2.355082525864022,
+        48.85236800621986
+      ],
+      "target": [
+        2.356892428581578,
+        48.85170759556986
+      ],
+      "panoId": "FmlnuwMphlg6-IJvF3JXdQ",
+      "captureDate": "2025-05",
+      "copyright": "© Google",
+      "heading": 298.7389113526058,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-3a12b163e07389b21afb-4ce1d403c6a9.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-10",
+      "street": "Impasse Maubert",
+      "cardKey": "street:Impasse Maubert",
+      "image": "/data/daily_images/2027-11-10__verified-135c003b5d1479b1.jpg",
+      "sha256": "135c003b5d1479b1ea92d8c1c116a53e8a9aeaa4e6c6ed5194dab4f67becd63a",
+      "coordinate": [
+        2.349470045421786,
+        48.85116418567898
+      ],
+      "target": [
+        2.3494888003404357,
+        48.8511553468693
+      ],
+      "panoId": "fpaRw403R5JLBXFJLJXbQQ",
+      "captureDate": "2019-07",
+      "copyright": "© Google",
+      "heading": 107.23096394370725,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8050728f648cf355d6b2-135c003b5d14.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-11",
+      "street": "Quai Malaquais",
+      "cardKey": "street:Quai Malaquais",
+      "image": "/data/daily_images/2027-11-11__verified-0795f6dd3ee894e3.jpg",
+      "sha256": "0795f6dd3ee894e3fcdce8a4fa03dd97130c761430199f4b28e537e2ed63e50a",
+      "coordinate": [
+        2.334335708651983,
+        48.8580357792728
+      ],
+      "target": [
+        2.335055700631197,
+        48.8578360748422
+      ],
+      "panoId": "x6dy1yUiL4OoiS4s6YiBTA",
+      "captureDate": "2025-05",
+      "copyright": "© Google",
+      "heading": 289.95951164439157,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-d47e0dd786d5ef2ba371-0795f6dd3ee8.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-12",
+      "street": "Promenade du Quai Branly",
+      "cardKey": "street:Promenade du Quai Branly",
+      "image": "/data/daily_images/2027-11-12__verified-eefb81d323437cc3.jpg",
+      "sha256": "eefb81d323437cc3c9ab52506e2b3d84f1a90d17c4626df438818229762c6f97",
+      "coordinate": [
+        2.294125131934189,
+        48.86010436049977
+      ],
+      "target": [
+        2.2943090531179213,
+        48.86019031254427
+      ],
+      "panoId": "b4XzvNiHQ9oDDc8viJSusg",
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "heading": 41.93715409230657,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-833e9aef07bf162a721a-eefb81d32343.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-13",
+      "street": "Rue Joseph Sansbœuf",
+      "cardKey": "street:Rue Joseph Sansbœuf",
+      "image": "/data/daily_images/2027-11-13__verified-31730d2352229cc8.jpg",
+      "sha256": "31730d2352229cc85abe80ed2c5526056fb7c0e4563a2d1b9aa754d09c210072",
+      "coordinate": [
+        2.322942653969133,
+        48.87529389647568
+      ],
+      "target": [
+        2.3229293821653307,
+        48.875444554133274
+      ],
+      "panoId": "wB43rZwescz459rZjC1tMg",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 179.99666991653942,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-e7df02956a9b5dcece72-31730d235222.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-14",
+      "street": "Rue de Vintimille",
+      "cardKey": "street:Rue de Vintimille",
+      "image": "/data/daily_images/2027-11-14__verified-da3a20229440b679.jpg",
+      "sha256": "da3a20229440b67914e44a17faf65bf710d569f4c639feb2c62a6a87aae781f6",
+      "coordinate": [
+        2.329301058675309,
+        48.88248999846964
+      ],
+      "target": [
+        2.3290434195690977,
+        48.882313686442984
+      ],
+      "panoId": "scX53JHIIeBIuoIJ2WnVzA",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 42.70553527609252,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-1c0e0fd1a83609bd4f84-da3a20229440.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-15",
+      "street": "Rue du Faubourg Saint-Martin",
+      "cardKey": "street:Rue du Faubourg Saint-Martin",
+      "image": "/data/daily_images/2027-11-15__verified-80acb9963cccf0dc.jpg",
+      "sha256": "80acb9963cccf0dc1bde4c2ef0e84332af93f6eeeb618e2ddbfed1e55490820c",
+      "coordinate": [
+        2.356702595772669,
+        48.87096719347291
+      ],
+      "target": [
+        2.361106964774761,
+        48.87693044716214
+      ],
+      "panoId": "0h9s39jfnoxfMyWlJf28rQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 200.9914304517941,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-1c21d4eb96df00477de7-80acb9963ccc.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-16",
+      "street": "Passage Piver",
+      "cardKey": "street:Passage Piver",
+      "image": "/data/daily_images/2027-11-16__verified-3880064402b28842.jpg",
+      "sha256": "3880064402b2884227e4e4b108dfa005324eab7eb5ae4cb673919f6d6743b7f4",
+      "coordinate": [
+        2.374695828012479,
+        48.87028831715424
+      ],
+      "target": [
+        2.3745864424589573,
+        48.87042227050449
+      ],
+      "panoId": "0ky7QcUy_e3Hun3QAsZWNA",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 154.0570974818944,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-137bf4a353b21b9a44f9-3880064402b2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-17",
+      "street": "Passage Jacqueline Giraud",
+      "cardKey": "street:Passage Jacqueline Giraud",
+      "image": "/data/daily_images/2027-11-17__verified-0d8a16c711468686.jpg",
+      "sha256": "0d8a16c7114686866401021f07d751ad539e6d23c8db572ce874ee440e0b756e",
+      "coordinate": [
+        2.384082330559165,
+        48.84865194870502
+      ],
+      "target": [
+        2.38441600146419,
+        48.84864812889057
+      ],
+      "panoId": "Vn_WJQr4jnR_11Y2S1mq7Q",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 98.53544798874486,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 3.2,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées.",
+      "sourceImage": "/data/collect_images/photo-4e5917d387f263fcd206-0d8a16c71146.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-18",
+      "street": "Rue du Docteur Bourneville",
+      "cardKey": "street:Rue du Docteur Bourneville",
+      "image": "/data/daily_images/2027-11-18__verified-2b3c3b432ff491f3.jpg",
+      "sha256": "2b3c3b432ff491f352370e2d4453d12d6b47d39bbb87213d0c73cf4d6ffcf5f6",
+      "coordinate": [
+        2.358532843113998,
+        48.81848524480934
+      ],
+      "target": [
+        2.358421288480531,
+        48.81855344229292
+      ],
+      "panoId": "nEyrMfCbaDUXdURmEFhOBA",
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "heading": 139.77615549364475,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-3b46d6bf0bf13e456bae-2b3c3b432ff4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-19",
+      "street": "Rue de l'Abbé Carton",
+      "cardKey": "street:Rue de l'Abbé Carton",
+      "image": "/data/daily_images/2027-11-19__verified-ec3c44d6b9fc1938.jpg",
+      "sha256": "ec3c44d6b9fc19380933e7c11d2c668bef63d8133f91fdf171eef79c87f97af8",
+      "coordinate": [
+        2.319432088583515,
+        48.82828616259223
+      ],
+      "target": [
+        2.3175939054417025,
+        48.82909291478875
+      ],
+      "panoId": "n7auKzbaSHmy6Hq8FXRx0g",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 303.46122648651857,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-06ad67fe9efc1a0f9177-ec3c44d6b9fc.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-20",
+      "street": "Boulevard Garibaldi",
+      "cardKey": "street:Boulevard Garibaldi",
+      "image": "/data/daily_images/2027-11-20__verified-02b0a2ace6cd3637.jpg",
+      "sha256": "02b0a2ace6cd3637af2ca368aaefc0af9aa2086c6961266729d49595356650e7",
+      "coordinate": [
+        2.304041123193212,
+        48.84708601351838
+      ],
+      "target": [
+        2.306582703234058,
+        48.8465735133617
+      ],
+      "panoId": "jp7K8xcoJtCjXVh2V1icHQ",
+      "captureDate": "2024-04",
+      "copyright": "© Google",
+      "heading": 294.90627171245626,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-8cfe1a1f14ebcf3f20e1-02b0a2ace6cd.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-21",
+      "street": "Boulevard de Montmorency",
+      "cardKey": "street:Boulevard de Montmorency",
+      "image": "/data/daily_images/2027-11-21__verified-abf9454b46e6f0cb.jpg",
+      "sha256": "abf9454b46e6f0cb89ceb88ba1b7e0b1bf999a6dafea12b6596469ff018d323b",
+      "coordinate": [
+        2.262607336223232,
+        48.85303378700105
+      ],
+      "target": [
+        2.262379309830098,
+        48.851943402116206
+      ],
+      "panoId": "fpLKI0QQwH8WVJlW8w1pXg",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 191.06842117854052,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-15ca948a0092543aadd8-abf9454b46e6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-22",
+      "street": "Rue Lebon",
+      "cardKey": "street:Rue Lebon",
+      "image": "/data/daily_images/2027-11-22__verified-318a20d6e114d301.jpg",
+      "sha256": "318a20d6e114d301fb7a05afcc14b44170ad0dff9381264a9a983e65a684e1e1",
+      "coordinate": [
+        2.291594607261964,
+        48.88137137875079
+      ],
+      "target": [
+        2.2918817850996325,
+        48.88110057192029
+      ],
+      "panoId": "nGCSzaMhhcuiBOxAMPWtLA",
+      "captureDate": "2022-04",
+      "copyright": "© Google",
+      "heading": 142.37384230001373,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bc86fdf62914857a657b-318a20d6e114.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-23",
+      "street": "Rue Lagille",
+      "cardKey": "street:Rue Lagille",
+      "image": "/data/daily_images/2027-11-23__verified-d3790bf454660393.jpg",
+      "sha256": "d3790bf454660393fec132e3871eb3ce70e782ff9a5cdfe2eb447cb9f2a6d9f2",
+      "coordinate": [
+        2.328957467909444,
+        48.89466557840625
+      ],
+      "target": [
+        2.3292070000270617,
+        48.89457047296383
+      ],
+      "panoId": "cP8yNGhwbWVrEHglTqO2_Q",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 118.87910741456648,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-384ffca2124672499f78-d3790bf45466.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-24",
+      "street": "Rue Rouvet",
+      "cardKey": "street:Rue Rouvet",
+      "image": "/data/daily_images/2027-11-24__verified-b91b1ed714853494.jpg",
+      "sha256": "b91b1ed714853494c39e10ec3e120315b5fa9e1d9afb5105f55098dddd612b76",
+      "coordinate": [
+        2.383670339998681,
+        48.89398253626715
+      ],
+      "target": [
+        2.383725036265985,
+        48.893948550705154
+      ],
+      "panoId": "FYxY4fEofoib3c9gsFPuaw",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 309.17407664014104,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bad8f056238c76f9d1a1-b91b1ed71485.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-25",
+      "street": "Rue de la Sourdière",
+      "cardKey": "street:Rue de la Sourdière",
+      "image": "/data/daily_images/2027-11-25__verified-6668617f0e5acf44.jpg",
+      "sha256": "6668617f0e5acf44794f6c1442a70393da639afb7f3bef634629444f1f4a79a6",
+      "coordinate": [
+        2.332405536435517,
+        48.86617653028306
+      ],
+      "target": [
+        2.3323956174991456,
+        48.86618620113286
+      ],
+      "panoId": "MPLwSCiio89YdSvyFxWpow",
+      "captureDate": "2024-05",
+      "copyright": "© Google",
+      "heading": 205.79908253315415,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-58394c4dbb2a48e90211-6668617f0e5a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-26",
+      "street": "Passage Maigrot Delaunay",
+      "cardKey": "street:Passage Maigrot Delaunay",
+      "image": "/data/daily_images/2027-11-26__verified-ad8675559115f5bd.jpg",
+      "sha256": "ad8675559115f5bd2170f4ea6084b0748b2a7296941078ecc157a6918c3e1c45",
+      "coordinate": [
+        2.401119602744121,
+        48.85003057235456
+      ],
+      "target": [
+        2.4009669157635583,
+        48.85037452638983
+      ],
+      "panoId": "XENSMaIDF8evMhba8WnKOA",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 345.4076438789882,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.9,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue de la voie ou de son accès caractéristique, perspective dans sa longueur contrôlée visuellement dans les deux sens.",
+      "sourceImage": "/data/collect_images/photo-66ab4f6a3d2c30facb3a-ad8675559115.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-27",
+      "street": "Rue Gaillon",
+      "cardKey": "street:Rue Gaillon",
+      "image": "/data/daily_images/2027-11-27__verified-e1802fe444f7d09f.jpg",
+      "sha256": "e1802fe444f7d09f62fa73193b2d293d3c968fca91fed7b2d900a7430e90fc8d",
+      "coordinate": [
+        2.334022503706767,
+        48.86824093521989
+      ],
+      "target": [
+        2.3340447307629066,
+        48.868282006398665
+      ],
+      "panoId": "nljZWL1BVPYD9eAumTSFjw",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 199.73783008576888,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-00e75d84f5187f2c0cee-e1802fe444f7.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-28",
+      "street": "Rue des Quatre Fils",
+      "cardKey": "street:Rue des Quatre Fils",
+      "image": "/data/daily_images/2027-11-28__verified-ccc37b0827efb6f7.jpg",
+      "sha256": "ccc37b0827efb6f75de0f25ca388125a53d605db2eaf418989ed2ab96dcdb95e",
+      "coordinate": [
+        2.359023374385317,
+        48.86081852534875
+      ],
+      "target": [
+        2.3594757376336832,
+        48.860590274624
+      ],
+      "panoId": "akUtebgUVkgZx9oYYn9VKA",
+      "captureDate": "2023-03",
+      "copyright": "© Google",
+      "heading": 128.82391927071797,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-983e0ca56fe00d4f2323-ccc37b0827ef.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-29",
+      "street": "Place de l'Hôtel de Ville",
+      "cardKey": "street:Place de l'Hôtel de Ville",
+      "image": "/data/daily_images/2027-11-29__verified-aa812a1b45bd7ca5.jpg",
+      "sha256": "aa812a1b45bd7ca589d705575c42826414783bf1f7d79dde1b90843dcb149d8b",
+      "coordinate": [
+        2.350822379276495,
+        48.85630745672928
+      ],
+      "target": [
+        2.3510716692242117,
+        48.856795553850525
+      ],
+      "panoId": "DCf4xx6ZegmKPALCPg7JmQ",
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "heading": 19.577811884749906,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-fa3fda778d1dab3e9b73-aa812a1b45bd.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-11-30",
+      "street": "Rue de Mirbel",
+      "cardKey": "street:Rue de Mirbel",
+      "image": "/data/daily_images/2027-11-30__verified-b7bb4c71c24bcced.jpg",
+      "sha256": "b7bb4c71c24bccedc14b1a44de6905fde80f223bee3f1c6421cdd81332dc575e",
+      "coordinate": [
+        2.351276620485718,
+        48.84096273614289
+      ],
+      "target": [
+        2.3520510720285737,
+        48.84080378559428
+      ],
+      "panoId": "idR7_eqF87RpKrER9I-Dhg",
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "heading": 287.5918271309168,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-10d634217aa49150f4eb-b7bb4c71c24b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-01",
+      "street": "Rue Bernard Palissy",
+      "cardKey": "street:Rue Bernard Palissy",
+      "image": "/data/daily_images/2027-12-01__verified-208702cc8ad1ddae.jpg",
+      "sha256": "208702cc8ad1ddae5352114200c054b12aaf37ab3d86424c626dddb712eaced6",
+      "coordinate": [
+        2.331751507334076,
+        48.85316616728258
+      ],
+      "target": [
+        2.331722993846144,
+        48.85316469390045
+      ],
+      "panoId": "nOhcQKeJHVffIvCrt3NW4A",
+      "captureDate": "2023-05",
+      "copyright": "© Google",
+      "heading": 266.9315616953801,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-acdfc593ad50dd64d978-208702cc8ad1.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-02",
+      "street": "Rue du Colonel Combes",
+      "cardKey": "street:Rue du Colonel Combes",
+      "image": "/data/daily_images/2027-12-02__verified-33bb9565e8849d30.jpg",
+      "sha256": "33bb9565e8849d30586484f8079865bcb4d6502900c7c72687677e7ad1406163",
+      "coordinate": [
+        2.306023350741846,
+        48.86169017132953
+      ],
+      "target": [
+        2.306065656719151,
+        48.86168526695088
+      ],
+      "panoId": "XOeD-_vv6UYe3hdRa8umgA",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 272.48689411105494,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-cac2c759d1592160c73f-33bb9565e884.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-03",
+      "street": "Rue de Cerisoles",
+      "cardKey": "street:Rue de Cerisoles",
+      "image": "/data/daily_images/2027-12-03__verified-e0d8c045f8791800.jpg",
+      "sha256": "e0d8c045f87918003c0fc980c06c363151ae7b084fdf5bb4843deaeecddb6d5a",
+      "coordinate": [
+        2.302722799154347,
+        48.8686965678812
+      ],
+      "target": [
+        2.302698293739279,
+        48.868679342118355
+      ],
+      "panoId": "n63LAKXyZzdBfRc_PhczvA",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 222.7683599762653,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b29e1fc790be1f2bf674-e0d8c045f879.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-04",
+      "street": "Rue Marie-Éléonore de Bellefond",
+      "cardKey": "street:Rue Marie-Éléonore de Bellefond",
+      "image": "/data/daily_images/2027-12-04__verified-61047ced1b8f1477.jpg",
+      "sha256": "61047ced1b8f1477337cd9262f117a65069868d8404843bb701a8573f11c4184",
+      "coordinate": [
+        2.345974154209839,
+        48.87810512749046
+      ],
+      "target": [
+        2.3470332979009494,
+        48.87783462356132
+      ],
+      "panoId": "DxBdzs_WAinIBYtbv13iMg",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 111.4980546895602,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-33747a9084ba3f44c055-61047ced1b8f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-05",
+      "street": "Rue Léon Schwartzenberg",
+      "cardKey": "street:Rue Léon Schwartzenberg",
+      "image": "/data/daily_images/2027-12-05__verified-0d5e0f4b84755b1f.jpg",
+      "sha256": "0d5e0f4b84755b1fc629a16e8d6baf5b95229b0a882a4f64babc75405e944e5b",
+      "coordinate": [
+        2.35467776086309,
+        48.87528918038304
+      ],
+      "target": [
+        2.3536035871917544,
+        48.87566467618696
+      ],
+      "panoId": "FuUhA7XyRXiqL7AjPDi_1Q",
+      "captureDate": "2018-04",
+      "copyright": "© Google",
+      "heading": 48.79062687040175,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.6,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Vue reconnaissable de la voie ou de son accès, perspective contrôlée visuellement après comparaison des deux sens.",
+      "sourceImage": "/data/collect_images/photo-b9d032598a8af516d361-0d5e0f4b8475.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-06",
+      "street": "Rue Plichon",
+      "cardKey": "street:Rue Plichon",
+      "image": "/data/daily_images/2027-12-06__verified-8ea4298a72b2db24.jpg",
+      "sha256": "8ea4298a72b2db240a5be85c127f5419851acebc2766929d8a52797c44dda627",
+      "coordinate": [
+        2.385117546424782,
+        48.86281961515423
+      ],
+      "target": [
+        2.385121174284118,
+        48.86280509693648
+      ],
+      "panoId": "VpKn1B1AomYJyh8Qh5fbFA",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 338.6492795056418,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-962a2dd4efc826bcbf06-8ea4298a72b2.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-07",
+      "street": "Rue Raoul",
+      "cardKey": "street:Rue Raoul",
+      "image": "/data/daily_images/2027-12-07__verified-26af4e2fd7774685.jpg",
+      "sha256": "26af4e2fd7774685de1b000f85751070d8a4162ce1ec3ad3a1ac092af4a2d9aa",
+      "coordinate": [
+        2.396827049536628,
+        48.83877392500009
+      ],
+      "target": [
+        2.3968721572834566,
+        48.838777822847426
+      ],
+      "panoId": "ng0G0b481azysofMyu_2lQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 253.5126564885798,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-244c178042a33ecc266d-26af4e2fd777.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-08",
+      "street": "Rue Sthrau",
+      "cardKey": "street:Rue Sthrau",
+      "image": "/data/daily_images/2027-12-08__verified-c79160e36fb5b872.jpg",
+      "sha256": "c79160e36fb5b872be8cbabfc5de972f043ee8a8441a01c340e8283aa93aa94a",
+      "coordinate": [
+        2.366927458919829,
+        48.82748402592037
+      ],
+      "target": [
+        2.3667473627202757,
+        48.82778316834616
+      ],
+      "panoId": "sxi93wbdrUrOPn5oZunPnw",
+      "captureDate": "2022-08",
+      "copyright": "© Google",
+      "heading": 339.79445065974505,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-79447a25cfa5a7f321fa-c79160e36fb5.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-09",
+      "street": "Rue des Artistes",
+      "cardKey": "street:Rue des Artistes",
+      "image": "/data/daily_images/2027-12-09__verified-47605779597f250f.jpg",
+      "sha256": "47605779597f250f058cd0d55855073d5cffbe43a6f58afcab166742e0bc6d8f",
+      "coordinate": [
+        2.334525943472621,
+        48.82605811887304
+      ],
+      "target": [
+        2.334622704930902,
+        48.826572623010875
+      ],
+      "panoId": "9aZvsJUWDa61uxoSUVW1NA",
+      "captureDate": "2024-05",
+      "copyright": "© Google",
+      "heading": 6.749530086662844,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b2888302a174dc85d75b-47605779597f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-10",
+      "street": "Rue Marmontel",
+      "cardKey": "street:Rue Marmontel",
+      "image": "/data/daily_images/2027-12-10__verified-1f5909986ac01bcf.jpg",
+      "sha256": "1f5909986ac01bcfa07d7bcf2f752c41c20a040e856de4ba5b75735fefa35e52",
+      "coordinate": [
+        2.299854524412581,
+        48.83699827291132
+      ],
+      "target": [
+        2.2999359714706133,
+        48.837042194443754
+      ],
+      "panoId": "UJD7MZtrs4AHIEMd4f2I5Q",
+      "captureDate": "2026-03",
+      "copyright": "© Google",
+      "heading": 219.29378598235107,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-3e687f961a483b0dce33-1f5909986ac0.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-11",
+      "street": "Rue Jean Hugues",
+      "cardKey": "street:Rue Jean Hugues",
+      "image": "/data/daily_images/2027-12-11__verified-7dcbcc3ed512bb13.jpg",
+      "sha256": "7dcbcc3ed512bb1328dc50c0a238f72ec75281062287bc271a87e547dd9387df",
+      "coordinate": [
+        2.274856679578014,
+        48.86858406141233
+      ],
+      "target": [
+        2.2748310726328334,
+        48.86860967864847
+      ],
+      "panoId": "x_tO-xNV5MfLG2UXigNoWg",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 24.01762860597188,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2.9,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-bf8d8839415b3209ae38-7dcbcc3ed512.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-12",
+      "street": "Rue Mère Teresa",
+      "cardKey": "street:Rue Mère Teresa",
+      "image": "/data/daily_images/2027-12-12__verified-51630c887ad4e596.jpg",
+      "sha256": "51630c887ad4e5961e926e7d2660c03480f81c7f51e0275e9373d6fdf8f86b1d",
+      "coordinate": [
+        2.312485511875927,
+        48.88895563065861
+      ],
+      "target": [
+        2.312091461911222,
+        48.888662372538974
+      ],
+      "panoId": "X4N_SrMnA7KB42dpU3UOAQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 40.57355163834819,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-b7c1403496160d4e0768-51630c887ad4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-13",
+      "street": "Rue Ravignan",
+      "cardKey": "street:Rue Ravignan",
+      "image": "/data/daily_images/2027-12-13__verified-dd27e5d9f6e46e50.jpg",
+      "sha256": "dd27e5d9f6e46e50ca0861f2defe5bc64c351d7f4b70726b7f4a66b52c37e548",
+      "coordinate": [
+        2.338324739869949,
+        48.88634154700538
+      ],
+      "target": [
+        2.3379580992231843,
+        48.885719201035755
+      ],
+      "panoId": "Q1drPyNLOcyYDnzTKtLQWw",
+      "captureDate": "2020-07",
+      "copyright": "© Google",
+      "heading": 270.575555155894,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-e0ece68ba21f4d845c48-dd27e5d9f6e4.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-14",
+      "street": "Passage du Sud",
+      "cardKey": "street:Passage du Sud",
+      "image": "/data/daily_images/2027-12-14__verified-1bb28b0e9c79d96c.jpg",
+      "sha256": "1bb28b0e9c79d96c2a8f8f34ab2125b524175e2f86b9623801692980e72f616c",
+      "coordinate": [
+        2.382126257743662,
+        48.88456125947587
+      ],
+      "target": [
+        2.3821999843010286,
+        48.88444002616495
+      ],
+      "panoId": "hF354KBIiyvR95J5FZO4iQ",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 158.46839193210099,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a98694c01c9fb392e83c-1bb28b0e9c79.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-15",
+      "street": "Quai du Louvre",
+      "cardKey": "street:Quai du Louvre",
+      "image": "/data/daily_images/2027-12-15__verified-db26403bf60c9ca3.jpg",
+      "sha256": "db26403bf60c9ca376ef9956b308e3054fd81c3a66d233e89b4508a3e39625d4",
+      "coordinate": [
+        2.341141920721896,
+        48.85877273644338
+      ],
+      "target": [
+        2.3411580464087893,
+        48.858736829727334
+      ],
+      "panoId": "vsP8JH-uBf9p9XV6r3JFUQ",
+      "captureDate": "2026-07",
+      "copyright": "© Google",
+      "heading": 106.39288286750036,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 3.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-356b6e0d1a94648bf600-db26403bf60c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-16",
+      "street": "Rue Frantz Fanon",
+      "cardKey": "street:Rue Frantz Fanon",
+      "image": "/data/daily_images/2027-12-16__verified-c7814b6e57ebe143.jpg",
+      "sha256": "c7814b6e57ebe143b7663442946fcbc7fc7507b321ca643b5d4ba3d8a0013605",
+      "coordinate": [
+        2.400828981565459,
+        48.85713240402615
+      ],
+      "target": [
+        2.400781342389792,
+        48.85708780816261
+      ],
+      "panoId": "Ainu3HICCxko5-EQ7PyqWQ",
+      "captureDate": "2023-07",
+      "copyright": "© Google",
+      "heading": 221.46125714978623,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.7,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-83ab1bb705a8f7ecefd1-c7814b6e57eb.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-17",
+      "street": "Rue Dalayrac",
+      "cardKey": "street:Rue Dalayrac",
+      "image": "/data/daily_images/2027-12-17__verified-0737e79db7acb8cb.jpg",
+      "sha256": "0737e79db7acb8cb09aa56dfe1f266902fc07c18c67cc09a5d84e2de14492973",
+      "coordinate": [
+        2.335305458154266,
+        48.86795969455613
+      ],
+      "target": [
+        2.335217763495588,
+        48.86781508483188
+      ],
+      "panoId": "8TQUkXo8LoPMT8jxF2Kj2w",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 20.129233145294393,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-f3cfb34501211b6aa4d5-0737e79db7ac.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-18",
+      "street": "Rue du Parc Royal",
+      "cardKey": "street:Rue du Parc Royal",
+      "image": "/data/daily_images/2027-12-18__verified-e0d07b776b0a47b3.jpg",
+      "sha256": "e0d07b776b0a47b3f748a388c0a2f967b06a660dd87cf06d9953924d8cee7211",
+      "coordinate": [
+        2.363358467041652,
+        48.85852345929968
+      ],
+      "target": [
+        2.3630455119705434,
+        48.85862626097996
+      ],
+      "panoId": "cl2RAz1qvf0Qm5WrH0z9ig",
+      "captureDate": "2024-07",
+      "copyright": "© Google",
+      "heading": 297.9092091272624,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.6,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-4d988153e5f986bc1f44-e0d07b776b0a.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-19",
+      "street": "Rue du Grenier sur l'Eau",
+      "cardKey": "street:Rue du Grenier sur l'Eau",
+      "image": "/data/daily_images/2027-12-19__verified-7f2654b3632b8af5.jpg",
+      "sha256": "7f2654b3632b8af5c84f8005e51537cf3fd698bd54a23e35738c4b28589fe713",
+      "coordinate": [
+        2.355547492044529,
+        48.85534886916915
+      ],
+      "target": [
+        2.3555770294941993,
+        48.8553462372599
+      ],
+      "panoId": "Q2dhTxL1pqcSCnwQnWykow",
+      "captureDate": "2022-11",
+      "copyright": "© Google",
+      "heading": 126.38617468718422,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7f3d885877d1626da821-7f2654b3632b.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-20",
+      "street": "Rue Guy de la Brosse",
+      "cardKey": "street:Rue Guy de la Brosse",
+      "image": "/data/daily_images/2027-12-20__verified-ccbc51e26715fa9a.jpg",
+      "sha256": "ccbc51e26715fa9ac8c95274a453482fd709eea3c1f0c28b79617fb610864d66",
+      "coordinate": [
+        2.355343867417602,
+        48.84512001682056
+      ],
+      "target": [
+        2.355374690709617,
+        48.84513524407966
+      ],
+      "panoId": "YDOXI-owVHMR-HsngJRaig",
+      "captureDate": "2025-05",
+      "copyright": "© Google",
+      "heading": 45.921705558414146,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-78b51628d17ed5aa61e5-ccbc51e26715.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-21",
+      "street": "Avenue de l'Observatoire",
+      "cardKey": "street:Avenue de l'Observatoire",
+      "image": "/data/daily_images/2027-12-21__verified-030fd9a2947e580f.jpg",
+      "sha256": "030fd9a2947e580f6b72c45071e93bfe33327dbbc1f84ebdf3b9520ffef9f6b0",
+      "coordinate": [
+        2.33638543559998,
+        48.84267357651909
+      ],
+      "target": [
+        2.3366047477267298,
+        48.84082841742442
+      ],
+      "panoId": "5gx-4KzRDi1sgJLSG5BwuQ",
+      "captureDate": "2022-06",
+      "copyright": "© Google",
+      "heading": 183.13356337461383,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-5bda51f1ee37b1d9c22a-030fd9a2947e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-22",
+      "street": "Place El Salvador",
+      "cardKey": "street:Place El Salvador",
+      "image": "/data/daily_images/2027-12-22__verified-9158e83a1408a2f8.jpg",
+      "sha256": "9158e83a1408a2f8d379a1ebac9088f75123bd7cd0a49ae0f8af23a5193d3f45",
+      "coordinate": [
+        2.31243362829522,
+        48.85065775079615
+      ],
+      "target": [
+        2.312269497073104,
+        48.85046917824571
+      ],
+      "panoId": "xk7nrFb0tpdFsPzQcKup8w",
+      "captureDate": "2024-04",
+      "copyright": "© Google",
+      "heading": 185.33024089379947,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 11.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-c95922db5a41513e8513-9158e83a1408.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-23",
+      "street": "Rue de Berri",
+      "cardKey": "street:Rue de Berri",
+      "image": "/data/daily_images/2027-12-23__verified-5d969e30d5f3ce13.jpg",
+      "sha256": "5d969e30d5f3ce13c48bd730cfb6122fcdabbd99d6a1f94fb2c6ccfc715a2dff",
+      "coordinate": [
+        2.305606311121681,
+        48.87321421469904
+      ],
+      "target": [
+        2.3055719011195777,
+        48.87320024952358
+      ],
+      "panoId": "5AZUYa5fzhN9orS-0uo3JQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 50.55508835374064,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.4,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-2221f861fe86de8af556-5d969e30d5f3.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-24",
+      "street": "Rue de Bruxelles",
+      "cardKey": "street:Rue de Bruxelles",
+      "image": "/data/daily_images/2027-12-24__verified-d5b22b7e4c7e8af9.jpg",
+      "sha256": "d5b22b7e4c7e8af9e0021b320e5ae9cbace0988c7236f2b1e7c7abf9f8a59588",
+      "coordinate": [
+        2.331330017019259,
+        48.88349264462851
+      ],
+      "target": [
+        2.33043,
+        48.88329
+      ],
+      "panoId": "LTYsQv1bvxx4NnXrHy5dzA",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 70.7016215235783,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-006232f39c77d44ed3d6-d5b22b7e4c7e.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-25",
+      "street": "Square Alban Satragne",
+      "cardKey": "street:Square Alban Satragne",
+      "image": "/data/daily_images/2027-12-25__verified-3d9ec1c9983c33c8.jpg",
+      "sha256": "3d9ec1c9983c33c895108e83af78ab2c71cc4e7de5d0cae9d2da2191ee2bc236",
+      "coordinate": [
+        2.355519568740831,
+        48.87539306100792
+      ],
+      "target": [
+        2.355576475043863,
+        48.87571130694201
+      ],
+      "panoId": "67S8neQOIz6jBH0P6YcnhQ",
+      "captureDate": "2026-04",
+      "copyright": "© Google",
+      "heading": 273.7822516233021,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-a2d5dc06e8b5b852f81f-3d9ec1c9983c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-26",
+      "street": "Passage des Taillandiers",
+      "cardKey": "street:Passage des Taillandiers",
+      "image": "/data/daily_images/2027-12-26__verified-9deef8cc0ccbf1f3.jpg",
+      "sha256": "9deef8cc0ccbf1f3e2b37e0ecc39f3c7f1b4e8d6175907dd91bfcadad39fc671",
+      "coordinate": [
+        2.374854158715467,
+        48.85390049228524
+      ],
+      "target": [
+        2.3748417845279617,
+        48.85389928545066
+      ],
+      "panoId": "du-VfSU1qnm_atsIyZcegA",
+      "captureDate": "2019-06",
+      "copyright": "© Google",
+      "heading": 245.13895768803263,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.2,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-8ba9a7e123033e931b91-9deef8cc0ccb.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-27",
+      "street": "Rue Victor Chevreuil",
+      "cardKey": "street:Rue Victor Chevreuil",
+      "image": "/data/daily_images/2027-12-27__verified-405f2ae04dc6e179.jpg",
+      "sha256": "405f2ae04dc6e179a19244e4a6970743a416131427d15f474f29689d28eee08e",
+      "coordinate": [
+        2.404210441482088,
+        48.84168295929749
+      ],
+      "target": [
+        2.4035799386355707,
+        48.84175996768624
+      ],
+      "panoId": "BVWePXWYqt_LW1FmFr_3qw",
+      "captureDate": "2024-10",
+      "copyright": "© Google",
+      "heading": 282.34455349023636,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.5,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-72907083e03145c0dff9-405f2ae04dc6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-28",
+      "street": "Impasse du Petit Modèle",
+      "cardKey": "street:Impasse du Petit Modèle",
+      "image": "/data/daily_images/2027-12-28__verified-7d6866b428b6d85a.jpg",
+      "sha256": "7d6866b428b6d85af53c326d0b22e8422f4be1c5ba9db83242feb1f0f558b7f5",
+      "coordinate": [
+        2.35927275995956,
+        48.832712902743
+      ],
+      "target": [
+        2.3593819021736913,
+        48.83285105283121
+      ],
+      "panoId": "eGaT2U9AP_ICsSC3riN84A",
+      "captureDate": "2021-05",
+      "copyright": "© Google",
+      "heading": 114.66854873271518,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 17.3,
+      "reviewedAt": "2026-10-14",
+      "visualReview": true,
+      "framing": "Voie reconnaissable, perspective dans sa longueur ou accès caractéristique ; comparaison visuelle des deux orientations et métadonnées géographiques vérifiées.",
+      "sourceImage": "/data/collect_images/photo-f01a4ce8f953a8f649a7-7d6866b428b6.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-29",
+      "street": "Rue Desprez",
+      "cardKey": "street:Rue Desprez",
+      "image": "/data/daily_images/2027-12-29__verified-75c98624411f1b61.jpg",
+      "sha256": "75c98624411f1b618d1f0c7cfc23e0f6cbf1230bff270a27cca4706d4dcb153a",
+      "coordinate": [
+        2.315559870339643,
+        48.83476564470658
+      ],
+      "target": [
+        2.3155392151069645,
+        48.83475539244652
+      ],
+      "panoId": "1k17bDaKVuf6gSBBTn8ZNQ",
+      "captureDate": "2025-10",
+      "copyright": "© Google",
+      "heading": 133.22337376080918,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 1.8,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-5c5676e1f0ca82018081-75c98624411f.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-30",
+      "street": "Boulevard du Général Martial Valin",
+      "cardKey": "street:Boulevard du Général Martial Valin",
+      "image": "/data/daily_images/2027-12-30__verified-d1ab3bb5d93ceb1f.jpg",
+      "sha256": "d1ab3bb5d93ceb1fc6721346729342783e8f3176df9c1c95841e8e9432afb967",
+      "coordinate": [
+        2.274353986199517,
+        48.83708757426125
+      ],
+      "target": [
+        2.273214266030884,
+        48.83742017852008
+      ],
+      "panoId": "89HDOSfTiKAVM-14WLqaPA",
+      "captureDate": "2017-08",
+      "copyright": "© Google",
+      "heading": 292.86360224862074,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.1,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Comparaison visuelle des deux cadrages : axe de la voie lisible, scène extérieure reconnaissable et attribution conservée.",
+      "sourceImage": "/data/collect_images/photo-c4286f0e58f068c6567c-d1ab3bb5d93c.jpg",
+      "scheduledAt": "2026-10-24"
+    },
+    {
+      "date": "2027-12-31",
+      "street": "Rue Lecomte du Noüy",
+      "cardKey": "street:Rue Lecomte du Noüy",
+      "image": "/data/daily_images/2027-12-31__verified-b96bad48f9d2b649.jpg",
+      "sha256": "b96bad48f9d2b64913bf1710a95d345034949a360fc3db21762700c56b113951",
+      "coordinate": [
+        2.255471595383466,
+        48.8425385354624
+      ],
+      "target": [
+        2.255441178732617,
+        48.84253859560652
+      ],
+      "panoId": "yIErtJ-SJGt6AidR3GY1UA",
+      "captureDate": "2022-05",
+      "copyright": "© Google",
+      "heading": 98.36493464719575,
+      "pitch": 0,
+      "fov": 85,
+      "distanceMeters": 0.3,
+      "reviewedAt": "2026-10-13",
+      "visualReview": true,
+      "framing": "Contrôle visuel de la planche photographique : vue extérieure et axe de la voie lisibles ; position vérifiée sur la géométrie de jeu.",
+      "sourceImage": "/data/collect_images/photo-7e4ed8aa685817dea698-b96bad48f9d2.jpg",
+      "scheduledAt": "2026-10-24"
     }
   ]
 }

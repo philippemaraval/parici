@@ -118,7 +118,13 @@ async function riddleImage(req, res) {
   }
   const path = require("node:path"),
     root = path.resolve(__dirname, "../../.."),
-    file = path.resolve(root, "." + row.image_url);
+    file = path.resolve(
+      root,
+      "." +
+        require("../collect/image-urls").imageVariants(row.image_url, {
+          versioned: false,
+        }).image_reference,
+    );
   if (
     !file.startsWith(path.join(root, "data") + path.sep) ||
     !/[.]?(?:jpg|jpeg|png|webp)$/i.test(file)

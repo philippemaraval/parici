@@ -1,3 +1,4 @@
+import { parseCollectGame } from "../../types/api-boundaries.js";
 import { initSocial } from "./collect-social-view.js";
 import { initPersonalAlbums } from "./personal-albums-view.js";
 import { renderCardArtwork } from "./collect-card-art.js";
@@ -112,7 +113,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
         if(response.status===401)setCollectAuthentication(false);
         throw error;
       }
-      return payload;
+      return path === "/api/collect/games" ? parseCollectGame(payload) : payload;
     } catch (error) {
       if (error.name === 'AbortError') throw new Error('La connexion a expiré. Tu peux sélectionner de nouveau le lieu.');
       throw error;
@@ -1139,7 +1140,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       })().catch(error=>showError(error.message));
       const idle=window.requestIdleCallback||((callback)=>setTimeout(callback,250));
       idle(()=>{prewarmCollect();if(!navigator.connection?.saveData)loadAlbumOptions().catch(()=>{});});
-      try{const {game:pending}=await request('/api/collect/games/pending');if(pending){pendingGame=pending;els['collect-next'].textContent='Reprendre la partie';els['collect-game-status'].textContent='Une partie est en cours · reprends-la pour continuer.';}}catch(error){if(error.status!==404)showError(error.message);}
+      try{const {game:pending}=await request('/api/collect/games/pending');if(pending){pendingGame=parseCollectGame(pending);els['collect-next'].textContent='Reprendre la partie';els['collect-game-status'].textContent='Une partie est en cours · reprends-la pour continuer.';}}catch(error){if(error.status!==404)showError(error.message);}
       loadWeeklyPlay();
 
     }catch(_error){setCollectAuthentication(false);}

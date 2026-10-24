@@ -45,6 +45,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Préparer le jeton privé des métriques sans remplacer les autres variables
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_PRODUCTION_SERVICE_ID }}
+        run: node scripts/render_metrics_token.js --ensure
       - name: Déployer la production avec retour arrière automatique
         env:
           DEPLOY_COMMIT: ${{ github.event.workflow_run.head_sha }}

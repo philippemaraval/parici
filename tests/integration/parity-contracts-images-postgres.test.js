@@ -1,0 +1,23 @@
+const test=require('node:test'),assert=require('node:assert/strict'),http=require('node:http'),fs=require('node:fs'),path=require('node:path');
+const {createTestDatabase}=require('./test-database');
+test('real Paris sessions, Collect games and Explorer progress conform to the checked boundaries',{skip:!process.env.TEST_DATABASE_URL,timeout:180000},async t=>{
+ const isolated=await createTestDatabase(process.env.TEST_DATABASE_URL,'parici_contracts_images');
+ process.env.DATABASE_URL=isolated.url;process.env.NODE_ENV='production';process.env.SECRET_KEY='parici-contracts-isolated-validation-secret';process.env.METRICS_TOKEN='isolated-private-metrics-token';
+ const db=require('../../backend/database'),{app,initializeDatabase}=require('../../backend/server');const server=http.createServer(app);
+ t.after(async()=>{server.closeAllConnections();await new Promise(r=>server.close(r));await db.pool.end();await isolated.cleanup();});
+ await initializeDatabase({startBackgroundServices:false});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ const request=async(route,body,token)=>{const r=await fetch(base+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})});assert.ok(r.ok,route+' '+r.status+' '+(r.ok?'':await r.text()));return r.json();};
+ const user=await request('/api/register',{username:'contracts_images_player',password:'local-contracts-password-long',recoveryEmail:'contracts-images@example.test'});
+ const parsers=await import('data:text/javascript;base64,'+fs.readFileSync(path.join(__dirname,'../../src/types/api-boundaries.js')).toString('base64'));
+ const names=[...new Set(JSON.parse(fs.readFileSync(path.join(__dirname,'../../backend/data/paris_rues_light.geojson'),'utf8')).features.map(f=>f.properties.name).filter(Boolean))];
+ const session=await request('/api/game-sessions',{mode:'ville',gameType:'classique',availableNames:names},user.token);assert.deepEqual(parsers.parseVerifiedSession(session),session);
+ const game=await request('/api/collect/games',{},user.token);assert.deepEqual(parsers.parseCollectGame(game),game);
+ const progress=await request('/api/explorer/progress',null,user.token);assert.deepEqual(parsers.parseExplorerProgress(progress),progress);
+ const riddles=await request('/api/explorer/riddles',null,user.token);assert.ok(riddles.riddles.length);const riddle=riddles.riddles[0];
+ await db.pool.query("INSERT INTO explorer_user_progress(user_id,riddle_id,started_at,solved_at,hints_used,points_earned,walking_time_seconds,client_payload) VALUES($1,$2,NOW()-INTERVAL '5 minutes',NOW(),1,85,300,'{}'::jsonb)",[user.id,riddle.id]);
+ const solved=await request('/api/explorer/progress',null,user.token);assert.equal(parsers.parseExplorerProgress(solved).progress.length,1);assert.ok(solved.progress[0].solution.street_name_clean);
+ const image=await fetch(base+riddle.image_url,{headers:{Authorization:'Bearer '+user.token}});assert.equal(image.status,200);
+ const row=(await db.pool.query('SELECT image_url FROM explorer_riddles WHERE id=$1',[riddle.id])).rows[0];const variant=require('../../backend/domains/collect/image-urls').imageVariants(row.image_url,{versioned:false}).image_reference;
+ assert.deepEqual(Buffer.from(await image.arrayBuffer()),fs.readFileSync(path.join(__dirname,'../..',variant)));
+ assert.equal((await fetch(base+'/api/metrics')).status,401);const metrics=await fetch(base+'/api/metrics',{headers:{Authorization:'Bearer isolated-private-metrics-token'}});assert.equal(metrics.status,200);assert.match(await metrics.text(),/camino_http_requests_total/);
+});

@@ -4,7 +4,8 @@
     "maxInitialJavaScriptBytes": 286720,
     "maxStylesheetBytes": 81920,
     "maxMapOverviewBytes": 5242880,
-    "maxMapOverviewGzipBytes": 1048576
+    "maxMapOverviewGzipBytes": 1048576,
+    "maxPublishedFiles": 20000
   },
   "webVitals": {
     "lcpMs": 2500,

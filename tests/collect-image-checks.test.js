@@ -16,6 +16,7 @@ test("editorial image checks retain responsive paths without hashing; player URL
         statSync: () => { stats++; return { mtimeMs: 1 }; },
         readFileSync(file) {
           if (file.endsWith("responsive.json")) return JSON.stringify({ "/data/photo.jpg": { detail: "/data/detail.jpg", thumbnail: "/data/thumb.jpg" } });
+          if (file.endsWith("explorer_images/manifest.json")) return JSON.stringify({images:[]});
           imageReads++;
           return Buffer.from("photo");
         },

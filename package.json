@@ -32,7 +32,10 @@
     "staging:anonymize": "node scripts/anonymize_staging_database.js",
     "delivery:render": "node scripts/render_delivery.js",
     "content:check": "node scripts/check_player_content.js",
-    "daily:geography": "node scripts/audit_daily_geography.js"
+    "daily:geography": "node scripts/audit_daily_geography.js",
+    "images:optimize": "node scripts/optimize_game_images.js",
+    "daily:extend": "node scripts/extend_verified_daily_calendar.js",
+    "photos:research": "node scripts/research_missing_collect_photos.js"
   },
   "keywords": [],
   "author": "",
@@ -58,6 +61,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
     "prettier": "^3.7.4",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3"
   },
   "overrides": {

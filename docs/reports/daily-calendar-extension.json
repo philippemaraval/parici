@@ -1,0 +1,28 @@
+{
+  "previousManifestSHA256": "ba08ea6316dd461fc04c6d6b520fce56660b3bb5fba588cbdc1b7051678c275d",
+  "previousThrough": "2027-06-27",
+  "through": "2027-12-31",
+  "added": 187,
+  "arrondissements": {
+    "10e arrondissement": 10,
+    "11e arrondissement": 10,
+    "12e arrondissement": 10,
+    "13e arrondissement": 10,
+    "14e arrondissement": 10,
+    "15e arrondissement": 10,
+    "16e arrondissement": 10,
+    "17e arrondissement": 9,
+    "18e arrondissement": 9,
+    "19e arrondissement": 9,
+    "1er arrondissement": 9,
+    "20e arrondissement": 9,
+    "2e arrondissement": 9,
+    "3e arrondissement": 9,
+    "4e arrondissement": 9,
+    "5e arrondissement": 9,
+    "6e arrondissement": 9,
+    "7e arrondissement": 9,
+    "8e arrondissement": 9,
+    "9e arrondissement": 9
+  }
+}
