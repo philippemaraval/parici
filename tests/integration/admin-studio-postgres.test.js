@@ -284,12 +284,10 @@ test(
       ),
       "https://example.test/image.png",
     );
-    const today = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Europe/Paris",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date());
+    const activeDaily = await request("/api/daily/health", accounts.player.token);
+    assert.equal(activeDaily.status, 200, JSON.stringify(activeDaily.data));
+    const today = activeDaily.data.date;
+    assert.match(today, /^\d{4}-\d{2}-\d{2}$/);
     await db.setDailyTarget(
       today,
       "Rue test studio",
