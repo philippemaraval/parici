@@ -323,6 +323,7 @@ async function fingerprintProductionAssets() {
   const indexPath = path.join(DIST_DIR, "index.html");
   let indexHtml = fs.readFileSync(indexPath, "utf8");
   indexHtml = replaceAssetReference(indexHtml, "style.css", styleUrl);
+  indexHtml = replaceAssetReference(indexHtml, "/src/public/css/collect-cards.css", assetManifest["collect-cards.css"]);
   indexHtml = replaceAssetReference(indexHtml, "/src/public/css/site-shell.css", siteShellCssUrl);
   indexHtml = replaceAssetReference(indexHtml, "/src/public/js/map-dependencies.js", mapDependenciesUrl);
   indexHtml = replaceAssetReference(indexHtml, "data_rules.js", dataRulesUrl);

@@ -1080,6 +1080,7 @@ async function finishCollectGame(
 }
 
 async function grantDailyCardCopy(userId, date, streetName, _attemptCount) {
+  const rolloverHour = require("./config").readEnvIntegerInRange("DAILY_ROLLOVER_HOUR", 3, 0, 23);
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -1103,8 +1104,9 @@ async function grantDailyCardCopy(userId, date, streetName, _attemptCount) {
       JOIN app_settings s ON s.key = 'collect_launch_at'
       JOIN daily_targets t ON t.date = d.date AND t.street_name = $3
       WHERE d.user_id = $1 AND d.date = $2 AND d.success = TRUE
-      AND d.last_attempt_at >= s.value_text::timestamptz`,
-      [userId, date, streetName],
+      AND d.last_attempt_at >= s.value_text::timestamptz
+      AND d.date >= TO_CHAR((s.value_text::timestamptz - make_interval(hours => $4)) AT TIME ZONE 'Europe/Paris', 'YYYY-MM-DD')`,
+      [userId, date, streetName, rolloverHour],
     );
     if (!eligible.rows.length) {
       await client.query("COMMIT");
@@ -1170,10 +1172,14 @@ async function grantDailyCardCopy(userId, date, streetName, _attemptCount) {
 }
 
 async function getDailyEarnedCard(userId, date) {
+  // Awards survive exchanges and destruction; a reload must never grant a new copy.
+  const social = require("./domains/collect-social/service").schemaEnabled();
   const result = await pool.query(
-    `SELECT c.*,cp.id AS copy_id,cp.obtained_at FROM card_copies cp
-    LEFT JOIN collect_card_merges m ON m.source_card_id=cp.card_id JOIN cards c ON c.id=COALESCE(m.canonical_card_id,cp.card_id)
-    WHERE cp.user_id=$1 AND cp.source='daily' AND cp.daily_date=$2 ${require("./domains/collect-social/service").schemaEnabled() ? "AND cp.acquisition='earned'" : ""} LIMIT 1`,
+    `SELECT c.*,a.${social ? "copy_id" : "id"} AS copy_id,a.obtained_at
+    FROM ${social ? "collect_awards" : "card_copies"} a
+    LEFT JOIN collect_card_merges m ON m.source_card_id=a.card_id
+    JOIN cards c ON c.id=COALESCE(m.canonical_card_id,a.card_id)
+    WHERE a.user_id=$1 AND a.source='daily' AND a.daily_date=$2 LIMIT 1`,
     [userId, date],
   );
   if (!result.rows[0]) return null;

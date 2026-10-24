@@ -86,7 +86,7 @@ test('finishing catch-up offers today only after server confirmation', () => {
             getElementById: id => id === 'daily-guesses-history' ? { appendChild: el => { button = el; } } : null,
             createElement: () => ({}),
         },
-        loadAllLeaderboards() {}, showMessage() {},
+        loadAllLeaderboards() {}, showMessage() {}, updateDailyResultPanel() {},
         endSession: () => actions.push('end'),
         handleDailyModeClick: () => actions.push('load'),
     });

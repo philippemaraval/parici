@@ -4850,6 +4850,8 @@ function applyDailyGuessSyncResult(result) {
     return;
   }
   dailyTargetData.userStatus = result;
+  if (result.collectCardCopy) dailyTargetData.collectCardCopy = result.collectCardCopy;
+  updateDailyResultPanel();
   dailyTargetData.targetGeometry = result.targetGeometry || dailyTargetData.targetGeometry;
   if (result.dailyStreak) {
     dailyTargetData.dailyStreak = result.dailyStreak;
@@ -4896,7 +4898,7 @@ function submitDailyGuessToServer(payload, retryIndex = 0) {
       if (!response.ok) {
         throw new Error(result.error || `Daily sync failed (${response.status})`);
       }
-      applyDailyGuessSyncResult(result);
+      if (dailyTargetData?.date === payload.date) applyDailyGuessSyncResult(result);
       return result;
     })
     .catch((error) => {
@@ -6371,6 +6373,9 @@ function startDailySession(e) {
   if (r || !t.success) {
     restoreDailyGuessesFromStorage(e.date);
   }
+  if (r && Array.isArray(e.guesses) && e.guesses.length > dailyGuessHistory.length) {
+    dailyGuessHistory = e.guesses.map((guess, index) => ({ ...guess, streetName: `Essai ${index + 1}`, direction: "" }));
+  }
   const serverAttempts = Number(t.attempts_count) || 0;
   if (!r && dailyGuessHistory.length > serverAttempts) {
     const unsynced = dailyGuessHistory.slice(serverAttempts);
@@ -6406,6 +6411,7 @@ function startDailySession(e) {
         ? "🎉 Défi réussi !"
         : "❌ Défi échoué"
       : `🎯 ${e.catchUp ? `Rattrapage du ${e.date.slice(8, 10)}/${e.date.slice(5, 7)}` : "Défi quotidien"} — ${o} essai${o > 1 ? "s" : ""} restant${o > 1 ? "s" : ""}`;
+  document.body.classList.toggle("daily-game-over", r);
   (setTargetPanelTitleText(u),
     updateTargetItemCounter(),
     (isSessionRunning = !0),

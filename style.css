@@ -2005,6 +2005,11 @@ select:focus-visible,
 
   body.daily-game-over .target-panel {
     max-height: 50vh !important;
+    overflow-y: auto !important;
+  }
+
+  body.session-running.daily-game-over #daily-result-panel.daily-result-panel--inline {
+    display: block !important;
   }
 
   body.session-running .actions-row {

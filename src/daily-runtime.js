@@ -1,3 +1,5 @@
+import { renderDailyCardReward } from "./public/js/collect-card-art.js";
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -522,7 +524,27 @@ export function updateDailyResultPanelRuntime({
     return;
   }
 
-  if (isSessionRunning) {
+  const targetPanel = document.querySelector(".target-panel");
+  if (!panel.__dailyResultHome) {
+    panel.__dailyResultHome = {
+      parent: panel.parentNode,
+      nextSibling: panel.nextSibling,
+    };
+  }
+
+  const showInsideFinishedGame = isSessionRunning && isDailyGameOver && targetPanel;
+  if (showInsideFinishedGame) {
+    targetPanel.appendChild(panel);
+    panel.classList.add("daily-result-panel--inline");
+  } else if (panel.classList.contains("daily-result-panel--inline")) {
+    const { parent, nextSibling } = panel.__dailyResultHome;
+    if (parent) {
+      parent.insertBefore(panel, nextSibling?.parentNode === parent ? nextSibling : null);
+    }
+    panel.classList.remove("daily-result-panel--inline");
+  }
+
+  if (isSessionRunning && !isDailyGameOver) {
     panel.classList.add("hidden");
     panel.style.display = "none";
     content.innerHTML = "";
@@ -547,7 +569,9 @@ export function updateDailyResultPanelRuntime({
     guesses = [];
   }
 
-  if (guesses.length === 0) {
+  const status = dailyTargetData?.userStatus;
+  const serverFinished = status?.success || Number(status?.attempts_count) >= 7;
+  if (guesses.length === 0 && !serverFinished) {
     panel.classList.add("hidden");
     panel.style.display = "none";
     content.innerHTML = "";
@@ -558,8 +582,8 @@ export function updateDailyResultPanelRuntime({
   setDailyGuessHistory(normalizedGuesses);
   restoreDailyMetaFromStorage(dailyDate);
 
-  const isSuccess = guesses.some((guess) => guess.distance < 20);
-  const isFinished = isSuccess || guesses.length >= 7 || isDailyGameOver;
+  const isSuccess = Boolean(status?.success) || guesses.some((guess) => guess.distance < 20);
+  const isFinished = isSuccess || guesses.length >= 7 || isDailyGameOver || serverFinished;
 
   if (!isFinished) {
     panel.classList.add("hidden");
@@ -570,7 +594,7 @@ export function updateDailyResultPanelRuntime({
 
   const result = {
     success: isSuccess,
-    attempts: guesses.length,
+    attempts: serverFinished ? Number(status.attempts_count) : guesses.length,
   };
 
   let html = "";
@@ -578,14 +602,16 @@ export function updateDailyResultPanelRuntime({
     const attempts = result.attempts;
     html += `<div class="daily-result daily-result--success">🎉 Bravo, vous avez trouvé la rue en ${attempts} essai${attempts > 1 ? "s" : ""} !</div>`;
   } else {
-    const minDistance = Math.min(...guesses.map((guess) => guess.distance));
+    const minDistance = guesses.length ? Math.min(...guesses.map((guess) => guess.distance)) : Number(status?.best_distance_meters);
     const minDistanceLabel =
       minDistance >= 1000
         ? `${(minDistance / 1000).toFixed(1)} km`
         : `${Math.round(minDistance)} m`;
     const targetStreetName = dailyTargetData?.streetName || "Rue inconnue";
-    html += `<div class="daily-result daily-result--fail">Votre meilleur score est ${minDistanceLabel} en sept essais.<br>La rue cible était « ${targetStreetName} ».</div>`;
+    html += `<div class="daily-result daily-result--fail">Votre meilleur score est ${minDistanceLabel} en sept essais.<br>La rue cible était « ${escapeHtml(targetStreetName)} ».</div>`;
   }
+
+  if (isSuccess) html += renderDailyCardReward(dailyTargetData?.collectCardCopy || dailyTargetData?.userStatus?.collectCardCopy);
 
   html += '<div class="daily-share-buttons">';
   html += '<button id="daily-share-text" class="btn-secondary daily-share-btn">📋 Copier le texte</button>';

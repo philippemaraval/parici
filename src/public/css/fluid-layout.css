@@ -415,7 +415,7 @@ body .profile-stats-section>summary:focus-visible{outline:2px solid #2878bc;outl
 .profile-stats-section-content{padding:4px 10px 16px}
 
 .daily-card-reward{margin:16px 0;padding:12px;border:1px solid #cc323230;border-radius:12px;background:#fff9f3;text-align:center;font-size:12px;line-height:1.5;--collect-red:#cc3232;--collect-red-soft:#fff0ec}
-.daily-card-reward .collect-card{width:min(100%,270px);margin:12px auto;--rarity:#687585;background:#f4f6f8;text-align:left}
+.daily-card-reward .collect-card{width:min(100%,270px);margin:12px auto;text-align:left}
 .collect-reward-flip > .collect-card, .daily-card-reward .collect-card { animation: collect-card-turn .42s cubic-bezier(.2,.7,.2,1) both; transform-origin: center; backface-visibility: hidden; }
 @keyframes collect-card-turn { from { opacity: 0; transform: perspective(900px) rotateY(-78deg) scale(.97); } to { opacity: 1; transform: perspective(900px) rotateY(0) scale(1); } }
 @media(prefers-reduced-motion: reduce) { .collect-reward-flip > .collect-card, .daily-card-reward .collect-card { animation: none; } }
@@ -427,10 +427,6 @@ body .profile-stats-section>summary:focus-visible{outline:2px solid #2878bc;outl
 .collect-shell .collect-tabs { display: flex; justify-content: center; }
 .collect-shell .collect-tabs button { flex: 1 1 0; min-width: 0; width: auto; text-align: center; }
 @media(max-width:650px) { .collect-shell .collect-tabs { gap: 2px; overflow: visible; } .collect-shell .collect-tabs button { flex: 1 1 auto; padding: 9px 2px; white-space: nowrap; font-size: 11px; } }
-.daily-card-reward .rarity-2{--rarity:#2983c4;background:#eaf5ff}
-.daily-card-reward .rarity-3{--rarity:#8656be;background:#f4edff}
-.daily-card-reward .rarity-4{--rarity:#bd8b16;background:#fff7dc}
-.daily-card-reward .rarity-5{--rarity:#bb4c3d;background:#fff0e8}
 .daily-card-reward .collect-card-art{aspect-ratio:auto}
 .daily-card-reward .collect-tile__name{font-size:15px}
 .daily-card-reward .daily-collect-link{display:inline-flex;justify-content:center;background:#cc3232;color:#fff;padding:9px 14px;border-radius:9px;text-decoration:none}
@@ -447,3 +443,5 @@ body.session-running:not(.daily-game-over) .site-nav.is-stuck {
   padding-left: max(8px, env(safe-area-inset-left, 0px));
   padding-right: max(8px, env(safe-area-inset-right, 0px));
 }
+
+#daily-result-panel .daily-share-btn.btn-primary{background:#12297a;color:#fff}

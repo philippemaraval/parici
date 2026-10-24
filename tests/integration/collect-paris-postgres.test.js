@@ -29,7 +29,22 @@ test(
       await isolated.cleanup();
     });
     await initializeDatabase({ startBackgroundServices: false });
+    const launch = await db.getAppSetting("collect_launch_at");
+    assert.ok(Number.isFinite(Date.parse(launch)), "First deployment explicitly dates the launch");
     await initializeDatabase({ startBackgroundServices: false });
+    assert.equal(await db.getAppSetting("collect_launch_at"), launch);
+    const launchProbe = await db.pool.connect();
+    try {
+      await launchProbe.query("BEGIN");
+      await launchProbe.query("DELETE FROM app_settings WHERE key='parici_daily_collect_launch'");
+      await launchProbe.query("UPDATE app_settings SET value_text='2026-10-20T12:00:00Z' WHERE key='collect_launch_at'");
+      await require("../../backend/domains/collect/daily-launch").launchDailyRewards(launchProbe);
+      assert.equal((await launchProbe.query("SELECT value_text FROM app_settings WHERE key='collect_launch_at'")).rows[0].value_text, "2026-10-20T12:00:00Z");
+    } finally { await launchProbe.query("ROLLBACK"); launchProbe.release(); }
+    // Exercise the private gate as well; a restart must preserve this operator setting.
+    await db.pool.query("UPDATE app_settings SET value_text='infinity' WHERE key='collect_launch_at'");
+    await initializeDatabase({ startBackgroundServices: false });
+    assert.equal(await db.getAppSetting("collect_launch_at"), "infinity");
     await new Promise((resolve) =>
       server.listen(
         process.env.CAMINO_REAL_BROWSER === "1" ? 4173 : 0,
@@ -708,7 +723,7 @@ test(
         .body.goal.slug,
       goal.slug,
     );
-    const day = "2026-10-13",
+    const day = (await request("/api/daily/health")).body.date,
       daily = cards.find((c) => c.family === "street" && !c.fragments_enabled);
     await db.pool.query(
       "INSERT INTO daily_targets(date,street_name,arrondissement,coordinates_json) VALUES($1,$2,'Paris',$3) ON CONFLICT(date) DO UPDATE SET street_name=EXCLUDED.street_name",
@@ -771,12 +786,13 @@ test(
       "UPDATE daily_user_attempts SET last_attempt_at=NOW() WHERE user_id=$1 AND date=$2",
       [other.id, day],
     );
-    const dailyReward = await db.grantDailyCardCopy(
-      other.id,
-      day,
-      daily.source_entity_id,
-      999,
-    );
+    // A catch-up dated before launch remains ineligible even if won now.
+    await db.pool.query("INSERT INTO daily_targets(date,street_name,arrondissement,coordinates_json) VALUES('1999-01-01',$1,'Paris','[2.35,48.85]')", [daily.source_entity_id]);
+    await db.pool.query("INSERT INTO daily_user_attempts(user_id,date,success,attempts_count,last_attempt_at) VALUES($1,'1999-01-01',TRUE,1,NOW())", [other.id]);
+    assert.equal(await db.grantDailyCardCopy(other.id, '1999-01-01', daily.source_entity_id, 1), null);
+    const concurrentRewards = await Promise.all(Array.from({length: 3}, () => db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999)));
+    assert.equal(concurrentRewards.filter(Boolean).length, 1);
+    const dailyReward = concurrentRewards.find(Boolean);
     assert.ok(dailyReward);
     assert.equal(
       await db.grantDailyCardCopy(other.id, day, daily.source_entity_id, 999),

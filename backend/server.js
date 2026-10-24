@@ -4508,8 +4508,14 @@ app.get('/api/daily', authenticateToken, async (req, res) => {
                 && !reminderPromptStatus.hasActiveSubscription,
         };
 
+        if (userStatus.success) response.collectCardCopy = await db.getDailyEarnedCard(req.user.id, date);
+
         if (userStatus.success || userStatus.attempts_count >= 7) {
             response.targetGeometry = await getTargetGeometry(target);
+            response.guesses = (await db.pool.query(
+                'SELECT distance_meters AS distance FROM daily_attempt_details WHERE user_id=$1 AND date=$2 ORDER BY attempt_number',
+                [req.user.id, date],
+            )).rows;
         }
 
         res.setHeader('Cache-Control', 'no-store');
@@ -4547,7 +4553,10 @@ app.post(
         const integrity = require('./domains/game-integrity/daily');
         const result = await integrity.submitGuess(db, req.user.id, parsed.value, target, integrity.getStreetFeatures());
 
-        if(result.success) await db.grantDailyCardCopy(req.user.id,parsed.value.date,target.street_name,result.attempts_count);
+        if (result.success) {
+            result.collectCardCopy = await db.grantDailyCardCopy(req.user.id, parsed.value.date, target.street_name, result.attempts_count)
+                || await db.getDailyEarnedCard(req.user.id, parsed.value.date);
+        }
 
         if (result.success || result.attempts_count >= 7) {
             result.dailyStreak = await db.getDailyStreakForUser(req.user.id, expectedDate);

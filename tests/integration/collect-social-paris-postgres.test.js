@@ -596,6 +596,13 @@ test(
         const won = await request("/api/daily/guess", d, guess, "POST");
         assert.equal(won.status, 200);
         assert.equal(won.body.success, true);
+        assert.ok(won.body.collectCardCopy?.card);
+        const restored = (await request("/api/daily", d)).body;
+        assert.equal(restored.collectCardCopy.id, won.body.collectCardCopy.id);
+        assert.equal(restored.guesses.length, won.body.attempts_count);
+        assert.equal(restored.guesses.at(-1).distance, 0);
+        const retries = await Promise.all(Array.from({length: 3}, () => request("/api/daily/guess", d, guess, "POST")));
+        for (const retry of retries) assert.equal(retry.body.collectCardCopy.id, won.body.collectCardCopy.id);
         const cp = (
           await db.pool.query(
             "SELECT id FROM card_copies WHERE user_id=$1 AND source='daily'",
@@ -604,6 +611,7 @@ test(
         ).rows[0];
         assert.ok(cp);
         await s.destroy(db.pool, d.id, [cp.id], true);
+        assert.equal((await request("/api/daily", d)).body.collectCardCopy.card.id, won.body.collectCardCopy.card.id);
         assert.equal(
           (await request("/api/daily/guess", d, guess, "POST")).status,
           200,

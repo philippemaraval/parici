@@ -691,7 +691,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       if(count>0 && [2,3,4].includes(Number(card.fragments_required))){
         return `<article class="collect-tile collect-tile--fragments">${fragmentPreview(card,card.fragments_required,count,labels)}<strong class="collect-fragment-progress"><span>${count}/${card.fragments_required} fragments</span><span>${cardNameHtml(card)}</span></strong></article>`;
       }
-      return `<article class="collect-tile collect-tile--hidden"><span class="collect-card-seal" aria-hidden="true">◇</span><strong>Carte à découvrir</strong><small>${escapeHtml(familyNames[card.family])} · ${number}</small></article>`;
+      return `<article class="collect-tile collect-tile--hidden"><span class="collect-card-seal" aria-hidden="true">◇</span><strong class="collect-tile__name">${cardNameHtml(card)}</strong><small>${escapeHtml(familyNames[card.family])} · ${number}</small></article>`;
     }
     const rarity=card.fragments_enabled?5:(Number(card.current_rarity)||1);
     const stats=card.statistics;

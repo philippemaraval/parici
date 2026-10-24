@@ -3,6 +3,8 @@
 const fs = require('fs');
 const https = require('https');
 const path = require('path');
+const crypto = require('crypto');
+const { streetPhotoView } = require('./enrich_collect_paris_photos');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DEFAULT_MANIFEST_PATH = path.join(ROOT_DIR, 'data', 'daily_images', 'manifest_next_30.csv');
@@ -135,6 +137,11 @@ function readManifest(manifestPath) {
             ).trim(),
             fileName: String(row[headerIndex.get('file_name')] || '').trim(),
             missingImageStreet: String(row[headerIndex.get('missing_image_street')] || '').trim(),
+            streetViewCoordinatesSupplied: Boolean(String(row[headerIndex.get('street_view_latitude')] || '').trim() || String(row[headerIndex.get('street_view_longitude')] || '').trim()),
+            streetViewLatitude: Number.parseFloat(row[headerIndex.get('street_view_latitude')]),
+            streetViewLongitude: Number.parseFloat(row[headerIndex.get('street_view_longitude')]),
+            streetViewHeading: Number.parseFloat(row[headerIndex.get('street_view_heading')]),
+            streetViewPanoId: String(row[headerIndex.get('street_view_pano_id')] || '').trim(),
         }))
         .filter((entry) => entry.date && entry.streetName && entry.fileName);
 }
@@ -148,11 +155,11 @@ function getApiKey() {
 }
 
 function getStreetViewLocation(entry) {
-    if (Array.isArray(entry.streetViewCoordinate)) {
+    if (isPoint(entry.streetViewCoordinate)) {
         const [lng, lat] = entry.streetViewCoordinate;
         return `${lat.toFixed(7)},${lng.toFixed(7)}`;
     }
-    return `${entry.streetName}, Paris, France`;
+    throw new Error(`Coordonnees manquantes pour ${entry.streetName}; recherche textuelle interdite.`);
 }
 
 function normalizeLookupName(name) {
@@ -298,7 +305,15 @@ function loadStreetGeometryIndex() {
 }
 
 function addStreetViewGeometry(entry, streetGeometryIndex) {
-    const features = streetGeometryIndex.get(normalizeLookupName(entry.streetName)) || [];
+    const canonical = require('../backend/data/streets_index.json').find(street => normalizeLookupName(street.name) === normalizeLookupName(entry.streetName));
+    const features = streetGeometryIndex.get(normalizeLookupName(canonical?.osmName || entry.streetName)) || [];
+    const hasLatitude = Number.isFinite(entry.streetViewLatitude);
+    const hasLongitude = Number.isFinite(entry.streetViewLongitude);
+    if ((entry.streetViewCoordinatesSupplied && (!hasLatitude || !hasLongitude)) || hasLatitude !== hasLongitude) throw new Error(`Coordonnees incompletes pour ${entry.streetName}`);
+    if (hasLatitude) {
+        if (Math.abs(entry.streetViewLatitude) > 90 || Math.abs(entry.streetViewLongitude) > 180) throw new Error(`Coordonnees invalides pour ${entry.streetName}`);
+        return { ...entry, streetViewCoordinate: [entry.streetViewLongitude, entry.streetViewLatitude], streetViewFeatures: features };
+    }
     const line = findDominantLine(features);
     if (!line) {
         return entry;
@@ -311,7 +326,8 @@ function addStreetViewGeometry(entry, streetGeometryIndex) {
     return {
         ...entry,
         streetViewCoordinate: coordinate,
-        streetViewHeading: bearingDegrees(points[0], points[points.length - 1]),
+        streetViewHeading: Number.isFinite(entry.streetViewHeading) ? entry.streetViewHeading : bearingDegrees(points[0], points[points.length - 1]),
+        streetViewFeatures: features,
     };
 }
 
@@ -356,9 +372,13 @@ function buildStreetViewParams(entry, args, apiKey) {
     const width = Number.parseInt(args.width, 10) || DEFAULT_WIDTH;
     const height = Number.parseInt(args.height, 10) || DEFAULT_HEIGHT;
     params.set('size', `${width}x${height}`);
-    params.set('location', getStreetViewLocation(entry));
+    getStreetViewLocation(entry); // Require a geographic pin even for a pinned panorama.
+    const requestedView = streetPhotoView(entry.streetViewCoordinate, { features: entry.streetViewFeatures || [], target: entry.streetViewCoordinate });
+    if (!requestedView || requestedView.distanceMeters > 18) throw new Error(`Coordonnees hors geometrie de ${entry.streetName}`);
+    if (entry.streetViewPanoId) params.set('pano', entry.streetViewPanoId);
+    else params.set('location', getStreetViewLocation(entry));
     params.set('fov', String(Number.parseInt(args.fov, 10) || DEFAULT_FOV));
-    params.set('pitch', String(Number.parseInt(args.pitch, 10) || DEFAULT_PITCH));
+    params.set('pitch', String(args.pitch !== undefined ? Number(args.pitch) : DEFAULT_PITCH));
     params.set('radius', String(Number.parseInt(args.radius, 10) || DEFAULT_RADIUS));
     params.set('source', 'outdoor');
     params.set('return_error_code', 'true');
@@ -429,11 +449,25 @@ function filterEntries(entries, args, outputDir) {
     return filtered;
 }
 
-async function downloadStreetViewImage(entry, args, apiKey, outputDir) {
+function validatePanorama(entry, metadata) {
+    const coordinate = [metadata.location?.lng, metadata.location?.lat];
+    if (!isPoint(entry.streetViewCoordinate) || !isPoint(coordinate) || !metadata.pano_id
+        || lineDistanceMeters(entry.streetViewCoordinate, coordinate) > 80) {
+        throw new Error(`Panorama trop eloigne des coordonnees de ${entry.streetName}`);
+    }
+    if (entry.streetViewPanoId && metadata.pano_id !== entry.streetViewPanoId) {
+        throw new Error(`Panorama impose non respecte pour ${entry.streetName}`);
+    }
+    const view = streetPhotoView(coordinate, { features: entry.streetViewFeatures || [], target: entry.streetViewCoordinate });
+    if (!view || view.distanceMeters > 18) throw new Error(`Panorama hors geometrie de ${entry.streetName}`);
+    return view;
+}
+
+async function downloadStreetViewImage(entry, args, apiKey, outputDir, transport = { requestJson, requestBuffer }) {
     const timeoutMs = Number.parseInt(args.timeout, 10) || DEFAULT_TIMEOUT_MS;
     const params = buildStreetViewParams(entry, args, apiKey);
     const metadataUrl = `${STREET_VIEW_METADATA_URL}?${params.toString()}`;
-    const imageUrl = `${STREET_VIEW_BASE_URL}?${params.toString()}`;
+    let imageUrl = `${STREET_VIEW_BASE_URL}?${params.toString()}`;
 
     if (args['dry-run']) {
         console.log(`[dry-run] ${entry.fileName}: ${getStreetViewLocation(entry)}`);
@@ -444,7 +478,7 @@ async function downloadStreetViewImage(entry, args, apiKey, outputDir) {
         return { status: 'dry-run' };
     }
 
-    const metadata = await requestJson(metadataUrl, timeoutMs);
+    const metadata = await transport.requestJson(metadataUrl, timeoutMs);
     if (metadata.status !== 'OK') {
         if (['REQUEST_DENIED', 'OVER_QUERY_LIMIT', 'INVALID_REQUEST', 'UNKNOWN_ERROR'].includes(metadata.status)) {
             throw new Error(`Street View metadata ${metadata.status}: ${metadata.error_message || 'sans detail'}`);
@@ -453,7 +487,11 @@ async function downloadStreetViewImage(entry, args, apiKey, outputDir) {
         return { status: 'skipped', reason: metadata.status || 'UNKNOWN' };
     }
 
-    const response = await requestBuffer(imageUrl, timeoutMs);
+    const view = validatePanorama(entry, metadata);
+    params.delete('location');
+    params.set('pano', metadata.pano_id);
+    imageUrl = `${STREET_VIEW_BASE_URL}?${params.toString()}`;
+    const response = await transport.requestBuffer(imageUrl, timeoutMs);
     const contentType = String(response.headers['content-type'] || '');
     if (response.statusCode !== 200 || !contentType.startsWith('image/')) {
         const message = response.body.toString('utf8').slice(0, 200);
@@ -466,6 +504,16 @@ async function downloadStreetViewImage(entry, args, apiKey, outputDir) {
     const temporaryPath = `${outputPath}.tmp`;
     fs.writeFileSync(temporaryPath, response.body);
     fs.renameSync(temporaryPath, outputPath);
+    // Separate generation evidence; existing editorial/visual audits remain intact.
+    fs.writeFileSync(`${outputPath}.generation.json`, JSON.stringify({
+        date: entry.date, street: entry.streetName, fileName: entry.fileName,
+        sha256: crypto.createHash('sha256').update(response.body).digest('hex'),
+        requestedCoordinate: entry.streetViewCoordinate, coordinate: [metadata.location.lng, metadata.location.lat],
+        panoId: metadata.pano_id, heading: params.get('heading'), pitch: params.get('pitch'),
+        captureDate: metadata.date, copyright: metadata.copyright,
+        geometrySha256: crypto.createHash('sha256').update(JSON.stringify(entry.streetViewFeatures)).digest('hex'),
+        distanceMeters: view.distanceMeters, generatedAt: new Date().toISOString(),
+    }, null, 2) + '\n');
     console.log(`[ok] ${path.relative(ROOT_DIR, outputPath)} (${metadata.date || 'date inconnue'})`);
     return { status: 'ok' };
 }
@@ -513,7 +561,9 @@ async function run() {
     }
 }
 
-run().catch((error) => {
+if (require.main === module) run().catch((error) => {
     console.error(`[daily-streetview] ${error.message}`);
     process.exitCode = 1;
 });
+
+module.exports = { readManifest, addStreetViewGeometry, getStreetViewLocation, buildStreetViewParams, validatePanorama, downloadStreetViewImage };
