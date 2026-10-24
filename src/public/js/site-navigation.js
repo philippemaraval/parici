@@ -80,7 +80,8 @@
   }
   const footerActions =
     document.querySelector(".site-footer__utility-links") ||
-    document.querySelector(".site-footer__actions");
+    document.querySelector(".site-footer__actions") ||
+    document.querySelector(".site-footer");
   if (footerActions) {
     const share = document.createElement("button");
     share.type = "button";
