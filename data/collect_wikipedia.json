@@ -1,1 +1,1498 @@
-{}
+{
+  "district:Bonne-Nouvelle": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Bonne-Nouvelle",
+    "title": "Quartier de Bonne-Nouvelle",
+    "pageId": 1493948,
+    "wikidataId": "Q3413158",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Chaillot": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Chaillot",
+    "title": "Quartier de Chaillot",
+    "pageId": 1494028,
+    "wikidataId": "Q3413160",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Gaillon": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Gaillon",
+    "title": "Quartier Gaillon",
+    "pageId": 1493926,
+    "wikidataId": "Q3413062",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Maison-Blanche": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Maison-Blanche",
+    "title": "Quartier de la Maison-Blanche",
+    "pageId": 366892,
+    "wikidataId": "Q2378493",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Les Halles": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Halles",
+    "title": "Quartier des Halles",
+    "pageId": 1004936,
+    "wikidataId": "Q387285",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Les Îles": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Notre-Dame_(Paris)",
+    "title": "Quartier Notre-Dame (Paris)",
+    "pageId": 3864052,
+    "wikidataId": "Q3413095",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Necker": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Necker",
+    "title": "Quartier Necker",
+    "pageId": 1494025,
+    "wikidataId": "Q3413091",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Notre-Dame-des-Champs": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Notre-Dame-des-Champs",
+    "title": "Quartier Notre-Dame-des-Champs",
+    "pageId": 1493973,
+    "wikidataId": "Q3413094",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Ambroise": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Ambroise",
+    "title": "Quartier Saint-Ambroise",
+    "pageId": 1030786,
+    "wikidataId": "Q3413103",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Fargeau": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Fargeau",
+    "title": "Quartier Saint-Fargeau",
+    "pageId": 774280,
+    "wikidataId": "Q3413107",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Georges": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Georges_(Paris)",
+    "title": "Quartier Saint-Georges (Paris)",
+    "pageId": 1493992,
+    "wikidataId": "Q3413110",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Gervais": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Gervais",
+    "title": "Quartier Saint-Gervais",
+    "pageId": 1169320,
+    "wikidataId": "Q3413113",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Lambert": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Lambert",
+    "title": "Quartier Saint-Lambert",
+    "pageId": 1494026,
+    "wikidataId": "Q3413115",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Merri": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Merri",
+    "title": "Quartier Saint-Merri",
+    "pageId": 1493964,
+    "wikidataId": "Q3413122",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Thomas-d'Aquin": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Thomas-d%27Aquin",
+    "title": "Quartier Saint-Thomas-d'Aquin",
+    "pageId": 1493984,
+    "wikidataId": "Q3413129",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Victor": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Victor",
+    "title": "Quartier Saint-Victor",
+    "pageId": 1493970,
+    "wikidataId": "Q3413130",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Saint-Vincent-de-Paul": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Vincent-de-Paul",
+    "title": "Quartier Saint-Vincent-de-Paul",
+    "pageId": 1494001,
+    "wikidataId": "Q3413132",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Sainte-Avoye": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Sainte-Avoye",
+    "title": "Quartier Sainte-Avoye",
+    "pageId": 1493962,
+    "wikidataId": "Q3413138",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Sainte-Marguerite": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Sainte-Marguerite",
+    "title": "Quartier Sainte-Marguerite",
+    "pageId": 1030824,
+    "wikidataId": "Q3413141",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier Vendôme": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Place-Vend%C3%B4me",
+    "title": "Quartier de la Place-Vendôme",
+    "pageId": 1493923,
+    "wikidataId": "Q2720541",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier d'Amérique": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_d%27Am%C3%A9rique",
+    "title": "Quartier d'Amérique",
+    "pageId": 259569,
+    "wikidataId": "Q3413152",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier d'Auteuil": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_d%27Auteuil",
+    "title": "Quartier d'Auteuil",
+    "pageId": 259994,
+    "wikidataId": "Q784536",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Belleville": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Belleville",
+    "title": "Quartier de Belleville",
+    "pageId": 184414,
+    "wikidataId": "Q815949",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Bercy": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Bercy",
+    "title": "Quartier de Bercy",
+    "pageId": 132710,
+    "wikidataId": "Q773318",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Charonne": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Charonne",
+    "title": "Quartier de Charonne",
+    "pageId": 51101,
+    "wikidataId": "Q728591",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Clignancourt": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Clignancourt",
+    "title": "Quartier de Clignancourt",
+    "pageId": 1494032,
+    "wikidataId": "Q3413163",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Croulebarbe": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Croulebarbe",
+    "title": "Quartier de Croulebarbe",
+    "pageId": 528447,
+    "wikidataId": "Q3413165",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Grenelle": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Grenelle",
+    "title": "Quartier de Grenelle",
+    "pageId": 193728,
+    "wikidataId": "Q376896",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Javel": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Javel",
+    "title": "Quartier de Javel",
+    "pageId": 149250,
+    "wikidataId": "Q845191",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Picpus": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Picpus",
+    "title": "Quartier de Picpus",
+    "pageId": 6986912,
+    "wikidataId": "Q3413171",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Plaisance": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Plaisance",
+    "title": "Quartier de Plaisance",
+    "pageId": 260022,
+    "wikidataId": "Q3413173",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Rochechouart": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_Rochechouart",
+    "title": "Quartier de Rochechouart",
+    "pageId": 1493996,
+    "wikidataId": "Q3413176",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de Saint-Germain-des-Prés": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Germain-des-Pr%C3%A9s",
+    "title": "Quartier Saint-Germain-des-Prés",
+    "pageId": 420122,
+    "wikidataId": "Q604717",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de l'Arsenal": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27Arsenal",
+    "title": "Quartier de l'Arsenal",
+    "pageId": 259984,
+    "wikidataId": "Q2426361",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de l'Europe": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27Europe",
+    "title": "Quartier de l'Europe",
+    "pageId": 441118,
+    "wikidataId": "Q1037632",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de l'Hôpital Saint-Louis": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27H%C3%B4pital-Saint-Louis",
+    "title": "Quartier de l'Hôpital-Saint-Louis",
+    "pageId": 1494005,
+    "wikidataId": "Q3413184",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de l'Odéon": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27Od%C3%A9on",
+    "title": "Quartier de l'Odéon",
+    "pageId": 791772,
+    "wikidataId": "Q3413185",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de l'École Militaire": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_l%27%C3%89cole-Militaire",
+    "title": "Quartier de l'École-Militaire",
+    "pageId": 1493986,
+    "wikidataId": "Q3413187",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Chapelle": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Chapelle",
+    "title": "Quartier de la Chapelle",
+    "pageId": 531426,
+    "wikidataId": "Q3413190",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Chaussée-d'Antin": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Chauss%C3%A9e-d%27Antin",
+    "title": "Quartier de la Chaussée-d'Antin",
+    "pageId": 1493993,
+    "wikidataId": "Q3413189",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Folie-Méricourt": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Folie-M%C3%A9ricourt",
+    "title": "Quartier de la Folie-Méricourt",
+    "pageId": 1030773,
+    "wikidataId": "Q3413193",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Gare": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Gare",
+    "title": "Quartier de la Gare",
+    "pageId": 1194618,
+    "wikidataId": "Q3413195",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Goutte-d'Or": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Goutte-d%27Or",
+    "title": "Quartier de la Goutte-d'Or",
+    "pageId": 909571,
+    "wikidataId": "Q591741",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Madeleine": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Madeleine",
+    "title": "Quartier de la Madeleine",
+    "pageId": 1626889,
+    "wikidataId": "Q3413198",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Monnaie": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Monnaie_(Paris)",
+    "title": "Quartier de la Monnaie (Paris)",
+    "pageId": 1493974,
+    "wikidataId": "Q3413201",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Muette": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Muette",
+    "title": "Quartier de la Muette",
+    "pageId": 260001,
+    "wikidataId": "Q3413202",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Plaine-de-Monceau": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Plaine-de-Monceaux",
+    "title": "Quartier de la Plaine-de-Monceaux",
+    "pageId": 2944003,
+    "wikidataId": "Q1763599",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Porte-Dauphine": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Porte-Dauphine",
+    "title": "Quartier de la Porte-Dauphine",
+    "pageId": 1494027,
+    "wikidataId": "Q3413205",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Porte-Saint-Denis": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Porte-Saint-Denis",
+    "title": "Quartier de la Porte-Saint-Denis",
+    "pageId": 1494003,
+    "wikidataId": "Q430241",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Porte-Saint-Martin": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Porte-Saint-Martin",
+    "title": "Quartier de la Porte-Saint-Martin",
+    "pageId": 1494004,
+    "wikidataId": "Q3413206",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Roquette": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Roquette",
+    "title": "Quartier de la Roquette",
+    "pageId": 1030806,
+    "wikidataId": "Q3413209",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Salpêtrière": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Salp%C3%AAtri%C3%A8re",
+    "title": "Quartier de la Salpêtrière",
+    "pageId": 1194617,
+    "wikidataId": "Q3413210",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Sorbonne": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Sorbonne",
+    "title": "Quartier de la Sorbonne",
+    "pageId": 1211874,
+    "wikidataId": "Q3413213",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier de la Villette": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_de_la_Villette",
+    "title": "Quartier de la Villette",
+    "pageId": 133547,
+    "wikidataId": "Q1463559",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Archives": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Archives",
+    "title": "Quartier des Archives",
+    "pageId": 1493960,
+    "wikidataId": "Q3413222",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Arts-et-Métiers": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Arts-et-M%C3%A9tiers",
+    "title": "Quartier des Arts-et-Métiers",
+    "pageId": 1493957,
+    "wikidataId": "Q3413219",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Batignolles": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Batignolles",
+    "title": "Quartier des Batignolles",
+    "pageId": 404073,
+    "wikidataId": "Q575565",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Champs-Élysées": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Champs-%C3%89lys%C3%A9es",
+    "title": "Quartier des Champs-Élysées",
+    "pageId": 259996,
+    "wikidataId": "Q3413229",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Enfants-Rouges": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Enfants-Rouges",
+    "title": "Quartier des Enfants-Rouges",
+    "pageId": 1493958,
+    "wikidataId": "Q3413231",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Grandes-Carrières": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Grandes-Carri%C3%A8res",
+    "title": "Quartier des Grandes-Carrières",
+    "pageId": 1494031,
+    "wikidataId": "Q3413237",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Invalides": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Invalides",
+    "title": "Quartier des Invalides",
+    "pageId": 1493985,
+    "wikidataId": "Q3413242",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Quinze-Vingts": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Quinze-Vingts",
+    "title": "Quartier des Quinze-Vingts",
+    "pageId": 1244117,
+    "wikidataId": "Q738555",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Ternes": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_Ternes",
+    "title": "Quartier des Ternes",
+    "pageId": 376039,
+    "wikidataId": "Q968881",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier des Épinettes": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_des_%C3%89pinettes",
+    "title": "Quartier des Épinettes",
+    "pageId": 725984,
+    "wikidataId": "Q2426877",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Bel-Air": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Bel-Air",
+    "title": "Quartier du Bel-Air",
+    "pageId": 1244077,
+    "wikidataId": "Q3413267",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Combat": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Combat",
+    "title": "Quartier du Combat",
+    "pageId": 361073,
+    "wikidataId": "Q3413270",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Faubourg-Montmartre": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Faubourg-Montmartre",
+    "title": "Quartier du Faubourg-Montmartre",
+    "pageId": 1493994,
+    "wikidataId": "Q3413272",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Faubourg-du-Roule": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Faubourg-du-Roule",
+    "title": "Quartier du Faubourg-du-Roule",
+    "pageId": 1488877,
+    "wikidataId": "Q2720548",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Gros-Caillou": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Gros-Caillou",
+    "title": "Quartier du Gros-Caillou",
+    "pageId": 1493987,
+    "wikidataId": "Q3413275",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Jardin des Plantes": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Jardin-des-Plantes",
+    "title": "Quartier du Jardin-des-Plantes",
+    "pageId": 1493969,
+    "wikidataId": "Q3413276",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Mail": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Mail",
+    "title": "Quartier du Mail",
+    "pageId": 1493943,
+    "wikidataId": "Q3413277",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Montparnasse": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Montparnasse",
+    "title": "Quartier du Montparnasse",
+    "pageId": 54849,
+    "wikidataId": "Q211604",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Palais Royal": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Palais-Royal",
+    "title": "Quartier du Palais-Royal",
+    "pageId": 1493916,
+    "wikidataId": "Q1763626",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Parc-de-Montsouris": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Parc-de-Montsouris",
+    "title": "Quartier du Parc-de-Montsouris",
+    "pageId": 735639,
+    "wikidataId": "Q3413285",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Petit-Montrouge": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Petit-Montrouge",
+    "title": "Quartier du Petit-Montrouge",
+    "pageId": 733672,
+    "wikidataId": "Q1537421",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Pont-de-Flandre": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Pont-de-Flandre",
+    "title": "Quartier du Pont-de-Flandre",
+    "pageId": 1494034,
+    "wikidataId": "Q2069776",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Père-Lachaise": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_P%C3%A8re-Lachaise",
+    "title": "Quartier du Père-Lachaise",
+    "pageId": 1494035,
+    "wikidataId": "Q3413289",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Quartier du Val-de-Grâce": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_du_Val-de-Gr%C3%A2ce",
+    "title": "Quartier du Val-de-Grâce",
+    "pageId": 1493968,
+    "wikidataId": "Q3413293",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Saint-Germain-l'Auxerrois": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Saint-Germain-l%27Auxerrois",
+    "title": "Quartier Saint-Germain-l'Auxerrois",
+    "pageId": 1493909,
+    "wikidataId": "Q2409554",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "district:Vivienne": {
+    "url": "https://fr.wikipedia.org/wiki/Quartier_Vivienne",
+    "title": "Quartier Vivienne",
+    "pageId": 1493928,
+    "wikidataId": "Q3413149",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Accor Arena": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_omnisports_de_Paris-Bercy",
+    "title": "Palais omnisports de Paris-Bercy",
+    "pageId": 105068,
+    "wikidataId": "Q537720",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Arc de Triomphe": {
+    "url": "https://fr.wikipedia.org/wiki/Arc_de_triomphe_de_l%27%C3%89toile",
+    "title": "Arc de triomphe de l'Étoile",
+    "pageId": 16,
+    "wikidataId": "Q64436",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Arc de triomphe du Carrousel": {
+    "url": "https://fr.wikipedia.org/wiki/Arc_de_triomphe_du_Carrousel",
+    "title": "Arc de triomphe du Carrousel",
+    "pageId": 103383,
+    "wikidataId": "Q631104",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Arènes de Lutèce": {
+    "url": "https://fr.wikipedia.org/wiki/Ar%C3%A8nes_de_Lut%C3%A8ce",
+    "title": "Arènes de Lutèce",
+    "pageId": 129749,
+    "wikidataId": "Q641548",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Bataclan": {
+    "url": "https://fr.wikipedia.org/wiki/Bataclan",
+    "title": "Bataclan",
+    "pageId": 161134,
+    "wikidataId": "Q810700",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Bibliothèque nationale de France": {
+    "url": "https://fr.wikipedia.org/wiki/Biblioth%C3%A8que_nationale_de_France",
+    "title": "Bibliothèque nationale de France",
+    "pageId": 10925,
+    "wikidataId": "Q193563",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Bourse de Commerce - Pinault Collection": {
+    "url": "https://fr.wikipedia.org/wiki/Bourse_de_commerce_de_Paris",
+    "title": "Bourse de commerce de Paris",
+    "pageId": 704445,
+    "wikidataId": "Q691375",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Canal Saint-Martin": {
+    "url": "https://fr.wikipedia.org/wiki/Canal_Saint-Martin",
+    "title": "Canal Saint-Martin",
+    "pageId": 141398,
+    "wikidataId": "Q860172",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Catacombes de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Catacombes_de_Paris",
+    "title": "Catacombes de Paris",
+    "pageId": 5115,
+    "wikidataId": "Q28924",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Cathédrale Notre-Dame de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Cath%C3%A9drale_Notre-Dame_de_Paris",
+    "title": "Cathédrale Notre-Dame de Paris",
+    "pageId": 19424,
+    "wikidataId": "Q2981",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Centre Pompidou": {
+    "url": "https://fr.wikipedia.org/wiki/Centre_national_d%27art_et_de_culture_Georges-Pompidou",
+    "title": "Centre national d'art et de culture Georges-Pompidou",
+    "pageId": 77267,
+    "wikidataId": "Q178065",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Cimetière du Père-Lachaise": {
+    "url": "https://fr.wikipedia.org/wiki/Cimeti%C3%A8re_du_P%C3%A8re-Lachaise",
+    "title": "Cimetière du Père-Lachaise",
+    "pageId": 22615,
+    "wikidataId": "Q311",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Cité de l'Économie - Hôtel Gaillard": {
+    "url": "https://fr.wikipedia.org/wiki/Cit%C3%A9_de_l%27%C3%89conomie",
+    "title": "Cité de l'Économie",
+    "pageId": 5910069,
+    "wikidataId": "Q2974758",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Cité des sciences et de l'industrie": {
+    "url": "https://fr.wikipedia.org/wiki/Cit%C3%A9_des_sciences_et_de_l%27industrie",
+    "title": "Cité des sciences et de l'industrie",
+    "pageId": 133038,
+    "wikidataId": "Q1094338",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Colonne Vendôme": {
+    "url": "https://fr.wikipedia.org/wiki/Colonne_Vend%C3%B4me",
+    "title": "Colonne Vendôme",
+    "pageId": 163977,
+    "wikidataId": "Q1111051",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Colonne de Juillet": {
+    "url": "https://fr.wikipedia.org/wiki/Colonne_de_Juillet",
+    "title": "Colonne de Juillet",
+    "pageId": 104235,
+    "wikidataId": "Q269641",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Comédie-Française": {
+    "url": "https://fr.wikipedia.org/wiki/Com%C3%A9die-Fran%C3%A7aise",
+    "title": "Comédie-Française",
+    "pageId": 114945,
+    "wikidataId": "Q61460498",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Conciergerie": {
+    "url": "https://fr.wikipedia.org/wiki/Conciergerie_de_Paris",
+    "title": "Conciergerie de Paris",
+    "pageId": 15253923,
+    "wikidataId": "Q138101",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Flamme de la Liberté": {
+    "url": "https://fr.wikipedia.org/wiki/Flamme_de_la_Libert%C3%A9",
+    "title": "Flamme de la Liberté",
+    "pageId": 830512,
+    "wikidataId": "Q3036228",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fondation Cartier": {
+    "url": "https://fr.wikipedia.org/wiki/Fondation_Cartier_pour_l%27art_contemporain",
+    "title": "Fondation Cartier pour l'art contemporain",
+    "pageId": 342177,
+    "wikidataId": "Q1284688",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fondation Louis Vuitton": {
+    "url": "https://fr.wikipedia.org/wiki/Fondation_d%27entreprise_Louis-Vuitton",
+    "title": "Fondation d'entreprise Louis-Vuitton",
+    "pageId": 2469732,
+    "wikidataId": "Q3075489",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fontaine Médicis": {
+    "url": "https://fr.wikipedia.org/wiki/Fontaine_M%C3%A9dicis",
+    "title": "Fontaine Médicis",
+    "pageId": 5171621,
+    "wikidataId": "Q3076041",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fontaine Saint-Michel": {
+    "url": "https://fr.wikipedia.org/wiki/Fontaine_Saint-Michel_de_Paris",
+    "title": "Fontaine Saint-Michel de Paris",
+    "pageId": 898476,
+    "wikidataId": "Q692839",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fontaine Stravinsky": {
+    "url": "https://fr.wikipedia.org/wiki/Fontaine_Stravinsky",
+    "title": "Fontaine Stravinsky",
+    "pageId": 7102083,
+    "wikidataId": "Q281309",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Fontaine des Innocents": {
+    "url": "https://fr.wikipedia.org/wiki/Fontaine_des_Innocents",
+    "title": "Fontaine des Innocents",
+    "pageId": 388435,
+    "wikidataId": "Q1435791",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare Montparnasse": {
+    "url": "https://fr.wikipedia.org/wiki/Gare_de_Paris-Montparnasse",
+    "title": "Gare de Paris-Montparnasse",
+    "pageId": 55136,
+    "wikidataId": "Q631114",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare Saint-Lazare": {
+    "url": "https://fr.wikipedia.org/wiki/Gare_de_Paris-Saint-Lazare",
+    "title": "Gare de Paris-Saint-Lazare",
+    "pageId": 105799,
+    "wikidataId": "Q747506",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare d'Austerlitz": {
+    "url": "https://fr.wikipedia.org/wiki/Gare_de_Paris-Austerlitz",
+    "title": "Gare de Paris-Austerlitz",
+    "pageId": 61200,
+    "wikidataId": "Q734017",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare de Lyon": {
+    "url": "https://fr.wikipedia.org/wiki/Paris-Gare-de-Lyon",
+    "title": "Paris-Gare-de-Lyon",
+    "pageId": 52847,
+    "wikidataId": "Q747541",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare de l'Est": {
+    "url": "https://fr.wikipedia.org/wiki/Gare_de_Paris-Est",
+    "title": "Gare de Paris-Est",
+    "pageId": 53489,
+    "wikidataId": "Q757180",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Gare du Nord": {
+    "url": "https://fr.wikipedia.org/wiki/Gare_de_Paris-Nord",
+    "title": "Gare de Paris-Nord",
+    "pageId": 52480,
+    "wikidataId": "Q745942",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Grand Palais": {
+    "url": "https://fr.wikipedia.org/wiki/Grand_Palais_(Paris)",
+    "title": "Grand Palais (Paris)",
+    "pageId": 135680,
+    "wikidataId": "Q457318",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Grande Galerie de l'Évolution": {
+    "url": "https://fr.wikipedia.org/wiki/Grande_galerie_de_l%27%C3%89volution",
+    "title": "Grande galerie de l'Évolution",
+    "pageId": 490762,
+    "wikidataId": "Q2372049",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Grande Halle de la Villette": {
+    "url": "https://fr.wikipedia.org/wiki/Grande_halle_de_la_Villette",
+    "title": "Grande halle de la Villette",
+    "pageId": 751810,
+    "wikidataId": "Q2010697",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Grande Mosquée de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Grande_mosqu%C3%A9e_de_Paris",
+    "title": "Grande mosquée de Paris",
+    "pageId": 354863,
+    "wikidataId": "Q392564",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel de Cluny": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Cluny",
+    "title": "Hôtel de Cluny",
+    "pageId": 1232043,
+    "wikidataId": "Q3145813",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel de Soubise": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Soubise",
+    "title": "Hôtel de Soubise",
+    "pageId": 3059217,
+    "wikidataId": "Q917337",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel de Sully": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Sully",
+    "title": "Hôtel de Sully",
+    "pageId": 157292,
+    "wikidataId": "Q1643144",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel de Ville": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Paris",
+    "title": "Hôtel de ville de Paris",
+    "pageId": 404157,
+    "wikidataId": "Q640968",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel de la Marine": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine",
+    "title": "Hôtel de la Marine",
+    "pageId": 768254,
+    "wikidataId": "Q2059518",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Hôtel des Invalides": {
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_des_Invalides",
+    "title": "Hôtel des Invalides",
+    "pageId": 75747,
+    "wikidataId": "Q188977",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Institut de France": {
+    "url": "https://fr.wikipedia.org/wiki/Institut_de_France",
+    "title": "Institut de France",
+    "pageId": 15824,
+    "wikidataId": "Q377066",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Institut du Monde Arabe": {
+    "url": "https://fr.wikipedia.org/wiki/Institut_du_monde_arabe",
+    "title": "Institut du monde arabe",
+    "pageId": 80086,
+    "wikidataId": "Q860166",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Jardin des Plantes": {
+    "url": "https://fr.wikipedia.org/wiki/Jardin_des_plantes_de_Paris",
+    "title": "Jardin des plantes de Paris",
+    "pageId": 69949,
+    "wikidataId": "Q730948",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Jardin du Luxembourg": {
+    "url": "https://fr.wikipedia.org/wiki/Jardin_du_Luxembourg",
+    "title": "Jardin du Luxembourg",
+    "pageId": 79128,
+    "wikidataId": "Q309458",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:La Géode": {
+    "url": "https://fr.wikipedia.org/wiki/La_G%C3%A9ode",
+    "title": "La Géode",
+    "pageId": 133043,
+    "wikidataId": "Q2280550",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Monnaie de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Monnaie_de_Paris",
+    "title": "Monnaie de Paris",
+    "pageId": 1288782,
+    "wikidataId": "Q1250541",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Moulin Rouge": {
+    "url": "https://fr.wikipedia.org/wiki/Moulin-Rouge",
+    "title": "Moulin-Rouge",
+    "pageId": 97851,
+    "wikidataId": "Q151030",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Carnavalet": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Carnavalet",
+    "title": "Musée Carnavalet",
+    "pageId": 149571,
+    "wikidataId": "Q640447",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Grévin": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Gr%C3%A9vin",
+    "title": "Musée Grévin",
+    "pageId": 41563,
+    "wikidataId": "Q1265070",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Guimet": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_national_des_Arts_asiatiques_-_Guimet",
+    "title": "Musée national des Arts asiatiques - Guimet",
+    "pageId": 285863,
+    "wikidataId": "Q860994",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Jacquemart-André": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Jacquemart-Andr%C3%A9",
+    "title": "Musée Jacquemart-André",
+    "pageId": 109272,
+    "wikidataId": "Q1165526",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Marmottan Monet": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Marmottan_Monet",
+    "title": "Musée Marmottan Monet",
+    "pageId": 184101,
+    "wikidataId": "Q1327886",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Picasso": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Picasso_(Paris)",
+    "title": "Musée Picasso (Paris)",
+    "pageId": 29287,
+    "wikidataId": "Q743206",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée Rodin": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Rodin",
+    "title": "Musée Rodin",
+    "pageId": 133570,
+    "wikidataId": "Q650519",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée d'Art Moderne de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_d%27Art_moderne_de_Paris",
+    "title": "Musée d'Art moderne de Paris",
+    "pageId": 1402830,
+    "wikidataId": "Q857276",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée d'Orsay": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_d%27Orsay",
+    "title": "Musée d'Orsay",
+    "pageId": 69682,
+    "wikidataId": "Q23402",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée de l'Orangerie": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_de_l%27Orangerie",
+    "title": "Musée de l'Orangerie",
+    "pageId": 149132,
+    "wikidataId": "Q726781",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée des Arts et Métiers": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Arts_et_M%C3%A9tiers",
+    "title": "Musée des Arts et Métiers",
+    "pageId": 133170,
+    "wikidataId": "Q1538826",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée du Louvre": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_du_Louvre",
+    "title": "Musée du Louvre",
+    "pageId": 36857,
+    "wikidataId": "Q19675",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Musée du quai Branly - Jacques Chirac": {
+    "url": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_-_Jacques-Chirac",
+    "title": "Musée du Quai Branly - Jacques-Chirac",
+    "pageId": 119783,
+    "wikidataId": "Q167863",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Mémorial de la Shoah": {
+    "url": "https://fr.wikipedia.org/wiki/M%C3%A9morial_de_la_Shoah",
+    "title": "Mémorial de la Shoah",
+    "pageId": 1477195,
+    "wikidataId": "Q479218",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Obélisque de Louxor": {
+    "url": "https://fr.wikipedia.org/wiki/Ob%C3%A9lisque_de_Louxor",
+    "title": "Obélisque de Louxor",
+    "pageId": 331071,
+    "wikidataId": "Q1503331",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Olympia": {
+    "url": "https://fr.wikipedia.org/wiki/Olympia_(Paris)",
+    "title": "Olympia (Paris)",
+    "pageId": 51529,
+    "wikidataId": "Q915451",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Opéra Bastille": {
+    "url": "https://fr.wikipedia.org/wiki/Op%C3%A9ra_Bastille",
+    "title": "Opéra Bastille",
+    "pageId": 69606,
+    "wikidataId": "Q638423",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Opéra Garnier": {
+    "url": "https://fr.wikipedia.org/wiki/Op%C3%A9ra_Garnier",
+    "title": "Opéra Garnier",
+    "pageId": 24240,
+    "wikidataId": "Q187840",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais Bourbon": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_Bourbon",
+    "title": "Palais Bourbon",
+    "pageId": 313691,
+    "wikidataId": "Q936633",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais Brongniart": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_Brongniart",
+    "title": "Palais Brongniart",
+    "pageId": 415927,
+    "wikidataId": "Q1854102",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais Royal": {
+    "url": "https://fr.wikipedia.org/wiki/Palais-Royal",
+    "title": "Palais-Royal",
+    "pageId": 2972193,
+    "wikidataId": "Q329948",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais de Chaillot": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_de_Chaillot",
+    "title": "Palais de Chaillot",
+    "pageId": 591634,
+    "wikidataId": "Q13360213",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais de Tokyo": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_de_Tokyo",
+    "title": "Palais de Tokyo",
+    "pageId": 244728,
+    "wikidataId": "Q1535247",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais de l'Élysée": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_de_l%27%C3%89lys%C3%A9e",
+    "title": "Palais de l'Élysée",
+    "pageId": 38724,
+    "wikidataId": "Q188190",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais de la Porte Dorée": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_de_la_Porte-Dor%C3%A9e",
+    "title": "Palais de la Porte-Dorée",
+    "pageId": 458009,
+    "wikidataId": "Q1141316",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Palais du Luxembourg": {
+    "url": "https://fr.wikipedia.org/wiki/Palais_du_Luxembourg",
+    "title": "Palais du Luxembourg",
+    "pageId": 359333,
+    "wikidataId": "Q329852",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Panthéon": {
+    "url": "https://fr.wikipedia.org/wiki/Panth%C3%A9on_(Paris)",
+    "title": "Panthéon (Paris)",
+    "pageId": 24940,
+    "wikidataId": "Q188856",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Parc des Buttes-Chaumont": {
+    "url": "https://fr.wikipedia.org/wiki/Parc_des_Buttes-Chaumont",
+    "title": "Parc des Buttes-Chaumont",
+    "pageId": 92561,
+    "wikidataId": "Q532113",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Petit Palais": {
+    "url": "https://fr.wikipedia.org/wiki/Petit_Palais",
+    "title": "Petit Palais",
+    "pageId": 135686,
+    "wikidataId": "Q820892",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Philharmonie de Paris": {
+    "url": "https://fr.wikipedia.org/wiki/Philharmonie_de_Paris",
+    "title": "Philharmonie de Paris",
+    "pageId": 1469530,
+    "wikidataId": "Q3378907",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Place de la Nation": {
+    "url": "https://fr.wikipedia.org/wiki/Place_de_la_Nation_(Paris)",
+    "title": "Place de la Nation (Paris)",
+    "pageId": 300455,
+    "wikidataId": "Q1573359",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Place de la République": {
+    "url": "https://fr.wikipedia.org/wiki/Place_de_la_R%C3%A9publique_(Paris)",
+    "title": "Place de la République (Paris)",
+    "pageId": 105942,
+    "wikidataId": "Q175055",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Place des Vosges": {
+    "url": "https://fr.wikipedia.org/wiki/Place_des_Vosges",
+    "title": "Place des Vosges",
+    "pageId": 76238,
+    "wikidataId": "Q898629",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Pont Alexandre III": {
+    "url": "https://fr.wikipedia.org/wiki/Pont_Alexandre-III",
+    "title": "Pont Alexandre-III",
+    "pageId": 130347,
+    "wikidataId": "Q390418",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Pont Neuf": {
+    "url": "https://fr.wikipedia.org/wiki/Pont_Neuf",
+    "title": "Pont Neuf",
+    "pageId": 76627,
+    "wikidataId": "Q335277",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Pont de Bir-Hakeim": {
+    "url": "https://fr.wikipedia.org/wiki/Pont_de_Bir-Hakeim",
+    "title": "Pont de Bir-Hakeim",
+    "pageId": 254905,
+    "wikidataId": "Q290355",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Pont des Arts": {
+    "url": "https://fr.wikipedia.org/wiki/Pont_des_Arts",
+    "title": "Pont des Arts",
+    "pageId": 340266,
+    "wikidataId": "Q1329141",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Porte Saint-Denis": {
+    "url": "https://fr.wikipedia.org/wiki/Porte_Saint-Denis",
+    "title": "Porte Saint-Denis",
+    "pageId": 222074,
+    "wikidataId": "Q684594",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Porte Saint-Martin": {
+    "url": "https://fr.wikipedia.org/wiki/Porte_Saint-Martin",
+    "title": "Porte Saint-Martin",
+    "pageId": 222075,
+    "wikidataId": "Q950217",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Sacré-Cœur": {
+    "url": "https://fr.wikipedia.org/wiki/Basilique_du_Sacr%C3%A9-C%C5%93ur_de_Montmartre",
+    "title": "Basilique du Sacré-Cœur de Montmartre",
+    "pageId": 42465,
+    "wikidataId": "Q28785",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Sainte-Chapelle": {
+    "url": "https://fr.wikipedia.org/wiki/Sainte-Chapelle",
+    "title": "Sainte-Chapelle",
+    "pageId": 58680,
+    "wikidataId": "Q193193",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Sorbonne": {
+    "url": "https://fr.wikipedia.org/wiki/Sorbonne",
+    "title": "Sorbonne",
+    "pageId": 3438139,
+    "wikidataId": "Q214654",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Stade Roland-Garros": {
+    "url": "https://fr.wikipedia.org/wiki/Stade_Roland-Garros",
+    "title": "Stade Roland-Garros",
+    "pageId": 596556,
+    "wikidataId": "Q1613027",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Théâtre des Champs-Élysées": {
+    "url": "https://fr.wikipedia.org/wiki/Th%C3%A9%C3%A2tre_des_Champs-%C3%89lys%C3%A9es",
+    "title": "Théâtre des Champs-Élysées",
+    "pageId": 1446920,
+    "wikidataId": "Q726531",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Théâtre du Châtelet": {
+    "url": "https://fr.wikipedia.org/wiki/Th%C3%A9%C3%A2tre_du_Ch%C3%A2telet",
+    "title": "Théâtre du Châtelet",
+    "pageId": 797018,
+    "wikidataId": "Q1469315",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Tour Eiffel": {
+    "url": "https://fr.wikipedia.org/wiki/Tour_Eiffel",
+    "title": "Tour Eiffel",
+    "pageId": 1359783,
+    "wikidataId": "Q243",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Tour Montparnasse": {
+    "url": "https://fr.wikipedia.org/wiki/Tour_Montparnasse",
+    "title": "Tour Montparnasse",
+    "pageId": 40368,
+    "wikidataId": "Q323767",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Tour Saint-Jacques": {
+    "url": "https://fr.wikipedia.org/wiki/Tour_Saint-Jacques",
+    "title": "Tour Saint-Jacques",
+    "pageId": 714515,
+    "wikidataId": "Q1431547",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:École militaire": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89cole_militaire_(France)",
+    "title": "École militaire (France)",
+    "pageId": 293041,
+    "wikidataId": "Q273480",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Augustin": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Augustin_de_Paris",
+    "title": "Église Saint-Augustin de Paris",
+    "pageId": 106396,
+    "wikidataId": "Q550157",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Eustache": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Eustache_de_Paris",
+    "title": "Église Saint-Eustache de Paris",
+    "pageId": 245778,
+    "wikidataId": "Q1338207",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Germain-des-Prés": {
+    "url": "https://fr.wikipedia.org/wiki/Abbaye_de_Saint-Germain-des-Pr%C3%A9s",
+    "title": "Abbaye de Saint-Germain-des-Prés",
+    "pageId": 1103542,
+    "wikidataId": "Q334186",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Gervais-Saint-Protais": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Gervais-Saint-Protais_de_Paris",
+    "title": "Église Saint-Gervais-Saint-Protais de Paris",
+    "pageId": 943011,
+    "wikidataId": "Q427340",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Paul-Saint-Louis": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Paul-Saint-Louis",
+    "title": "Église Saint-Paul-Saint-Louis",
+    "pageId": 179656,
+    "wikidataId": "Q1247969",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Roch": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Roch_de_Paris",
+    "title": "Église Saint-Roch de Paris",
+    "pageId": 830966,
+    "wikidataId": "Q1436962",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Sulpice": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Sulpice_de_Paris",
+    "title": "Église Saint-Sulpice de Paris",
+    "pageId": 174438,
+    "wikidataId": "Q295844",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Séverin": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-S%C3%A9verin_de_Paris",
+    "title": "Église Saint-Séverin de Paris",
+    "pageId": 911598,
+    "wikidataId": "Q1710376",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église Saint-Étienne-du-Mont": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-%C3%89tienne-du-Mont_de_Paris",
+    "title": "Église Saint-Étienne-du-Mont de Paris",
+    "pageId": 106174,
+    "wikidataId": "Q583251",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  },
+  "monument:Église de la Madeleine": {
+    "url": "https://fr.wikipedia.org/wiki/%C3%89glise_de_la_Madeleine",
+    "title": "Église de la Madeleine",
+    "pageId": 118777,
+    "wikidataId": "Q330564",
+    "subject": "place",
+    "verifiedAt": "2026-10-24"
+  }
+}

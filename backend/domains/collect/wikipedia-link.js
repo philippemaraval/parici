@@ -1,17 +1,31 @@
 "use strict";
 const articles = require("../../../data/collect_wikipedia.json");
 
-// Prefer a checked place article; retain checked editorial links explaining
-// the place name or history when no standalone article exists.
+// Only reviewed place articles belong here. An eponym or a search result
+// must not become a place link just because it appears in editorial sources.
 function wikipediaLink(family, entityId) {
   const entry = articles[`${family}:${entityId}`];
-  if (!entry || family === "bus") return null;
+  if (
+    !entry ||
+    entry.subject !== "place" ||
+    !Number.isInteger(entry.pageId) ||
+    entry.pageId <= 0 ||
+    family === "bus" ||
+    /^(?:Spécial|Special):/i.test(entry.title)
+  )
+    return null;
   try {
     const url = new URL(entry.url);
     if (
       url.protocol !== "https:" ||
-      url.hostname !== "fr.wikipedia.org" ||
-      !url.pathname.startsWith("/wiki/")
+      url.origin !== "https://fr.wikipedia.org" ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      !url.pathname.startsWith("/wiki/") ||
+      decodeURIComponent(url.pathname.slice(6)).replace(/_/g, " ") !==
+        entry.title
     )
       return null;
     return url.href;
