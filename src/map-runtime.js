@@ -524,13 +524,17 @@ export async function loadBusLinesRuntime({
   uiTheme,
   isTouchDevice,
   handleBusLineClick,
+  runtimeBusLines,
+  renderer,
 }) {
-  const response = await fetch("data/paris_transit_lines.geojson?v=4", { cache: "force-cache" });
-  if (!response.ok) {
-    throw new Error(`Impossible de charger les lignes de métro, RER et Transilien (HTTP ${response.status}).`);
+  let payload = runtimeBusLines;
+  if (!payload) {
+    const response = await fetch("data/paris_transit_lines.geojson?v=4", { cache: "force-cache" });
+    if (!response.ok) {
+      throw new Error(`Impossible de charger les lignes de métro, RER et Transilien (HTTP ${response.status}).`);
+    }
+    payload = await response.json();
   }
-
-  const payload = await response.json();
   const allBusLines = (payload.features || []).filter(
     (feature) =>
       feature?.properties?.name &&
@@ -558,7 +562,8 @@ export async function loadBusLinesRuntime({
 
   const busLineLayersByName = new Map();
   const busLinesLayer = L.featureGroup();
-  const busLineRenderer = L.canvas({ padding: 0.5 });
+  const busLineRenderer = renderer || L.canvas({ padding: 0.5, tolerance: 6 });
+  const lineColors = new Map(allBusLines.map(feature => [feature.properties.name, `#${feature.properties.color || uiTheme.mapBusLine.replace("#", "")}`]));
   let hoveredBusLineName = null;
   let busLineHoverEndTimer = null;
   const setBusLineHoverStyle = (lineName, active) => {
@@ -617,9 +622,12 @@ export async function loadBusLinesRuntime({
         spacing *
         (layer._busSegmentDirection || 1),
     );
+    layer._busHitArea?.setOffset(layer.options.offset);
   };
   let linePicker = null;
   const chooseBusLine = (layer, event) => {
+    // A line click must not also clear Collect selection via the map background.
+    L.DomEvent.stop(event);
     const names = layer._validBusLineNames;
     if (names.length === 1) {
       handleBusLineClick(layer.feature, layer, [names[0]]);
@@ -636,7 +644,7 @@ export async function loadBusLinesRuntime({
     options.style.cssText = "max-height:180px;overflow-y:auto";
     const colors = new Map();
     names.forEach(name => {
-      const color = busLineLayersByName.get(name)[0].options.color;
+      const color = lineColors.get(name);
       if (!colors.has(color)) colors.set(color, []);
       colors.get(color).push(name);
     });
@@ -696,6 +704,7 @@ export async function loadBusLinesRuntime({
             opacity: 0.82,
             offset: 0,
             renderer: busLineRenderer,
+            bubblingMouseEvents: false,
           },
         );
         layer.feature = feature;
@@ -723,18 +732,30 @@ export async function loadBusLinesRuntime({
         opacity: 0,
         interactive: true,
         renderer: busLineRenderer,
+        bubblingMouseEvents: false,
+        offset: layer.options.offset,
       });
+      layer._busHitArea = hitArea;
       hitArea._isBusHitArea = true;
       hitArea._visibleBusLine = layer;
       hitArea.on("click", event => chooseBusLine(layer, event));
       busLinesLayer.addLayer(hitArea);
     });
   }
+  // An empty canvas still catches DOM clicks above the other zone's renderer.
+  // Collect supplies its shared canvas; the standalone transport canvas is
+  // detached with its group and Leaflet reattaches it when the zone returns.
+  const detachOwnedRenderer = () => {
+    if (!renderer && map?.hasLayer(busLineRenderer)) map.removeLayer(busLineRenderer);
+  };
+  busLinesLayer.on("remove", detachOwnedRenderer);
   const updateBusZoom = () => busLinesLayer.eachLayer(applyBusSegmentZoomStyle);
   map?.on("zoomend", updateBusZoom);
   return { allBusLines, busLinesLayer, busLineLayersByName, destroy: () => {
     map?.off("zoomend", updateBusZoom);
     if (linePicker) map.closePopup(linePicker);
+    clearTimeout(busLineHoverEndTimer);
+    detachOwnedRenderer();
   } };
 }
 

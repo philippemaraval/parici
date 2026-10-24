@@ -159,7 +159,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, attribution: 'Tiles © Esri',
     }).addTo(map);
-    map.on('click',()=>{if(game?.card.family==='bus'&&mapReady&&!game.finished&&!answering){selectedAnswer=null;featureLayer?.eachLayer(layer=>{if(visibleLayer(layer)&&layer.setStyle)layer.setStyle({color:'#'+(layer.feature?.properties?.color||'049bc5'),weight:3,opacity:.82});});if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}}});
+    map.on('click',()=>{if(game?.card.family==='bus'&&mapReady&&!game.finished&&!answering){selectedAnswer=null;featureLayer?.eachLayer(layer=>{if(visibleLayer(layer)&&layer.setStyle){delete layer.__caminoLockedStyle;layer.setStyle({color:'#'+(layer.feature?.properties?.color||'049bc5'),weight:3,opacity:.82});}});if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}}});
   }
 
   const crosshair=document.createElement('span');crosshair.className='collect-map-crosshair';crosshair.setAttribute('aria-hidden','true');els['collect-map'].append(crosshair);
@@ -209,11 +209,20 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   function markSelection(_layer, answer, context = '') {
     if (!mapReady || loadedFamily !== game?.card.family || !answer || !game || game.finished || game.question || answering) return;
     if (selectedAnswer?.id === answer && selectedAnswer?.context === context) {submitAnswer(); return;}
-    featureLayer.eachLayer(item => {if (visibleLayer(item) && item.setStyle) item.setStyle(layerStyle(game.card.family));});
+    featureLayer.eachLayer(item => {
+      if (!visibleLayer(item) || !item.setStyle) return;
+      delete item.__caminoLockedStyle;
+      item.setStyle(game.card.family === 'bus'
+        ? { color: '#'+(item.feature?.properties?.color || '049bc5'), weight: 3, opacity: .82 }
+        : layerStyle(game.card.family));
+    });
     selectedAnswer = { id: answer, context };
 
     featureLayer.eachLayer(item => {
-      if (visibleLayer(item) && featureAnswer(game.card.family,item.feature) === answer && item.setStyle) item.setStyle({color:UI_THEME.mapPending,fillColor:UI_THEME.mapPending,weight:8,fillOpacity:0.72});
+      if (visibleLayer(item) && featureAnswer(game.card.family,item.feature) === answer && item.setStyle) {
+        if (game.card.family === 'bus') item.__caminoLockedStyle = true;
+        item.setStyle({color:UI_THEME.mapPending,fillColor:UI_THEME.mapPending,weight:8,fillOpacity:0.72});
+      }
     });
     if(selectionMarker) map.removeLayer(selectionMarker);
     const matching=loadedFamilyData.features.filter(feature=>featureAnswer(game.card.family,feature)===answer);
@@ -271,7 +280,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       featureLayer=result.monumentsLayer.addTo(map);
     } else if (family === 'bus') {
       await window.loadCollectBusRuntime();
-      const result=await loadBusLinesRuntime({map,L:window.L,uiTheme:{mapBusLine:'#c43832'},isTouchDevice:isTouchDevice(),runtimeBusLines:data,groupSegments:true,
+      const result=await loadBusLinesRuntime({map,L:window.L,uiTheme:{mapBusLine:'#c43832'},isTouchDevice:isTouchDevice(),runtimeBusLines:data,renderer:gameRenderer,
         handleBusLineClick:(feature,layer,colorNames=[])=>markSelection(layer,featureAnswer(family,feature))});
       featureLayer=result.busLinesLayer.addTo(map);destroyFamilyMap=result.destroy;
     } else featureLayer = window.L.geoJSON(data, {

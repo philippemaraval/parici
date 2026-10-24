@@ -39,13 +39,9 @@ test("transit geometry optimization removes reversed duplicate ways", () => {
   ]);
 });
 
-test("transport lines are rendered on demand with canvas", () => {
+test("transport lines are not loaded automatically during startup", () => {
   const appSource = fs.readFileSync(
     path.join(__dirname, "../src/app.js"),
-    "utf8",
-  );
-  const mapRuntimeSource = fs.readFileSync(
-    path.join(__dirname, "../src/map-runtime.js"),
     "utf8",
   );
 
@@ -53,8 +49,6 @@ test("transport lines are rendered on demand with canvas", () => {
     appSource,
     /scheduleAfterStartup\(\(\) => \{\s*loadBusLines\(\);/,
   );
-  assert.match(mapRuntimeSource, /const busLineRenderer = L\.canvas/);
-  assert.match(mapRuntimeSource, /renderer: busLineRenderer/);
 });
 
 test("a transport session loads its lines before starting the game", async () => {
@@ -105,4 +99,82 @@ test("a transport session loads its lines before starting the game", async () =>
   await pending;
   assert.equal(started, 1);
   assert.equal(context.sessionLaunchPending, false);
+});
+
+test("transport paths use a tolerant canvas and reuse Collect's supplied renderer", async () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, "../src/map-runtime.js"),
+    "utf8",
+  );
+  const { loadBusLinesRuntime } = await import(
+    `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
+  );
+  const runtimeBusLines = {
+    features: [
+      {
+        properties: { name: "A", color: "ff0000" },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2.3, 48.8],
+            [2.4, 48.9],
+          ],
+        },
+      },
+    ],
+  };
+  let canvasOptions;
+  const canvas = {};
+  const L = {
+    featureGroup: () => ({
+      layers: [],
+      on() {},
+      addLayer(layer) {
+        this.layers.push(layer);
+      },
+      eachLayer(callback) {
+        this.layers.forEach(callback);
+      },
+    }),
+    canvas: (options) => {
+      canvasOptions = options;
+      return canvas;
+    },
+    polyline: (points, options) => ({
+      options,
+      on() {},
+      setOffset(offset) {
+        this.options.offset = offset;
+      },
+      getLatLngs() {
+        return points;
+      },
+    }),
+  };
+  const options = {
+    L,
+    map: { on() {}, getZoom: () => 16 },
+    runtimeBusLines,
+    uiTheme: { mapBusLine: "#ff0000" },
+    handleBusLineClick() {},
+  };
+  const standard = await loadBusLinesRuntime(options);
+  assert.ok(canvasOptions.tolerance >= 5);
+  assert.equal(standard.busLinesLayer.layers[0].options.renderer, canvas);
+  assert.equal(
+    standard.busLinesLayer.layers[0].options.bubblingMouseEvents,
+    false,
+  );
+  const sharedRenderer = {};
+  const collect = await loadBusLinesRuntime({
+    ...options,
+    renderer: sharedRenderer,
+    isTouchDevice: true,
+  });
+  for (const layer of collect.busLinesLayer.layers) {
+    assert.equal(layer.options.renderer, sharedRenderer);
+    assert.equal(layer.options.bubblingMouseEvents, false);
+  }
+  const [visible, touch] = collect.busLinesLayer.layers;
+  assert.equal(touch.options.offset, visible.options.offset);
 });
