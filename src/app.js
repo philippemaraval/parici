@@ -1320,6 +1320,7 @@ let loadedPointZone = null;
 let busLinesLoadingPromise = null;
 let monumentsContentSyncPromise = null;
 let monumentsSessionRefreshPending = !1;
+let sessionLaunchPending = false;
 
 const FRIEND_CHALLENGE_QUERY_PARAM = "defi";
 const DAILY_STREET_MIDPOINT_MARKER_PANE = "dailyStreetMidpointMarkerPane";
@@ -3357,7 +3358,8 @@ function initUI() {
       loadUniqueVisitorCounter();
     }, 1800),
     e &&
-    e.addEventListener("click", () => {
+    e.addEventListener("click", (event) => {
+      if (sessionLaunchPending || event.detail > 1) return;
       isDailyMode && window._dailyGameOver
         ? stopSessionManually()
         : isSessionRunning
@@ -3671,32 +3673,39 @@ function initUI() {
 }
 
 async function prepareAndStartNewSession() {
+  if (sessionLaunchPending || isSessionRunning) return;
   const zoneMode = getZoneMode();
-  if (
-    !isPointZone(zoneMode) &&
-    zoneMode !== "arrondissements-ville" &&
-    !areStreetsReady
-  ) {
-    showMessage("Chargement des rues...", "info");
-    const loaded = await loadStreets({ force: true });
-    if (!loaded) {
-      showMessage("Impossible de lancer la session: rues indisponibles.", "error");
-      return;
+  const gameMode = getGameMode();
+  sessionLaunchPending = true;
+  updateStartStopButton();
+  try {
+    if (isPointZone(zoneMode)) {
+      // Load the selected point catalogue before asking the server for targets.
+      // Metro stations are independent of the editable monument content.
+      if (zoneMode === "stations-metro") await loadMonuments();
+      else await refreshMonumentsContentAndLayer();
+    } else if (zoneMode === "arrondissements-ville") {
+      await loadArrondissements();
+    } else if (zoneMode === "lignes-transports-idf") {
+      await loadBusLines();
+    } else if (!areStreetsReady) {
+      const loaded = await loadStreets({ force: true });
+      if (!loaded) throw new Error("Impossible de lancer la session : rues indisponibles.");
     }
+    if (getZoneMode() !== zoneMode || getGameMode() !== gameMode) return;
+    const prepared = currentUser?.token && gameMode !== "lecture"
+      ? await prepareVerifiedSession()
+      : null;
+    if (getZoneMode() !== zoneMode || getGameMode() !== gameMode) return;
+    // Enter the playing layout only once the server has accepted the session.
+    sessionLaunchPending = false;
+    startNewSession({ skipMonumentsRefresh: true, preparedSession: prepared });
+  } catch (error) {
+    showMessage(error.message || "Impossible de préparer la session. Réessayez.", "error");
+  } finally {
+    sessionLaunchPending = false;
+    updateStartStopButton();
   }
-  if (isPointZone(zoneMode) && (!allMonuments.length || loadedPointZone !== zoneMode)) {
-    showMessage(zoneMode === "stations-metro" ? "Chargement des stations de métro..." : "Chargement des monuments...", "info");
-    await loadMonuments();
-  }
-  if ("arrondissements-ville" === zoneMode && !allArrondissementFeatures.length) {
-    showMessage("Chargement des quartiers...", "info");
-    await loadArrondissements();
-  }
-  if ("lignes-transports-idf" === zoneMode && !allBusLines.length) {
-    showMessage("Chargement des lignes de métro, RER et Transilien...", "info");
-    await loadBusLines();
-  }
-  startNewSession();
 }
 
 async function initializeApplication() {
@@ -4237,6 +4246,8 @@ function exitLectureModeToMenu() {
     showMessage("Retour au menu.", "info"));
 }
 function startNewSession(options = {}) {
+  null !== sessionEndFeedbackTimeoutId && clearTimeout(sessionEndFeedbackTimeoutId);
+  sessionEndFeedbackTimeoutId = null;
   void loadCelebrationRuntime();
   document.body.classList.remove("session-ended");
   clearDailyTransientUiState();
@@ -4281,8 +4292,8 @@ function startNewSession(options = {}) {
     clearDailyLastGuessHighlight(),
     clearHighlight(),
     resetMapViewForSession(),
-    (activeSessionId = generateSessionId()),
-    (verifiedSession = null),
+    (activeSessionId = options.preparedSession?.id || generateSessionId()),
+    (verifiedSession = options.preparedSession || null),
     (sessionSync = Promise.resolve()),
     (correctCount = 0),
     (totalAnswered = 0),
@@ -4585,24 +4596,23 @@ async function verifiedRequest(path, body) {
   }
 }
 async function prepareVerifiedSession() {
-  const mode=getZoneMode();
-  const pool=isPointZone(mode)?allMonuments:mode==='arrondissements-ville'?allArrondissementFeatures:mode==='lignes-transports-idf'?allBusLines:buildUniqueStreetList(getCurrentZoneStreets());
-  const name=feature=>mode==='arrondissements-ville'?getArrondissementTargetName(feature):feature.properties.name;
-  const result=parseVerifiedSession(await verifiedRequest('/api/game-sessions',{mode,gameType:getGameMode(),arrondissementName:getSelectedArrondissement(),challengeCode:activeFriendChallenge?.code,availableNames:pool.map(name)}));
-  if(!isSessionRunning)return;
-  const byName=new Map(pool.map(f=>[normalizeName(name(f)),f]));
-  const targets=result.targets.map(n=>byName.get(normalizeName(n)));
-  if(targets.some(f=>!f))throw new Error('Les lieux de cette session doivent être rechargés.');
-  if(isPointZone(mode))sessionMonuments=targets;
-  else if(mode==='arrondissements-ville')sessionArrondissements=targets;
-  else if(mode==='lignes-transports-idf')sessionBusLines=targets;
-  else sessionStreets=targets;
-  activeSessionId=result.sessionId;
-  verifiedSession={id:result.sessionId};verifiedAnswerIndex=0;sessionSync=Promise.resolve();
-  sessionStartTime=performance.now();
-  if(isChronoMode)chronoEndTime=sessionStartTime+CHRONO_DURATION*1000;
-  setNewTarget();
+  const mode = getZoneMode();
+  const pool = isPointZone(mode) ? allMonuments
+    : mode === "arrondissements-ville" ? allArrondissementFeatures
+    : mode === "lignes-transports-idf" ? allBusLines
+    : buildUniqueStreetList(getCurrentZoneStreets());
+  const name = feature => mode === "arrondissements-ville"
+    ? getArrondissementTargetName(feature) : feature.properties.name;
+  const result = parseVerifiedSession(await verifiedRequest('/api/game-sessions', {
+    mode, gameType: getGameMode(), arrondissementName: getSelectedArrondissement(),
+    challengeCode: activeFriendChallenge?.code, availableNames: pool.map(name),
+  }));
+  const byName = new Map(pool.map(feature => [normalizeName(name(feature)), feature]));
+  const targets = result.targets.map(value => byName.get(normalizeName(value)));
+  if (targets.some(feature => !feature)) throw new Error('Les lieux de cette session doivent être rechargés.');
+  return { id: result.sessionId, targets, mode };
 }
+
 function recordSessionAnswer(summary,answerName='') {
   summaryData.push(summary);
   if(verifiedSession?.id) {
@@ -4612,20 +4622,15 @@ function recordSessionAnswer(summary,answerName='') {
   }
 }
 function setNewTarget({ waitForAnswerFeedback = !1 } = {}) {
-  if(currentUser?.token && isSessionRunning && !verifiedSession) {
-    verifiedSession={pending:true};
-    showMessage('Préparation de la session…','info');
-    prepareVerifiedSession().catch(error => {
-      verifiedSession = null;
-      isSessionRunning = false;
-      updateStartStopButton();
-      updatePauseButton();
-      updateLayoutSessionState();
-      showMessage(error.message, 'error');
-    });
-    return;
+  if (verifiedSession?.targets) {
+    const { id, targets, mode } = verifiedSession;
+    if (isPointZone(mode)) sessionMonuments = targets;
+    else if (mode === "arrondissements-ville") sessionArrondissements = targets;
+    else if (mode === "lignes-transports-idf") sessionBusLines = targets;
+    else sessionStreets = targets;
+    verifiedSession = { id };
+    verifiedAnswerIndex = 0;
   }
-  if(verifiedSession?.pending)return;
   const e = getGameMode();
   if ("lignes-transports-idf" === getZoneMode()) {
     if (currentBusLineIndex >= sessionBusLines.length) {
@@ -4722,6 +4727,15 @@ function triggerTargetPulse() {
 function updateStartStopButton() {
   const e = document.getElementById("restart-btn"),
     t = document.getElementById("skip-btn");
+  if (e) {
+    e.disabled = sessionLaunchPending;
+    e.setAttribute("aria-busy", sessionLaunchPending ? "true" : "false");
+    if (sessionLaunchPending) {
+      e.textContent = "Préparation de la session…";
+      if (t) t.style.display = "none";
+      return;
+    }
+  }
   if (e)
     return "lecture" === getGameMode()
       ? ((e.style.display = "none"), void (t && (t.style.display = "none")))

@@ -107,6 +107,7 @@ test(
       "rues-principales",
       "rues-celebres",
       "monuments",
+      "stations-metro",
       "arrondissements-ville",
       "lignes-transports-idf",
       ...Array.from({ length: 20 }, (_, i) =>
@@ -121,35 +122,39 @@ test(
             : zone;
           const selected = mode === "arrondissement" ? zone : null;
           const availableNames =
-            mode === "monuments"
-              ? read("data/paris_monuments.geojson").features.map(
+            mode === "stations-metro"
+              ? read("data/paris_metro_stations.geojson").features.map(
                   (f) => f.properties.name,
                 )
-              : mode === "arrondissements-ville"
-                ? read("data/paris_quartiers.geojson").features.map(
-                    (f) => f.properties.l_qu || f.properties.nom_qua,
+              : mode === "monuments"
+                ? read("data/paris_monuments.geojson").features.map(
+                    (f) => f.properties.name,
                   )
-                : mode === "lignes-transports-idf"
-                  ? read("data/paris_transit_lines.geojson").features.map(
-                      (f) => f.properties.name,
+                : mode === "arrondissements-ville"
+                  ? read("data/paris_quartiers.geojson").features.map(
+                      (f) => f.properties.l_qu || f.properties.nom_qua,
                     )
-                  : core
-                      .buildUniqueStreetList(
-                        core.getCurrentZoneStreets({
-                          allStreetFeatures,
-                          zoneMode: mode,
-                          selectedArrondissement: selected,
-                          normalizeName: normalize,
-                          mainStreetNames: new Set(
-                            [...rules.MAIN_STREET_NAMES].map(normalize),
-                          ),
-                          famousStreetNames: new Set(
-                            [...rules.FAMOUS_STREET_NAMES].map(normalize),
-                          ),
-                        }),
-                        normalize,
+                  : mode === "lignes-transports-idf"
+                    ? read("data/paris_transit_lines.geojson").features.map(
+                        (f) => f.properties.name,
                       )
-                      .map((f) => f.properties.name);
+                    : core
+                        .buildUniqueStreetList(
+                          core.getCurrentZoneStreets({
+                            allStreetFeatures,
+                            zoneMode: mode,
+                            selectedArrondissement: selected,
+                            normalizeName: normalize,
+                            mainStreetNames: new Set(
+                              [...rules.MAIN_STREET_NAMES].map(normalize),
+                            ),
+                            famousStreetNames: new Set(
+                              [...rules.FAMOUS_STREET_NAMES].map(normalize),
+                            ),
+                          }),
+                          normalize,
+                        )
+                        .map((f) => f.properties.name);
           const started = await post("/api/game-sessions", {
             mode,
             gameType,
