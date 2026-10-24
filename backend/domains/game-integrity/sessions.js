@@ -12,6 +12,7 @@ const modes = new Set([
   "rues-principales",
   "rues-celebres",
   "monuments",
+  "stations-metro",
   "lignes-transports-idf",
 ]);
 const types = new Set(["classique", "marathon", "chrono"]);
@@ -95,13 +96,15 @@ function scoreSession(session, now = Date.now()) {
 function catalogNames(mode) {
   const root = path.resolve(__dirname, "../../..");
   const file =
-    mode === "monuments"
-      ? "backend/data/paris_monuments.geojson"
-      : mode === "arrondissements-ville"
-        ? "data/paris_quartiers.geojson"
-        : mode === "lignes-transports-idf"
-          ? "data/paris_transit_lines.geojson"
-          : "backend/data/paris_rues_light.geojson";
+    mode === "stations-metro"
+      ? "data/paris_metro_stations.geojson"
+      : mode === "monuments"
+        ? "backend/data/paris_monuments.geojson"
+        : mode === "arrondissements-ville"
+          ? "data/paris_quartiers.geojson"
+          : mode === "lignes-transports-idf"
+            ? "data/paris_transit_lines.geojson"
+            : "backend/data/paris_rues_light.geojson";
   return new Set(
     JSON.parse(fs.readFileSync(path.join(root, file), "utf8")).features.map(
       (f) =>

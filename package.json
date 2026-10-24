@@ -7,6 +7,7 @@
     "start": "node backend/server.js",
     "dev:api": "NODE_ENV=development node --watch backend/server.js",
     "sync-osm": "node scripts/sync_osm.js",
+    "sync-metro": "node scripts/sync_paris_metro_stations.js",
     "sync-transit": "node scripts/sync_paris_transit_lines.js",
     "validate:osm": "node scripts/validate_osm_outputs.js",
     "daily:manifest": "node scripts/generate_daily_manifest.js",

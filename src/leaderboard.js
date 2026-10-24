@@ -14,6 +14,7 @@ const TITLE_THRESHOLDS_BY_MODE = {
     arrondissement: { M: 40, H: 80, V: 120, MV: 160 },
     ville: { M: 30, H: 70, V: 110, MV: 150 },
     monuments: { M: 40, H: 80, V: 120, MV: 160 },
+    "stations-metro": { M: 40, H: 80, V: 120, MV: 160 },
   },
   marathon: {
     "rues-celebres": { M: 10, H: 20, V: 35, MV: 55 },
@@ -22,6 +23,7 @@ const TITLE_THRESHOLDS_BY_MODE = {
     "rues-principales": { M: 9, H: 18, V: 30, MV: 48 },
     ville: { M: 8, H: 16, V: 28, MV: 44 },
     monuments: { M: 9, H: 18, V: 30, MV: 46 },
+    "stations-metro": { M: 9, H: 18, V: 30, MV: 46 },
   },
   chrono: {
     "rues-celebres": { M: 7, H: 11, V: 16, MV: 22 },
@@ -31,6 +33,7 @@ const TITLE_THRESHOLDS_BY_MODE = {
     arrondissement: { M: 5, H: 8, V: 12, MV: 16 },
     ville: { M: 4, H: 7, V: 10, MV: 14 },
     monuments: { M: 5, H: 8, V: 12, MV: 16 },
+    "stations-metro": { M: 5, H: 8, V: 12, MV: 16 },
   },
 };
 
@@ -53,6 +56,7 @@ export const ZONE_LABELS = {
   "arrondissements-ville": "Quartiers de la ville",
   arrondissement: "Rues par arrondissement",
   monuments: "Monuments",
+  "stations-metro": "Stations de métro",
   "lignes-transports-idf": "Métro, RER et Transilien",
 };
 
@@ -63,7 +67,7 @@ export const GAME_LABELS = {
   lecture: "Lecture",
 };
 
-const ZONE_ORDER = ["rues-celebres", "rues-principales", "arrondissement", "ville", "monuments", "arrondissements-ville", "lignes-transports-idf"];
+const ZONE_ORDER = ["rues-celebres", "rues-principales", "arrondissement", "ville", "monuments", "stations-metro", "arrondissements-ville", "lignes-transports-idf"];
 const GAME_ORDER = ["classique", "marathon", "chrono", "lecture"];
 
 export function buildArrondissementMarathonThresholds(maxItems) {
@@ -360,7 +364,9 @@ function appendZoneLeaderboards(rootElement, boards) {
         table.className = "leaderboard-table";
         const thead = document.createElement("thead");
         const foundColumnLabel =
-          zoneMode === "arrondissements-ville"
+          zoneMode === "stations-metro"
+            ? "Stations trouvées"
+            : zoneMode === "arrondissements-ville"
             ? "Quartiers trouvés"
             : zoneMode === "monuments"
               ? "Monuments trouvés"

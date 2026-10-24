@@ -95,3 +95,18 @@ mises à jour npm chaque semaine.
 
 Les tests avec PostgreSQL éphémère et la livraison Render avec retour arrière sont
 détaillés dans [`docs/TESTS_ET_LIVRAISON.md`](docs/TESTS_ET_LIVRAISON.md).
+
+### Zone Stations de métro
+
+La zone `stations-metro` utilise `data/paris_metro_stations.geojson`, un catalogue
+indépendant des monuments et des lignes de transport. Les quais du référentiel
+d'Île-de-France Mobilités sont regroupés par zone d'arrêt (`zdaid`) ; le point de
+jeu est le centre de leurs coordonnées. Source :
+[Référentiel des arrêts IDFM](https://prim.iledefrance-mobilites.fr/jeux-de-donnees/arrets),
+Licence Ouverte 2.0.
+
+Actualisation : `npm run sync-metro` (ou
+`node scripts/sync_paris_metro_stations.js chemin/vers/arrets.json`). Le catalogue
+initial du 24 octobre 2026 contient 321 stations. Le funiculaire de Montmartre et
+les arrêts de la future ligne 18 sont explicitement exclus dans le script ;
+réexaminer ces exclusions lors de l'ouverture commerciale de cette ligne.

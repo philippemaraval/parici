@@ -1918,6 +1918,7 @@ const ADMIN_RANK_THRESHOLDS = {
         arrondissement: [40, 80, 120, 160],
         ville: [30, 70, 110, 150],
         monuments: [40, 80, 120, 160],
+        'stations-metro': [40, 80, 120, 160],
     },
     marathon: {
         'rues-celebres': [10, 20, 35, 55],
@@ -1926,6 +1927,7 @@ const ADMIN_RANK_THRESHOLDS = {
         'rues-principales': [9, 18, 30, 48],
         ville: [8, 16, 28, 44],
         monuments: [9, 18, 30, 46],
+        'stations-metro': [9, 18, 30, 46],
     },
     chrono: {
         'rues-celebres': [7, 11, 16, 22],
@@ -1935,6 +1937,7 @@ const ADMIN_RANK_THRESHOLDS = {
         arrondissement: [5, 8, 12, 16],
         ville: [4, 7, 10, 14],
         monuments: [5, 8, 12, 16],
+        'stations-metro': [5, 8, 12, 16],
     },
 };
 const ADMIN_RANK_NAMES = ['Touriste', 'Titi Parisien', 'Habitué des Quais', 'Vrai Parigot', 'Préfet de Paris'];
@@ -1989,9 +1992,9 @@ const SCORE_MODE_ALIASES = {
     main: 'rues-principales',
     famous: 'rues-celebres',
 };
-const ALLOWED_SCORE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'lignes-transports-idf']);
+const ALLOWED_SCORE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'stations-metro', 'lignes-transports-idf']);
 const ALLOWED_SCORE_GAME_TYPES = new Set(['classique', 'marathon', 'chrono']);
-const ALLOWED_FRIEND_CHALLENGE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'lignes-transports-idf']);
+const ALLOWED_FRIEND_CHALLENGE_MODES = new Set(['ville', 'arrondissement', 'arrondissements-ville', 'rues-principales', 'rues-celebres', 'monuments', 'stations-metro', 'lignes-transports-idf']);
 const ALLOWED_FRIEND_CHALLENGE_GAME_TYPES = new Set(['classique', 'marathon', 'chrono']);
 const MAX_SCORE_ITEMS = 100000;
 const MAX_SCORE_SECONDS = 24 * 60 * 60;
@@ -3933,6 +3936,9 @@ async function buildFriendChallengeTargets({ mode, gameType, arrondissementName,
     if (normalizedMode === 'arrondissements-ville') {
         targetType = 'arrondissement';
         pool = arrondissementChallengeIndex.map((entry) => entry.name);
+    } else if (normalizedMode === 'stations-metro') {
+        targetType = 'monument';
+        pool = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'paris_metro_stations.geojson'), 'utf8')).features.map(feature => feature.properties.name);
     } else if (normalizedMode === 'monuments') {
         targetType = 'monument';
         let dynamicMonumentIndex = monumentChallengeIndex;

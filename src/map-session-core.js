@@ -286,7 +286,7 @@ export function isStreetVisibleInCurrentMode({
   famousStreetNames,
   mainStreetNames,
 }) {
-  if (zoneMode === "monuments" || zoneMode === "arrondissements-ville") {
+  if (zoneMode === "stations-metro" || zoneMode === "monuments" || zoneMode === "arrondissements-ville") {
     return false;
   }
 

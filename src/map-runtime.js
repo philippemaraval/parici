@@ -425,6 +425,7 @@ export async function loadMonumentsRuntime({
   handleMonumentClick,
   allowedMonumentNames,
   runtimeMonuments,
+  dataUrl = "data/paris_monuments.geojson",
 }) {
   const normalizeMonumentName = (value) =>
     String(value || "")
@@ -442,7 +443,7 @@ export async function loadMonumentsRuntime({
   if (Array.isArray(runtimeMonuments)) {
     sourceFeatures = runtimeMonuments;
   } else {
-    const response = await fetch("data/paris_monuments.geojson");
+    const response = await fetch(dataUrl);
     if (!response.ok) {
       throw new Error(`Impossible de charger les monuments (HTTP ${response.status}).`);
     }

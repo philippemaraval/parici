@@ -262,7 +262,7 @@
 
           <div class="info-block" id="mode-select-block">
             <label id="mode-select-label">Zone de jeu <span class="tooltip-icon"
-                data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Ville entière (expert), monuments, quartiers de la ville (difficile) ou transports franciliens.">i</span></label>
+                data-tooltip="Choisissez la zone géographique : rues célèbres (facile), rues principales, rues par arrondissement, Ville entière (expert), monuments, quartiers de la ville (difficile) stations de métro ou transports franciliens.">i</span></label>
 
             <div id="mode-select-wrapper" class="custom-select">
               <button id="mode-select-button" class="custom-select-button" type="button"
@@ -284,6 +284,7 @@
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
                 <li data-value="arrondissements-ville" role="option" aria-selected="false" tabindex="-1">Quartiers de la ville <span
                     class="difficulty-pill difficulty-pill--hard">Difficile</span></li>
+                <li data-value="stations-metro" role="option" aria-selected="false" tabindex="-1">Stations de métro <span class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
                 <li data-value="lignes-transports-idf" role="option" aria-selected="false" tabindex="-1">Métro, tramway, RER et Transilien <span
                     class="difficulty-pill difficulty-pill--medium">Faisable</span></li>
               </ul>
@@ -295,6 +296,7 @@
               <option value="arrondissement">Rues par arrondissement</option>
               <option value="ville">Ville entière</option>
               <option value="monuments">Monuments</option>
+              <option value="stations-metro">Stations de métro</option>
               <option value="arrondissements-ville">Quartiers de la ville</option>
               <option value="lignes-transports-idf">Métro, tramway, RER et Transilien</option>
             </select>

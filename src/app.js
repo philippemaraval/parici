@@ -1316,6 +1316,7 @@ let areStreetsReady = false;
 let mapInvalidateTimeoutIds = [];
 let arrondissementsLoadingPromise = null;
 let monumentsLoadingPromise = null;
+let loadedPointZone = null;
 let busLinesLoadingPromise = null;
 let monumentsContentSyncPromise = null;
 let monumentsSessionRefreshPending = !1;
@@ -1332,15 +1333,19 @@ const FRIEND_CHALLENGE_ALLOWED_ZONE_MODES = new Set([
   "rues-principales",
   "rues-celebres",
   "monuments",
+  "stations-metro",
   "lignes-transports-idf",
 ]);
+function isPointZone(mode = getZoneMode()) {
+  return mode === "monuments" || mode === "stations-metro";
+}
 function getSessionScoreValue(e = getGameMode()) {
   return "classique" === e ? weightedScore : correctCount;
 }
 function getCurrentSessionPoolSize() {
   return "lignes-transports-idf" === getZoneMode()
     ? sessionBusLines.length
-    : "monuments" === getZoneMode()
+    : isPointZone(getZoneMode())
     ? sessionMonuments.length
     : "arrondissements-ville" === getZoneMode()
       ? sessionArrondissements.length
@@ -1349,7 +1354,9 @@ function getCurrentSessionPoolSize() {
 function getScoreMetricUIConfig(e = getGameMode()) {
   const zoneMode = getZoneMode();
   const itemLabel =
-    "monuments" === zoneMode
+    zoneMode === "stations-metro"
+      ? "Stations"
+      : isPointZone(zoneMode)
       ? "Monuments"
       : "arrondissements-ville" === zoneMode
         ? "Quartiers"
@@ -1357,7 +1364,7 @@ function getScoreMetricUIConfig(e = getGameMode()) {
           ? "Lignes"
         : "Rues";
   const foundWord =
-    "monuments" === zoneMode || "arrondissements-ville" === zoneMode
+    zoneMode === "monuments" || "arrondissements-ville" === zoneMode
       ? "trouvés"
       : "trouvées";
 
@@ -2438,7 +2445,7 @@ function updateModeDifficultyPill() {
       : "arrondissements-ville" === r
         ? ((t.textContent = "Difficile"),
           t.classList.add("difficulty-pill--hard"))
-      : "arrondissement" === r || "monuments" === r
+      : "arrondissement" === r || isPointZone(r)
         ? ((t.textContent = "Faisable"),
           t.classList.add("difficulty-pill--medium"))
       : "rues-celebres" === r
@@ -2474,7 +2481,7 @@ function updateTargetItemCounter() {
     a =
       "lignes-transports-idf" === r
         ? sessionBusLines.length
-      : "monuments" === r
+      : isPointZone(r)
         ? sessionMonuments.length
         : "arrondissements-ville" === r
           ? sessionArrondissements.length
@@ -2487,7 +2494,7 @@ function updateTargetItemCounter() {
   const n =
     "lignes-transports-idf" === r
       ? currentBusLineIndex
-    : "monuments" === r
+    : isPointZone(r)
       ? currentMonumentIndex
       : "arrondissements-ville" === r
         ? currentArrondissementIndex
@@ -2499,8 +2506,8 @@ function updateTargetPanelTitle() {
   const e = getZoneMode();
   (isLectureMode
     ? setTargetPanelTitleText(
-      "monuments" === e
-        ? "Monument à lire"
+      isPointZone(e)
+        ? (e === "stations-metro" ? "Station à lire" : "Monument à lire")
         : "arrondissements-ville" === e
           ? "Quartier à lire"
           : "lignes-transports-idf" === e
@@ -2508,8 +2515,8 @@ function updateTargetPanelTitle() {
           : "Recherche de rue",
     )
     : setTargetPanelTitleText(
-      "monuments" === e
-        ? "Monument à trouver"
+      isPointZone(e)
+        ? (e === "stations-metro" ? "Station à trouver" : "Monument à trouver")
         : "arrondissements-ville" === e
           ? "Quartier à trouver"
           : "lignes-transports-idf" === e
@@ -2566,7 +2573,8 @@ function setLectureStreetSearchVisible(e, t = !1) {
     ((input.value = ""), input.blur()));
 }
 function getLectureSearchCopy(e = getZoneMode()) {
-  if ("monuments" === e)
+  if (e === "stations-metro") return { placeholder: "Rechercher une station de métro", unavailable: "Aucune station disponible.", notFound: "Station introuvable.", noResults: "Aucune station trouvée.", srLabel: "Rechercher une station de métro" };
+  if (isPointZone(e))
     return {
       placeholder: "Rechercher un monument (nom ou mot)",
       unavailable: "Aucun monument disponible pour cette zone.",
@@ -2610,7 +2618,7 @@ function focusMonumentByName(e) {
 function focusLectureSearchResultByName(e) {
   if (!e) return null;
   if ("lignes-transports-idf" === getZoneMode()) return focusBusLineByName(e);
-  if ("monuments" === getZoneMode()) return focusMonumentByName(e);
+  if (isPointZone(getZoneMode())) return focusMonumentByName(e);
   if ("arrondissements-ville" === getZoneMode()) return focusArrondissementByName(e);
   const t = focusStreetByName(e);
   if (!t) return null;
@@ -2618,7 +2626,7 @@ function focusLectureSearchResultByName(e) {
 }
 function buildLectureStreetSearchIndex() {
   let e = [];
-  if ("monuments" === getZoneMode())
+  if (isPointZone(getZoneMode()))
     e = allMonuments
       .map((e) =>
         "string" == typeof e?.properties?.name ? e.properties.name.trim() : "",
@@ -3398,7 +3406,7 @@ function initUI() {
           setNewTarget();
           return;
         }
-        if ("monuments" === getZoneMode()) {
+        if (isPointZone(getZoneMode())) {
           if (!currentMonumentTarget) return;
           recordSessionAnswer({
             name: currentMonumentTarget.properties.name,
@@ -3488,7 +3496,7 @@ function initUI() {
           : ((r.style.display = "none"), clearArrondissementOverlay()),
         setZoneLayersVisibility(e),
         "arrondissements-ville" === e && loadArrondissements(),
-        "monuments" === e &&
+        isPointZone(e) &&
         refreshMonumentsContentAndLayer().catch((error) => {
           console.warn("Actualisation des monuments impossible après changement de mode.", error);
         }),
@@ -3665,7 +3673,7 @@ function initUI() {
 async function prepareAndStartNewSession() {
   const zoneMode = getZoneMode();
   if (
-    zoneMode !== "monuments" &&
+    !isPointZone(zoneMode) &&
     zoneMode !== "arrondissements-ville" &&
     !areStreetsReady
   ) {
@@ -3676,8 +3684,8 @@ async function prepareAndStartNewSession() {
       return;
     }
   }
-  if ("monuments" === zoneMode && !allMonuments.length) {
-    showMessage("Chargement des monuments...", "info");
+  if (isPointZone(zoneMode) && (!allMonuments.length || loadedPointZone !== zoneMode)) {
+    showMessage(zoneMode === "stations-metro" ? "Chargement des stations de métro..." : "Chargement des monuments...", "info");
     await loadMonuments();
   }
   if ("arrondissements-ville" === zoneMode && !allArrondissementFeatures.length) {
@@ -3852,7 +3860,7 @@ function setZoneLayersVisibility(e = getZoneMode()) {
     busLinesLayer && !map.hasLayer(busLinesLayer) && busLinesLayer.addTo(map);
     return;
   }
-  if ("monuments" === e) {
+  if (isPointZone(e)) {
     (arrondissementsLayer && map.hasLayer(arrondissementsLayer) && map.removeLayer(arrondissementsLayer),
       streetsLayer && map.hasLayer(streetsLayer) && map.removeLayer(streetsLayer),
       busLinesLayer && map.hasLayer(busLinesLayer) && map.removeLayer(busLinesLayer),
@@ -3943,6 +3951,7 @@ function loadStreets({ force = false } = {}) {
       streetsLayer = result.streetsLayer;
       streetLayersById = result.streetLayersById;
       streetLayersByName = result.streetLayersByName;
+      setZoneLayersVisibility(getZoneMode());
 
       console.log(
         `Rues chargées : ${allStreetFeatures.length} en ${result.loadedMs}ms (source: ${result.loadedFrom})`,
@@ -3985,8 +3994,9 @@ function loadStreets({ force = false } = {}) {
   return streetsLoadingPromise;
 }
 function loadMonuments() {
+  const pointZone = getZoneMode() === "stations-metro" ? "stations-metro" : "monuments";
   if (monumentsLoadingPromise) {
-    return monumentsLoadingPromise;
+    return monumentsLoadingPromise.then(() => loadedPointZone === pointZone ? undefined : loadMonuments());
   }
 
   monumentsLoadingPromise = loadMonumentsRuntime({
@@ -3995,11 +4005,15 @@ function loadMonuments() {
     uiTheme: UI_THEME,
     isTouchDevice: IS_TOUCH_DEVICE,
     handleMonumentClick,
-    allowedMonumentNames: MONUMENT_NAMES_RUNTIME,
-    runtimeMonuments: MONUMENT_FEATURES_RUNTIME,
+    allowedMonumentNames: pointZone === "stations-metro" ? null : MONUMENT_NAMES_RUNTIME,
+    runtimeMonuments: pointZone === "stations-metro" ? null : MONUMENT_FEATURES_RUNTIME,
+    dataUrl: pointZone === "stations-metro" ? "data/paris_metro_stations.geojson" : undefined,
   })
     .then((result) => {
+      const changedCatalogue = loadedPointZone !== pointZone;
       allMonuments = result.allMonuments;
+      loadedPointZone = pointZone;
+      refreshLectureStreetSearchForCurrentMode({ preserveQuery: !0 });
       console.log("Nombre de monuments chargés :", allMonuments.length);
       if (allMonuments.length === 0) {
         console.warn("Aucun monument trouvé après filtrage.");
@@ -4013,6 +4027,9 @@ function loadMonuments() {
 
       refreshLectureTooltipsIfNeeded();
       setZoneLayersVisibility(getZoneMode());
+      if (changedCatalogue && pointZone === "stations-metro" && getZoneMode() === pointZone) {
+        map.fitBounds(monumentsLayer.getBounds(), { padding: [24, 24] });
+      }
     })
     .catch((e) => {
       console.error("Erreur lors du chargement des monuments :", e);
@@ -4054,7 +4071,7 @@ function loadBusLines() {
 
 function refreshMonumentsContentAndLayer() {
   if (monumentsContentSyncPromise) {
-    return monumentsContentSyncPromise;
+    return monumentsContentSyncPromise.then(() => loadMonuments());
   }
 
   monumentsContentSyncPromise = (async () => {
@@ -4244,12 +4261,12 @@ function startNewSession(options = {}) {
         (pendingFriendChallengeArrondissementName = activeFriendChallenge.arrondissementName);
     }
   }
-  if ("monuments" === t && !skipMonumentsRefresh) {
+  if (isPointZone(t) && !skipMonumentsRefresh) {
     if (monumentsSessionRefreshPending) {
       return;
     }
     monumentsSessionRefreshPending = !0;
-    showMessage("Actualisation des monuments...", "info");
+    showMessage(t === "stations-metro" ? "Chargement des stations de métro..." : "Actualisation des monuments...", "info");
     refreshMonumentsContentAndLayer()
       .catch((error) => {
         console.warn("Actualisation des monuments avant session impossible.", error);
@@ -4310,7 +4327,7 @@ function startNewSession(options = {}) {
       (() => {
         const r = document.getElementById("target-street");
         r &&
-          ("monuments" === t || "arrondissements-ville" === t
+          (isPointZone(t) || "arrondissements-ville" === t
             ? ((r.textContent = "Mode lecture : survolez la carte"),
               requestAnimationFrame(fitTargetStreetText))
             : (r.textContent = "—"));
@@ -4371,11 +4388,11 @@ function startNewSession(options = {}) {
     ((isLectureMode = !1),
       updateTargetPanelTitle(),
       refreshLectureStreetSearchForCurrentMode(),
-      "monuments" === t)
+      isPointZone(t))
   ) {
     if (!allMonuments.length)
       return void showMessage(
-        "Aucun monument disponible (vérifiez data/paris_monuments.geojson).",
+        t === "stations-metro" ? "Aucune station de métro disponible." : "Aucun monument disponible (vérifiez data/paris_monuments.geojson).",
         "error",
       );
     if (
@@ -4397,7 +4414,7 @@ function startNewSession(options = {}) {
       return void showMessage(
         activeFriendChallenge
           ? "Impossible de démarrer ce défi amis (monuments introuvables)."
-          : "Aucun monument disponible pour cette session.",
+          : t === "stations-metro" ? "Aucune station disponible pour cette session." : "Aucun monument disponible pour cette session.",
         "error",
       );
     ((currentMonumentIndex = 0),
@@ -4416,7 +4433,7 @@ function startNewSession(options = {}) {
     return (
       e && (e.style.display = "inline-block"),
       setNewTarget(),
-      showMessage("Session monuments démarrée.", "info"),
+      showMessage(t === "stations-metro" ? "Session stations de métro démarrée." : "Session monuments démarrée.", "info"),
       void updateLayoutSessionState()
     );
   }
@@ -4569,14 +4586,14 @@ async function verifiedRequest(path, body) {
 }
 async function prepareVerifiedSession() {
   const mode=getZoneMode();
-  const pool=mode==='monuments'?allMonuments:mode==='arrondissements-ville'?allArrondissementFeatures:mode==='lignes-transports-idf'?allBusLines:buildUniqueStreetList(getCurrentZoneStreets());
+  const pool=isPointZone(mode)?allMonuments:mode==='arrondissements-ville'?allArrondissementFeatures:mode==='lignes-transports-idf'?allBusLines:buildUniqueStreetList(getCurrentZoneStreets());
   const name=feature=>mode==='arrondissements-ville'?getArrondissementTargetName(feature):feature.properties.name;
   const result=parseVerifiedSession(await verifiedRequest('/api/game-sessions',{mode,gameType:getGameMode(),arrondissementName:getSelectedArrondissement(),challengeCode:activeFriendChallenge?.code,availableNames:pool.map(name)}));
   if(!isSessionRunning)return;
   const byName=new Map(pool.map(f=>[normalizeName(name(f)),f]));
   const targets=result.targets.map(n=>byName.get(normalizeName(n)));
   if(targets.some(f=>!f))throw new Error('Les lieux de cette session doivent être rechargés.');
-  if(mode==='monuments')sessionMonuments=targets;
+  if(isPointZone(mode))sessionMonuments=targets;
   else if(mode==='arrondissements-ville')sessionArrondissements=targets;
   else if(mode==='lignes-transports-idf')sessionBusLines=targets;
   else sessionStreets=targets;
@@ -4631,7 +4648,7 @@ function setNewTarget({ waitForAnswerFeedback = !1 } = {}) {
     updateTargetItemCounter();
     return void triggerTargetPulse();
   }
-  if ("monuments" === getZoneMode()) {
+  if (isPointZone(getZoneMode())) {
     if (currentMonumentIndex >= sessionMonuments.length) {
       if ("chrono" !== e)
         return void (waitForAnswerFeedback ? endSessionAfterAnswerFeedback() : endSession());
@@ -4891,7 +4908,7 @@ function submitDailyGuessToServer(payload, retryIndex = 0) {
 
 function handleStreetClick(e, t, r) {
   const a = getZoneMode();
-  if ("monuments" === a || "arrondissements-ville" === a) return;
+  if (isPointZone(a) || "arrondissements-ville" === a) return;
   if ("rues-principales" === a || "main" === a) {
     const t = normalizeName(e.properties.name);
     if (!MAIN_STREET_NAMES_RUNTIME.has(t)) return;
@@ -5077,7 +5094,7 @@ function handleStreetClick(e, t, r) {
       : ((currentIndex += 1), setNewTarget({ waitForAnswerFeedback: !0 })));
 }
 function handleMonumentClick(e, t) {
-  if ("monuments" !== getZoneMode()) return;
+  if (!isPointZone()) return;
   if (isPaused) return;
   if (
     !currentMonumentTarget ||
@@ -5130,7 +5147,7 @@ function handleMonumentClick(e, t) {
       feedbackError());
   ((totalAnswered += 1),
     recordSessionAnswer({ name: s, correct: n, time: a.toFixed(1) }, e.properties.name),
-    trackAnswer(s, "monuments", n, a),
+    trackAnswer(s, getZoneMode(), n, a),
     updateWeightedScoreUI(),
     updateScoreUI(),
     !n && "marathon" === r && errorsCount >= MAX_ERRORS_MARATHON
@@ -5755,7 +5772,9 @@ function endSession() {
   const foundItemsLabel =
     "lignes-transports-idf" === o
       ? "Lignes trouvées"
-    : "monuments" === o
+    : o === "stations-metro"
+      ? "Stations trouvées"
+    : isPointZone(o)
       ? "Monuments trouvés"
       : "arrondissements-ville" === o
         ? "Quartiers trouvés"

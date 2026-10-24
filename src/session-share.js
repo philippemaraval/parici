@@ -35,7 +35,9 @@ function getSessionResultLine({
   poolSize,
 }) {
   const itemLabel =
-    zoneMode === "lignes-transports-idf"
+    zoneMode === "stations-metro"
+      ? "stations"
+    : zoneMode === "lignes-transports-idf"
       ? "lignes"
     : zoneMode === "monuments"
       ? "monuments"

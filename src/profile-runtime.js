@@ -402,7 +402,7 @@ function buildProfileCompactStatsHTML(profile, zoneLabels) {
       </tr>`).join("")
     : '<tr><td colspan="3">Aucune donnée disponible.</td></tr>';
 
-  const orderedModes = ["rues-celebres", "arrondissements-ville", "rues-principales", "arrondissement", "ville", "monuments", "lignes-transports-idf"];
+  const orderedModes = ["rues-celebres", "arrondissements-ville", "rues-principales", "arrondissement", "ville", "monuments", "stations-metro", "lignes-transports-idf"];
   const difficultyMap = new Map(difficultyStats.map((row) => [row.mode, row]));
   const difficultyRows = orderedModes
     .filter((mode) => difficultyMap.has(mode))
