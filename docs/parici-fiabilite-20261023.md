@@ -22,7 +22,7 @@ Ce contrôle utilise les variables de build documentées [par Render](https://re
 
 ## Synchronisation OSM et fiches en attente
 
-Une nouvelle identité OSM sans fiche sourcée peut être ajoutée au catalogue interne avec `editorial_status: pending`. Son numéro est réservé durablement. Elle ne crée pas de carte publique, n’entre pas dans les tirages, albums ou exemplaires, et apparaît dans les points de qualité éditoriale de l’administration. Les géométries de carte peuvent ainsi être actualisées sans annoncer une fiche achevée.
+Une nouvelle identité OSM sans fiche sourcée peut être ajoutée au catalogue interne avec `editorial_status: pending`. Son numéro est réservé durablement. Le seuil de couverture photographique des cartes publiables reste à 98 % ; les nouvelles fiches internes en attente ne comptent pas dans ce dénominateur. Elle ne crée pas de carte publique, n’entre pas dans les tirages, albums ou exemplaires, et apparaît dans les points de qualité éditoriale de l’administration. Les géométries de carte peuvent ainsi être actualisées sans annoncer une fiche achevée.
 
 La suppression accidentelle d’une fiche déjà vérifiée reste bloquante. Les fiches publiées gardent les contrôles de contenu et de sources existants. Pour publier une carte en attente, ajouter sa fiche vérifiée dans `data/collect_descriptions.json`, régénérer le catalogue et passer les contrôles ; la synchronisation suivante reprend le numéro réservé. Les exemplaires, corrections manuelles, numéros historiques et cartes retirées restent préservés.
 
@@ -37,3 +37,5 @@ Une identité OSM renommée peut conserver son identifiant de jeu au moyen de `d
 Les tests couvrent les deux anciens formats géographiques, tous les quartiers et rues du référentiel et les dates planifiées, la concurrence PostgreSQL, la conservation d’un abonnement partagé, l’exclusion des nouvelles cartes en attente et les refus du contrôle de publication. Les parcours navigateur vérifient les deux indices et conservent les accès publics actuels.
 
 Les lectures Overpass locales ont rencontré des serveurs saturés ou sans réponse. Une absence de réponse externe n’est pas présentée comme une mise à jour effective des données ; la synchronisation complète est revérifiée dans GitHub Actions après le push.
+
+La reprise du 24 octobre a aussi nécessité de mettre à jour les résolutions compatibles de `body-parser`, `multer`, `fast-uri` et `nodemailer`, ainsi que `qs` requis par `body-parser`, après intégration de leurs avis de sécurité à l’audit de production. Les avis des mainteneurs précisent les versions corrigées pour [body-parser](https://github.com/advisories/GHSA-27r3-jxmh-p828), [multer](https://github.com/advisories/GHSA-q7qp-rjg7-q26m), [fast-uri](https://github.com/advisories/GHSA-w74x-v6f9-j3xg) et [Nodemailer](https://github.com/advisories/GHSA-8c8m-p3m8-cjg8). L’envoi SMTP isolé et les contrôles de production sont revérifiés sur ce verrou.

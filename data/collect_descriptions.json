@@ -25659,15 +25659,16 @@
   },
   "street:Passerelle Lambeau": {
     "short": "La passerelle Lambeau : un cheminement piéton.",
-    "text": "La passerelle Lambeau est un cheminement piéton. Elle se situe dans le 20e arrondissement de Paris. Son tracé rencontre « Rue Lucien Lambeau ». Son emprise s’étire principalement selon un axe est-ouest.",
+    "text": "La passerelle Lambeau est un cheminement piéton. Elle se situe dans le 20e arrondissement de Paris. Son tracé rencontre « Passage Lucien Lambeau ». Son emprise s’étire principalement selon un axe est-ouest.",
     "source": "https://www.openstreetmap.org/way/939085895",
     "sources": [
-      "https://www.openstreetmap.org/way/939085895"
+      "https://www.openstreetmap.org/way/939085895",
+      "https://www.openstreetmap.org/way/726842868"
     ],
     "source_title": "OpenStreetMap — tracé et voies en contact",
     "license": "ODbL 1.0",
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
-    "reviewed_at": "2026-10-15",
+    "reviewed_at": "2026-10-24",
     "description_kind": "geographic",
     "source_osm_ids": [
       "way/939085895"
@@ -25675,7 +25676,7 @@
     "geographic_evidence": {
       "highway": "footway",
       "neighbors": [
-        "Rue Lucien Lambeau"
+        "Passage Lucien Lambeau"
       ],
       "axis": "est-ouest"
     }
@@ -69284,9 +69285,8 @@
   "street:Rue de Paris - Quartier Saint-Fargeau": {
     "short": "La rue de Paris - Quartier Saint-Fargeau : une voie urbaine.",
     "text": "La rue de Paris - Quartier Saint-Fargeau est une voie urbaine. Son tracé rencontre « Rue Raoul Wallenberg », « Rue des Frères Flavien », « Avenue de la Porte des Lilas ». Son emprise s’étire principalement selon un axe est-ouest.",
-    "source": "https://www.openstreetmap.org/way/1454389992",
+    "source": "https://www.openstreetmap.org/way/29705154",
     "sources": [
-      "https://www.openstreetmap.org/way/1454389992",
       "https://www.openstreetmap.org/way/29705154",
       "https://www.openstreetmap.org/way/977485979",
       "https://www.openstreetmap.org/way/977487015"
@@ -69294,10 +69294,9 @@
     "source_title": "OpenStreetMap — tracé et voies en contact",
     "license": "ODbL 1.0",
     "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
-    "reviewed_at": "2026-10-15",
+    "reviewed_at": "2026-10-24",
     "description_kind": "geographic",
     "source_osm_ids": [
-      "way/1454389992",
       "way/29705154",
       "way/977485979",
       "way/977487015"

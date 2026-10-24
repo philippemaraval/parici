@@ -13,7 +13,7 @@ test('reviewed Paris photographs retain source, location and unchanged image evi
   const cards = new Map(catalog.records.map(c => [c.family + ':' + c.source_entity_id, c]));
   const manifest = photoManifest();
   assert.ok(Object.keys(manifest).length >= 477);
-  const streets = catalog.records.filter(c => c.family === 'street');
+  const streets = catalog.records.filter(c => c.family === 'street' && c.editorial_status !== 'pending');
   const photographicStreets = streets.filter(c => c.illustration.kind === 'photograph');
   const jobs = new Map(plan({allStreets:true,includePhotographed:true}).map(job => [job.key,job]));
   assert.ok(photographicStreets.length >= Math.ceil(streets.length * 0.98), 'Street photo coverage must remain at least 98%');
