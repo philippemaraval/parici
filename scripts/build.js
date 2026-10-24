@@ -334,6 +334,8 @@ async function fingerprintProductionAssets() {
   const rulesPath = path.join(DIST_DIR, "regles.html");
   if (fs.existsSync(rulesPath)) {
     let rulesHtml = fs.readFileSync(rulesPath, "utf8");
+    const publicRulesUrl = writeFingerprintedAsset("public-rules", "js", await minifiedSource("src/public/js/public-rules.js", "js"), assetManifest);
+    rulesHtml = replaceAssetReference(rulesHtml, "/src/public/js/public-rules.js", publicRulesUrl);
     rulesHtml = replaceAssetReference(rulesHtml, "/src/public/css/site-shell.css", siteShellCssUrl);
     rulesHtml = replaceAssetReference(rulesHtml, "/src/public/js/site-shell.js", siteShellJsUrl);
     fs.writeFileSync(rulesPath, rulesHtml);

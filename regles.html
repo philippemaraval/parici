@@ -105,6 +105,8 @@
       font-weight: 700;
     }
 
+    [data-public-mode][hidden] { display: none !important; }
+
     section {
       max-width: 100%;
       background: var(--surface);
@@ -258,6 +260,7 @@
   <script type="module" src="/src/public/js/interface-icons.js"></script>
   <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
 <script defer src="/src/public/js/site-navigation.js?v=20261013"></script>
+<script defer src="/src/public/js/public-rules.js"></script>
 <script defer src="/src/public/js/page-gestures.js?v=20261013"></script>
 </head>
 
@@ -294,20 +297,22 @@
         Version courte et pratique: l'essentiel pour jouer vite, comprendre le score, le Daily et les classements.
       </p>
       <ul class="toc" aria-label="Sommaire">
-        <li><a href="#essentiel">1. À retenir en 30 secondes</a></li>
-        <li><a href="#jouer">2. Comment jouer</a></li>
-        <li><a href="#zones-modes">3. Zones et modes</a></li>
-        <li><a href="#daily">4. Défi Daily</a></li>
-        <li><a href="#transports">5. Métro, RER et Transilien</a></li>
-        <li><a href="#rangs">6. Rangs et avatars</a></li>
-        <li><a href="#classements">7. Classements</a></li>
-        <li><a href="#compte">8. Connexion, sauvegarde et rappels</a></li>
-        <li><a href="#faq">9. FAQ courte</a></li>
+        <li><a href="#essentiel">À retenir en 30 secondes</a></li>
+        <li><a href="#jouer">Comment jouer</a></li>
+        <li><a href="#zones-modes">Zones et modes</a></li>
+        <li><a href="#daily">Défi Daily</a></li>
+        <li><a href="#transports">Métro, RER et Transilien</a></li>
+        <li data-public-mode="collect" hidden><a href="#collect">Collect · Paris en cartes</a></li>
+        <li data-public-mode="explorer" hidden><a href="#explorer">Explorer · Paris à pied</a></li>
+        <li><a href="#rangs">Rangs et avatars</a></li>
+        <li><a href="#classements">Classements</a></li>
+        <li><a href="#compte">Connexion, sauvegarde et rappels</a></li>
+        <li><a href="#faq">FAQ courte</a></li>
       </ul>
     </header>
 
     <section id="essentiel">
-      <h2>1. À retenir en 30 secondes</h2>
+      <h2>À retenir en 30 secondes</h2>
       <div class="highlight">
         <ul>
           <li>Classique: jusqu'à 20 items, score pondéré par vitesse.</li>
@@ -321,7 +326,7 @@
     </section>
 
     <section id="jouer">
-      <h2>2. Comment jouer</h2>
+      <h2>Comment jouer</h2>
       <ol>
         <li>Choisissez une zone puis un mode.</li>
         <li>Cliquez sur <strong>Commencer la session</strong>.</li>
@@ -340,7 +345,7 @@
     </section>
 
     <section id="zones-modes">
-      <h2>3. Zones et modes</h2>
+      <h2>Zones et modes</h2>
       <table aria-label="Zones de jeu">
         <thead>
           <tr>
@@ -386,7 +391,7 @@
     </section>
 
     <section id="daily">
-      <h2>4. Défi Daily</h2>
+      <h2>Défi Daily</h2>
       <h3>Règles</h3>
       <ul>
         <li>Une cible commune par jour pour tous les joueurs.</li>
@@ -405,7 +410,7 @@
     </section>
 
     <section id="transports">
-      <h2>5. Métro, RER et Transilien</h2>
+      <h2>Métro, RER et Transilien</h2>
       <p>
         Ce mode affiche les lignes franciliennes sur la carte et vous demande d’identifier leur tracé.
       </p>
@@ -421,8 +426,41 @@
       </ul>
     </section>
 
+    <section id="collect" data-public-mode="collect" hidden>
+      <h2>Collect · Paris en cartes</h2>
+      <p>Connectez-vous à <a href="/collect.html">Collect</a> pour retrouver une rue, un quartier, un monument ou une ligne de transport francilien sur la carte. Un premier appui sélectionne le lieu ; un second confirme la réponse.</p>
+      <h3>Essais, indices et raretés</h3>
+      <ul>
+        <li>Commune : 1 essai. Peu commune : 2 essais. Rare et Épique : jusqu’à 3 essais ; les monuments et les voies dont le nom précise « Quartier » sont limités à 2. Légendaire : 1 essai de placement.</li>
+        <li>La photo peut être repliée. Après une erreur, la distance approximative et la direction entre les centres des lieux guident les essais suivants : moins de 500 m en vert, moins de 2 km en orange, puis rouge.</li>
+        <li>Une carte légendaire demande 2, 3 ou 4 fragments : placez le lieu, puis répondez au QCM culturel. Une bonne réponse ajoute un fragment ; une mauvaise n’en ajoute aucun. Chaque exemplaire nécessite un nouveau cycle complet.</li>
+        <li>Les raretés ordinaires reflètent la difficulté du placement et peuvent évoluer selon les performances observées ou une correction éditoriale. La rareté ne correspond pas à un pourcentage fixe de tirage ; les chances dépendent des cartes actives et des réglages.</li>
+      </ul>
+      <h3>Exemplaires et quota</h3>
+      <ul>
+        <li>Le quota actuel est de <strong id="collect-rules-quota">cartes selon le quota affiché dans Collect</strong>. Une fois ce quota atteint, vous pouvez continuer à jouer sans gagner d’exemplaire jusqu’à sa réouverture.</li>
+        <li>Échanger ou détruire une carte ne libère pas de place dans ce quota. Une réussite Daily éligible peut rapporter la carte de la rue, une seule fois par Daily et sans attribution rétroactive ; elle ne consomme pas ce quota.</li>
+        <li>Terminer un défi hebdomadaire donne une carte bonus, hors quota. Les raretés possibles et leurs probabilités sont indiquées avec le défi.</li>
+        <li>Une partie peut être reprise pendant 30 minutes. Quitter ou laisser expirer la partie avant le placement compte comme un échec de placement ; après un placement réussi, abandonner le QCM ne donne aucun fragment.</li>
+      </ul>
+      <h3>Collection, échanges et confidentialité</h3>
+      <p>Retrouvez vos exemplaires, favoris et fragments dans Ma collection. Les albums et badges suivent votre progression ; vous pouvez aussi créer des albums personnels privés. Les cartes archivées déjà obtenues restent conservées, mais ne comptent plus dans la progression de la collection active.</p>
+      <p>Les échanges portent sur des exemplaires précis et nécessitent l’accord des deux joueurs. Dans <a href="/collect.html?settings=1">Réglages</a>, choisissez une collection publique, réservée aux amis ou privée, et qui peut vous proposer un échange. Les alertes push sont facultatives et distinctes du rappel Daily ; sur iPhone/iPad, elles nécessitent l’installation sur l’écran d’accueil.</p>
+    </section>
+
+    <section id="explorer" data-public-mode="explorer" hidden>
+      <h2>Explorer · Paris à pied</h2>
+      <p>Explorer est une enquête historique à parcourir sur smartphone avec un profil connecté. L’ordinateur affiche une invitation à poursuivre sur mobile.</p>
+      <ol>
+        <li>Lisez l’énigme et observez l’image, puis rejoignez la rue recherchée.</li>
+        <li>Autorisez la géolocalisation et photographiez la plaque : le nom reconnu et une position à au plus 100 mètres de la rue doivent correspondre à l’énigme.</li>
+        <li>Découvrez l’explication historique et poursuivez vers l’étape suivante. Les étapes résolues sont conservées dans votre progression serveur.</li>
+      </ol>
+      <p>Le chronomètre affiche 20 minutes ; la rapidité augmente le score. Utiliser l’indice retire 15 points, une seule fois pour l’étape. La caméra et la géolocalisation servent à la validation sur place : une autorisation refusée empêche cette validation et peut être rétablie dans les réglages du navigateur.</p>
+    </section>
+
     <section id="rangs">
-      <h2>6. Rangs et avatars</h2>
+      <h2>Rangs et avatars</h2>
       <p>
         Rangs: <strong>Titi Parisien</strong>, <strong>Habitué des Quais</strong>, <strong>Vrai Parigot</strong>,
         <strong>Préfet de Paris</strong>.
@@ -511,7 +549,7 @@
     </section>
 
     <section id="classements">
-      <h2>7. Classements</h2>
+      <h2>Classements</h2>
       <ul>
         <li>Classement global par zone et mode.</li>
         <li>Classement mensuel dédié.</li>
@@ -531,7 +569,7 @@
     </section>
 
     <section id="compte">
-      <h2>8. Connexion, sauvegarde et rappels</h2>
+      <h2>Connexion, sauvegarde et rappels</h2>
       <ul>
         <li>Connecté: scores enregistrés (classements, rangs, stats, avatars, badges).</li>
         <li>Non connecté: jeu possible, mais pas d'envoi de scores serveur.</li>
@@ -542,7 +580,7 @@
     </section>
 
     <section id="faq">
-      <h2>9. FAQ courte</h2>
+      <h2>FAQ courte</h2>
       <h3>Le mode Lecture donne-t-il un score compétitif ?</h3>
       <p>Non.</p>
       <h3>Le mode Chrono dure combien de temps ?</h3>

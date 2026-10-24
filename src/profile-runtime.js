@@ -1,3 +1,4 @@
+import { renderCollectProfileSummary } from "./public/js/collect-profile-summary.js";
 
 import { avatarMarkup, iconMarkup } from "./public/js/camino-art.js";
 import { VILLE_RANK_AVATAR_DEFINITIONS } from "./rank-avatar-definitions.js";
@@ -711,7 +712,7 @@ export function loadProfileRuntime({
           <span class="badge-name">${escapeHtml(badge.name)}</span>
         </div>`;
 
-        const modeSummaries = `${profile.collect ? `<section class="profile-daily-summary" aria-label="Votre collection Collect"><h3 class="profile-section-heading">Collect · Paris en cartes</h3><div class="profile-stats-grid"><div class="profile-stat"><span class="profile-stat-value">${Number(profile.collect.unique_cards)}</span><span class="profile-stat-label">Cartes uniques</span></div><div class="profile-stat"><span class="profile-stat-value">${Number(profile.collect.total_copies)}</span><span class="profile-stat-label">Exemplaires</span></div><div class="profile-stat"><span class="profile-stat-value">${Number(profile.collect.progress)} %</span><span class="profile-stat-label">Collection active</span></div></div></section>` : ""}${profile.explorer ? `<section class="profile-daily-summary" aria-label="Votre progression Explorer"><h3 class="profile-section-heading">Explorer · Paris à pied</h3><p>${Number(profile.explorer.solved_count)} énigmes résolues${profile.explorer.completed ? " · Parcours terminé" : ""}</p></section>` : ""}`;
+        const modeSummaries = `${renderCollectProfileSummary(profile.collect, profile.username)}${profile.explorer ? `<section class="profile-daily-summary" aria-label="Votre progression Explorer"><h3 class="profile-section-heading">Explorer · Paris à pied</h3><p>${Number(profile.explorer.solved_count)} énigmes résolues${profile.explorer.completed ? " · Parcours terminé" : ""}</p></section>` : ""}`;
         let html = `
           <div class="profile-header">
             <div class="profile-avatar">${avatarMarkup(profile.avatar)}</div>

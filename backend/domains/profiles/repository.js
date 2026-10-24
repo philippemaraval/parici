@@ -6,10 +6,20 @@ function createProfileRepository(database) {
       const modes = await require("../site-shell/public-modes").publicModes(
         database.pool,
       );
+      let collect;
+      if (modes.collect) {
+        collect = await database.getCollectProfileStats(userId);
+        const { rows } = await database.pool.query(
+          "SELECT collect_visibility FROM users WHERE id=$1",
+          [userId],
+        );
+        collect = {
+          ...collect,
+          visibility: rows[0]?.collect_visibility || "private",
+        };
+      }
       return {
-        ...(modes.collect
-          ? { collect: await database.getCollectProfileStats(userId) }
-          : {}),
+        ...(modes.collect ? { collect } : {}),
         ...(modes.explorer
           ? {
               explorer:

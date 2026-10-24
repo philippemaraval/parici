@@ -44,10 +44,12 @@ test("Parici keeps Explorer accessible only by direct URL", () => {
   assert.equal(fs.existsSync(path.join(ROOT, "explorer.html")), true);
   assert.match(read("explorer.html"), /noindex, nofollow/);
 
-  for (const page of ["index.html", "regles.html", "arbre-rangs.html", "reset-password.html"]) {
+  for (const page of ["index.html", "arbre-rangs.html", "reset-password.html"]) {
     assert.doesNotMatch(read(page), /explorer\.html|admin\/explorer|Explorer/);
   }
 
+  assert.match(read("regles.html"), /id="explorer" data-public-mode="explorer" hidden/);
+  assert.match(read("src/public/js/public-rules.js"), /modes\[element.dataset.publicMode\]!==true/);
   assert.doesNotMatch(read("style.css"), /explorer-mode-link|mobile-mode-card--explorer/);
   assert.doesNotMatch(read("src/public/css/site-shell.css"), /is-active--explorer/);
   assert.doesNotMatch(read("src/public/js/site-menu.js"), /explorer\.html|collect\.html/);
@@ -104,7 +106,7 @@ test("rules mirror the actual Daily and Parici rank behavior", () => {
   assert.match(rules, /Préfet de Paris/);
   assert.match(rules, /dans au moins un mode classé/);
   assert.doesNotMatch(rules, /<p>\s*<p>/);
-  assert.doesNotMatch(rules, /Explorer/);
+  assert.match(rules, /id="explorer" data-public-mode="explorer" hidden/);
 });
 
 test("page headings share one rhythm and the current release version", () => {

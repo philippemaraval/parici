@@ -445,3 +445,5 @@ body.session-running:not(.daily-game-over) .site-nav.is-stuck {
 }
 
 #daily-result-panel .daily-share-btn.btn-primary{background:#12297a;color:#fff}
+.daily-reminder-card[hidden],.daily-reminder-card [hidden]{display:none!important}
+.profile-collect-links{font-size:12px;line-height:1.8;overflow-wrap:anywhere}

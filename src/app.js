@@ -1,3 +1,4 @@
+import { renderReminderControl, setReminderStatus, reminderBlockReason } from "./public/js/reminder-control.js";
 import { reviewMapFeatures } from "./map-review.js";
 import { avatarMarkup, iconMarkup, renderPasswordToggle } from "./public/js/camino-art.js";
 import {
@@ -561,13 +562,7 @@ function setDailyReminderStatus(message, type = "neutral") {
   if (!statusEl) {
     return;
   }
-  statusEl.textContent = message;
-  statusEl.classList.remove("is-error", "is-success");
-  if (type === "error") {
-    statusEl.classList.add("is-error");
-  } else if (type === "success") {
-    statusEl.classList.add("is-success");
-  }
+  setReminderStatus({statusElement:statusEl,container:statusEl.closest(".daily-reminder-card"),message,type,label:"Rappel Daily"});
 }
 
 function setDailyReminderButtons({
@@ -579,12 +574,7 @@ function setDailyReminderButtons({
   if (!enableBtn || !disableBtn) {
     return;
   }
-  enableBtn.classList.toggle("hidden", !canEnable);
-  disableBtn.classList.toggle("hidden", !canDisable);
-  const reminderIcon = document.querySelector(".daily-reminder-icon");
-  if (reminderIcon) reminderIcon.innerHTML = iconMarkup(canDisable ? "bellCheck" : "bell");
-  enableBtn.disabled = loading;
-  disableBtn.disabled = loading;
+  renderReminderControl({enableButton:enableBtn,disableButton:disableBtn,icon:document.querySelector(".daily-reminder-icon"),canEnable,canDisable,loading,statusElement:document.getElementById("daily-reminder-status"),container:enableBtn.closest(".daily-reminder-card"),label:"le rappel Daily"});
 }
 
 function isAuthStatus(status) {
@@ -814,29 +804,15 @@ async function refreshDailyReminderControls() {
   const reminderCard = statusEl.closest(".daily-reminder-card");
   const hasAuthenticatedUser = Boolean(currentUser && currentUser.token);
   reminderCard?.classList.toggle("hidden", !hasAuthenticatedUser);
-
+  if(reminderCard)reminderCard.hidden=!hasAuthenticatedUser;
+  const blocked = reminderBlockReason({authenticated:hasAuthenticatedUser,needsInstallation:requiresInstalledAppForMobilePush(),supported:isPushReminderSupported(),permission:window.Notification?.permission});
+  if (blocked) {
+    setDailyReminderStatus(blocked, hasAuthenticatedUser ? "error" : "neutral");
+    setDailyReminderButtons({canEnable:false,canDisable:false,loading:false});
+    return;
+  }
   setDailyReminderStatus("Chargement…");
-  setDailyReminderButtons({ loading: true });
-
-  if (!hasAuthenticatedUser) {
-    setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
-    return;
-  }
-
-  if (requiresInstalledAppForMobilePush()) {
-    setDailyReminderStatus(
-      "Sur iPhone/iPad, installe Parici via “Ajouter à l’écran d’accueil” pour activer les notifications.",
-      "error",
-    );
-    setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
-    return;
-  }
-
-  if (!isPushReminderSupported()) {
-    setDailyReminderStatus("Notifications push non disponibles sur ce navigateur.", "error");
-    setDailyReminderButtons({ canEnable: false, canDisable: false, loading: false });
-    return;
-  }
+  setDailyReminderButtons({loading:true});
 
   let config;
   try {
@@ -1054,8 +1030,8 @@ async function enableDailyReminder(options = {}) {
     );
 
     if (permission !== "granted") {
-      setDailyReminderStatus("Autorisation de notification refusée.", "error");
-      setDailyReminderButtons({ canEnable: true, canDisable: false, loading: false });
+      setDailyReminderStatus("Notifications refusées. Autorisez-les dans les réglages du navigateur.", "error");
+      setDailyReminderButtons({ canEnable: permission !== "denied", canDisable: false, loading: false });
       return;
     }
 

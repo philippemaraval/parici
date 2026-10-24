@@ -3359,9 +3359,14 @@ app.get('/api/leaderboards', async (req, res) => {
     }
 });
 
+app.get('/api/site/modes', asyncHandler(async (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json(await require('./domains/site-shell/public-rules').publicRules(db));
+}));
+
 app.post('/api/site/reports',authenticateToken,createPersistentRateLimit({name:'site-reports',windowMs:3600000,maxRequests:10}),asyncHandler(async(req,res)=>{
  const p=req.body||{};
- if(!['camino','daily','technical'].includes(p.domain)||!['image','description','question','geography','bug','other'].includes(p.category)||typeof p.detail!=='string'||p.detail.trim().length<10||p.detail.length>2000||typeof p.entity_key!=='string'||p.entity_key.length>200) return res.status(400).json({error:'Précisez le jeu, le contenu et le problème (10 à 2 000 caractères).'});
+ if(!['camino','daily','collect','explorer','technical'].includes(p.domain)||!['image','description','question','geography','bug','other'].includes(p.category)||typeof p.detail!=='string'||p.detail.trim().length<10||p.detail.length>2000||typeof p.entity_key!=='string'||p.entity_key.length>200) return res.status(400).json({error:'Précisez le jeu, le contenu et le problème (10 à 2 000 caractères).'});
  const existing=await db.pool.query("SELECT id FROM admin_reports WHERE reporter_id=$1 AND domain=$2 AND entity_key=$3 AND category=$4 AND detail=$5 AND status IN ('open','investigating')",[req.user.id,p.domain,p.entity_key,p.category,p.detail.trim()]);
  if(existing.rowCount)return res.json({reported:true,id:existing.rows[0].id});
  const row=(await db.pool.query('INSERT INTO admin_reports(domain,entity_key,category,detail,reporter_id) VALUES($1,$2,$3,$4,$5) RETURNING id',[p.domain,p.entity_key,p.category,p.detail.trim(),req.user.id])).rows[0];res.status(201).json({reported:true,id:row.id});
