@@ -72,6 +72,7 @@ jobs:
             data/collect_paris_catalog.json \
             data/collect_numbering_paris.json \
             data/collect_images/manifest.json \
+            'data/collect_images/*.svg' \
             data/collect_quartier_arrondissement.json \
             backend/data/paris_rues_light.geojson \
             backend/data/paris_arrondissements.geojson \

@@ -26,6 +26,8 @@ Une nouvelle identité OSM sans fiche sourcée peut être ajoutée au catalogue 
 
 La suppression accidentelle d’une fiche déjà vérifiée reste bloquante. Les fiches publiées gardent les contrôles de contenu et de sources existants. Pour publier une carte en attente, ajouter sa fiche vérifiée dans `data/collect_descriptions.json`, régénérer le catalogue et passer les contrôles ; la synchronisation suivante reprend le numéro réservé. Les exemplaires, corrections manuelles, numéros historiques et cartes retirées restent préservés.
 
+Le commit de synchronisation inclut également les illustrations SVG régénérées à partir des géométries, pour publier un ensemble cohérent et ne laisser aucun résultat du générateur en attente avant le rebase.
+
 Le workflow OSM déclenche explicitement les deux workflows de validation après publication du commit de données, car une poussée effectuée avec `GITHUB_TOKEN` ne déclenche pas les workflows `push`. Il ne lance plus un hook Render en dehors des contrôles de qualité. L’instance publique Private.coffee est ajoutée aux sources de secours ; chaque requête possède une limite de temps.
 
 Une identité OSM renommée peut conserver son identifiant de jeu au moyen de `data/street_identity_aliases_paris.json`. Chaque correspondance est gardée par l’identifiant OSM exact et le nom actuel vérifié ; une simple ressemblance de noms ne suffit pas. La place Aimée Millot conserve ainsi son identité historique « Place de la Bergère d’Ivry », sa fiche, ses numéros et le Daily déjà planifié, avec le nom OSM actuel disponible pour l’affichage. La géométrie reste celle de la source OSM.
