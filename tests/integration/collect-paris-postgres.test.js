@@ -967,8 +967,9 @@ test(
       }
       const logoSample = cards.find(
         (c) =>
-          c.name === "Passage Commun P/12" &&
-          c.image_reference === "/apple-touch-icon.png",
+          c.family === "street" &&
+          c.image_reference === "/apple-touch-icon.png" &&
+          photoManifest()[c.family + ":" + c.source_entity_id]?.kind !== "photograph",
       );
       assert.ok(logoSample);
       await db.pool.query(
@@ -990,7 +991,10 @@ test(
             img.loading = "eager";
             return img.decode();
           });
-          assert.ok((await photo.getAttribute("src")).includes("/photo-"));
+          assert.equal(
+            await photo.getAttribute("src"),
+            require("../../backend/domains/collect/image-urls").imageVariants(card.image_reference).image_thumbnail,
+          );
           const author =
             photoManifest()[card.family + ":" + card.source_entity_id]?.author;
           const expectedCredit =
@@ -1020,7 +1024,10 @@ test(
             img.loading = "eager";
             return img.decode();
           });
-          assert.ok((await photo.getAttribute("src")).includes("/wikimedia-"));
+          assert.equal(
+            await photo.getAttribute("src"),
+            require("../../backend/domains/collect/image-urls").imageVariants(card.image_reference).image_thumbnail,
+          );
           assert.match(
             await tile.locator(".collect-card-photo-credit").innerText(),
             /Wikimedia/,

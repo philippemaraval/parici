@@ -82,7 +82,28 @@ test(
       assert.match(r.image_url, /^\/api\/explorer\/riddles\/\d+\/image$/);
       const photo = await fetch(base + r.image_url);
       assert.equal(photo.status, 200);
-      assert.match(photo.headers.get("content-type"), /image\/jpeg/);
+      const original = (
+        await db.pool.query(
+          "SELECT image_url FROM explorer_riddles WHERE id=$1",
+          [r.id],
+        )
+      ).rows[0].image_url;
+      const detail =
+        require("../../backend/domains/collect/image-urls").imageVariants(
+          original,
+          { versioned: false },
+        ).image_reference;
+      const bytes = Buffer.from(await photo.arrayBuffer());
+      assert.deepEqual(
+        bytes,
+        fs.readFileSync(path.join(__dirname, "../..", detail)),
+      );
+      const metadata = await require("sharp")(bytes).metadata();
+      assert.equal(
+        photo.headers.get("content-type"),
+        "image/" + metadata.format,
+      );
+      assert.ok(metadata.width > 0 && metadata.height > 0);
     }
     assert.equal((await fetch(base + "/data/explorer_paris.json")).status, 404);
     assert.equal((await request("/api/explorer/admin/riddles")).status, 401);
