@@ -351,7 +351,9 @@ async function drawCollectGame(userId, random, streetGroups, client) {
   }
   if (!cardResult.rows.length)
     throw new Error(`collect_family_empty:${family}`);
-  const card = cardResult.rows[0];
+  const card = await require("./domains/collect/player-goals").targetDrawCard(
+    client, userId, cardResult.rows[0], random,
+  );
   const gameId = crypto.randomUUID();
   const maxAttempts =
     require("./domains/collect/game-hints").placementAttemptLimit(

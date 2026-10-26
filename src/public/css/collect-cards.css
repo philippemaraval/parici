@@ -255,3 +255,11 @@
 /* Leave room for the title, statistics and favorite action on narrow cards. */
 @media(max-width:550px){.collect-grid .collect-card{grid-template-rows:40% minmax(0,1fr)}.collect-grid .collect-card-description{-webkit-line-clamp:2;height:2.6em}}
 @media(max-width:350px){.collect-grid .collect-card{grid-template-rows:30% minmax(0,1fr)}}
+
+
+.collect-album-target-actions{padding:0 12px 12px;display:flex;flex-wrap:wrap;gap:8px}
+.collect-target-button{max-width:100%;white-space:normal}
+.collect-target-button[aria-pressed="true"]{background:#12297a;color:#fff}
+.collect-target-summary{padding:14px;border:1px solid #ccd6ee;border-radius:12px;background:#f2f5fc;margin-bottom:14px}
+.collect-target-summary[hidden]{display:none}
+.collect-target-summary p{line-height:1.5;margin:8px 0}

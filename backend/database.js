@@ -226,6 +226,7 @@ async function applyPlayerUpgradeSchema(client) {
       FROM jsonb_to_recordset($1::jsonb) AS r(seed_key text,way_id bigint,street_name_clean text,riddle_text text,hint_text text,explanation_text text,image_url text,latitude double precision,longitude double precision,source_url text)
       ON CONFLICT(seed_key) DO NOTHING`, [JSON.stringify(explorerSeed)]);
     await require('./domains/collect/paris-schema').applyParisCollect(client);
+    await client.query(fs.readFileSync(path.join(__dirname, '../migrations/20261025_collect_album_target.sql'), 'utf8'));
     await require('./domains/admin/schema').applyAdminSchema(client);
     await require('./domains/collect/catalog-corrections').applyCatalogCorrections(client);
     await require('./domains/collect/catalog-sync').syncCatalog(client);

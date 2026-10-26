@@ -906,8 +906,8 @@ module.exports = function registerCollect({
           ),
         });
       } catch (error) {
-        if (error.status === 404)
-          return res.status(404).json({ error: error.message });
+        if ([404, 409].includes(error.status))
+          return res.status(error.status).json({ error: error.message });
         throw error;
       }
     }),

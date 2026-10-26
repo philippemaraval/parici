@@ -1,4 +1,5 @@
 import { parseCollectGame } from "../../types/api-boundaries.js";
+import { initAlbumGoal } from "./collect-album-goal-view.js";
 import { initSocial } from "./collect-social-view.js";
 import { initPersonalAlbums } from "./personal-albums-view.js";
 import { renderCardArtwork } from "./collect-card-art.js";
@@ -740,7 +741,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const arr=document.getElementById('collect-filter-arrondissement');if(!arr.options.length)arr.innerHTML='<option value="">Tous les arrondissements</option>'+Array.from({length:20},(_,i)=>`<option value="${i+1}">${i+1}${i===0?'er':'e'} arrondissement</option>`).join('');
   }
 
-  const personalAlbums=initPersonalAlbums(request,renderCard);
+  const personalAlbums=initPersonalAlbums(request,renderCard,album=>albumTarget.buttonMarkup(album),renderGoal);
   let albumsPayload=null;
   let albumMap=null,albumLayer=null,albumRequest=0;
   function albumFamily(slug){return slug.startsWith('street-district-')?'street-district':slug.startsWith('street-arrondissement-')?'street-arrondissement':({'streets':'street','famous-streets':'famous','main-streets':'main','districts':'district','monuments':'monument','bus':'bus'}[slug]||'');}
@@ -752,7 +753,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     document.getElementById('collect-album-geography-label').hidden=!geographic;
     const choices=albumsPayload.albums.filter(a=>albumFamily(a.slug)===family).sort((a,b)=>a.name.localeCompare(b.name,'fr',{numeric:true}));
     if(geographic && geo.dataset.family!==family){geo.innerHTML=choices.map(a=>`<option value="${escapeHtml(a.slug)}">${escapeHtml(a.name)}</option>`).join('');geo.dataset.family=family;}
-    els['collect-album-grid'].innerHTML=(albumsPayload.albums||[]).filter(a=>family?(albumFamily(a.slug)===family&&(!geographic||a.slug===geo.value)):!a.slug.startsWith('street-district-')&&!a.slug.startsWith('street-arrondissement-')).map(album=>`<article class="collect-album"><button class="collect-album-open" data-album="${escapeHtml(album.slug)}" type="button"><strong>${escapeHtml(album.name)}</strong><span>${socialApi?'Possédées : ':''}${album.owned_active_card_count} / ${album.active_card_count} · ${percentage(album.owned_active_card_count,album.active_card_count)} %</span><span class="collect-progress-track"><i style="width:${Number(album.progress)}%"></i></span>${album.earned_active_card_count!==undefined?`<small class="collect-personal-progress">Gagnées personnellement : ${album.earned_active_card_count} / ${album.active_card_count}</small>`:''}<small>Voir mes lieux sur la carte →</small></button></article>`).join('');
+    els['collect-album-grid'].innerHTML=(albumsPayload.albums||[]).filter(a=>family?(albumFamily(a.slug)===family&&(!geographic||a.slug===geo.value)):!a.slug.startsWith('street-district-')&&!a.slug.startsWith('street-arrondissement-')).map(album=>`<article class="collect-album"><button class="collect-album-open" data-album="${escapeHtml(album.slug)}" type="button"><strong>${escapeHtml(album.name)}</strong><span>${socialApi?'Possédées : ':''}${album.owned_active_card_count} / ${album.active_card_count} · ${percentage(album.owned_active_card_count,album.active_card_count)} %</span><span class="collect-progress-track"><i style="width:${Number(album.progress)}%"></i></span>${album.earned_active_card_count!==undefined?`<small class="collect-personal-progress">Gagnées personnellement : ${album.earned_active_card_count} / ${album.active_card_count}</small>`:''}<small>Voir mes lieux sur la carte →</small></button><div class="collect-album-target-actions">${albumTarget.buttonMarkup(album)}</div></article>`).join('');
     if(!family)els['collect-album-grid'].insertAdjacentHTML('beforeend',['street-district','street-arrondissement'].map(group=>`<article class="collect-album"><button class="collect-album-open" data-album-group="${group}" type="button"><strong>${group==='street-district'?'Rues par quartier':'Rues par arrondissement'}</strong><small>Choisir ${group==='street-district'?'un quartier':'un arrondissement'} →</small></button></article>`).join(''));
     const basic=new Set(['collect-first-card','collect-10-cards','collect-100-cards','album-streets','album-districts','album-monuments','album-bus','collect-master']);
     const badges=albumsPayload.badges||[];const extra=badges.filter(b=>!basic.has(b.slug)&&(!family||albumFamily(b.slug.replace(/^album-/,''))===family));
@@ -770,7 +771,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   }
   async function fetchAlbumOptions(){
     const payload=await request('/api/collect/albums');albumsPayload=payload;albumsLoadedAt=Date.now();
-    fillGoalGeography();renderGoal();
+    renderGoal();
     const rankingType=document.getElementById('collect-ranking-type');
     rankingType.querySelectorAll('option[data-album-option]').forEach(option=>option.remove());
     const added=new Set();
@@ -794,6 +795,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const view=document.getElementById('collect-album-view');view.hidden=false;
     const album=albumsPayload?.albums.find(a=>a.slug===slug);
     document.getElementById('collect-album-title').textContent=album?.name||'Mon album';
+    document.getElementById('collect-album-target-action').innerHTML=album?albumTarget.buttonMarkup(album):'';
     document.getElementById('collect-album-map-note').textContent='Chargement de l’album…';
     view.scrollIntoView({behavior:'smooth',block:'start'});
     try {
@@ -836,27 +838,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     try{const payload=await request('/api/collect/weekly-challenge');document.getElementById('collect-weekly-play').innerHTML=`<h3>Défi de la semaine</h3><p>Seules les cartes gagnées cette semaine comptent. Les cartes des semaines précédentes sont exclues.</p><ul>${payload.personal.progress.map(g=>`<li>${escapeHtml(g.label)} <strong>${g.current}/${g.target}</strong></li>`).join('')}</ul>`+weeklyPrizeMarkup(payload);}
     catch(_error){document.getElementById('collect-weekly-play').textContent='';}
   }
-  let albumGoal=null;
-  function showGoal(){
-    const node=document.getElementById('collect-album-goal');
-    node.textContent=albumGoal?`${albumGoal.name} · ${albumGoal.owned_active_card_count}/${albumGoal.active_card_count} · ${albumGoal.remaining?`encore ${albumGoal.remaining} lieu${albumGoal.remaining>1?'x':''}`:'Album terminé !'}`:'';
-    if(albumGoal){document.getElementById('collect-goal-select').value=albumFamily(albumGoal.slug);fillGoalGeography();document.getElementById('collect-goal-geography').value=albumGoal.slug;}
-  }
-  async function renderGoal(){
-    try{const payload=await request('/api/collect/goal');albumGoal=payload.goal;showGoal();}catch(_error){showGoal();}
-  }
-  function fillGoalGeography(){
-    const type=document.getElementById('collect-goal-select').value,select=document.getElementById('collect-goal-geography'),current=select.value;
-    document.getElementById('collect-goal-geography-label').hidden=!type;
-    const choices=(albumsPayload?.albums||[]).filter(a=>albumFamily(a.slug)===type).sort((a,b)=>a.name.localeCompare(b.name,'fr',{numeric:true}));
-    select.innerHTML='<option value="">Choisir '+(type==='street-district'?'un quartier':'un arrondissement')+'</option>'+choices.map(a=>`<option value="${escapeHtml(a.slug)}">${escapeHtml(a.name)} · ${a.owned_active_card_count}/${a.active_card_count}</option>`).join('');
-    if(choices.some(a=>a.slug===current))select.value=current;
-  }
-  document.getElementById('collect-goal-select').addEventListener('change',()=>{fillGoalGeography();if(!document.getElementById('collect-goal-select').value)document.getElementById('collect-goal-geography').dispatchEvent(new Event('change'));});
-  document.getElementById('collect-goal-geography').addEventListener('change',async event=>{
-    try{const payload=await request('/api/collect/goal',{method:'PUT',body:JSON.stringify({slug:event.target.value})});albumGoal=payload.goal;showGoal();document.getElementById('collect-goal-status').textContent=albumGoal?'Objectif enregistré.':'Objectif retiré.';}
-    catch(error){showError(error.message);}
-  });
+  const albumTarget=initAlbumGoal(request);
+  function renderGoal(){return albumTarget.refresh();}
   async function loadWeeklyChallenge(){
     const current=++weeklyRequest;
     const note=document.getElementById('collect-weekly-note');
@@ -1150,7 +1133,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       const idle=window.requestIdleCallback||((callback)=>setTimeout(callback,250));
       idle(()=>{prewarmCollect();if(!navigator.connection?.saveData)loadAlbumOptions().catch(()=>{});});
       try{const {game:pending}=await request('/api/collect/games/pending');if(pending){pendingGame=parseCollectGame(pending);els['collect-next'].textContent='Reprendre la partie';els['collect-game-status'].textContent='Une partie est en cours · reprends-la pour continuer.';}}catch(error){if(error.status!==404)showError(error.message);}
-      loadWeeklyPlay();
+      loadWeeklyPlay();renderGoal();
 
     }catch(_error){setCollectAuthentication(false);}
   }
