@@ -132,6 +132,24 @@ test("database startup skips migrations when the schema version is current", asy
     ),
     "current revisions must not rewrite catalog data",
   );
+  assert.ok(
+    queries.some(
+      (q) =>
+        q.sql ===
+        fs
+          .readFileSync(
+            path.join(
+              __dirname,
+              "..",
+              "migrations",
+              "20261025_collect_reviews.sql",
+            ),
+            "utf8",
+          )
+          .trim(),
+    ),
+    "current schemas also apply the review migration",
+  );
   assert.match(queries[3].sql, /BEGIN/);
   assert.match(queries[4].sql, /daily_guess_receipts/);
   assert.match(queries[5].sql, /site_notification_reads/);

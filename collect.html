@@ -70,10 +70,10 @@
           <p>Retrouve les lieux de Paris, gagne leurs cartes et conserve ta collection sur ton profil Parici.</p>
           <a class="btn-primary" href="/?view=profile#profile">Se connecter à Parici</a>
         </section>
-        <div id="collect-game-controls" class="collect-game-controls panel target-panel" hidden>
+        <section id="collect-review-end" class="collect-review-end" hidden aria-live="polite"><h3>Révision terminée</h3><p id="collect-review-summary"></p><button type="button" id="collect-review-continue" class="btn-primary">Continuer à réviser</button><button type="button" id="collect-review-return" class="btn-secondary">Retour à ma collection</button></section><div id="collect-game-controls" class="collect-game-controls panel target-panel" hidden>
           <button id="collect-exit" class="btn-secondary" type="button" hidden>Quitter la partie</button>
           <div class="collect-map-copy"><span id="collect-target-title" class="collect-target-title panel-title">Lieu à trouver</span><strong id="collect-family-label" class="target-name">Quel lieu vas-tu découvrir ?</strong><span id="collect-map-hint">Lance une partie, puis sélectionne le lieu demandé sur la carte.</span></div>
-          <div id="collect-game-status" class="collect-game-status" aria-live="polite">Prêt à jouer ?</div>
+          <p id="collect-review-progress" class="collect-review-note" hidden aria-live="polite"></p><div id="collect-game-status" class="collect-game-status" aria-live="polite">Prêt à jouer ?</div>
           <details hidden id="collect-visual-hint" class="collect-visual-hint daily-image-hint"><summary class="daily-image-hint-summary">🖼️ Indice visuel</summary><div class="daily-image-hint-body"><img id="collect-hint-image" src="/apple-touch-icon.png" alt="Indice visuel du lieu à trouver"><small id="collect-hint-credit"></small></div></details><div class="collect-game-actions"><button id="collect-next" class="btn-primary" type="button">Lancer une partie</button></div>
           <p id="collect-play-album-goal" class="collect-goal" aria-live="polite"></p><div id="collect-weekly-play" class="collect-weekly-play" aria-live="polite"></div><div id="collect-revealed-card" hidden></div><details class="collect-rules"><summary>Comment jouer ?</summary><p>Retrouve le lieu sur la carte pour gagner sa carte. Tu as 1 à 3 essais selon sa rareté, avec une direction et une distance après un placement manqué. Les cartes légendaires s’assemblent en répondant à des questions : chaque bonne réponse donne un fragment. Tu peux gagner 4 cartes en 20 minutes et continuer à jouer ensuite. Termine aussi le défi de la semaine pour gagner une carte bonus.</p></details>
         </div>
@@ -94,7 +94,7 @@
       <p id="collect-ranking-note"></p><div id="collect-podium" class="collect-podium"></div><div id="collect-ranking" class="collect-ranking"></div>
     </section>
     </section>
-    <section id="collect-collection" class="collect-panel hidden" aria-label="Ma collection">
+    <section id="collect-collection" class="collect-panel hidden" aria-label="Ma collection"><div id="collect-collection-review"></div><p class="collect-review-note">Révise jusqu’à 10 cartes déjà obtenues, sans carte ni fragment à gagner.</p>
       <div id="collect-progress" class="collect-progress"></div>
       <div class="collect-profile-search">
         <div class="collect-collection-primary-filters">

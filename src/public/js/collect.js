@@ -1,4 +1,5 @@
 import { parseCollectGame } from "../../types/api-boundaries.js";
+import { initCollectReviews } from "./collect-review-view.js";
 import { initAlbumGoal } from "./collect-album-goal-view.js";
 import { initSocial } from "./collect-social-view.js";
 import { initPersonalAlbums } from "./personal-albums-view.js";
@@ -51,11 +52,12 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   }
   exitButton.addEventListener("click", async () => {
     if(answering)return;
-    if(game&&!game.finished){
+    if(game&&!game.finished&&!game.review){
       exitButton.disabled=true;
       try{await request(`/api/collect/games/${encodeURIComponent(game.gameId)}`,{method:"DELETE"});}
       catch(error){showError(error.message);exitButton.disabled=false;return;}
     }
+    if(reviewSession){reviewSession=null;pendingReviewGame=null;document.getElementById("collect-review-progress").hidden=true;els["collect-leaderboard"].hidden=false;}
     pendingGame=null;
     gameRequest++; leaveMap(); questionPanel.hidden=true; game=null; selectedAnswer=null;
     els["collect-next"].hidden=false; els["collect-next"].disabled=false;
@@ -71,6 +73,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   let collectionRequest=0, pagedCollection=null;
   let leaderboardRequest=0;
   let pendingGame=null;
+  let reviewSession=null,pendingReviewGame=null;
   let publicProfileRequest = 0;
   let publicProfileName = '';
   let publicRarityLabels = {};
@@ -89,7 +92,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     gameControls.hidden=!connected;
     els['collect-quota'].hidden=!connected;
     if(!connected){
-      gameRequest++;leaveMap();questionPanel.hidden=true;game=null;selectedAnswer=null;
+      gameRequest++;leaveMap();questionPanel.hidden=true;game=null;selectedAnswer=null;reviewSession=null;pendingReviewGame=null;document.getElementById("collect-review-end").hidden=true;
       els['collect-next'].hidden=true;els['collect-next'].disabled=true;
       els['collect-game-status'].hidden=false;
       delete els['collect-game-status'].dataset.outcome;
@@ -136,7 +139,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
           : `${quota.limit}/${quota.limit} · ${formatCountdown(wait)}`;
         els['collect-quota'].title = remaining ? `${quota.copies}/${quota.limit} cartes gagnées` : `Prochaine carte dans ${formatCountdown(wait)}`;
         els['collect-quota'].setAttribute('aria-label', els['collect-quota'].title);
-        if(!game || game.finished)els['collect-next'].textContent=remaining?(pendingGame?'Reprendre la partie':game?'Partie suivante':'Lancer une partie'):'Continuer à jouer sans carte';
+        if(!reviewSession && (!game || game.finished))els['collect-next'].textContent=remaining?(pendingGame?'Reprendre la partie':game?'Partie suivante':'Lancer une partie'):'Continuer à jouer sans carte';
         if (nextAt && wait <= 0) { clearInterval(quotaTimer); refreshQuota(); }
       };
       drawQuota();
@@ -304,8 +307,11 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     setTimeout(() => map.invalidateSize(), 30);
   }
 
-  async function startGame() {
+  async function startGame(reviewOptions=null) {
+    if(reviewOptions){reviewSession={...reviewOptions};pendingReviewGame=null;}
+    document.getElementById("collect-review-end").hidden=true;
     if(!authenticated){setCollectAuthentication(false);return;}
+    gameControls.hidden=false;els['collect-leaderboard'].hidden=Boolean(reviewSession);
     const requestId = ++gameRequest;
     leaveMap();
     showError('');
@@ -318,12 +324,16 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     document.getElementById('collect-revealed-card').hidden=true;
     try {
       const runtime=ensureMap();
-      const draw=pendingGame?Promise.resolve(pendingGame):request('/api/collect/games',{method:'POST',body:'{}'}).then(payload=>{pendingGame=payload;return payload;});
+      const reviewPath=reviewSession?.sessionId&&!reviewSession.completed?`/api/collect/reviews/${encodeURIComponent(reviewSession.sessionId)}/next`:'/api/collect/reviews';
+      const draw=reviewSession
+        ? (pendingReviewGame?Promise.resolve(pendingReviewGame):request(reviewPath,{method:'POST',body:JSON.stringify({mode:reviewSession.mode,scope:reviewSession.scope})}).then(payload=>{if(requestId===gameRequest)pendingReviewGame=payload;return payload;}))
+        : (pendingGame?Promise.resolve(pendingGame):request('/api/collect/games',{method:'POST',body:'{}'}).then(payload=>{pendingGame=payload;return payload;}));
       const [drawResult,mapResult]=await Promise.allSettled([draw,runtime]);
+      if (requestId !== gameRequest || !authenticated) return;
+      if(drawResult.status==='fulfilled' && drawResult.value.complete){finishReview(drawResult.value);return;}
       if(mapResult.status==='rejected')throw mapResult.reason;
       if(drawResult.status==='rejected')throw drawResult.reason;
       const payload=drawResult.value;
-      if (requestId !== gameRequest || !authenticated) return;
       if (!payload.gameId || !payload.card?.name || !familyNames[payload.card.family]) {
         pendingGame=null;
         throw new Error('Le lieu à trouver n’a pas pu être chargé. Relance la partie.');
@@ -335,13 +345,17 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       map.invalidateSize();
 
       game = { ...payload, finished: false };
+      if(payload.review)reviewSession={...payload.review,completed:false};
+      const reviewProgress=document.getElementById('collect-review-progress');
+      reviewProgress.hidden=!payload.review;
+      if(payload.review)reviewProgress.textContent=`${payload.review.mode==='errors'?'Revoir mes erreurs':'Réviser mes cartes'} · Carte ${payload.review.position}/${payload.review.total} · Sans carte ni fragment à gagner`;
       selectedAnswer = null;
       renderGuessHistory(payload);
       document.getElementById('collect-visual-hint').hidden=false;
       hintImage.src=safeImage(game.card.imageReference)||fallbackImage;
       hintImage.alt='Indice visuel du lieu à trouver';
       document.getElementById('collect-hint-credit').innerHTML=imageCredit(game.card.imageAttribution);
-      document.getElementById('collect-visual-hint').open=true;
+      document.getElementById('collect-visual-hint').open=!payload.review;
       document.getElementById('collect-target-title').textContent=`${familyNames[game.card.family]} à trouver`;
       els['collect-family-label'].innerHTML = cardNameHtml(game.card);
       els['collect-map-hint'].textContent = '';
@@ -362,11 +376,11 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       if (game.card.family === 'street') map.setView([48.8566, 2.3522],13,{animate:false,reset:true});
       else map.fitBounds(featureLayer.getBounds(),{padding:[18,18],maxZoom:13,animate:false,reset:true});
       mapReady = true;
-      pendingGame=null;
+      if(game.review)pendingReviewGame=null;else pendingGame=null;
       els['collect-next'].textContent = 'Partie suivante';
       els['collect-next'].hidden = true;
       if(payload.questionPayload)showQuestion(payload.questionPayload);
-      request('/api/collect/events',{method:'POST',body:JSON.stringify({kind:'map_ready',gameId:game.gameId})}).catch(()=>{});
+      if(!game.review)request('/api/collect/events',{method:'POST',body:JSON.stringify({kind:'map_ready',gameId:game.gameId})}).catch(()=>{});
     } catch (error) {
       if (requestId !== gameRequest) return;
       showError(error.message === 'Failed to fetch' ? 'Connexion au serveur impossible.' : error.message);
@@ -396,6 +410,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   }
 
   function resultFeedback(result) {
+    if(result.review)return {outcome:result.correct?'success':'failure',status:result.correct?'Révision réussie':'Placement à revoir',hint:result.correct?'Bonne réponse · aucune récompense en révision.':'La bonne position est affichée en vert · aucune récompense en révision.'};
     if (!result.correct) return {
       outcome: 'failure',
       status: 'Mauvais emplacement · carte non obtenue',
@@ -493,7 +508,12 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     featureLayer?.eachLayer(item=>{if(!visibleLayer(item)||!item.setStyle)return;const id=featureAnswer(game.card.family,item.feature);if(id===targetId){item.setStyle({color:UI_THEME.mapCorrect,weight:8,fillColor:UI_THEME.mapCorrect,fillOpacity:0.55,opacity:1});item.bringToFront?.();targets.push(item);}else if(id===selectedAnswer?.id)item.setStyle({color:UI_THEME.mapWrong,weight:7,fillColor:UI_THEME.mapWrong,opacity:1});});
     if(targets.length && !result.correct){const bounds=window.L.featureGroup(targets).getBounds();if(bounds.isValid())map.fitBounds(bounds,{paddingTopLeft:[24,isTouchDevice()?240:30],paddingBottomRight:[24,30],maxZoom:16});const label=document.createElement('span');label.innerHTML='Bonne réponse : '+cardNameHtml(game.card);targets[0].bindTooltip(label,{permanent:true}).openTooltip();}
     for (const badge of result.newBadges || []) els['collect-map-hint'].append(` · Badge : ${badge.name}`);
-    refreshQuota();loadWeeklyPlay();renderGoal();
+    if(result.review){
+      reviewSession={...result.review,completed:false};
+      els['collect-next'].textContent=result.review.position>=result.review.total?'Voir le bilan':'Carte suivante';
+      document.getElementById('collect-review-progress').textContent=`Carte ${result.review.position}/${result.review.total} · ${result.review.correct} bonne${result.review.correct>1?'s':''} réponse${result.review.correct>1?'s':''} · Sans récompense`;
+      reviews.refresh();
+    }else{refreshQuota();loadWeeklyPlay();renderGoal();}
   }
 
   function renderGuessHistory(payload) {
@@ -528,7 +548,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const currentGame = game;
     answering = true; exitButton.disabled=true;
     try {
-      const result = await request(`/api/collect/games/${encodeURIComponent(game.gameId)}/answer`, {
+      const result = await request(game.review?`/api/collect/reviews/games/${encodeURIComponent(game.gameId)}/answer`:`/api/collect/games/${encodeURIComponent(game.gameId)}/answer`, {
         method: 'POST', body: JSON.stringify({ answerEntityId: selectedAnswer.id, answerContext: selectedAnswer.context, requestId: selectedAnswer.requestId ||= crypto.randomUUID() }),
       });
       if (game !== currentGame) return;
@@ -537,6 +557,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       else reveal(result);
     } catch (error) {
       showError(error.message);
+      if(game===currentGame && game.review && error.status===409){game.finished=true;els['collect-next'].hidden=false;els['collect-next'].disabled=false;els['collect-next'].textContent='Passer cette carte';}
     } finally {answering=false;exitButton.disabled=false;}
   }
 
@@ -741,7 +762,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const arr=document.getElementById('collect-filter-arrondissement');if(!arr.options.length)arr.innerHTML='<option value="">Tous les arrondissements</option>'+Array.from({length:20},(_,i)=>`<option value="${i+1}">${i+1}${i===0?'er':'e'} arrondissement</option>`).join('');
   }
 
-  const personalAlbums=initPersonalAlbums(request,renderCard,album=>albumTarget.buttonMarkup(album),renderGoal);
+  const personalAlbums=initPersonalAlbums(request,renderCard,album=>reviews.buttons('personal-'+album.id)+albumTarget.buttonMarkup(album),async()=>{await renderGoal();await reviews.refresh();});
   let albumsPayload=null;
   let albumMap=null,albumLayer=null,albumRequest=0;
   function albumFamily(slug){return slug.startsWith('street-district-')?'street-district':slug.startsWith('street-arrondissement-')?'street-arrondissement':({'streets':'street','famous-streets':'famous','main-streets':'main','districts':'district','monuments':'monument','bus':'bus'}[slug]||'');}
@@ -753,7 +774,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     document.getElementById('collect-album-geography-label').hidden=!geographic;
     const choices=albumsPayload.albums.filter(a=>albumFamily(a.slug)===family).sort((a,b)=>a.name.localeCompare(b.name,'fr',{numeric:true}));
     if(geographic && geo.dataset.family!==family){geo.innerHTML=choices.map(a=>`<option value="${escapeHtml(a.slug)}">${escapeHtml(a.name)}</option>`).join('');geo.dataset.family=family;}
-    els['collect-album-grid'].innerHTML=(albumsPayload.albums||[]).filter(a=>family?(albumFamily(a.slug)===family&&(!geographic||a.slug===geo.value)):!a.slug.startsWith('street-district-')&&!a.slug.startsWith('street-arrondissement-')).map(album=>`<article class="collect-album"><button class="collect-album-open" data-album="${escapeHtml(album.slug)}" type="button"><strong>${escapeHtml(album.name)}</strong><span>${socialApi?'Possédées : ':''}${album.owned_active_card_count} / ${album.active_card_count} · ${percentage(album.owned_active_card_count,album.active_card_count)} %</span><span class="collect-progress-track"><i style="width:${Number(album.progress)}%"></i></span>${album.earned_active_card_count!==undefined?`<small class="collect-personal-progress">Gagnées personnellement : ${album.earned_active_card_count} / ${album.active_card_count}</small>`:''}<small>Voir mes lieux sur la carte →</small></button><div class="collect-album-target-actions">${albumTarget.buttonMarkup(album)}</div></article>`).join('');
+    els['collect-album-grid'].innerHTML=(albumsPayload.albums||[]).filter(a=>family?(albumFamily(a.slug)===family&&(!geographic||a.slug===geo.value)):!a.slug.startsWith('street-district-')&&!a.slug.startsWith('street-arrondissement-')).map(album=>`<article class="collect-album"><div class="collect-album-summary"><strong>${escapeHtml(album.name)}</strong><span>${socialApi?'Possédées : ':''}${album.owned_active_card_count} / ${album.active_card_count} · ${percentage(album.owned_active_card_count,album.active_card_count)} %</span>${album.earned_active_card_count!==undefined?`<small class="collect-personal-progress">Gagnées personnellement : ${album.earned_active_card_count} / ${album.active_card_count}</small>`:''}<span class="collect-progress-track"><i style="width:${Number(album.progress)}%"></i></span>${reviews.buttons(album.slug)}${albumTarget.buttonMarkup(album)}<button class="btn-tertiary" data-album="${escapeHtml(album.slug)}" type="button">Voir les lieux sur la carte</button></div></article>`).join('');
     if(!family)els['collect-album-grid'].insertAdjacentHTML('beforeend',['street-district','street-arrondissement'].map(group=>`<article class="collect-album"><button class="collect-album-open" data-album-group="${group}" type="button"><strong>${group==='street-district'?'Rues par quartier':'Rues par arrondissement'}</strong><small>Choisir ${group==='street-district'?'un quartier':'un arrondissement'} →</small></button></article>`).join(''));
     const basic=new Set(['collect-first-card','collect-10-cards','collect-100-cards','album-streets','album-districts','album-monuments','album-bus','collect-master']);
     const badges=albumsPayload.badges||[];const extra=badges.filter(b=>!basic.has(b.slug)&&(!family||albumFamily(b.slug.replace(/^album-/,''))===family));
@@ -795,7 +816,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     const view=document.getElementById('collect-album-view');view.hidden=false;
     const album=albumsPayload?.albums.find(a=>a.slug===slug);
     document.getElementById('collect-album-title').textContent=album?.name||'Mon album';
-    document.getElementById('collect-album-target-action').innerHTML=album?albumTarget.buttonMarkup(album):'';
+    document.getElementById('collect-album-target-action').innerHTML=album?reviews.buttons(album.slug)+albumTarget.buttonMarkup(album):'';
     document.getElementById('collect-album-map-note').textContent='Chargement de l’album…';
     view.scrollIntoView({behavior:'smooth',block:'start'});
     try {
@@ -839,6 +860,25 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     catch(_error){document.getElementById('collect-weekly-play').textContent='';}
   }
   const albumTarget=initAlbumGoal(request);
+  const reviews=initCollectReviews(request,async options=>{if(answering)return;document.querySelector('[data-panel="play"]').click();await startGame(options);});
+  document.getElementById('collect-collection-review').innerHTML=reviews.buttons();
+  function finishReview(payload){
+    reviewSession={...payload.review,completed:true};pendingReviewGame=null;game=null;selectedAnswer=null;leaveMap();questionPanel.hidden=true;
+    gameControls.hidden=true;els['collect-leaderboard'].hidden=true;
+    els['collect-next'].hidden=true;els['collect-game-status'].hidden=false;els['collect-game-status'].textContent='Session de révision terminée';
+    document.getElementById('collect-review-progress').hidden=true;
+    document.getElementById('collect-review-end').hidden=false;
+    const r=payload.review;
+    document.getElementById('collect-review-summary').textContent=`${r.correct}/${r.answered} bonnes réponses · ${r.errors} placement${r.errors>1?'s':''} à revoir.${r.remainingErrors!==undefined?` ${r.remainingErrors} erreur${r.remainingErrors>1?'s':''} restante${r.remainingErrors>1?'s':''} dans ce périmètre.`:''} Aucune carte ni aucun fragment gagné.`;
+    document.getElementById('collect-review-continue').disabled=r.mode==='errors'&&r.remainingErrors===0;
+    reviews.refresh();
+  }
+  document.getElementById('collect-review-continue').addEventListener('click',()=>startGame());
+  document.getElementById('collect-review-return').addEventListener('click',()=>{
+    reviewSession=null;pendingReviewGame=null;document.getElementById('collect-review-end').hidden=true;gameControls.hidden=false;els['collect-leaderboard'].hidden=false;
+    els['collect-next'].hidden=false;els['collect-next'].disabled=false;refreshQuota();
+    document.querySelector('[data-panel="collection"]').click();
+  });
   function renderGoal(){return albumTarget.refresh();}
   async function loadWeeklyChallenge(){
     const current=++weeklyRequest;
@@ -912,8 +952,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       requestAnimationFrame(() => map.invalidateSize());
       if (game.question && !game.finished) showQuestion(game.questionPayload);
     }
-    if (selected === 'collection') await loadCollection();
-    if (selected === 'albums') {await loadAlbums();personalAlbums.load();}
+    if (selected === 'collection') {await loadCollection();reviews.refresh();}
+    if (selected === 'albums') {await loadAlbums();personalAlbums.load();reviews.refresh();}
     if (selected === 'play') { await loadAlbumOptions().catch(()=>{}); renderRankingGeography(); await Promise.all([loadWeeklyOptions(),loadWeeklyChallenge(),loadLeaderboard()]); }
   }));
   async function loadPublicProfile(username) {
@@ -1102,7 +1142,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   document.querySelector('.collect-shell').addEventListener('error',handleImageError,true);
   detailDialog.addEventListener('error',handleImageError,true);
 
-  els['collect-next'].addEventListener('click', startGame);
+  els['collect-next'].addEventListener('click', ()=>startGame());
   function restoreMapInteraction() {
     if (!map || !game || game.finished || !document.body.classList.contains('collect-session-active')) return;
     if (!answering) exitButton.disabled = false;

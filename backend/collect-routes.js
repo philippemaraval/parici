@@ -912,4 +912,71 @@ module.exports = function registerCollect({
       }
     }),
   );
+
+  const collectReviews = require("./domains/collect/reviews");
+  const reviewHandler = (handler) =>
+    asyncHandler(async (req, res) => {
+      res.setHeader("Cache-Control", "no-store");
+      try {
+        return res.json(await handler(req));
+      } catch (error) {
+        if ([400, 404, 409].includes(error.status))
+          return res.status(error.status).json({ error: error.message });
+        throw error;
+      }
+    });
+  const reviewId = (value) =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value || "",
+    );
+  app.get(
+    "/api/collect/reviews/counts",
+    authenticateToken,
+    reviewHandler((req) =>
+      collectReviews.counts(db, req.user.id, req.query.scope || ""),
+    ),
+  );
+  app.post(
+    "/api/collect/reviews",
+    authenticateToken,
+    reviewHandler((req) =>
+      collectReviews.start(db, req.user.id, {
+        mode: req.body?.mode,
+        scope: req.body?.scope,
+      }),
+    ),
+  );
+  app.post(
+    "/api/collect/reviews/:sessionId/next",
+    authenticateToken,
+    reviewHandler((req) => {
+      if (!reviewId(req.params.sessionId))
+        throw Object.assign(new Error("Session invalide"), { status: 400 });
+      return collectReviews.next(db, req.user.id, req.params.sessionId);
+    }),
+  );
+  app.post(
+    "/api/collect/reviews/games/:gameId/answer",
+    authenticateToken,
+    reviewHandler((req) => {
+      const answer = req.body?.answerEntityId,
+        context = req.body?.answerContext || "";
+      if (
+        !reviewId(req.params.gameId) ||
+        typeof answer !== "string" ||
+        !answer.trim() ||
+        answer.length > 200 ||
+        typeof context !== "string" ||
+        context.length > 200
+      )
+        throw Object.assign(new Error("Réponse invalide"), { status: 400 });
+      return collectReviews.answer(
+        db,
+        req.user.id,
+        req.params.gameId,
+        answer.trim(),
+        context,
+      );
+    }),
+  );
 };

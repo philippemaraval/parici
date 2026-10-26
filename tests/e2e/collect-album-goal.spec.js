@@ -135,7 +135,7 @@ test("album targets persist, switch, and can be removed on desktop and mobile", 
   if (info.project.name === "mobile-chromium")
     await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
-    path: `/private/tmp/collect-target-${info.project.name}.png`,
+    path: info.outputPath("collect-target.png"),
     fullPage: true,
   });
   await page.locator("#collect-target-remove").click();

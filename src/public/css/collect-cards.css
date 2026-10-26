@@ -263,3 +263,17 @@
 .collect-target-summary{padding:14px;border:1px solid #ccd6ee;border-radius:12px;background:#f2f5fc;margin-bottom:14px}
 .collect-target-summary[hidden]{display:none}
 .collect-target-summary p{line-height:1.5;margin:8px 0}
+
+.collect-review-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.collect-review-actions button{white-space:normal;max-width:100%}
+.collect-review-note{font-size:13px;line-height:1.5;color:#526580}
+.collect-review-end{padding:16px;border:1px solid #ccd6ee;border-radius:12px;background:#f2f5fc}
+.collect-review-end[hidden]{display:none}
+.collect-review-end button{margin:5px 5px 0 0}
+.collect-album-summary{color:#12297a}
+.collect-album-summary .collect-review-actions{margin:0}
+
+.collect-album>.collect-album-summary:first-child{display:flex;flex-direction:column;align-items:stretch;gap:10px;min-width:0;padding:0}
+.collect-album-summary .collect-review-actions{flex-direction:column;align-items:stretch}
+.collect-album-summary .collect-target-button{width:100%}
+.collect-play-rankings[hidden]{display:none}
