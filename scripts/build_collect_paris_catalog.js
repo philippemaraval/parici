@@ -541,6 +541,7 @@ for (const [key, required] of Object.entries(fragmentRequirements)) {
   record.fragments_required = required;
   record.questions = questions;
 }
+require("../backend/domains/collect/thematic-albums").applyThematicAlbums({ albums, records });
 const numberingPath = path.join(root, "data/collect_numbering_paris.json");
 const numbering = fs.existsSync(numberingPath)
   ? read("data/collect_numbering_paris.json")

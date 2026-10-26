@@ -296,3 +296,5 @@
 .collect-result-details[open]>summary{margin:0 -9px}
 
 @media(max-height:700px){#collect-revealed-card .collect-card{max-width:220px}}
+
+.collect-album-description{margin:0;color:#596780;font-size:13px;line-height:1.45;overflow-wrap:anywhere}

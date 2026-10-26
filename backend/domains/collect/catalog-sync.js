@@ -46,8 +46,9 @@ async function syncCatalog(client, value = catalog) {
   );
   // Numbering, manual rarities, archives, fragments, copies and editorial overrides are never reset.
   await client.query(
-    `INSERT INTO albums(slug,name) SELECT slug,name FROM jsonb_to_recordset($1::jsonb) AS a(slug text,name text)
-    ON CONFLICT(slug) DO NOTHING`,
+    `INSERT INTO albums(slug,name,description) SELECT slug,name,description FROM jsonb_to_recordset($1::jsonb) AS a(slug text,name text,description text)
+    ON CONFLICT(slug) DO UPDATE SET name=EXCLUDED.name,description=EXCLUDED.description
+    WHERE EXCLUDED.slug LIKE 'theme-%'`,
     [JSON.stringify(value.albums)],
   );
   const managedSlugs = [
