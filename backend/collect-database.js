@@ -999,7 +999,13 @@ async function finishCollectGame(
         statistics: statistics.get(Number(game.card_id)),
       };
     }
+    const progress = rewardGranted
+      ? await require("./domains/collect/result-progress").resultProgress(
+          client, userId, game.card_id, Number(owned.rows[0]?.count || 0),
+        )
+      : null;
     const response = {
+      progress,
       correct,
       guesses: guesses.map(
         ({ answerEntityId, answerName, feedback, correct }) => ({

@@ -63,5 +63,5 @@ export function initPersonalAlbums(request, renderCard, targetButton = () => "",
   node("delete").addEventListener("click", action(async () => { if (!confirm("Supprimer cet album personnel ? Tes cartes restent dans ta collection.")) return; await request(`/api/collect/personal-albums/${active}`, { method: "DELETE" }); generation++; node("view").hidden = true; await load(); status("Album supprimé."); }));
   node("prev").addEventListener("click", action(async () => { page = Math.max(1, page - 1); await render(); }));
   node("next").addEventListener("click", action(async () => { page++; await render(); }));
-  return { load };
+  return { load, open: async id => { active=id; picking=false; page=1; selection.clear(); await render(); node("view").scrollIntoView({behavior:"smooth",block:"start"}); } };
 }

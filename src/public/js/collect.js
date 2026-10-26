@@ -1,4 +1,5 @@
 import { parseCollectGame } from "../../types/api-boundaries.js";
+import { renderResultProgress } from "./collect-result-view.js";
 import { initCollectReviews } from "./collect-review-view.js";
 import { initAlbumGoal } from "./collect-album-goal-view.js";
 import { initSocial } from "./collect-social-view.js";
@@ -90,6 +91,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     internalNavigation.hidden=!connected;
     authGate.hidden=connected;
     gameControls.hidden=!connected;
+    if(!connected)document.getElementById('collect-result-progress').hidden=true;
     els['collect-quota'].hidden=!connected;
     if(!connected){
       gameRequest++;leaveMap();questionPanel.hidden=true;game=null;selectedAnswer=null;reviewSession=null;pendingReviewGame=null;document.getElementById("collect-review-end").hidden=true;
@@ -139,7 +141,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
           : `${quota.limit}/${quota.limit} · ${formatCountdown(wait)}`;
         els['collect-quota'].title = remaining ? `${quota.copies}/${quota.limit} cartes gagnées` : `Prochaine carte dans ${formatCountdown(wait)}`;
         els['collect-quota'].setAttribute('aria-label', els['collect-quota'].title);
-        if(!reviewSession && (!game || game.finished))els['collect-next'].textContent=remaining?(pendingGame?'Reprendre la partie':game?'Partie suivante':'Lancer une partie'):'Continuer à jouer sans carte';
+        if(!reviewSession && (!game || game.finished))els['collect-next'].textContent=game?.finished?'Rejouer':remaining?(pendingGame?'Reprendre la partie':'Lancer une partie'):'Continuer à jouer sans carte';
         if (nextAt && wait <= 0) { clearInterval(quotaTimer); refreshQuota(); }
       };
       drawQuota();
@@ -313,6 +315,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     if(!authenticated){setCollectAuthentication(false);return;}
     gameControls.hidden=false;els['collect-leaderboard'].hidden=Boolean(reviewSession);
     const requestId = ++gameRequest;
+    document.getElementById('collect-result-progress').hidden=true;
     leaveMap();
     showError('');
     els['collect-next'].disabled = true;
@@ -492,16 +495,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     if (awarded) {
       els['collect-map-hint'].append(result.ownedCount > 1 ? ` · DOUBLON ×${result.ownedCount}` : ' · NOUVELLE');
     }
-    if (result.rewardGranted && collectionPayload?.cards) {
-      const card = collectionPayload.cards.find(item => String(item.id) === String(result.card.id));
-      if (card) card.copy_count = result.ownedCount;
-      const active = collectionPayload.cards.filter(item => item.status === 'active');
-      const owned = active.filter(item => Number(item.copy_count) > 0).length;
-      const progression = document.createElement('small');
-      progression.className = 'collect-reveal-progress';
-      progression.textContent = `${owned} / ${active.length} cartes trouvées · ${percentage(owned,active.length)} %`;
-      els['collect-map-hint'].append(document.createElement('br'), progression);
-    }
+    renderResultProgress(document.getElementById('collect-result-progress'),result);
+    if(result.rewardGranted){collectionPayload=null;pagedCollection=null;albumsPayload=null;}
     if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}
     const targetId=result.card.sourceEntityId || game.card.name;
     const targets=[];
@@ -513,7 +508,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       els['collect-next'].textContent=result.review.position>=result.review.total?'Voir le bilan':'Carte suivante';
       document.getElementById('collect-review-progress').textContent=`Carte ${result.review.position}/${result.review.total} · ${result.review.correct} bonne${result.review.correct>1?'s':''} réponse${result.review.correct>1?'s':''} · Sans récompense`;
       reviews.refresh();
-    }else{refreshQuota();loadWeeklyPlay();renderGoal();}
+    }else{els['collect-next'].textContent='Rejouer';refreshQuota();loadWeeklyPlay();renderGoal();}
   }
 
   function renderGuessHistory(payload) {
@@ -833,6 +828,14 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       document.getElementById('collect-album-map-note').textContent=`${cards.filter(c=>c.owned).length} / ${cards.length} lieux possédés · vert : obtenus · gris : à découvrir.`;
     }catch(error){if(requestId===albumRequest)showError(error.message);}
   }
+  document.getElementById('collect-result-progress').addEventListener('click',async event=>{
+    const button=event.target.closest('[data-result-album]');if(!button)return;
+    document.querySelector('[data-panel="albums"]').click();
+    try{const slug=button.dataset.resultAlbum;
+      if(slug.startsWith('personal-'))await personalAlbums.open(slug.slice(9));
+      else if(slug){await loadAlbumOptions();await openAlbum(slug);}
+    }catch(error){showError(error.message);}
+  });
   els['collect-album-grid'].addEventListener('click',event=>{const group=event.target.closest('[data-album-group]');if(group){document.getElementById('collect-album-family').value=group.dataset.albumGroup;renderAlbums();return;}const button=event.target.closest('[data-album]');if(button)openAlbum(button.dataset.album);});
   document.getElementById('collect-album-family').addEventListener('change',()=>{albumRequest++;document.getElementById('collect-album-view').hidden=true;renderAlbums();});
   document.getElementById('collect-album-geography').addEventListener('change',()=>{renderAlbums();openAlbum(document.getElementById('collect-album-geography').value);});
