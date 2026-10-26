@@ -262,7 +262,8 @@ async function cardSetting(pool, user, card, body) {
 async function copies(c, user, selected, lock = false) {
   const rows = (
     await c.query(
-      `SELECT cp.*,COALESCE(m.canonical_card_id,cp.card_id) AS canonical_id,c.name,c.family,c.status,
+      `SELECT cp.*,COALESCE(m.canonical_card_id,cp.card_id) AS canonical_id,c.name,c.family,c.status,c.catalog_present,
+ COALESCE(s.hidden,FALSE) AS card_hidden,
  CASE WHEN c.fragments_enabled THEN 5 ELSE c.current_rarity END AS rarity,
  COALESCE(s.locked,FALSE) AS card_locked
  FROM card_copies cp LEFT JOIN collect_card_merges m ON m.source_card_id=cp.card_id
@@ -553,9 +554,20 @@ async function createOffer(pool, user, body) {
       await exchange(c, user, receiver);
       await view(c, user, receiver);
     }
+    const simple = body.simple === true;
+    if (simple && (kind !== "direct" || parent))
+      throw fail("Proposition simplifiée invalide");
     const given = await copies(c, user, offered, true);
     let received = [];
     if (receiver) received = await copies(c, receiver, requested, true);
+    if (simple)
+      await require("./opportunities").validateSimple(
+        c,
+        user,
+        receiver,
+        given,
+        received,
+      );
     if (old) {
       if (old.kind === "direct") {
         if (
@@ -603,8 +615,8 @@ async function createOffer(pool, user, body) {
         throw fail("Carte recherchée introuvable", 404);
     const result = (
       await c.query(
-        `INSERT INTO collect_trade_offers(id,maker_id,receiver_id,kind,offered_ids,requested_ids,offered_cards,wanted_cards,parent_id,request_id)
-   VALUES($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,$10) RETURNING *`,
+        `INSERT INTO collect_trade_offers(id,maker_id,receiver_id,kind,offered_ids,requested_ids,offered_cards,wanted_cards,parent_id,request_id,simple_exchange)
+   VALUES($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,$10,$11) RETURNING *`,
         [
           crypto.randomUUID(),
           user,
@@ -616,6 +628,7 @@ async function createOffer(pool, user, body) {
           JSON.stringify(wanted),
           parent,
           requestId,
+          simple,
         ],
       )
     ).rows[0];
@@ -656,15 +669,19 @@ async function offerAction(pool, user, offerId, action, confirmed) {
       action === "accept" &&
       o.state === "accepted" &&
       String(user) === String(o.receiver_id)
-    )
+    ) {
+      const trade = (
+        await c.query("SELECT * FROM collect_trades WHERE offer_id=$1", [o.id])
+      ).rows[0];
+      const summary = privateTradeSummary(trade.summary, "receiver");
       return {
-        trade: (
-          await c.query("SELECT * FROM collect_trades WHERE offer_id=$1", [
-            o.id,
-          ])
-        ).rows[0],
+        trade: { ...trade, summary },
         duplicate: true,
+        ...(summary.progress
+          ? { progress: summary.progress.receiver, card: summary.given[0] }
+          : {}),
       };
+    }
     if (o.state !== "active" || o.expires_at <= new Date())
       throw fail("Offre clôturée", 409);
     if (action === "withdraw") {
@@ -701,6 +718,14 @@ async function offerAction(pool, user, offerId, action, confirmed) {
     );
     const given = await copies(c, o.maker_id, o.offered_ids.map(String)),
       received = await copies(c, o.receiver_id, o.requested_ids.map(String));
+    if (o.simple_exchange)
+      await require("./opportunities").validateSimple(
+        c,
+        o.maker_id,
+        o.receiver_id,
+        given,
+        received,
+      );
     const tradeId = crypto.randomUUID(),
       summary = {
         given: given.map((r) => ({
@@ -740,6 +765,22 @@ async function offerAction(pool, user, offerId, action, confirmed) {
           [tradeId, r.id, r.canonical_id, from, to],
         );
     }
+    if (o.simple_exchange) {
+      const { resultProgress } = require("../collect/result-progress");
+      summary.progress = {
+        maker: await resultProgress(c, o.maker_id, received[0].canonical_id, 1),
+        receiver: await resultProgress(
+          c,
+          o.receiver_id,
+          given[0].canonical_id,
+          1,
+        ),
+      };
+      await c.query("UPDATE collect_trades SET summary=$2::jsonb WHERE id=$1", [
+        tradeId,
+        JSON.stringify(summary),
+      ]);
+    }
     await c.query(
       "UPDATE collect_trade_offers SET state='accepted' WHERE id=$1",
       [o.id],
@@ -753,7 +794,13 @@ async function offerAction(pool, user, offerId, action, confirmed) {
     const db = require("../../database");
     await db.awardCollectBadges?.(o.maker_id, c);
     await db.awardCollectBadges?.(o.receiver_id, c);
-    return { tradeId, state: "accepted" };
+    return {
+      tradeId,
+      state: "accepted",
+      ...(summary.progress
+        ? { progress: summary.progress.receiver, card: summary.given[0] }
+        : {}),
+    };
   });
 }
 async function offerRows(pool, user, query = {}, market = false) {
@@ -813,7 +860,7 @@ async function offerRows(pool, user, query = {}, market = false) {
     const snapshot = selected.length
       ? (
           await pool.query(
-            `SELECT cp.id::text,COALESCE(m.canonical_card_id,cp.card_id)::text AS card_id,c.name,c.family,cp.source,cp.daily_date,cp.daily_attempt_count,cp.locked
+            `SELECT cp.id::text,COALESCE(m.canonical_card_id,cp.card_id)::text AS card_id,c.name,c.family,CASE WHEN c.fragments_enabled THEN 5 ELSE c.current_rarity END AS rarity,cp.source,cp.daily_date,cp.daily_attempt_count,cp.locked
    FROM card_copies cp LEFT JOIN collect_card_merges m ON m.source_card_id=cp.card_id JOIN cards c ON c.id=COALESCE(m.canonical_card_id,cp.card_id) WHERE cp.id=ANY($1::bigint[]) AND cp.user_id=ANY($2::int[])`,
             [selected, [o.maker_id, o.receiver_id].filter(Boolean)],
           )
@@ -835,13 +882,22 @@ async function offerRows(pool, user, query = {}, market = false) {
   }
   return { offers: out, page, pageSize: 50 };
 }
+function privateTradeSummary(summary, role) {
+  // Personal albums stay private even though both snapshots share one receipt.
+  return summary.progress
+    ? { ...summary, progress: { [role]: summary.progress[role] } }
+    : summary;
+}
 async function history(pool, user) {
   return (
     await pool.query(
       `SELECT t.id,t.executed_at,t.summary,t.maker_id=$1 AS maker,u.username AS other_name FROM collect_trades t LEFT JOIN users u ON u.id=CASE WHEN t.maker_id=$1 THEN t.receiver_id ELSE t.maker_id END WHERE $1 IN(t.maker_id,t.receiver_id) ORDER BY t.executed_at DESC LIMIT 100`,
       [user],
     )
-  ).rows;
+  ).rows.map((row) => ({
+    ...row,
+    summary: privateTradeSummary(row.summary, row.maker ? "maker" : "receiver"),
+  }));
 }
 async function statistics(pool, card) {
   return (

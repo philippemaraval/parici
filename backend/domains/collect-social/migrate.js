@@ -22,6 +22,23 @@ async function migrate(pool) {
         "Le schéma Collect Paris doit être initialisé avant les échanges.",
       );
     }
+    const simple = await c.query(
+      "SELECT value_text FROM app_settings WHERE key='collect_simple_trades_schema'",
+    );
+    if (!simple.rows[0]?.value_text) {
+      await c.query(
+        require("node:fs").readFileSync(
+          require("node:path").resolve(
+            __dirname,
+            "../../../migrations/20261026_collect_simple_trades.sql",
+          ),
+          "utf8",
+        ),
+      );
+      await c.query(
+        "INSERT INTO app_settings(key,value_text) VALUES('collect_simple_trades_schema','20261026-1') ON CONFLICT(key) DO UPDATE SET value_text=EXCLUDED.value_text",
+      );
+    }
     await c.query("COMMIT");
     markMigrated();
   } catch (e) {

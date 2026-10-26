@@ -1,3 +1,5 @@
+import { initExchangeSuggestions } from "./collect-exchange-view.js";
+import { renderResultProgress } from "./collect-result-view.js";
 const esc = (v) =>
   String(v ?? "").replace(
     /[&<>"']/g,
@@ -43,31 +45,26 @@ export async function initSocial({ request, refresh }) {
     if (event.target === dialog) dialog.close();
   });
   let generation = 0,
-    tab = ["friends", "offers", "market", "manage", "history"].includes(
+    tab = ["opportunities", "duplicates", "friends", "offers", "market", "manage", "history"].includes(
       new URLSearchParams(location.search).get("tab"),
     )
       ? new URLSearchParams(location.search).get("tab")
-      : "friends",
+      : "opportunities",
+    suggestionCard=null,
     marketPage = 1,
     managerPage = 1,
     managerFilter = "all";
   const status = document.createElement("p");
   status.className = "collect-social-status";
   status.setAttribute("role", "status");
-  panel.innerHTML = `<h3>Amis et échanges</h3><p>Choisis un ami, sélectionne les cartes, puis envoie ta proposition.</p><nav class="collect-social-tabs" aria-label="Amis et échanges">${[
-    ["friends", "Amis"],
-    ["offers", "Propositions"],
-    ["market", "Marché"],
-    ["manage", "Mes exemplaires"],
-    ["history", "Historique"],
-  ]
-    .map(
-      ([v, n]) =>
-        `<button class="btn-secondary" type="button" data-social-tab="${v}">${n}</button>`,
-    )
-    .join("")}</nav><div id="collect-social-content"></div>`;
+  const tabButton=([v,n])=>`<button class="btn-secondary" type="button" data-social-tab="${v}">${n}</button>`;
+  panel.innerHTML=`<h3>Mes échanges</h3><p>Complète ta collection grâce à tes doublons.</p><nav class="collect-social-tabs collect-social-primary" aria-label="Mes échanges">${[['duplicates','Mes doublons'],['opportunities','Échanges possibles'],['offers','Mes propositions']].map(tabButton).join('')}</nav><details class="collect-social-more"><summary>Amis et outils avancés</summary><nav class="collect-social-tabs" aria-label="Autres outils d’échange">${[['friends','Amis'],['market','Marché'],['manage','Mes exemplaires'],['history','Historique']].map(tabButton).join('')}</nav></details><div id="collect-social-content"></div>`;
   panel.insertBefore(status, panel.querySelector("#collect-social-content"));
   const content = panel.querySelector("#collect-social-content");
+  const suggestions=initExchangeSuggestions({api,send,content,showModal,modalAction,message,
+    showOpportunities:async cardId=>{suggestionCard=cardId;tab='opportunities';await render();},
+    showOffers:async()=>{tab='offers';await render();}
+  });
   function message(text) {
     status.textContent = text;
   }
@@ -197,22 +194,12 @@ export async function initSocial({ request, refresh }) {
                 return `${esc(c ? label(c) : "Carte #" + v.cardId)} ×${v.quantity}${c ? " · " + rarity[c.rarity] + (c.status === "archived" ? " · Archivée" : "") : ""}`;
               })
               .join("<br>");
-          return `<article class="collect-offer" data-offer="${o.id}"><h3>${market ? esc(o.maker_name) : mine ? "À " + esc(other) : "De " + esc(other)}</h3><p>${states[o.state]} · expire le ${date(o.expires_at)}</p><div class="collect-match"><section><h4>${market ? "Proposées" : "L’auteur donne"}</h4><p>${side(o.offered_cards)}</p></section><section><h4>${market ? "Recherchées" : "L’auteur reçoit"}</h4><p>${
-            market
-              ? side(o.wanted_cards) || "Offre ouverte"
-              : o.requested_ids
-                  .map((v) => {
-                    const c = o.copies.find((c) => String(c.id) === String(v));
-                    return c
-                      ? esc(label(c)) + " · " + esc(origin(c))
-                      : "Exemplaire indisponible";
-                  })
-                  .join("<br>")
-          }</p></section></div>${o.kind === "direct" ? `<details><summary>Exemplaires précis</summary>${o.copies.map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</details>` : ""}${o.lastCopies?.length ? `<p class="collect-last-copy-warning">Dernier exemplaire : ${o.lastCopies.map((c) => esc(label(c))).join(", ")}. La carte disparaîtra de la collection du joueur qui la cède et son classement pourra baisser.</p>` : ""}<div class="collect-social-actions">${o.state === "active" ? (mine ? `<button class="btn-tertiary" data-offer-withdraw="${o.id}">Retirer</button>` : market ? `<button class="btn-primary" data-market-respond="${o.id}" data-exact="true">${o.wanted_cards.length ? "Accepter l’offre précise" : "Faire une offre"}</button>${o.wanted_cards.length ? `<button class="btn-secondary" data-market-respond="${o.id}">Contre-proposer</button>` : ""}` : `<button class="btn-primary" data-offer-accept="${o.id}">Examiner et accepter</button><button class="btn-secondary" data-offer-counter="${o.id}">Contre-proposer</button><button class="btn-tertiary" data-offer-refuse="${o.id}">Refuser</button>`) : ""}${!mine ? `<button class="btn-tertiary" data-report-player="${o.maker_id}" data-report-offer="${o.id}">Signaler</button>` : ""}</div></article>`;
+          const requestedSide=o.requested_ids.map(v=>{const c=o.copies.find(c=>String(c.id)===String(v));return c?esc(label(c))+' · '+rarity[c.rarity]:'Exemplaire indisponible';}).join('<br>');
+          return `<article class="collect-offer" data-offer="${o.id}"><h3>${market ? esc(o.maker_name) : mine ? "À " + esc(other) : "De " + esc(other)}</h3><p>${states[o.state]} · expire le ${date(o.expires_at)}</p><div class="collect-match"><section><h4>${market?'Proposées':'Je donne'}</h4><p>${market||mine?side(o.offered_cards):requestedSide}</p></section><section><h4>${market?'Recherchées':'Je reçois'}</h4><p>${market?side(o.wanted_cards)||'Offre ouverte':mine?requestedSide:side(o.offered_cards)}</p></section></div>${o.kind === "direct" ? `<details><summary>Exemplaires précis</summary>${o.copies.map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</details>` : ""}${o.lastCopies?.length ? `<p class="collect-last-copy-warning">Dernier exemplaire : ${o.lastCopies.map((c) => esc(label(c))).join(", ")}. La carte disparaîtra de la collection du joueur qui la cède et son classement pourra baisser.</p>` : ""}<div class="collect-social-actions">${o.state === "active" ? (mine ? `<button class="btn-tertiary" data-offer-withdraw="${o.id}">Retirer</button>` : market ? `<button class="btn-primary" data-market-respond="${o.id}" data-exact="true">${o.wanted_cards.length ? "Accepter l’offre précise" : "Faire une offre"}</button>${o.wanted_cards.length ? `<button class="btn-secondary" data-market-respond="${o.id}">Contre-proposer</button>` : ""}` : `<button class="btn-primary" data-offer-accept="${o.id}">Examiner et accepter</button>${o.simple_exchange?"":`<button class="btn-secondary" data-offer-counter="${o.id}">Contre-proposer</button>`}<button class="btn-tertiary" data-offer-refuse="${o.id}">Refuser</button>`) : ""}${!mine ? `<button class="btn-tertiary" data-report-player="${o.maker_id}" data-report-offer="${o.id}">Signaler</button>` : ""}</div></article>`;
         })
         .join("") || "<p>Aucune offre.</p>";
     if (!market) {
-      content.innerHTML = `<h3>Propositions directes</h3><p>25 propositions actives maximum · expiration après 7 jours.</p><div class="collect-social-list">${markup}</div>`;
+      content.innerHTML = `<h3>Mes propositions</h3><p>25 propositions actives maximum · expiration après 7 jours.</p><div class="collect-social-list">${markup}</div>`;
     } else {
       if (!content.querySelector("#social-market-search"))
         content.innerHTML = `<h3>Marché de troc</h3><p>25 annonces actives maximum, indépendantes des propositions directes.</p><button class="btn-primary" id="social-create-listing">Publier une annonce</button><form id="social-market-search" class="collect-social-filters"><label>Carte proposée<input name="offered" type="search" maxlength="100"></label><label>Carte recherchée<input name="wanted" type="search" maxlength="100"></label><label>Famille<select name="family"><option value="">Toutes</option><option value="street">Rues</option><option value="district">Quartiers</option><option value="monument">Monuments</option><option value="bus">Bus</option></select></label><label>Rareté<select name="rarity"><option value="0">Toutes</option>${rarity
@@ -256,23 +243,29 @@ export async function initSocial({ request, refresh }) {
       o = payload.offers.find((o) => o.id === offerId);
     if (!o || o.state !== "active")
       throw new Error("Cette offre n’est plus disponible.");
-    const list = (copyIds) =>
+    const list = (copyIds,side) =>
       copyIds
         .map((id) => {
           const c = o.copies.find((c) => String(c.id) === String(id));
-          return `<li>${esc(c ? label(c) : "Exemplaire indisponible")} · ${esc(origin(c || { id }))}</li>`;
+          return `<li>${esc(c ? label(c) : "Exemplaire indisponible")} · ${o.simple_exchange?esc(rarity[c?.rarity]||'')+' · '+(side==='give'?'Doublon : un exemplaire conservé':'Nouvelle pour ma collection'):esc(origin(c || { id }))}</li>`;
         })
         .join("");
     showModal(
-      `<h2>Confirmer l’échange</h2><div class="collect-match"><section><h3>Tu donnes</h3><ul>${list(o.requested_ids)}</ul></section><section><h3>Tu reçois</h3><ul>${list(o.offered_ids)}</ul></section></div>${o.lastCopies?.length ? `<p class="collect-last-copy-warning">Dernier exemplaire : ${o.lastCopies.map((c) => esc(label(c))).join(", ")}. Ces cartes disparaîtront de la collection du joueur qui les cède ; son classement peut baisser.</p>` : ""}<p>L’échange confirmé est définitif et irréversible.</p><button class="btn-primary" id="social-confirm-trade">Confirmer définitivement l’échange</button>`,
+      `<h2>Confirmer l’échange</h2><div class="collect-match"><section><h3>Tu donnes</h3><ul>${list(o.requested_ids,"give")}</ul></section><section><h3>Tu reçois</h3><ul>${list(o.offered_ids,"receive")}</ul></section></div>${o.lastCopies?.length ? `<p class="collect-last-copy-warning">Dernier exemplaire : ${o.lastCopies.map((c) => esc(label(c))).join(", ")}. Ces cartes disparaîtront de la collection du joueur qui les cède ; son classement peut baisser.</p>` : ""}<p>L’échange confirmé est définitif et irréversible.</p><button class="btn-primary" id="social-confirm-trade">Confirmer définitivement l’échange</button>`,
     );
     dialog.querySelector("#social-confirm-trade").onclick = modalAction(
       async () => {
-        await send(`/offers/${offerId}/accept`, { confirmed: true });
+        const result=await send(`/offers/${offerId}/accept`, { confirmed: true });
         dialog.close();
         await refresh();
         await render();
         message("Échange effectué.");
+        const progress=result.progress||result.trade?.summary?.progress?.receiver;
+        const card=result.card||result.trade?.summary?.given?.[0];
+        if(progress&&card){
+          showModal('<h2>Échange effectué</h2><section id="collect-trade-result" class="collect-result-progress"></section>');
+          renderResultProgress(document.getElementById('collect-trade-result'),{correct:true,rewardGranted:true,ownedCount:1,progress,card:{...card,rarityLabel:rarity[o.cards.find(c=>String(c.id)===String(card.cardId))?.rarity]||''}});
+        }
       },
     );
   }
@@ -675,6 +668,8 @@ export async function initSocial({ request, refresh }) {
         b.setAttribute("aria-pressed", String(b.dataset.socialTab === tab)),
       );
     content.innerHTML = "<p>Chargement…</p>";
+    if(['friends','market','manage','history'].includes(tab))panel.querySelector('.collect-social-more').open=true;
+    if(tab==='duplicates'||tab==='opportunities')return suggestions.render(tab,suggestionCard,()=>mine===generation);
     if (tab === "friends") return friendView();
     if (tab === "offers") return offerView();
     if (tab === "market") return offerView(true);
@@ -687,7 +682,7 @@ export async function initSocial({ request, refresh }) {
         rows
           .map(
             (t) =>
-              `<article><h4>${date(t.executed_at)} · ${esc(t.other_name || "Compte supprimé")}</h4><div class="collect-match"><section><h5>Donnés</h5>${(t.maker ? t.summary.given : t.summary.received).map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</section><section><h5>Reçus</h5>${(t.maker ? t.summary.received : t.summary.given).map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</section></div></article>`,
+              `<article><h4>${date(t.executed_at)} · ${esc(t.other_name || "Compte supprimé")}</h4><div class="collect-match"><section><h5>Donnés</h5>${(t.maker ? t.summary.given : t.summary.received).map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</section><section><h5>Reçus</h5>${(t.maker ? t.summary.received : t.summary.given).map((c) => `<p>${esc(label(c))} · ${esc(origin(c))}</p>`).join("")}</section></div>${(t.summary.progress?.[t.maker?"maker":"receiver"]?.albums||[]).map(a=>`<p>${esc(a.name)} : ${a.before} → ${a.after}/${a.total}${a.complete?" · Album terminé !":""}</p>`).join("")}</article>`,
           )
           .join("");
     }
@@ -710,6 +705,7 @@ export async function initSocial({ request, refresh }) {
     if (!b) return;
     if (b.dataset.socialTab) {
       tab = b.dataset.socialTab;
+      suggestionCard=null;
       await render();
     }
     for (const action of ["request", "accept", "remove"])
@@ -806,5 +802,8 @@ export async function initSocial({ request, refresh }) {
     ]);
     return { albums, personal };
   }
-  return { render, mountCard, attachProfile, progress, user, compose };
+  return { render, mountCard, attachProfile, progress, user, compose,
+    showOpportunities:async cardId=>{suggestionCard=cardId||null;tab='opportunities';await render();},
+    async hasOpportunities(cardId){const payload=await api('/opportunities?cardId='+encodeURIComponent(cardId));return Boolean(payload.opportunities?.length);}
+  };
 }

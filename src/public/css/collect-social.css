@@ -248,3 +248,13 @@
 @media(max-width:600px){.collect-social-list article:not(.collect-offer)>.collect-social-actions{grid-column:1 / -1;grid-row:auto;justify-content:flex-start;margin-top:6px}}
 .collect-composer-sides{display:none}
 @media(max-width:600px){.collect-composer-sides{display:flex;gap:6px;margin:10px 0}.collect-page .collect-composer-sides button{flex:1}.collect-composer-sides button[aria-pressed=true]{background:#c93434;color:#fff;border-color:#c93434}.collect-composer[data-side=give]>[data-compose-section=receive],.collect-composer[data-side=receive]>[data-compose-section=give]{display:none}.collect-composer [data-picker-list]{max-height:38dvh}}
+
+.collect-social-tabs.collect-social-primary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#collect-social-space .collect-social-primary button{white-space:normal;min-height:44px;font-weight:700}
+.collect-social-more{margin:10px 0}.collect-social-more>summary{cursor:pointer;font-size:13px;color:#596780}
+.collect-exchange-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}
+.collect-exchange-pair section{padding:12px;border:1px solid #dce2f2;border-radius:12px;background:#f2f5ff;min-width:0;overflow-wrap:anywhere}
+.collect-exchange-pair h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;color:#596780}.collect-exchange-pair strong{font-size:15px}.collect-exchange-pair p{margin:5px 0}.collect-exchange-pair small{display:block;font-size:12px;line-height:1.4}
+.collect-exchange-album{font-size:13px;color:#237943;overflow-wrap:anywhere}.collect-opportunities>article{min-width:0}.collect-opportunities h4{overflow-wrap:anywhere}.collect-opportunities button{white-space:normal;max-width:100%;min-height:44px}
+
+.collect-social-list.collect-opportunities article:not(.collect-offer){display:block;min-width:0}

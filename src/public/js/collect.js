@@ -497,6 +497,15 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     }
     renderResultProgress(document.getElementById('collect-result-progress'),result);
     if (awarded) document.getElementById('collect-game-controls').scrollTop = 0;
+    if(awarded&&result.ownedCount>1&&result.card?.id){
+      const completedGame=game;
+      socialReady.then(async()=>{
+        if(!socialApi||!(await socialApi.hasOpportunities(result.card.id))||game!==completedGame||!authenticated)return;
+        const button=document.createElement('button');button.type='button';button.className='btn-tertiary';
+        button.dataset.resultExchanges=String(result.card.id);button.textContent='Voir mes échanges possibles';
+        document.getElementById('collect-result-progress').append(button);
+      }).catch(()=>{});
+    }
     if(result.rewardGranted){collectionPayload=null;pagedCollection=null;albumsPayload=null;}
     if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}
     const targetId=result.card.sourceEntityId || game.card.name;
@@ -829,8 +838,16 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       document.getElementById('collect-album-map-note').textContent=`${cards.filter(c=>c.owned).length} / ${cards.length} lieux possédés · vert : obtenus · gris : à découvrir.`;
     }catch(error){if(requestId===albumRequest)showError(error.message);}
   }
-  document.getElementById('collect-result-progress').addEventListener('click',async event=>{
+  document.addEventListener('click',async event=>{
+    const exchangeButton=event.target.closest('[data-result-exchanges]');
+    if(exchangeButton){
+      await socialReady;if(!socialApi)return;
+      document.querySelector('[data-panel="community"]').click();
+      document.querySelector('[data-community-tab="social"]').click();
+      try{await socialApi.showOpportunities(exchangeButton.dataset.resultExchanges);}catch(error){showError(error.message);}return;
+    }
     const button=event.target.closest('[data-result-album]');if(!button)return;
+    button.closest('dialog')?.close();
     document.querySelector('[data-panel="albums"]').click();
     try{const slug=button.dataset.resultAlbum;
       if(slug.startsWith('personal-'))await personalAlbums.open(slug.slice(9));

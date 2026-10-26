@@ -63,7 +63,7 @@ test("friends can compose a multi-card exchange with quantities", async ({
     else if (path.endsWith("/settings")) json = {};
     await route.fulfill({ json });
   });
-  await page.goto("/collect.html?panel=social");
+  await page.goto("/collect.html?panel=social&tab=friends");
   await expect(page.locator("#collect-social-space")).toBeVisible();
   await expect(page.locator(".collect-social-list")).toHaveCSS(
     "display",

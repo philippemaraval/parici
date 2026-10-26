@@ -99,6 +99,18 @@ function router(db, authenticate, admin) {
     ),
   );
   r.get(
+    "/duplicates",
+    route((req) =>
+      require("./opportunities").duplicates(db.pool, req.user.id, req.query),
+    ),
+  );
+  r.get(
+    "/opportunities",
+    route((req) =>
+      require("./opportunities").opportunities(db.pool, req.user.id, req.query),
+    ),
+  );
+  r.get(
     "/matching/:userId",
     route((req) => s.matching(db.pool, req.user.id, s.id(req.params.userId))),
   );
