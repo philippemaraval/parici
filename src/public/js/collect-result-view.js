@@ -24,5 +24,13 @@ export function renderResultProgress(root, result) {
   const album=albums.find(a=>a.targeted)||albums.find(a=>a.complete);
   if(album)body+=`<button type="button" class="btn-tertiary" data-result-album="${escape(album.slug)}">Ouvrir ${escape(album.name)}</button>`;
   if(progress?.otherAlbumCount)body+=`<button type="button" class="btn-tertiary" data-result-album="">Voir les autres albums (+${progress.otherAlbumCount})</button>`;
-  root.innerHTML=`<h3>${escape(title)}</h3>${body}`;
+  const compact = awarded && root.id === 'collect-result-progress';
+  root.classList.toggle('collect-result-progress--compact', compact);
+  if (compact) {
+    const c = progress?.collection;
+    const collection = c ? `<span>Collection : ${c.before}${c.before!==c.after?` → ${c.after}`:''}/${c.total} cartes</span>` : '';
+    root.innerHTML=`<details class="collect-result-details"><summary><strong>${escape(title)}</strong>${collection}<span class="collect-result-details-label">Voir la progression</span></summary>${body}</details>`;
+  } else {
+    root.innerHTML=`<h3>${escape(title)}</h3>${body}`;
+  }
 }

@@ -281,3 +281,18 @@
 .collect-result-progress{margin:10px 0;padding:12px;border:1px solid #dce2f2;border-radius:12px;background:#f2f5ff;color:#12297a;font-size:13px;line-height:1.4;overflow-wrap:anywhere}
 .collect-result-progress[hidden]{display:none}.collect-result-progress h3{font-size:16px;margin:0 0 6px}.collect-result-progress p{margin:4px 0}.collect-result-progress ul{list-style:none;padding:0;margin:8px 0}.collect-result-progress li{margin:8px 0}.collect-result-progress li>span{display:block}.collect-result-complete strong{color:#237943}.collect-result-progress button{max-width:100%;white-space:normal;text-align:left;min-height:44px}
 .collect-result-track{height:5px;margin-top:4px;background:#dce2f2;border-radius:8px;overflow:hidden}.collect-result-track i{display:block;height:100%;width:var(--after);background:#b93636;animation:collect-result-fill .5s ease-out}.collect-result-complete .collect-result-track i{background:#237943}@keyframes collect-result-fill{from{width:var(--before)}to{width:var(--after)}}@media(prefers-reduced-motion:reduce){.collect-result-track i{animation:none}}
+
+
+/* Keep the earned card visible while album details remain available on demand. */
+.collect-result-progress--compact{margin:6px 0;padding:0;font-size:12px;line-height:1.3}
+.collect-result-details>summary{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;padding:7px 9px;min-height:44px;box-sizing:border-box;cursor:pointer;list-style:none}
+.collect-result-details>summary::-webkit-details-marker{display:none}
+.collect-result-details>summary strong{font-size:13px}
+.collect-result-details-label{color:#8c2828;text-decoration:underline;text-underline-offset:2px}
+.collect-result-details-label::before{content:'▸ ';display:inline-block;white-space:pre}
+.collect-result-details[open] .collect-result-details-label::before{content:'▾ '}
+.collect-result-details>summary:focus-visible{outline:2px solid var(--collect-red);outline-offset:2px;border-radius:10px}
+.collect-result-details[open]{padding:0 9px 7px}
+.collect-result-details[open]>summary{margin:0 -9px}
+
+@media(max-height:700px){#collect-revealed-card .collect-card{max-width:220px}}

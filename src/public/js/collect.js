@@ -496,6 +496,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       els['collect-map-hint'].append(result.ownedCount > 1 ? ` · DOUBLON ×${result.ownedCount}` : ' · NOUVELLE');
     }
     renderResultProgress(document.getElementById('collect-result-progress'),result);
+    if (awarded) document.getElementById('collect-game-controls').scrollTop = 0;
     if(result.rewardGranted){collectionPayload=null;pagedCollection=null;albumsPayload=null;}
     if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}
     const targetId=result.card.sourceEntityId || game.card.name;

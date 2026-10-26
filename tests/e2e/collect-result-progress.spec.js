@@ -179,6 +179,8 @@ async function setup(page, { errors = 1 } = {}) {
 }
 async function choose(page, name) {
   await expect(page.locator("#collect-map")).toBeVisible();
+  await expect(page.locator("#collect-next")).toBeHidden();
+  await page.locator("#collect-map").scrollIntoViewIfNeeded();
   const point = await page.evaluate((name) => {
     const l = window.reviewTestLayer
       .getLayers()
@@ -221,6 +223,8 @@ test("result shows three album changes and opens the targeted personal album", a
           ownedCount: 1,
           card: {
             id: 1,
+            collectionNumber: 1,
+            imageReference: "/apple-touch-icon.png",
             family: "street",
             name: "A",
             sourceEntityId: "A",
@@ -268,6 +272,11 @@ test("result shows three album changes and opens the targeted personal album", a
   await choose(page, "A");
   const result = page.locator("#collect-result-progress");
   await expect(result).toContainText("Nouvelle carte !");
+  const details = result.locator("details");
+  await expect(details).not.toHaveAttribute("open", "");
+  expect((await result.boundingBox()).height).toBeLessThan(90);
+  await result.locator("summary").click();
+  await expect(details).toHaveAttribute("open", "");
   await expect(result).toContainText("Peu commune");
   await expect(result).toContainText("4 → 5/20");
   await expect(result).toContainText("8 → 9/12");
@@ -284,6 +293,37 @@ test("result shows three album changes and opens the targeted personal album", a
       ),
     ).toBe(true);
   }
+  await result.locator("summary").click();
+  for (const [width, height] of [
+    [320, 568],
+    [390, 844],
+    [1440, 900],
+  ]) {
+    await page.setViewportSize({ width, height });
+    await page.locator("#collect-game-controls").evaluate((node) => {
+      node.scrollTop = 0;
+    });
+    const card = page.locator("#collect-revealed-card .collect-card");
+    await expect(card).toBeVisible();
+    const bounds = await card.boundingBox();
+    const controls = await page.locator("#collect-game-controls").boundingBox();
+    expect(bounds.y).toBeGreaterThanOrEqual(controls.y);
+    expect(bounds.y + bounds.height).toBeLessThanOrEqual(
+      Math.min(height, controls.y + controls.height),
+    );
+    expect((await result.boundingBox()).height).toBeLessThan(90);
+    expect(
+      await card.evaluate((node) => getComputedStyle(node).animationName),
+    ).toBe("collect-card-turn");
+    await page.screenshot({
+      path: info.outputPath(`collect-compact-${width}.png`),
+    });
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator("#collect-revealed-card .collect-card")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
   await page.setViewportSize(
     info.project.name === "mobile-chromium"
       ? { width: 390, height: 844 }
@@ -293,6 +333,9 @@ test("result shows three album changes and opens the targeted personal album", a
     path: info.outputPath("collect-result.png"),
     fullPage: true,
   });
+  await result.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(details).toHaveAttribute("open", "");
   await result.getByRole("button", { name: "Ouvrir Mes balades" }).click();
   await expect(page.locator("#personal-album-title")).toHaveText("Mes balades");
   await expect(page.locator("#personal-album-view")).toBeVisible();
@@ -375,6 +418,10 @@ test("duplicate, fragment, wrong and quota results show only earned progress and
     await choose(page, "A");
     await expect(page.locator("#collect-result-progress")).toContainText(text);
     await expect(page.locator("#collect-result-progress li")).toHaveCount(0);
+    if (text.startsWith("Doublon"))
+      await expect(
+        page.locator("#collect-result-progress details"),
+      ).not.toHaveAttribute("open", "");
     await expect(page.locator("#collect-next")).toHaveText("Rejouer");
   }
 });
