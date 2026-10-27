@@ -1,6 +1,59 @@
 #!/usr/bin/env node
 "use strict";
 const REQUIRED = ["Code quality", "Performance budgets"];
+const REPOSITORY = "philippemaraval/parici";
+const WORKFLOW_FILES = {
+  "Code quality": ".github/workflows/quality.yml",
+  "Performance budgets": ".github/workflows/performance-budget.yml",
+};
+function publicQualityRuns(html) {
+  const embedded = html.match(
+    /<script\b[^>]*data-target="react-app\.embeddedData"[^>]*>([\s\S]*?)<\/script>/,
+  );
+  let runs;
+  try {
+    runs = JSON.parse(embedded?.[1]).payload.allWorkflowRunsRoute.workflowRuns;
+  } catch {
+    throw Error("Invalid public GitHub quality response: publication refused.");
+  }
+  if (!Array.isArray(runs))
+    throw Error("Invalid public GitHub quality response: publication refused.");
+  return runs.flatMap((run) => {
+    const commit = run.description?.linkUrl?.match(
+      /^\/philippemaraval\/parici\/commit\/([a-f0-9]{40})$/,
+    )?.[1];
+    if (
+      !REQUIRED.includes(run.workflowName) ||
+      run.workflowFilePath !== WORKFLOW_FILES[run.workflowName] ||
+      !commit ||
+      run.branch?.name !== "refs/heads/main" ||
+      run.description?.action !== "pushed" ||
+      !Number.isSafeInteger(run.runNumber) ||
+      run.runNumber < 1 ||
+      !/^\d+$/.test(run.id) ||
+      run.runUrl !== `https://github.com/${REPOSITORY}/actions/runs/${run.id}`
+    )
+      return [];
+    return [
+      {
+        name: run.workflowName,
+        head_sha: commit,
+        head_branch: "main",
+        event: "push",
+        run_number: run.runNumber,
+        run_attempt: 1,
+        status:
+          run.state?.status === "WORKFLOW_RUN_STATUS_COMPLETED"
+            ? "completed"
+            : "in_progress",
+        conclusion:
+          run.state?.conclusion === "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+            ? "success"
+            : "failure",
+      },
+    ];
+  });
+}
 function hostedCommit(env = process.env) {
   if (env.GITHUB_ACTIONS === "true") return null;
   if (env.CF_PAGES !== "1" && env.RENDER !== "true") return null;
@@ -43,26 +96,56 @@ async function waitForQuality({
   token = process.env.GITHUB_TOKEN || "",
 }) {
   const deadline = now() + timeoutMs;
+  let usePublicPage = false;
   while (now() < deadline) {
-    const response = await request(
-      `https://api.github.com/repos/philippemaraval/parici/actions/runs?head_sha=${encodeURIComponent(commit)}&per_page=100`,
-      {
-        headers: {
-          accept: "application/vnd.github+json",
-          "user-agent": "parici-deployment-quality",
-          ...(token ? { authorization: `Bearer ${token}` } : {}),
+    let runs;
+    if (!usePublicPage) {
+      const response = await request(
+        `https://api.github.com/repos/${REPOSITORY}/actions/runs?head_sha=${encodeURIComponent(commit)}&per_page=100`,
+        {
+          headers: {
+            accept: "application/vnd.github+json",
+            "user-agent": "parici-deployment-quality",
+            ...(token ? { authorization: `Bearer ${token}` } : {}),
+          },
+          signal: AbortSignal.timeout(20000),
         },
-        signal: AbortSignal.timeout(20000),
-      },
-    );
-    if (!response.ok)
-      throw Error(
-        `GitHub quality verification HTTP ${response.status}: publication refused.`,
       );
-    const data = await response.json();
-    if (!Array.isArray(data.workflow_runs))
-      throw Error("Invalid quality response: publication refused.");
-    if (qualityState(data.workflow_runs, commit)) {
+      if (!response.ok && [403, 429].includes(response.status)) {
+        usePublicPage = true;
+        console.log(
+          `GitHub API HTTP ${response.status}; checking public GitHub workflow results instead.`,
+        );
+      } else if (!response.ok)
+        throw Error(
+          `GitHub quality verification HTTP ${response.status}: publication refused.`,
+        );
+      else {
+        const data = await response.json();
+        if (!Array.isArray(data.workflow_runs))
+          throw Error("Invalid quality response: publication refused.");
+        runs = data.workflow_runs;
+      }
+    }
+    if (usePublicPage) {
+      const response = await request(
+        `https://github.com/${REPOSITORY}/actions?query=branch%3Amain`,
+        {
+          headers: {
+            accept: "text/html",
+            "cache-control": "no-cache",
+            "user-agent": "parici-deployment-quality",
+          },
+          signal: AbortSignal.timeout(20000),
+        },
+      );
+      if (!response.ok)
+        throw Error(
+          `Public GitHub quality verification HTTP ${response.status}: publication refused. Configure GITHUB_TOKEN with Actions read access in the hosting environment.`,
+        );
+      runs = publicQualityRuns(await response.text());
+    }
+    if (qualityState(runs, commit)) {
       console.log(`Quality and performance validated for ${commit}.`);
       return;
     }
@@ -81,6 +164,7 @@ if (require.main === module)
     process.exitCode = 1;
   });
 module.exports = {
+  publicQualityRuns,
   hostedCommit,
   qualityState,
   waitForQuality,
