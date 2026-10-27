@@ -96,12 +96,21 @@ test("compact albums keep review buttons on one line and show several albums per
     { width: 390, height: 844 },
     { width: 430, height: 932 },
     { width: 1440, height: 900 },
+    { width: 1440, height: 900, wideFont: true },
   ]) {
-    await page.setViewportSize(viewport);
+    await page.setViewportSize({
+      width: viewport.width,
+      height: viewport.height,
+    });
     await page.reload();
     await page.locator("#collect-album-family").selectOption("thematic");
     await expect(tiles).toHaveCount(6);
     await page.evaluate(() => document.fonts.ready);
+    if (viewport.wideFont)
+      await page.addStyleTag({
+        content:
+          ".collect-album-summary, .collect-album-summary * { font-family: Verdana, sans-serif !important; }",
+      });
     const layout = await tiles.evaluateAll((nodes) =>
       nodes.map((node) => {
         const buttons = [
@@ -120,9 +129,12 @@ test("compact albums keep review buttons on one line and show several albums per
     );
     for (const tile of layout) {
       expect(tile.aligned).toBe(true);
-      expect(tile.clipped).toBe(false);
+      expect(tile.clipped, JSON.stringify({ viewport, tile })).toBe(false);
       expect(tile.buttonHeight).toBeLessThanOrEqual(34);
-      expect(tile.height).toBeLessThanOrEqual(200);
+      expect(
+        tile.height,
+        JSON.stringify({ viewport, tile }),
+      ).toBeLessThanOrEqual(200);
     }
     expect(
       await page.evaluate(

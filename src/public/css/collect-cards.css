@@ -302,7 +302,7 @@
 /* Dense album tiles keep review actions together and secondary actions alongside. */
 .collect-album-grid{gap:8px;align-items:start}
 .collect-album{padding:9px}
-.collect-album>.collect-album-summary:first-child{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 6px;align-items:start}
+.collect-album>.collect-album-summary:first-child{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px;align-items:start}
 .collect-album-summary>strong,.collect-album-summary>.collect-album-description,.collect-album-summary>.collect-album-counts,.collect-album-summary>.collect-progress-track,.collect-album-summary>.collect-review-actions{grid-column:1/-1;min-width:0}
 .collect-album-summary>strong{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
 .collect-album-summary .collect-album-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:11px;line-height:1.3}
