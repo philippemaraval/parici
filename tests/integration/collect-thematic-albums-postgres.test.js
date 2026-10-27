@@ -30,7 +30,7 @@ test(
     assert.equal(albums.length, 30);
     assert.equal(
       albums.reduce((sum, a) => sum + a.active_card_count, 0),
-      883,
+      1310,
     );
     for (const album of source) {
       const row = albums.find((a) => a.slug === album.slug);
@@ -69,9 +69,38 @@ test(
     catalog.albums.find((a) => a.slug === theme.slug).description +=
       " Mise à jour de test.";
     assert.notEqual(catalogRevision(catalog), before);
+    const previousCatalog = structuredClone(catalog);
+    const addedIdentity = (
+      await q("SELECT family,source_entity_id FROM cards WHERE id=$1", [
+        members.at(-1).id,
+      ])
+    ).rows[0];
+    previousCatalog.records.find(
+      (r) =>
+        r.family === addedIdentity.family &&
+        r.source_entity_id === addedIdentity.source_entity_id,
+    ).album_slugs = previousCatalog.records
+      .find(
+        (r) =>
+          r.family === addedIdentity.family &&
+          r.source_entity_id === addedIdentity.source_entity_id,
+      )
+      .album_slugs.filter((slug) => slug !== theme.slug);
     const client = await db.pool.connect();
     try {
       await client.query("BEGIN");
+      await syncCatalog(client, previousCatalog);
+      assert.equal(
+        Number(
+          (
+            await client.query(
+              "SELECT COUNT(*) AS n FROM album_cards ac JOIN albums a ON a.id=ac.album_id WHERE a.slug=$1",
+              [theme.slug],
+            )
+          ).rows[0].n,
+        ),
+        members.length - 1,
+      );
       await syncCatalog(client, catalog);
       await syncCatalog(client, catalog);
       await client.query("COMMIT");

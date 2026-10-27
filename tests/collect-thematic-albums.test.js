@@ -31,9 +31,9 @@ test("30 Paris themes preserve exact playable memberships and existing albums", 
   }
   assert.equal(
     source.reduce((n, a) => n + a.cards.length, 0),
-    883,
+    1310,
   );
-  assert.equal(expected.size, 801);
+  assert.equal(expected.size, 1126);
   const counts = source.map((a) => a.cards.length);
   assert.deepEqual(
     counts,

@@ -19,7 +19,11 @@ test("the 30 Paris thematic albums can be browsed, targeted and mapped on deskto
     owned_active_card_count: 1,
     progress: 100 / a.cards.length,
   }));
-  const museum = albums[0];
+  const museum = albums.find(
+    (a) =>
+      a.cards.some((c) => c.family === "street") &&
+      a.cards.some((c) => c.family === "monument"),
+  );
   const cards = [
     museum.cards.find((c) => c.family === "street"),
     museum.cards.find((c) => c.family === "monument"),
@@ -106,6 +110,9 @@ test("the 30 Paris thematic albums can be browsed, targeted and mapped on deskto
   await page.goto("/collect.html?panel=albums&e2eMap=1");
   await page.locator("#collect-album-family").selectOption("thematic");
   const tiles = page.locator("#collect-album-grid > article");
+  const featured = tiles.filter({
+    has: page.getByText(museum.name, { exact: true }),
+  });
   await expect(tiles).toHaveCount(30);
   await expect(tiles.first().locator("strong")).toHaveText(definitions[0].name);
   await expect(tiles.last().locator("strong")).toHaveText(
@@ -123,20 +130,20 @@ test("the 30 Paris thematic albums can be browsed, targeted and mapped on deskto
       )
       .map((a) => a.slug),
   );
-  await expect(tiles.first().locator(".collect-album-description")).toHaveText(
+  await expect(featured.locator(".collect-album-description")).toHaveText(
     museum.description,
   );
   for (const mode of ["revision", "errors"])
     await expect(
-      tiles.first().locator(`[data-review-mode="${mode}"]`),
+      featured.locator(`[data-review-mode="${mode}"]`),
     ).toBeEnabled();
-  await tiles.first().locator("[data-target-album]").click();
-  await expect(tiles.first().locator("[data-target-album]")).toHaveText(
+  await featured.locator("[data-target-album]").click();
+  await expect(featured.locator("[data-target-album]")).toHaveText(
     "Album ciblé",
   );
   await expect(page.locator("#collect-target-summary")).toContainText("20 %");
   expect(goal.slug).toBe(museum.slug);
-  await tiles.first().locator("[data-album]").click();
+  await featured.locator("[data-album]").click();
   await expect(page.locator("#collect-album-title")).toHaveText(museum.name);
   await expect(page.locator("#collect-album-map-note")).toContainText(
     "1 / 2 lieux possédés",
@@ -159,21 +166,21 @@ test("the 30 Paris thematic albums can be browsed, targeted and mapped on deskto
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    await expect(tiles.first().locator("[data-target-album]")).toBeVisible();
+    await expect(featured.locator("[data-target-album]")).toBeVisible();
   }
   await page.setViewportSize(
     info.project.name === "mobile-chromium"
       ? { width: 390, height: 844 }
       : { width: 1440, height: 1000 },
   );
-  await tiles.first().scrollIntoViewIfNeeded();
+  await featured.scrollIntoViewIfNeeded();
   await page.screenshot({
     path: info.outputPath("collect-themes.png"),
     fullPage: false,
   });
   await page.reload();
   await page.locator("#collect-album-family").selectOption("thematic");
-  await expect(tiles.first().locator("[data-target-album]")).toHaveText(
+  await expect(featured.locator("[data-target-album]")).toHaveText(
     "Album ciblé",
   );
   expect(errors).toEqual([]);
