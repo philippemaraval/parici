@@ -294,7 +294,7 @@ test("no errors state stays visible and layouts fit small screens", async ({
   const button = page
     .locator('#collect-album-grid [data-review-mode="errors"]')
     .first();
-  await expect(button).toHaveText("Aucune erreur à revoir");
+  await expect(button).toHaveText("Aucune erreur");
   await expect(button).toBeDisabled();
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
