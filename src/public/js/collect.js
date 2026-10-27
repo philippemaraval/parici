@@ -40,7 +40,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   let selectionMarker = null;
   const fallbackImage="/apple-touch-icon.png";
   const hintImage=document.getElementById("collect-hint-image");
-  hintImage.addEventListener("error",()=>{if(hintImage.getAttribute("src")!==fallbackImage){hintImage.src=fallbackImage;document.getElementById('collect-hint-credit').textContent='Parici';}});
+  hintImage.addEventListener("error",()=>{if(hintImage.getAttribute("src")!==fallbackImage){hintImage.src=fallbackImage;}});
   const questionPanel = document.getElementById("collect-question");
   const exitButton = document.getElementById("collect-exit");
   function leaveMap() {
@@ -357,7 +357,6 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       document.getElementById('collect-visual-hint').hidden=false;
       hintImage.src=safeImage(game.card.imageReference)||fallbackImage;
       hintImage.alt='Indice visuel du lieu à trouver';
-      document.getElementById('collect-hint-credit').innerHTML=imageCredit(game.card.imageAttribution);
       document.getElementById('collect-visual-hint').open=!payload.review;
       document.getElementById('collect-target-title').textContent=`${familyNames[game.card.family]} à trouver`;
       els['collect-family-label'].innerHTML = cardNameHtml(game.card);
