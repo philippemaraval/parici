@@ -151,6 +151,23 @@ test("database startup skips migrations when the schema version is current", asy
     "current schemas also apply the review migration",
   );
   assert.match(queries[3].sql, /BEGIN/);
+  assert.ok(
+    queries.some(
+      (q) =>
+        q.sql ===
+        fs
+          .readFileSync(
+            path.join(
+              __dirname,
+              "..",
+              "migrations/20261027_collect_rarity_draw_balance.sql",
+            ),
+            "utf8",
+          )
+          .trim(),
+    ),
+    "current schemas also apply the rarity draw balance migration",
+  );
   assert.match(queries[4].sql, /daily_guess_receipts/);
   assert.match(queries[5].sql, /site_notification_reads/);
   assert.match(queries[0].sql, /pg_advisory_lock/);

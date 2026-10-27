@@ -9,7 +9,7 @@ const DEFAULT_FAMILY_WEIGHTS = Object.freeze({
 
 const DEFAULT_RARITY_DRAW_WEIGHTS = Object.freeze({
   1: 2,
-  2: 0.75,
+  2: 1.5,
   3: 1,
   4: 0.8,
   5: 0.8,
