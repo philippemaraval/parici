@@ -102,10 +102,12 @@ test("a transport session loads its lines before starting the game", async () =>
 });
 
 test("transport paths use a tolerant canvas and reuse Collect's supplied renderer", async () => {
-  const source = fs.readFileSync(
-    path.join(__dirname, "../src/map-runtime.js"),
-    "utf8",
-  );
+  const source = fs
+    .readFileSync(path.join(__dirname, "../src/map-runtime.js"), "utf8")
+    .replace(
+      'import { buildMapLayer } from "./map-rendering.js";',
+      fs.readFileSync(path.join(__dirname, "../src/map-rendering.js"), "utf8"),
+    );
   const { loadBusLinesRuntime } = await import(
     `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
   );

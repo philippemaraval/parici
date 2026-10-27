@@ -5,7 +5,7 @@ import { initAlbumGoal } from "./collect-album-goal-view.js";
 import { initSocial } from "./collect-social-view.js";
 import { initPersonalAlbums } from "./personal-albums-view.js";
 import { renderCardArtwork } from "./collect-card-art.js";
-import { addTouchBufferForLayerRuntime } from "../../map-runtime.js";
+import { buildMapLayer, indexCollectLayers } from "../../map-rendering.js";
 import { loadMonumentsRuntime, loadBusLinesRuntime } from "../../map-runtime.js";
 import { avatarMarkup, iconMarkup } from "./camino-art.js";
 import { reviewMapFeatures } from "../../map-review.js";
@@ -32,7 +32,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   let gameRequest = 0;
   let selectedAnswer = null;
   let featureLayer = null;
-  let touchLayers = null;
+  let answerLayers = new Map();
+  const paintedLayers = new Set();
   let destroyFamilyMap = null;
   const isTouchDevice=()=>matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints>0;
   const visibleLayer=layer=>!layer._isHitArea && !layer._isBusHitArea;
@@ -215,29 +216,30 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   function markSelection(_layer, answer, context = '') {
     if (!mapReady || loadedFamily !== game?.card.family || !answer || !game || game.finished || game.question || answering) return;
     if (selectedAnswer?.id === answer && selectedAnswer?.context === context) {submitAnswer(); return;}
-    featureLayer.eachLayer(item => {
-      if (!visibleLayer(item) || !item.setStyle) return;
+    paintedLayers.forEach(item => {
+      if (!item.setStyle) return;
       delete item.__caminoLockedStyle;
       item.setStyle(game.card.family === 'bus'
         ? { color: '#'+(item.feature?.properties?.color || '049bc5'), weight: 3, opacity: .82 }
         : layerStyle(game.card.family));
     });
+    paintedLayers.clear();
     selectedAnswer = { id: answer, context };
 
-    featureLayer.eachLayer(item => {
+    (answerLayers.get(answer)||[]).forEach(item => {
       if (visibleLayer(item) && featureAnswer(game.card.family,item.feature) === answer && item.setStyle) {
+        paintedLayers.add(item);
         if (game.card.family === 'bus') item.__caminoLockedStyle = true;
         item.setStyle({color:UI_THEME.mapPending,fillColor:UI_THEME.mapPending,weight:8,fillOpacity:0.72});
       }
     });
     if(selectionMarker) map.removeLayer(selectionMarker);
-    const matching=loadedFamilyData.features.filter(feature=>featureAnswer(game.card.family,feature)===answer);
+    const matching=(answerLayers.get(answer)||[]).map(layer=>layer.feature);
     const midpoint=computeFeatureCollectionMidpoint(matching);
     if(midpoint)selectionMarker=window.L.circleMarker([midpoint[1],midpoint[0]],{radius:5,color:'#fff',weight:2,fillColor:'#ff0000',fillOpacity:1,interactive:false,renderer:selectionRenderer}).addTo(map);
   }
 
   let loadedFamily=null;
-  let loadedFamilyData=null;
   const familyMapCache=new Map();
   function getFamilyMap(family){
     if(!familyMapCache.has(family))familyMapCache.set(family,fetch(`${API}/api/collect/map/${encodeURIComponent(family)}`, {signal: AbortSignal.timeout(20000)}).then(async response=>{
@@ -246,24 +248,27 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     }).catch(error=>{familyMapCache.delete(family);throw error;}));
     return familyMapCache.get(family);
   }
+  let prewarmController;
   async function prewarmCollect(){
+    const controller=prewarmController=new AbortController();
     try{
-      await window.loadCollectMapRuntime();
-      if(navigator.connection?.saveData||['slow-2g','2g','3g'].includes(navigator.connection?.effectiveType))return;
-      await getFamilyMap('street');
-      if(!game&&!document.body.classList.contains('collect-session-active'))await loadFamilyMap('street');
+      const runtime=window.loadCollectMapRuntime();
+      if(navigator.connection?.saveData||['slow-2g','2g','3g'].includes(navigator.connection?.effectiveType)){await runtime;return;}
+      await Promise.all([runtime,getFamilyMap('street')]);
+      if(!controller.signal.aborted&&!game&&!document.body.classList.contains('collect-session-active'))await loadFamilyMap('street',controller.signal);
     }catch(_error){/* A launch retries any failed background request. */}
   }
   let familyMapLoad = Promise.resolve();
-  function loadFamilyMap(family) {
-    familyMapLoad = familyMapLoad.catch(() => {}).then(() => applyFamilyMap(family));
+  function loadFamilyMap(family,signal) {
+    familyMapLoad = familyMapLoad.catch(() => {}).then(() => applyFamilyMap(family,signal));
     return familyMapLoad;
   }
-  async function applyFamilyMap(family) {
+  async function applyFamilyMap(family,signal) {
     const [,data]=await Promise.all([ensureMap(),getFamilyMap(family)]);
-    loadedFamilyData=data;
+    signal?.throwIfAborted();
     if(selectionMarker){map.removeLayer(selectionMarker);selectionMarker=null;}
     if(featureLayer&&loadedFamily===family&&['street','district'].includes(family)){
+      paintedLayers.clear();
       featureLayer.eachLayer(layer=>{featureLayer.resetStyle(layer);if(layer.getTooltip?.()?.options.permanent)layer.unbindTooltip();});
       if(family==='street')map.setView([48.8566, 2.3522],13,{animate:false});
       else map.fitBounds(featureLayer.getBounds(),{padding:[18,18],maxZoom:13,animate:false});
@@ -272,8 +277,10 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     loadedFamily = null;
     if (destroyFamilyMap) {destroyFamilyMap();destroyFamilyMap=null;}
     if (featureLayer) { map.removeLayer(featureLayer); featureLayer = null; }
-    if (touchLayers) map.removeLayer(touchLayers);
-    touchLayers = window.L.layerGroup().addTo(map);
+    answerLayers.clear();
+    paintedLayers.clear();
+    // A 30px canvas touch target avoids duplicating every street path.
+    gameRenderer.options.tolerance=family==='street'&&isTouchDevice()?15:5;
     if (family === 'monument') {
       const result=await loadMonumentsRuntime({map,L:window.L,uiTheme:{mapMonumentStroke:'#fff',mapMonumentFill:'#c43832'},isTouchDevice:isTouchDevice(),runtimeMonuments:data.features,
         handleMonumentClick:(feature,layer)=>markSelection(layer,featureAnswer(family,feature))});
@@ -289,20 +296,16 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       const result=await loadBusLinesRuntime({map,L:window.L,uiTheme:{mapBusLine:'#c43832'},isTouchDevice:isTouchDevice(),runtimeBusLines:data,renderer:gameRenderer,
         handleBusLineClick:(feature,layer,colorNames=[])=>markSelection(layer,featureAnswer(family,feature))});
       featureLayer=result.busLinesLayer.addTo(map);destroyFamilyMap=result.destroy;
-    } else featureLayer = window.L.geoJSON(data, {
+    } else featureLayer = await buildMapLayer(window.L, map, data, {
+      renderer: gameRenderer,
       style: () => layerStyle(family),
       pointToLayer: (_feature, latlng) => window.L.circleMarker(latlng, { ...layerStyle(family), radius: 7, fillColor: family === 'street' ? '#f2a900' : '#d2463c', fillOpacity: 0.9 }),
       onEachFeature: (feature, layer) => {
         if (feature.properties?.collect_geometry_source === 'street_index_centroid') layer.bindTooltip('Repère de rue · référentiel Parici');
         layer.on('click', event => {window.L.DomEvent.stop(event); markSelection(layer, featureAnswer(family, feature), String(feature?.properties?.quartier || '')); });
       },
-    }).addTo(map);
-    if (family === 'street') featureLayer.eachLayer(layer => {
-      if (typeof layer.getLatLngs === 'function') addTouchBufferForLayerRuntime(layer, {
-        isTouchDevice:isTouchDevice(),
-        map:touchLayers,L:window.L,
-      });
-    });
+    }, gameRenderer, signal);
+    answerLayers=indexCollectLayers(featureLayer,feature=>featureAnswer(family,feature));
     if (family !== 'street') map.fitBounds(featureLayer.getBounds(), { padding: [18, 18], maxZoom: 13, animate: false });
     else map.setView([48.8566, 2.3522], 13, { animate: false });
     loadedFamily=family;
@@ -314,6 +317,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     document.getElementById("collect-review-end").hidden=true;
     if(!authenticated){setCollectAuthentication(false);return;}
     gameControls.hidden=false;els['collect-leaderboard'].hidden=Boolean(reviewSession);
+    prewarmController?.abort();
     const requestId = ++gameRequest;
     document.getElementById('collect-result-progress').hidden=true;
     leaveMap();
@@ -331,7 +335,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       const draw=reviewSession
         ? (pendingReviewGame?Promise.resolve(pendingReviewGame):request(reviewPath,{method:'POST',body:JSON.stringify({mode:reviewSession.mode,scope:reviewSession.scope})}).then(payload=>{if(requestId===gameRequest)pendingReviewGame=payload;return payload;}))
         : (pendingGame?Promise.resolve(pendingGame):request('/api/collect/games',{method:'POST',body:'{}'}).then(payload=>{pendingGame=payload;return payload;}));
-      const [drawResult,mapResult]=await Promise.allSettled([draw,runtime]);
+      const readyDraw=draw.then(payload=>{if(payload.card?.family)getFamilyMap(payload.card.family).catch(()=>{});return payload;});
+      const [drawResult,mapResult]=await Promise.allSettled([readyDraw,runtime]);
       if (requestId !== gameRequest || !authenticated) return;
       if(drawResult.status==='fulfilled' && drawResult.value.complete){finishReview(drawResult.value);return;}
       if(mapResult.status==='rejected')throw mapResult.reason;

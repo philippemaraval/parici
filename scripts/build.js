@@ -102,7 +102,7 @@ async function minifiedSource(relativePath, loader) {
   const result = await esbuild.transform(source, {
     loader,
     minify: true,
-    target: loader === "js" ? "es2019" : undefined,
+    target: loader === "js" ? "es2020" : undefined,
     legalComments: "none",
   });
   return result.code;
@@ -123,7 +123,7 @@ async function fingerprintProductionAssets() {
     outdir:path.join(DIST_DIR,"assets"),
     chunkNames:"chunks/[name]-[hash]",
     metafile:true,
-    target: ["es2019"],
+    target: ["es2020"],
     minify: true,
     sourcemap: false,
     write: false,
@@ -177,7 +177,7 @@ async function fingerprintProductionAssets() {
     },
     bundle: true,
     format: "iife",
-    target: ["es2019"],
+    target: ["es2020"],
     minify: true,
     sourcemap: false,
     write: false,
@@ -274,7 +274,7 @@ async function fingerprintProductionAssets() {
       .map(name => [`src/public/css/${name}.css`, name, "css"]),
   ]) {
     const content = ["collect","collect-notifications"].includes(label) && type === "js"
-      ? (await esbuild.build({ entryPoints:[path.join(ROOT,source)], bundle:true, write:false, minify:true, format:"iife", target:"es2019" })).outputFiles[0].text
+      ? (await esbuild.build({ entryPoints:[path.join(ROOT,source)], bundle:true, write:false, minify:true, format:"iife", target:"es2020" })).outputFiles[0].text
       : await minifiedSource(source, type);
     const url = writeFingerprintedAsset(label, type, content, assetManifest);
     collectHtml = replaceAssetReference(collectHtml, "/" + source, url);
@@ -377,7 +377,7 @@ async function fingerprintProductionAssets() {
   const minifiedServiceWorker = await esbuild.transform(serviceWorker, {
     loader: "js",
     minify: true,
-    target: "es2019",
+    target: "es2020",
     legalComments: "none",
   });
   fs.writeFileSync(serviceWorkerPath, minifiedServiceWorker.code);

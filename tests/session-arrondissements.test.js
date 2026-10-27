@@ -14,10 +14,12 @@ const quarters = JSON.parse(
 const resolve = createArrondissementResolver(quarters);
 
 test("server and browser assign every real Paris street to the same arrondissement", async (t) => {
-  const source = fs.readFileSync(
-    path.join(__dirname, "../src/map-runtime.js"),
-    "utf8",
-  );
+  const source = fs
+    .readFileSync(path.join(__dirname, "../src/map-runtime.js"), "utf8")
+    .replace(
+      'import { buildMapLayer } from "./map-rendering.js";',
+      fs.readFileSync(path.join(__dirname, "../src/map-rendering.js"), "utf8"),
+    );
   const { loadStreetsRuntime } = await import(
     `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
   );
@@ -40,6 +42,7 @@ test("server and browser assign every real Paris street to the same arrondisseme
   const result = await loadStreetsRuntime({
     map: {},
     L: {
+      canvas: () => ({}),
       geoJSON: () => ({
         addTo() {
           return this;

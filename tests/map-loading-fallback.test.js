@@ -2,10 +2,13 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const source = fs.readFileSync(
-  path.join(__dirname, "../src/map-runtime.js"),
+const rendering = fs.readFileSync(
+  path.join(__dirname, "../src/map-rendering.js"),
   "utf8",
 );
+const source = fs
+  .readFileSync(path.join(__dirname, "../src/map-runtime.js"), "utf8")
+  .replace('import { buildMapLayer } from "./map-rendering.js";', rendering);
 const runtime = import(
   `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`
 );
@@ -45,7 +48,17 @@ for (const broken of [
     const { loadStreetsRuntime } = await runtime;
     const result = await loadStreetsRuntime({
       map: {},
-      L: { geoJSON: () => ({ addTo() {return this;}, addData(data) {assert.equal(data.type,"FeatureCollection");assert.equal(data.features[0].properties.name,"Rue du Test");} }) },
+      L: {
+        canvas: () => ({}),
+        geoJSON: () => ({
+          addTo() {
+            return this;
+          },
+          addData(data) {
+            assert.equal(data.properties.name, "Rue du Test");
+          },
+        }),
+      },
       normalizeName: (x) => x,
     });
     assert.equal(result.allStreetFeatures.length, 1);
