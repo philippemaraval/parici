@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 const http = require("node:http");
 const crypto = require("node:crypto");
 const { createTestDatabase } = require("./test-database");
@@ -18,10 +19,7 @@ const normalize = (value) =>
     .replace(/[-‐‑‒–—]/g, "-")
     .replace(/\s*-\s*/g, "-")
     .replace(/\s+/g, " ");
-const loadModule = (file) =>
-  import(
-    `data:text/javascript;base64,${Buffer.from(fs.readFileSync(path.join(root, file), "utf8")).toString("base64")}`
-  );
+const loadModule = (file) => import(pathToFileURL(path.join(root, file)).href);
 
 test(
   "all 20 arrondissements and every zone launch classic, marathon and chrono sessions",
@@ -88,6 +86,7 @@ test(
       ({ allStreetFeatures } = await runtime.loadStreetsRuntime({
         map: {},
         L: {
+          canvas: () => ({}),
           geoJSON: () => ({
             addTo() {
               return this;
