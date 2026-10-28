@@ -4196,9 +4196,14 @@ summary{min-height:28px;box-sizing:border-box}
 
 .daily-streak-card--intro.hidden{display:flex;visibility:hidden}
 @media(max-width:900px){html[data-mobile-view="daily"] .panel-params .panel-title-row{min-height:80px;box-sizing:border-box}}
+/* Keep the Daily map hidden and unreachable until the session starts, at every width. */
+html[data-mobile-view="daily"] body:not(.session-running) #map {
+  visibility: hidden;
+  pointer-events: none;
+}
 @media(max-width:900px){
   html[data-mobile-view="daily"] body:not(.session-running) #sidebar{min-height:100vh;min-height:100dvh;max-height:none;overflow-y:auto}
-  html[data-mobile-view="daily"] body:not(.session-running) #map{height:0!important;opacity:0;visibility:hidden}
+  html[data-mobile-view="daily"] body:not(.session-running) #map{height:0!important}
   html[data-mobile-view="daily"] body:not(.session-running):not(.session-ended) :is(.info-panel,.panel-feedback,.stats-panel,.target-panel),
   html[data-mobile-view="daily"] body:not(.session-running) .actions-row{display:none!important}
 }
