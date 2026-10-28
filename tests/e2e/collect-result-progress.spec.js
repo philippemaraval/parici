@@ -1,6 +1,9 @@
 const { expectNumberLayout } = require("./support/assert-number-layout");
 const { test, expect } = require("@playwright/test");
-async function setup(page, { errors = 1 } = {}) {
+async function setup(
+  page,
+  { errors = 1, quota = () => ({ copies: 2, limit: 4 }) } = {},
+) {
   await page.addInitScript(() =>
     localStorage.setItem("camino_auth_token", "review-fixture"),
   );
@@ -161,8 +164,7 @@ async function setup(page, { errors = 1 } = {}) {
         },
       });
     if (path.endsWith("/pending")) return r.fulfill({ json: { game: null } });
-    if (path.endsWith("/quota"))
-      return r.fulfill({ json: { copies: 2, limit: 4 } });
+    if (path.endsWith("/quota")) return r.fulfill({ json: quota() });
     if (path.endsWith("/goal")) return r.fulfill({ json: { goal: null } });
     if (path.includes("/leaderboard")) return r.fulfill({ json: [] });
     if (path.endsWith("/weekly-challenge"))
@@ -426,4 +428,258 @@ test("duplicate, fragment, wrong and quota results show only earned progress and
       ).not.toHaveAttribute("open", "");
     await expect(page.locator("#collect-next")).toHaveText("Rejouer");
   }
+});
+
+async function expectResultInViewport(page, awarded) {
+  await expect(async () => {
+    const controls = await page.locator("#collect-game-controls").boundingBox();
+    const viewport = page.viewportSize();
+    for (const selector of [
+      "#collect-next",
+      "#collect-quota-notice",
+      ...(awarded ? ["#collect-revealed-card .collect-card"] : []),
+    ]) {
+      const locator = page.locator(selector);
+      await expect(locator).toBeVisible();
+      const bounds = await locator.boundingBox();
+      expect(bounds.y).toBeGreaterThanOrEqual(Math.max(0, controls.y));
+      expect(bounds.y + bounds.height).toBeLessThanOrEqual(
+        Math.min(viewport.height, controls.y + controls.height) + 1,
+      );
+      expect(bounds.x).toBeGreaterThanOrEqual(0);
+      expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width);
+      if (
+        selector.includes(".collect-card") &&
+        viewport.width >= 600 &&
+        viewport.height <= 600
+      ) {
+        expect(bounds.width).toBeGreaterThan(140);
+      }
+    }
+    expect(
+      await page.locator("#collect-next").evaluate((node) => {
+        const r = node.getBoundingClientRect();
+        return node.contains(
+          document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2),
+        );
+      }),
+    ).toBe(true);
+  }).toPass();
+}
+
+for (const [width, height] of [
+  [320, 568],
+  [390, 844],
+  [1440, 900],
+  [844, 390],
+]) {
+  for (const awarded of [true, false]) {
+    test(`complete Collect result, replay and quota warning fit ${width}x${height}, award=${awarded}`, async ({
+      page,
+    }, info) => {
+      await page.setViewportSize({ width, height });
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      let copies = awarded ? 3 : 4;
+      await setup(page, { quota: () => ({ copies, limit: 4 }) });
+      const card = {
+        id: 1,
+        family: "street",
+        name: "A",
+        sourceEntityId: "A",
+        imageReference: "/apple-touch-icon.png",
+        collectionNumber: 1,
+        rarity: 5,
+        rarityLabel: "Légendaire",
+        description:
+          "Une longue description pour vérifier que la carte reste entièrement visible, avec son nom et son pied de carte.",
+      };
+      await page.route("**/api/collect/games", (route) =>
+        route.fulfill({
+          json: {
+            gameId: "00000000-0000-4000-8000-000000000009",
+            guesses: [],
+            quota: { copies: 3, limit: 4 },
+            card,
+            maxAttempts: 1,
+          },
+        }),
+      );
+      await page.route(
+        "**/api/collect/games/00000000-0000-4000-8000-000000000009/answer",
+        (route) => {
+          copies = 4;
+          return route.fulfill({
+            json: {
+              correct: awarded,
+              rewardGranted: awarded,
+              ownedCount: 1,
+              card,
+              ...(awarded ? {} : { rewardBlockedReason: "quota" }),
+              progress: awarded
+                ? {
+                    kind: "new",
+                    collection: { before: 2, after: 3, total: 20 },
+                    albums: [
+                      {
+                        slug: "streets",
+                        name: "Toutes les rues",
+                        before: 2,
+                        after: 3,
+                        total: 3,
+                        complete: true,
+                      },
+                    ],
+                  }
+                : undefined,
+            },
+          });
+        },
+      );
+      await page.goto("/collect.html?e2eMap=1");
+      await expect(page.locator("#collect-quota-notice"))[
+        awarded ? "toBeHidden" : "toBeVisible"
+      ]();
+      await page.locator("#collect-next").click();
+      await expect(page.locator("#collect-quota-notice")).toBeHidden();
+      await page.locator("#collect-visual-hint").evaluate((node) => {
+        node.open = false;
+      });
+      await choose(page, "A");
+      await expect(page.locator("#collect-next")).toHaveText("Rejouer");
+      await expectResultInViewport(page, awarded);
+      await expect(page.locator("#collect-next")).toHaveAttribute(
+        "aria-describedby",
+        "collect-quota-notice",
+      );
+      await page.screenshot({ path: info.outputPath("collect-result.png") });
+      if (awarded) {
+        await page.locator("#collect-result-progress summary").click();
+        await expectResultInViewport(page, true);
+      }
+      await page.locator("#collect-next").click();
+      await expect(page.locator("#collect-next")).toBeHidden();
+      await expect(page.locator("#collect-quota-notice")).toBeHidden();
+      await expect(page.locator("#collect-game-controls")).not.toHaveClass(
+        /is-result/,
+      );
+    });
+  }
+}
+
+for (const awarded of [true, false]) {
+  test(`quiz result keeps replay visible and the complete award, award=${awarded}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await setup(page, { quota: () => ({ copies: 4, limit: 4 }) });
+    const card = {
+      id: 1,
+      family: "street",
+      name: "A",
+      sourceEntityId: "A",
+      imageReference: "/apple-touch-icon.png",
+      collectionNumber: 1,
+      rarity: 5,
+      fragments_enabled: true,
+      fragments_required: 2,
+    };
+    await page.route("**/api/collect/games", (r) =>
+      r.fulfill({
+        json: {
+          gameId: "00000000-0000-4000-8000-000000000008",
+          guesses: [],
+          quota: { copies: 3, limit: 4 },
+          card,
+          maxAttempts: 1,
+        },
+      }),
+    );
+    await page.route(
+      "**/api/collect/games/00000000-0000-4000-8000-000000000008/answer",
+      (r) =>
+        r.fulfill({
+          json: {
+            stage: "question",
+            fragments: { count: 1, required: 2 },
+            question: {
+              theme: "Histoire",
+              text: "Une question pour apprendre à découvrir ce lieu",
+              answers: ["A", "B", "C", "D"],
+            },
+          },
+        }),
+    );
+    await page.route(
+      "**/api/collect/games/00000000-0000-4000-8000-000000000008/question",
+      (r) =>
+        r.fulfill({
+          json: {
+            correct: true,
+            rewardGranted: awarded,
+            ownedCount: 1,
+            card,
+            fragments: {
+              earned: awarded ? 1 : 0,
+              count: awarded ? 2 : 1,
+              required: 2,
+              correct: awarded,
+              correctIndex: 0,
+              explanation: "Une explication détaillée sur le lieu. ".repeat(12),
+              sources: ["https://example.com/source"],
+            },
+          },
+        }),
+    );
+    await page.goto("/collect.html?e2eMap=1");
+    await page.locator("#collect-next").click();
+    await page.locator("#collect-visual-hint").evaluate((n) => {
+      n.open = false;
+    });
+    await choose(page, "A");
+    await page.locator("#collect-question-answers button").first().click();
+    await expect(page.locator("#collect-next")).toHaveText("Rejouer");
+    if (awarded) {
+      await expect(page.locator("#collect-question")).toBeHidden();
+      await expectResultInViewport(page, true);
+      await expect(page.locator("#collect-result-progress")).toContainText(
+        "En savoir plus",
+      );
+    } else {
+      await expect(page.locator("#collect-question")).toBeVisible();
+      const replay = await page.locator("#collect-next").boundingBox();
+      const notice = await page.locator("#collect-quota-notice").boundingBox();
+      expect(replay.y + replay.height).toBeLessThanOrEqual(568);
+      expect(notice.y).toBeGreaterThanOrEqual(0);
+      expect(notice.y + notice.height).toBeLessThanOrEqual(replay.y);
+      await page.locator("#collect-question-continue").click();
+      await expectResultInViewport(page, false);
+    }
+    await page.locator("#collect-next").click();
+    await expect(page.locator("#collect-next")).toBeHidden();
+  });
+}
+
+test("quota warning clears when a card becomes available again", async ({
+  page,
+}) => {
+  const availableAt = Date.now() + 5000;
+  await setup(page, {
+    quota: () =>
+      Date.now() < availableAt
+        ? {
+            copies: 4,
+            limit: 4,
+            nextAvailableAt: new Date(availableAt).toISOString(),
+          }
+        : { copies: 3, limit: 4 },
+  });
+  await page.goto("/collect.html?e2eMap=1");
+  await expect(page.locator("#collect-quota-notice")).toBeVisible();
+  await expect(page.locator("#collect-quota-notice")).toBeHidden({
+    timeout: 10000,
+  });
+  await expect(page.locator("#collect-next")).not.toHaveAttribute(
+    "aria-describedby",
+  );
 });

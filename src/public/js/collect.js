@@ -20,7 +20,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     : 'https://parici.onrender.com');
   const token = () => localStorage.getItem('camino_auth_token') || sessionStorage.getItem('camino_paris_session_token') || (JSON.parse(localStorage.getItem('camino_paris_user')||'null')?.authenticated ? '__cookie_session__' : '');
   const els = Object.fromEntries(['collect-quota','collect-game-status','collect-family-label','collect-map-hint',
-    'collect-map','collect-next','collect-grid','collect-progress','collect-error','collect-play',
+    'collect-map','collect-next','collect-quota-notice','collect-grid','collect-progress','collect-error','collect-play',
     'collect-social','collect-profile','collect-profile-content','collect-collection','collect-albums','collect-leaderboard','collect-album-grid','collect-badge-grid','collect-ranking']
     .map((id) => [id, document.getElementById(id)]));
   const familyNames = { street: 'Rue', district: 'Quartier', monument: 'Monument', bus: 'Transport' };
@@ -45,6 +45,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   const questionPanel = document.getElementById("collect-question");
   const exitButton = document.getElementById("collect-exit");
   function leaveMap() {
+    resetResultLayout();
     mapReady = false;
     document.body.classList.remove("collect-session-active");
     document.documentElement.classList.remove("collect-map-active");
@@ -65,10 +66,12 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     els["collect-next"].hidden=false; els["collect-next"].disabled=false;
     exitButton.disabled=false;
     els["collect-game-status"].hidden=false;delete els["collect-game-status"].dataset.outcome;els["collect-game-status"].textContent="Prêt à jouer ?";
+    updateQuotaNotice();
   });
   const questionExit=document.getElementById("collect-question-exit");
   questionExit.addEventListener("click",()=>{if(!answering)exitButton.click();});
   let quotaTimer = null;
+  let quotaExhausted = false;
   let collectionPayload = null;
   let recentlyAwardedDetail = null;
   let collectionPage = 1;
@@ -89,6 +92,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
   const internalNavigation=document.getElementById('collect-internal-navigation');
   function setCollectAuthentication(connected) {
     authenticated=connected;
+    if(!connected)quotaExhausted=false;
     internalNavigation.hidden=!connected;
     authGate.hidden=connected;
     gameControls.hidden=!connected;
@@ -104,6 +108,68 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       els['collect-next'].hidden=false;els['collect-next'].disabled=false;
       els['collect-game-status'].textContent='Prêt à jouer ?';
     }
+    updateQuotaNotice();
+  }
+  let resultLayoutFrame = 0;
+  const resultLayoutObserver = new ResizeObserver(scheduleResultLayout);
+  window.addEventListener('resize', scheduleResultLayout);
+  window.visualViewport?.addEventListener('resize', scheduleResultLayout);
+
+  function resetResultLayout() {
+    resultLayoutObserver.disconnect();
+    cancelAnimationFrame(resultLayoutFrame);
+    gameControls.classList.remove('is-result');
+    restoreReplayControls();
+    const stage = document.getElementById('collect-revealed-card');
+    stage.style.removeProperty('height');
+    stage.querySelector('.collect-reward-frame')?.style.removeProperty('transform');
+  }
+
+  function restoreReplayControls() {
+    const replay = document.querySelector('.collect-replay-controls');
+    if (replay.parentElement !== gameControls) document.getElementById('collect-result-progress').after(replay);
+    questionPanel.classList.remove('is-result');
+  }
+
+  function scheduleResultLayout() {
+    cancelAnimationFrame(resultLayoutFrame);
+    if (!gameControls.classList.contains('is-result')) return;
+    resultLayoutFrame = requestAnimationFrame(() => {
+      const stage = document.getElementById('collect-revealed-card');
+      const frame = stage.querySelector('.collect-reward-frame');
+      if (!frame || stage.hidden) return;
+      const style = getComputedStyle(gameControls);
+      const children = [...gameControls.children].filter(node => node !== stage &&
+        getComputedStyle(node).display !== 'none' && getComputedStyle(node).position !== 'absolute');
+      const occupied = children.reduce((height, node) => {
+        const css = getComputedStyle(node);
+        return height + node.getBoundingClientRect().height + parseFloat(css.marginTop) + parseFloat(css.marginBottom);
+      }, 0);
+      const available = (window.visualViewport?.height || innerHeight) - gameControls.getBoundingClientRect().top - 12 -
+        parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) -
+        parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth) -
+        (style.display === 'grid' ? 0 : occupied + children.length * parseFloat(style.rowGap)) - 8;
+      const naturalHeight = frame.offsetHeight;
+      const scale = Math.min(1, Math.max(0, available) / Math.max(1, naturalHeight));
+      const height = `${Math.floor(naturalHeight * scale)}px`;
+      const transform = `scale(${scale})`;
+      if (stage.style.height !== height) stage.style.height = height;
+      if (frame.style.transform !== transform) frame.style.transform = transform;
+    });
+  }
+
+  function showResultLayout() {
+    gameControls.classList.add('is-result');
+    gameControls.scrollTop = 0;
+    const visualHint = document.getElementById('collect-visual-hint');
+    visualHint.open = false;
+    visualHint.hidden = true;
+    resultLayoutObserver.disconnect();
+    for (const node of [gameControls, ...gameControls.children,
+      gameControls.querySelector('.collect-reward-frame')]) {
+      if (node) resultLayoutObserver.observe(node);
+    }
+    scheduleResultLayout();
   }
   setCollectAuthentication(false);
 
@@ -129,14 +195,25 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
 
   function showError(message = '') { els['collect-error'].textContent = message; }
 
+  function updateQuotaNotice() {
+    const visible = authenticated && quotaExhausted && !reviewSession
+      && (!game || game.finished) && !els['collect-next'].hidden;
+    els['collect-quota-notice'].hidden = !visible;
+    if(visible)els['collect-next'].setAttribute('aria-describedby','collect-quota-notice');
+    else els['collect-next'].removeAttribute('aria-describedby');
+    scheduleResultLayout();
+  }
+
   async function refreshQuota() {
     try {
       const quota = await request('/api/collect/quota');
       const nextAt = quota.nextAvailableAt ? new Date(quota.nextAvailableAt).getTime() : 0;
       const remaining = Math.max(0, quota.limit - quota.copies);
+      quotaExhausted = remaining === 0;
       clearInterval(quotaTimer);
       const drawQuota = () => {
         const wait = nextAt - Date.now();
+        updateQuotaNotice();
         els['collect-quota'].textContent = remaining
           ? `${quota.copies}/${quota.limit} cartes`
           : `${quota.limit}/${quota.limit} · ${formatCountdown(wait)}`;
@@ -396,7 +473,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
       els['collect-game-status'].textContent = 'Partie indisponible';
       els['collect-next'].hidden=false;
       els['collect-next'].textContent='Réessayer';
-    } finally { if (requestId === gameRequest) { els['collect-next'].disabled = Boolean(game && !game.finished); exitButton.disabled=false; } }
+    } finally { if (requestId === gameRequest) { els['collect-next'].disabled = Boolean(game && !game.finished); exitButton.disabled=false;updateQuotaNotice(); } }
   }
 
   function safeImage(url) {
@@ -457,6 +534,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     albumsLoadedAt=0;
     if(Array.isArray(result.guesses)){game.guesses=result.guesses;renderGuessHistory(result);}
     game.finished = true;
+    if(result.rewardBlockedReason === 'quota')quotaExhausted = true;
     els['collect-next'].disabled = false;
     els['collect-next'].hidden = false;
     const feedback = resultFeedback(result);
@@ -491,8 +569,8 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     revealed.classList.remove('collect-reward-flip');
     if (awarded) { void revealed.offsetWidth; revealed.classList.add('collect-reward-flip'); }
     revealed.innerHTML = awarded
-      ? renderCard({...result.card,copy_count:result.ownedCount||1,revealed:true,current_rarity:result.card.rarity,fragments_enabled:Boolean(result.card.fragments_enabled ?? result.fragments),fragments_required:result.card.fragments_required ?? result.fragments?.required,fragment_count:result.fragments?.required || 0,collection_number:result.card.collectionNumber,image_reference:result.card.imageReference,image_attribution:result.card.imageAttribution})
-      : showFragments ? fragmentPreview(result.card, result.fragments.required, fragmentCount) : '';
+      ? '<div class="collect-reward-frame">' + renderCard({...result.card,copy_count:result.ownedCount||1,revealed:true,current_rarity:result.card.rarity,fragments_enabled:Boolean(result.card.fragments_enabled ?? result.fragments),fragments_required:result.card.fragments_required ?? result.fragments?.required,fragment_count:result.fragments?.required || 0,collection_number:result.card.collectionNumber,image_reference:result.card.imageReference,image_attribution:result.card.imageAttribution}) + '</div>'
+      : showFragments ? '<div class="collect-reward-frame">' + fragmentPreview(result.card, result.fragments.required, fragmentCount) + '</div>' : '';
     if (result.fragments && !questionPanel.hidden) {
       document.getElementById('collect-question-fragments').innerHTML = fragmentPreview(result.card, result.fragments.required, fragmentCount);
     }
@@ -517,12 +595,14 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     featureLayer?.eachLayer(item=>{if(!visibleLayer(item)||!item.setStyle)return;const id=featureAnswer(game.card.family,item.feature);if(id===targetId){item.setStyle({color:UI_THEME.mapCorrect,weight:8,fillColor:UI_THEME.mapCorrect,fillOpacity:0.55,opacity:1});item.bringToFront?.();targets.push(item);}else if(id===selectedAnswer?.id)item.setStyle({color:UI_THEME.mapWrong,weight:7,fillColor:UI_THEME.mapWrong,opacity:1});});
     if(targets.length && !result.correct){const bounds=window.L.featureGroup(targets).getBounds();if(bounds.isValid())map.fitBounds(bounds,{paddingTopLeft:[24,isTouchDevice()?240:30],paddingBottomRight:[24,30],maxZoom:16});const label=document.createElement('span');label.innerHTML='Bonne réponse : '+cardNameHtml(game.card);targets[0].bindTooltip(label,{permanent:true}).openTooltip();}
     for (const badge of result.newBadges || []) els['collect-map-hint'].append(` · Badge : ${badge.name}`);
+    showResultLayout();
     if(result.review){
       reviewSession={...result.review,completed:false};
       els['collect-next'].textContent=result.review.position>=result.review.total?'Voir le bilan':'Carte suivante';
       document.getElementById('collect-review-progress').textContent=`Carte ${result.review.position}/${result.review.total} · ${result.review.correct} bonne${result.review.correct>1?'s':''} réponse${result.review.correct>1?'s':''} · Sans récompense`;
       reviews.refresh();
     }else{els['collect-next'].textContent='Rejouer';refreshQuota();loadWeeklyPlay();renderGoal();}
+    updateQuotaNotice();
   }
 
   function renderGuessHistory(payload) {
@@ -602,12 +682,20 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
           document.getElementById('collect-question-feedback').textContent=`${els['collect-game-status'].textContent}. ${result.fragments?.explanation || ''}`;
           document.getElementById('collect-question-feedback').insertAdjacentHTML('beforeend',questionSources(result));
           document.getElementById('collect-question-continue').hidden=false;
+          if(!result.rewardGranted){
+            questionPanel.classList.add('is-result');
+            questionPanel.append(document.querySelector('.collect-replay-controls'));
+          }
           if(result.correct === true && result.rewardGranted === true){
             questionPanel.hidden=true;
             if(result.fragments?.explanation){
               const explanation=document.createElement('p');explanation.className='collect-reveal-explanation';explanation.textContent=result.fragments.explanation;
-              document.getElementById('collect-revealed-card').append(explanation);
-              document.getElementById('collect-revealed-card').insertAdjacentHTML('beforeend',questionSources(result));
+              const details=document.createElement('details');
+              const summary=document.createElement('summary');summary.textContent='En savoir plus';
+              details.append(summary,explanation);
+              details.insertAdjacentHTML('beforeend',questionSources(result));
+              document.getElementById('collect-result-progress').append(details);
+              document.getElementById('collect-result-progress').hidden=false;
             }
           }
         } catch(error) {document.getElementById('collect-question-feedback').textContent=error.message; answers.querySelectorAll('button').forEach(b=>b.disabled=false);}
@@ -617,7 +705,7 @@ import { renderFragmentMosaic } from "./collect-fragment-view.js";
     });
     document.getElementById('collect-question-title').focus();
   }
-  document.getElementById('collect-question-continue').addEventListener('click',() => {questionPanel.hidden=true; els['collect-next'].focus();});
+  document.getElementById('collect-question-continue').addEventListener('click',() => {questionPanel.hidden=true; restoreReplayControls(); scheduleResultLayout(); els['collect-next'].focus();});
 
   function imageCredit(credit) {
     if(!credit)return '';
