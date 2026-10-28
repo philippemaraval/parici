@@ -57,3 +57,7 @@ Les deux assertions de série Daily lisent le texte rendu au lieu de concaténer
 les rouleaux décoratifs du Shadow DOM de NumberFlow. La valeur accessible et les
 positions des chiffres restent vérifiées par les contrôles dédiés.
 Le verrou de publication Render et ses contrôles du commit exact restent actifs.
+
+La vérification Linux à 320 px a ensuite révélé un débordement réel des adresses
+mail sur la page Confidentialité. Le contenu peut désormais se couper à l’intérieur
+d’un mot si nécessaire, sans masquer le débordement ni modifier le lien mail.

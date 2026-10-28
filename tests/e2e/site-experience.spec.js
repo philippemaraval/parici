@@ -74,10 +74,12 @@ for (const width of [320, 390, 1440]) {
         await expect(page.locator("#mode-select-block")).not.toBeVisible();
       }
       await expect
-        .poll(() =>
-          page.evaluate(
-            () => document.documentElement.scrollWidth <= innerWidth + 1,
-          ),
+        .poll(
+          () =>
+            page.evaluate(
+              () => document.documentElement.scrollWidth <= innerWidth + 1,
+            ),
+          { message: `Horizontal overflow on ${route} at ${width}px` },
         )
         .toBe(true);
       const active = page.locator(".site-nav > a[aria-current='page']");
