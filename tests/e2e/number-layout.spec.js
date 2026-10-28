@@ -51,7 +51,9 @@ test("Explorer counters align after font scaling, wrapping and repeated updates"
     }
     await expectNumberLayout(page.locator(".explorer-status"));
     await page.screenshot({
-      path: `/private/tmp/camino-numbers-${info.project.name}-explorer-${width}.png`,
+      path: info.outputPath(
+        `camino-numbers-${info.project.name}-explorer-${width}.png`,
+      ),
     });
   }
 });
@@ -96,7 +98,9 @@ test("Collect collection counts stay aligned at every layout width", async ({
     await page.setViewportSize({ width, height: 900 });
     await expectNumberLayout(page.locator("#collect-progress"));
     await page.screenshot({
-      path: `/private/tmp/parici-collection-numbers-${info.project.name}-${width}.png`,
+      path: info.outputPath(
+        `parici-collection-numbers-${info.project.name}-${width}.png`,
+      ),
     });
   }
 });

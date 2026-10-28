@@ -55,7 +55,9 @@ test("le Daily affiche le nombre de jours de série à côté de la flamme", asy
 
   const streak = page.locator("[data-daily-streak]");
   await expect(streak).toBeVisible();
-  await expect(streak.locator("[data-daily-streak-count]")).toHaveText("12");
+  await expect(streak.locator("[data-daily-streak-count]")).toHaveText("12", {
+    useInnerText: true,
+  });
   await expect(streak.locator("[data-daily-streak-unit]")).toHaveCount(0);
   await expect(streak).toHaveAttribute(
     "aria-label",
@@ -82,7 +84,9 @@ test("le Daily récupère la connexion lorsque iOS signale hors ligne à tort", 
   await page.goto("/?view=daily");
 
   await expect(page.locator("#offline-banner")).toBeHidden({ timeout: 8000 });
-  await expect(page.locator("[data-daily-streak-count]")).toHaveText("12");
+  await expect(page.locator("[data-daily-streak-count]")).toHaveText("12", {
+    useInnerText: true,
+  });
   await expect(page.locator("#leaderboard")).not.toContainText(
     "Classements momentanément indisponibles",
   );

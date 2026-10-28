@@ -47,3 +47,13 @@ avec les huit audits photographiques exclus explicitement. Build, lint sans
 erreur, formatage, typage, cohérence des dépendances et budgets de performance
 validés. Le contrôle global de contenu reste limité par les photos Daily absentes
 de cette copie de développement.
+
+## Portabilité des contrôles GitHub Actions
+
+Le refus Render du commit `8c0f6fe` provenait du job E2E. Les captures des nouveaux
+parcours utilisaient `/private/tmp`, absent sous Linux ; elles utilisent désormais
+`testInfo.outputPath`, distinct pour chaque scénario, terminal et tentative.
+Les deux assertions de série Daily lisent le texte rendu au lieu de concaténer
+les rouleaux décoratifs du Shadow DOM de NumberFlow. La valeur accessible et les
+positions des chiffres restent vérifiées par les contrôles dédiés.
+Le verrou de publication Render et ses contrôles du commit exact restent actifs.

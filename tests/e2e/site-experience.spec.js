@@ -91,7 +91,9 @@ for (const width of [320, 390, 1440]) {
         )
       ) {
         await page.screenshot({
-          path: `/private/tmp/parici-design-${info.project.name}-${name}-${width}.png`,
+          path: info.outputPath(
+            `parici-design-${info.project.name}-${name}-${width}.png`,
+          ),
           animations: "disabled",
         });
       }
@@ -224,7 +226,9 @@ for (const mode of ["classique", "chrono", "marathon", "lecture"]) {
     await expect(page.locator("#onboarding-banner")).not.toBeVisible();
     await expect(page.locator(".mobile-mode-intro--camino")).not.toBeVisible();
     await page.screenshot({
-      path: `/private/tmp/parici-design-${info.project.name}-game-${mode}.png`,
+      path: info.outputPath(
+        `parici-design-${info.project.name}-game-${mode}.png`,
+      ),
       animations: "disabled",
     });
     if (mode === "lecture") {

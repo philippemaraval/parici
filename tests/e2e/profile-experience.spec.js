@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
 });
 test("profile groups game summaries before clearly expandable details", async ({
   page,
-}) => {
+}, info) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
     localStorage.setItem("camino_auth_token", "e2e-player-token");
@@ -54,7 +54,7 @@ test("profile groups game summaries before clearly expandable details", async ({
     await page.setViewportSize({ width, height: 900 });
     await expectNumberLayout(page.locator("#profile-panel"));
     await page.screenshot({
-      path: `/private/tmp/parici-numbers-profile-${width}.png`,
+      path: info.outputPath(`parici-numbers-profile-${width}.png`),
     });
   }
   await page.setViewportSize({ width: 390, height: 844 });
