@@ -6668,10 +6668,9 @@ function fitTargetStreetText() {
     const userPanelDetails = document.getElementById("user-panel-details");
     if (userPanelDetails) {
       const syncUserPanelDetails = () => {
-        const isMobileProfileView =
-          window.matchMedia("(max-width: 900px)").matches &&
+        const isProfileView =
           document.documentElement.dataset.mobileView === "profile";
-        userPanelDetails.open = isMobileProfileView;
+        userPanelDetails.open = isProfileView;
       };
       syncUserPanelDetails();
       window.addEventListener("resize", syncUserPanelDetails);

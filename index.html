@@ -48,6 +48,8 @@
   <link rel="stylesheet" href="/src/public/css/fluid-layout.css">
 <script defer src="/src/public/js/site-navigation.js?v=20261013"></script>
 <script defer src="/src/public/js/page-gestures.js?v=20261013"></script>
+  <link rel="stylesheet" href="/src/public/css/site-experience.css">
+  <script type="module" src="/src/public/js/site-experience.js"></script>
 </head>
 
 <body>
@@ -154,6 +156,7 @@
             <a class="mobile-mode-card mobile-mode-card--camino" href="/?view=camino">
               <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/home-route.svg" alt="" width="34" height="34"></span>
               <span>
+                <span class="experience-mode-label">À votre rythme ou contre la montre</span>
                 <strong>Parici</strong>
                 <small>Rues, quartiers, monuments, transports… À vous de les retrouver.</small>
               </span>
@@ -162,6 +165,7 @@
             <a class="mobile-mode-card mobile-mode-card--daily" href="/?view=daily">
               <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/calendar.svg" alt="" width="34" height="34"></span>
               <span>
+                <span class="experience-mode-label">Le rendez-vous du jour</span>
                 <strong>Daily</strong>
                 <small>Une rue par jour. Sept essais. À vous de jouer.</small>
               </span>
@@ -170,6 +174,7 @@
             <a class="mobile-mode-card mobile-mode-card--collect" href="/collect.html">
               <span class="mobile-mode-card__icon" aria-hidden="true"><img src="/src/public/icons/home-card.svg" alt="" width="34" height="34"></span>
               <span>
+                <span class="experience-mode-label">Votre collection de Paris</span>
                 <strong>Collect</strong>
                 <small>Retrouve un lieu. Gagne sa carte. Collectionne Paris.</small>
               </span>
@@ -254,7 +259,7 @@
               <span class="panel-title--daily">Daily</span>
             </div>
             <button id="daily-mode-btn" class="btn-emphasis btn-emphasis--compact hidden">🏆 <span>Daily</span></button>
-            <p id="daily-login-prompt" class="daily-login-prompt hidden">
+            <p id="daily-login-prompt" class="daily-login-prompt game-login-prompt hidden">
               <a href="/?view=profile#profile">Connectez-vous</a> pour jouer au Daily.
             </p>
           </div>

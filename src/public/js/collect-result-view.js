@@ -28,7 +28,7 @@ export function renderResultProgress(root, result) {
   root.classList.toggle('collect-result-progress--compact', compact);
   if (compact) {
     const c = progress?.collection;
-    const collection = c ? `<span>Collection : ${c.before}${c.before!==c.after?` → ${c.after}`:''}/${c.total} cartes</span>` : '';
+    const collection = c ? `<span data-result-count>Collection : ${c.before}${c.before!==c.after?` → ${c.after}`:''}/${c.total} cartes</span>` : '';
     root.innerHTML=`<details class="collect-result-details"><summary><strong>${escape(title)}</strong>${collection}<span class="collect-result-details-label">Voir la progression</span></summary>${body}</details>`;
   } else {
     root.innerHTML=`<h3>${escape(title)}</h3>${body}`;

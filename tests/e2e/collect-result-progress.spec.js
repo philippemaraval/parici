@@ -1,3 +1,4 @@
+const { expectNumberLayout } = require("./support/assert-number-layout");
 const { test, expect } = require("@playwright/test");
 async function setup(page, { errors = 1 } = {}) {
   await page.addInitScript(() =>
@@ -315,6 +316,7 @@ test("result shows three album changes and opens the targeted personal album", a
     expect(
       await card.evaluate((node) => getComputedStyle(node).animationName),
     ).toBe("collect-card-turn");
+    await expectNumberLayout(result.locator("summary"));
     await page.screenshot({
       path: info.outputPath(`collect-compact-${width}.png`),
     });

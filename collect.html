@@ -31,6 +31,8 @@
   <script defer src="/src/public/js/site-navigation.js"></script>
   <script defer src="/src/public/js/page-gestures.js?v=20261011"></script>
   <link rel="stylesheet" href="/src/public/css/collect-social.css">
+  <link rel="stylesheet" href="/src/public/css/site-experience.css">
+  <script type="module" src="/src/public/js/site-experience.js"></script>
 </head>
 <body class="collect-page site-shell-page">
   <div class="site-shell-top">
@@ -65,10 +67,13 @@
     <section id="collect-play" class="collect-panel">
       <div class="collect-game-card">
         <section id="collect-auth-gate" class="collect-auth-gate" aria-labelledby="collect-auth-title">
-          <span class="collect-target-title">Connexion requise</span>
-          <h3 id="collect-auth-title">Connecte-toi pour jouer à Collect</h3>
-          <p>Retrouve les lieux de Paris, gagne leurs cartes et conserve ta collection sur ton profil Parici.</p>
-          <a class="btn-primary" href="/?view=profile#profile">Se connecter à Parici</a>
+          <div class="panel-title-row">
+            <h3 id="collect-auth-title" class="panel-title panel-title--compact">Défi Collect</h3>
+            <p class="game-login-prompt">
+              <a href="/?view=profile#profile">Connectez-vous</a> pour lancer Collect.
+            </p>
+          </div>
+          <p class="collect-auth-intro">Vos cartes sont conservées dans votre collection Parici.</p>
         </section>
         <section id="collect-review-end" class="collect-review-end" hidden aria-live="polite"><h3>Révision terminée</h3><p id="collect-review-summary"></p><button type="button" id="collect-review-continue" class="btn-primary">Continuer à réviser</button><button type="button" id="collect-review-return" class="btn-secondary">Retour à ma collection</button></section><div id="collect-game-controls" class="collect-game-controls panel target-panel" hidden>
           <button id="collect-exit" class="btn-secondary" type="button" hidden>Quitter la partie</button>

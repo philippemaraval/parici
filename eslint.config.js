@@ -52,6 +52,9 @@ module.exports = [
   {
     files: [
       "src/public/js/camino-art.js",
+      "src/public/js/site-experience.js",
+      "src/public/js/experience-numbers.js",
+      "src/public/js/experience-motion.js",
       "src/public/js/site-menu.js",
       "src/public/js/canvas-avatar.js",
       "src/public/js/interface-icons.js",

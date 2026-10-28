@@ -115,6 +115,30 @@ function replaceAssetReference(html, sourcePath, targetUrl) {
 
 async function fingerprintProductionAssets() {
   const assetManifest = {};
+  // Optional visual enhancements are separate ESM chunks. The game starts
+  // without waiting for GSAP or NumberFlow and all dependencies stay local.
+  const experienceBuild = await esbuild.build({
+    entryPoints: [path.join(ROOT, "src/public/js/site-experience.js")],
+    bundle: true,
+    splitting: true,
+    format: "esm",
+    target: ["es2020"],
+    minify: true,
+    sourcemap: false,
+    outdir: path.join(DIST_DIR, "assets"),
+    entryNames: "site-experience.[hash]",
+    chunkNames: "experience-[name].[hash]",
+    metafile: true,
+  });
+  const experienceEntry = Object.entries(experienceBuild.metafile.outputs)
+    .find(([, metadata]) => metadata.entryPoint?.endsWith("site-experience.js"));
+  const experienceJsUrl = `/assets/${path.basename(experienceEntry[0])}`;
+  assetManifest["site-experience.js"] = experienceJsUrl;
+  const experienceCssUrl = writeFingerprintedAsset(
+    "site-experience", "css",
+    await minifiedSource("src/public/css/site-experience.css", "css"),
+    assetManifest,
+  );
   const mainBundle = await esbuild.build({
     entryPoints: [FRONTEND_ENTRY],
     bundle: true,
@@ -341,6 +365,21 @@ async function fingerprintProductionAssets() {
     rulesHtml = replaceAssetReference(rulesHtml, "/src/public/js/site-shell.js", siteShellJsUrl);
     fs.writeFileSync(rulesPath, rulesHtml);
   }
+
+  function updateExperienceAssets(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) updateExperienceAssets(file);
+      else if (entry.name.endsWith(".html")) {
+        const html = fs.readFileSync(file, "utf8");
+        fs.writeFileSync(file, replaceAssetReference(
+          replaceAssetReference(html, "/src/public/js/site-experience.js", experienceJsUrl),
+          "/src/public/css/site-experience.css", experienceCssUrl,
+        ));
+      }
+    }
+  }
+  updateExperienceAssets(DIST_DIR);
 
   fs.writeFileSync(
     path.join(DIST_DIR, "asset-manifest.json"),
